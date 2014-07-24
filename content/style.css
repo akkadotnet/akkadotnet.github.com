@@ -19,6 +19,8 @@ span.o { color:#af75c1; }
 /* numbers */
 span.n { color:#FFFFFF; }
 span.nc { color:#FFFae0; }
+span.nf { color:#FFFae0; }
+span.nv { color:#FFFae0; }
 /* line number */
 span.l { color:#80b0b0; }
 
