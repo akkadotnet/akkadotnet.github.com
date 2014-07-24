@@ -10,8 +10,10 @@ span.i { color:#d1d1d1; }
 span.s { color:#d4b43c; }
 /* keywords */
 span.k { color:#4e98dc; }
+span.kt { color:#4e98dc; }
 /* comment */
 span.c { color:#96C71D; }
+span.c1 { color:#96C71D; }
 /* operators */
 span.o { color:#af75c1; }
 /* numbers */
