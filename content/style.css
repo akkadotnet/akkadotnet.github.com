@@ -9,8 +9,8 @@ span.i { color:#d1d1d1; }
 /* string */
 span.s { color:#d4b43c; }
 /* keywords */
-span.k { color:#4e98dc; }
-span.kt { color:#4e98dc; }
+span.k { color:##6eb8fc; }
+span.kt { color:##6eb8fc; }
 /* comment */
 span.c { color:#96C71D; }
 span.c1 { color:#96C71D; }
@@ -21,6 +21,7 @@ span.n { color:#FFFFFF; }
 span.nc { color:#FFFae0; }
 span.nf { color:#FFFae0; }
 span.nv { color:#FFFae0; }
+span.nn { color:#FFFae0; }
 /* line number */
 span.l { color:#80b0b0; }
 
