@@ -1,0 +1,41 @@
+
+      <p>Finite State Machine</p>
+
+<p>For more info see real Akka FSM documentation: <a href="http://doc.akka.io/docs/akka/snapshot/scala/fsm.html">http://doc.akka.io/docs/akka/snapshot/scala/fsm.html</a></p>
+
+<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">MyFSM</span> <span class="p">:</span> <span class="n">FSM</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">object</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">MyFSM</span><span class="p">(</span><span class="n">ActorRef</span> <span class="n">target</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Target</span> <span class="p">=</span> <span class="n">target</span><span class="p">;</span>
+        <span class="n">StartWith</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="k">new</span> <span class="kt">object</span><span class="p">());</span>
+        <span class="n">When</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">@event</span> <span class="p">=&gt;</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">@event</span><span class="p">.</span><span class="n">FsmEvent</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="s">"tick"</span><span class="p">))</span> <span class="k">return</span> <span class="n">GoTo</span><span class="p">(</span><span class="m">1</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
+        <span class="p">});</span>
+
+        <span class="n">When</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">@event</span> <span class="p">=&gt;</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">@event</span><span class="p">.</span><span class="n">FsmEvent</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="s">"tick"</span><span class="p">))</span> <span class="k">return</span> <span class="n">GoTo</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
+        <span class="p">});</span>
+
+        <span class="n">WhenUnhandled</span><span class="p">(</span><span class="n">@event</span> <span class="p">=&gt;</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">@event</span><span class="p">.</span><span class="n">FsmEvent</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="s">"reply"</span><span class="p">))</span> <span class="k">return</span> <span class="n">Stay</span><span class="p">().</span><span class="n">Replying</span><span class="p">(</span><span class="s">"reply"</span><span class="p">);</span>
+            <span class="k">return</span> <span class="k">null</span><span class="p">;</span>
+        <span class="p">});</span>
+
+        <span class="n">Initialize</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">ActorRef</span> <span class="n">Target</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">PreRestart</span><span class="p">(</span><span class="n">Exception</span> <span class="n">reason</span><span class="p">,</span> <span class="kt">object</span> <span class="n">message</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Target</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"restarted"</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+    

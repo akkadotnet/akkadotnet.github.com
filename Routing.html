@@ -1,0 +1,143 @@
+
+      <h2>
+<a name="user-content-tldr-roundrobin-group-router-example" class="anchor" href="#tldr-roundrobin-group-router-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>TL;DR RoundRobin Group router example</h2>
+
+<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+
+<span class="c1">//create workers</span>
+<span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">Worker</span><span class="p">&gt;(</span><span class="s">"Worker1"</span><span class="p">);</span>
+<span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">Worker</span><span class="p">&gt;(</span><span class="s">"Worker2"</span><span class="p">);</span>
+<span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">Worker</span><span class="p">&gt;(</span><span class="s">"Worker3"</span><span class="p">);</span>
+<span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">Worker</span><span class="p">&gt;(</span><span class="s">"Worker4"</span><span class="p">);</span>
+
+<span class="c1">//create the router using round robin strategy</span>
+<span class="kt">var</span> <span class="n">router</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">(</span><span class="k">new</span> <span class="n">Props</span><span class="p">().</span><span class="n">WithRouter</span><span class="p">(</span><span class="k">new</span> <span class="n">RoundRobinGroup</span><span class="p">(</span>
+<span class="s">"user/Worker1"</span><span class="p">,</span> <span class="s">"user/Worker2"</span><span class="p">,</span> <span class="s">"user/Worker3"</span><span class="p">,</span> <span class="s">"user/Worker4"</span><span class="p">)));</span>
+
+<span class="c1">//pass messages via the router to the routees</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="m">20</span><span class="p">;</span> <span class="n">i</span><span class="p">++)</span>
+<span class="p">{</span>
+   <span class="n">router</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<h1>
+<a name="user-content-routers" class="anchor" href="#routers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Routers</h1>
+
+<p>Messages can be sent via a router to efficiently route them to destination actors, known as its routees. A Router can be used inside or outside of an actor, and you can manage the routees yourselves or use a self contained router actor with configuration capabilities.</p>
+
+<p>Different routing strategies can be used, according to your application's needs. Akka comes with several useful routing strategies right out of the box. But, as you will see in this chapter, it is also possible to create your own.</p>
+
+<blockquote>
+<p><strong>Note:</strong><br>
+In general, any message sent to a router will be sent onwards to its routees, but there is one exception.<br>
+The special <code>Broadcast</code> Messages will send to all of a router's routees</p>
+</blockquote>
+
+<h2>
+<a name="user-content-routing-strategies" class="anchor" href="#routing-strategies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Routing strategies</h2>
+
+<h3>
+<a name="user-content-broadcast" class="anchor" href="#broadcast" aria-hidden="true"><span class="octicon octicon-link"></span></a>Broadcast</h3>
+
+<p>The broadcast router will as the name implies, broadcast any message to all of its routees.</p>
+
+<p><img src="images/BroadcastRouter.png" height="200px"></p>
+
+<h3>
+<a name="user-content-roundrobin" class="anchor" href="#roundrobin" aria-hidden="true"><span class="octicon octicon-link"></span></a>RoundRobin</h3>
+
+<p>A Router that uses round-robin to select a connection. For concurrent calls, round robin is just a best effort. </p>
+
+<p><img src="images/RoundRobinRouter.png" height="200px"></p>
+
+<h3>
+<a name="user-content-consistenthash" class="anchor" href="#consistenthash" aria-hidden="true"><span class="octicon octicon-link"></span></a>ConsistentHash</h3>
+
+<p>A Router that uses consistent hashing to select a connection based on the sent message.</p>
+
+<p>There is 3 ways to define what data to use for the consistent hash key.</p>
+
+<ol class="task-list">
+<li>You can define hashMapping / <code>WithHashMapper</code> of the router to map incoming messages to their consistent hash key. This makes the decision transparent for the sender.</li>
+<li>The messages may implement <code>Akka.Routing.ConsistentHashingRouter.ConsistentHashable</code>. The key is part of the message and it's convenient to define it together with the message definition.</li>
+<li>The messages can be be wrapped in a <code>Akka.Routing.ConsistentHashingRouter.ConsistentHashableEnvelope</code> to define what data to use for the consistent hash key. The sender knows the key to use.</li>
+</ol><p>These ways to define the consistent hash key can be use together and at the same time for one router. The hashMapping is tried first.</p>
+
+<p><img src="images/ConsistentHashRouter.png" height="200px"></p>
+
+<h4>
+<a name="user-content-usecase" class="anchor" href="#usecase" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usecase</h4>
+
+<p><code>ConsistentHash</code> can be very useful when dealing with <strong>"Commands"</strong> in the sense of <strong>CQRS</strong> or <strong>Domain Driven Design</strong>.
+For example, let's assume we have the following incoming sequence of <strong>"Customer Commands"</strong>:</p>
+
+<p><img src="images/ConsistentHash1.png" width="500px"></p>
+
+<p>In this case we might want to group all messages based on <strong>"Customer ID"</strong> (ID in the diagram).
+By using a <code>ConsistentHash</code> router we can now process multiple commands in parallel for different Customers, while still processing messages for each specific Customer in ordered sequence, and thus preventing us from getting race conditions with ourselves when applying each command on each customer entity.</p>
+
+<p><img src="images/ConsistentHash2.png"></p>
+
+<h3>
+<a name="user-content-scattergatherfirstcompleted" class="anchor" href="#scattergatherfirstcompleted" aria-hidden="true"><span class="octicon octicon-link"></span></a>ScatterGatherFirstCompleted</h3>
+
+<p>Simple router that broadcasts the message to all routees, and replies with the first response. 
+You have to defin the 'within: Duration' parameter (f.e: within = 10 seconds). </p>
+
+<p><img src="images/ScatterGatherFirstCompletedRouter.png" height="200px"></p>
+
+<h3>
+<a name="user-content-random" class="anchor" href="#random" aria-hidden="true"><span class="octicon octicon-link"></span></a>Random</h3>
+
+<p>A Router that randomly selects one of the target connections to send a message to.</p>
+
+<p>[No image yet]</p>
+
+<h3>
+<a name="user-content-smallestmailbox" class="anchor" href="#smallestmailbox" aria-hidden="true"><span class="octicon octicon-link"></span></a>SmallestMailbox</h3>
+
+<p>A Router that tries to send to the non-suspended routee with fewest messages in mailbox. The selection is done in this order:</p>
+
+<ul class="task-list">
+<li>Pick any idle routee (not processing message) with empty mailbox</li>
+<li>Pick any routee with empty mailbox</li>
+<li>Pick routee with fewest pending messages in mailbox</li>
+<li>Pick any remote routee, remote actors are consider lowest priority, since their mailbox size is unknown</li>
+</ul><p><img src="images/SmallestMailbox.png" width="400px"></p>
+
+<h2>
+<a name="user-content-pools-vs-groups" class="anchor" href="#pools-vs-groups" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pools vs. Groups</h2>
+
+<h3>
+<a name="user-content-pools" class="anchor" href="#pools" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pools</h3>
+
+<p>Router "Pools" are routers that create their own worker actors, that is; you provide a <code>nrOfInstances</code> to the router and the router will handle routee creation by itself.</p>
+
+<h3>
+<a name="user-content-groups" class="anchor" href="#groups" aria-hidden="true"><span class="octicon octicon-link"></span></a>Groups</h3>
+
+<p>Sometimes, rather than having the router actor create its routees, it is desirable to create routees separately and provide them to the router for its use. You can do this by passing an paths of the routees to the router's configuration. Messages will be sent with <code>ActorSelection</code> to these paths.</p>
+
+<h2>
+<a name="user-content-how-routing-is-designed-within-akkanet" class="anchor" href="#how-routing-is-designed-within-akkanet" aria-hidden="true"><span class="octicon octicon-link"></span></a>How Routing is Designed within Akka.NET</h2>
+
+<p>On the surface routers look like normal actors, but they are actually implemented differently. Routers are designed to be extremely efficient at receiving messages and passing them quickly on to routees.</p>
+
+<p>A normal actor can be used for routing messages, but an actor's single-threaded processing can become a bottleneck. Routers can achieve much higher throughput with an optimization to the usual message-processing pipeline that allows concurrent routing. This is achieved by embedding routers' routing logic directly in their ActorRef rather than in the router actor. Messages sent to a router's ActorRef can be immediately routed to the routee, bypassing the single-threaded router actor entirely.</p>
+
+<p>The cost to this is, of course, that the internals of routing code are more complicated than if routers were implemented with normal actors. Fortunately all of this complexity is invisible to consumers of the routing API. However, it is something to be aware of when implementing your own routers.</p>
+
+<h2>
+<a name="user-content-supervision" class="anchor" href="#supervision" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supervision</h2>
+
+<p>Routees that are created by a pool router will be created as the router's children. The router is therefore also the children's supervisor.</p>
+
+<p>The supervision strategy of the router actor can be configured with the supervisorStrategy property of the Pool. If no configuration is provided, routers default to a strategy of “always escalate”. This means that errors are passed up to the router's supervisor for handling. The router's supervisor will decide what to do about any errors.</p>
+
+<p>Note the router's supervisor will treat the error as an error with the router itself. Therefore a directive to stop or restart will cause the router itself to stop or restart. The router, in turn, will cause its children to stop and restart.</p>
+
+<p>It should be mentioned that the router's restart behavior has been overridden so that a restart, while still re-creating the children, will still preserve the same number of actors in the pool.</p>
+
+<p>This means that if you have not specified supervisorStrategy of the router or its parent a failure in a routee will escalate to the parent of the router, which will by default restart the router, which will restart all routees (it uses Escalate and does not stop routees during restart). The reason is to make the default behave such that adding withRouter to a child’s definition does not change the supervision strategy applied to the child. This might be an inefficiency that you can avoid by specifying the strategy when defining the router.</p>
+    

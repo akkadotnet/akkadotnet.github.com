@@ -1,0 +1,122 @@
+
+      <h1>
+<a name="user-content-circuit-breaker" class="anchor" href="#circuit-breaker" aria-hidden="true"><span class="octicon octicon-link"></span></a>Circuit Breaker</h1>
+
+<h2>
+<a name="user-content-why-are-they-used" class="anchor" href="#why-are-they-used" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why are they used?</h2>
+
+<p>A circuit breaker is used to provide stability and prevent cascading failures in distributed
+systems.  These should be used in conjunction with judicious timeouts at the interfaces between
+remote systems to prevent the failure of a single component from bringing down all components.</p>
+
+<p>As an example, we have a web application interacting with a remote third party web service.<br>
+Let's say the third party has oversold their capacity and their database melts down under load.<br>
+Assume that the database fails in such a way that it takes a very long time to hand back an
+error to the third party web service.  This in turn makes calls fail after a long period of 
+time.  Back to our web application, the users have noticed that their form submissions take
+much longer seeming to hang.  Well the users do what they know to do which is use the refresh
+button, adding more requests to their already running requests.  This eventually causes the 
+failure of the web application due to resource exhaustion.  This will affect all users, even
+those who are not using functionality dependent on this third party web service.</p>
+
+<p>Introducing circuit breakers on the web service call would cause the requests to begin to 
+fail-fast, letting the user know that something is wrong and that they need not refresh 
+their request.  This also confines the failure behavior to only those users that are using
+functionality dependent on the third party, other users are no longer affected as there is no
+resource exhaustion.  Circuit breakers can also allow savvy developers to mark portions of
+the site that use the functionality unavailable, or perhaps show some cached content as 
+appropriate while the breaker is open.</p>
+
+<p>The Akka library provides an implementation of a circuit breaker called 
+<code>Akka.Pattern.CircuitBreaker</code> which has the behavior described below.</p>
+
+<h2>
+<a name="user-content-what-do-they-do" class="anchor" href="#what-do-they-do" aria-hidden="true"><span class="octicon octicon-link"></span></a>What do they do?</h2>
+
+<ul class="task-list">
+<li>During normal operation, a circuit breaker is in the <code>Closed</code> state:
+
+<ul class="task-list">
+<li>Exceptions or calls exceeding the configured <code>callTimeout</code> increment a failure counter</li>
+<li>Successes reset the failure count to zero </li>
+<li>When the failure counter reaches a <code>maxFailures</code> count, the breaker is tripped into <code>Open</code> state</li>
+</ul>
+</li>
+<li>While in <code>Open</code> state:
+
+<ul class="task-list">
+<li>All calls fail-fast with a :class:<code>CircuitBreakerOpenException</code>
+</li>
+<li>After the configured <code>resetTimeout</code>, the circuit breaker enters a <code>Half-Open</code> state</li>
+</ul>
+</li>
+<li>In <code>Half-Open</code> state:
+
+<ul class="task-list">
+<li>The first call attempted is allowed through without failing fast</li>
+<li>All other calls fail-fast with an exception just as in <code>Open</code> state</li>
+<li>If the first call succeeds, the breaker is reset back to <code>Closed</code> state</li>
+<li>If the first call fails, the breaker is tripped again into the <code>Open</code> state for another full <code>resetTimeout</code>
+</li>
+</ul>
+</li>
+<li>State transition listeners: 
+
+<ul class="task-list">
+<li>Callbacks can be provided for every state entry via <code>onOpen</code>, <code>onClose</code>, and <code>onHalfOpen</code>
+</li>
+<li>These are executed in the :class:<code>ExecutionContext</code> provided. </li>
+</ul>
+</li>
+</ul><p>.. image:: ../images/circuit-breaker-states.png</p>
+
+<h2>
+<a name="user-content-examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<h3>
+<a name="user-content-initialization" class="anchor" href="#initialization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Initialization</h3>
+
+<p>Here's how a :class:<code>CircuitBreaker</code> would be configured for:</p>
+
+<ul class="task-list">
+<li>5 maximum failures</li>
+<li>a call timeout of 10 seconds </li>
+<li>a reset timeout of 1 minute</li>
+</ul><h4>
+<a name="user-content-f-api" class="anchor" href="#f-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>F# Api</h4>
+
+<p>.. includecode:: code/docs/circuitbreaker/CircuitBreakerDocSpec.cs
+   :include: imports1,circuit-breaker-initialization</p>
+
+<h4>
+<a name="user-content-c-api" class="anchor" href="#c-api" aria-hidden="true"><span class="octicon octicon-link"></span></a>C# Api</h4>
+
+<p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.fs
+   :include: imports1,circuit-breaker-initialization</p>
+
+<h3>
+<a name="user-content-call-protection" class="anchor" href="#call-protection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Call Protection</h3>
+
+<p>Here's how the :class:<code>CircuitBreaker</code> would be used to protect an asynchronous
+call as well as a synchronous one:</p>
+
+<h4>
+<a name="user-content-f-api-1" class="anchor" href="#f-api-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>F# Api</h4>
+
+<p>.. includecode:: code/docs/circuitbreaker/CircuitBreakerDocSpec.scala
+   :include: circuit-breaker-usage</p>
+
+<h4>
+<a name="user-content-c-api-1" class="anchor" href="#c-api-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>C# Api</h4>
+
+<p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.java
+   :include: circuit-breaker-usage</p>
+
+<blockquote>
+<p><strong>Node</strong><br>
+Using the :class:<code>CircuitBreaker</code> companion object's <code>apply</code> or <code>create</code> methods
+will return a :class:<code>CircuitBreaker</code> where callbacks are executed in the caller's thread.
+This can be useful if the asynchronous :class:<code>Future</code> behavior is unnecessary, for
+example invoking a synchronous-only API.</p>
+</blockquote>
+    
