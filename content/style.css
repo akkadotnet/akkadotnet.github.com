@@ -59,6 +59,8 @@ div.highlight, pre.fssnip, pre {
   padding:10px;
   border-radius:5px;
   color:#d1d1d1;
+  margin-left:0px;
+  margin-right:0px;
 }
 div.highlight pre {
   padding:0px;
