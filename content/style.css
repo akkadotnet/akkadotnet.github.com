@@ -53,7 +53,7 @@ div.highlight, pre.fssnip, pre {
   border-collapse:separate;
   white-space:pre;
   font: 9pt 'Droid Sans Mono',consolas,monospace;
-  width:90%;
+  width:100%;
   margin:10px 20px 20px 20px;
   background-color:#212d30;
   padding:10px;
