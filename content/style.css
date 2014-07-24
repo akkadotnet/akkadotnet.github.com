@@ -204,6 +204,7 @@ blockquote {
   padding: 3px 3px 3px 15px;
   border-left: 5px solid #E02000;
   background-color: #FFf9f0;
+  border-radius: 5px;
 }
 
 /*code {
