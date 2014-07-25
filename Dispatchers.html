@@ -43,7 +43,7 @@
 <h2>
 <a name="user-content-default-dispatcher" class="anchor" href="#default-dispatcher" aria-hidden="true"><span class="octicon octicon-link"></span></a>Default dispatcher</h2>
 
-<p>Every <code>ActorSystem</code> will have a default dispatcher that will be used in case nothing else is configured for an Actor. The default dispatcher can be configured, and is by default a <code>Dispatcher</code> with the specified <code>default-executor</code>. If an <code>ActorSystem</code> is created with an <code>ExecutionContext</code> passed in, this <code>ExecutionContext</code> will be used as the default executor for all dispatchers in this <code>ActorSystem</code>. If no <code>ExecutionContext</code> is given, it will fallback to the executor specified in <code>akka.actor.default-dispatcher.default-executor.fallback</code>. By default this is a <code>"fork-join-executor"</code>, which gives excellent performance in most cases.</p>
+<p>Every <code>ActorSystem</code> will have a default dispatcher that will be used in case nothing else is configured for an Actor. The default dispatcher can be configured using <code>akka.actor.default-dispatcher</code>, and is by default a <code>Dispatcher</code>.</p>
 
 <h4>
 <a name="user-content-actors-multiplexing-on-net-thread-pool" class="anchor" href="#actors-multiplexing-on-net-thread-pool" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actors multiplexing on .NET thread pool</h4>
@@ -113,10 +113,10 @@
 
 <p>Then you create the actor as usual and define the dispatcher in the deployment configuration.</p>
 
-<pre lang="chsarp"><code>ActorRef myActor =
-  system.ActorOf(Props.Create(typeof(MyUntypedActor)),
-    "myactor");
-</code></pre>
+<div class="highlight highlight-csharp"><pre><span class="n">ActorRef</span> <span class="n">myActor</span> <span class="p">=</span>
+  <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">MyUntypedActor</span><span class="p">)),</span>
+    <span class="s">"myactor"</span><span class="p">);</span>
+</pre></div>
 
 <pre><code>akka.actor.deployment {
   /myactor {
@@ -134,7 +134,7 @@
 
 <blockquote>
 <p><strong>Note</strong><br>
-The dispatcher you specify in withDispatcher and the dispatcher property in the deployment configuration is in fact a path into your configuration. So in this example it's a top-level section, but you could for instance put it as a sub-section, where you'd use periods to denote sub-sections, like this: "foo.bar.my-dispatcher"</p>
+The dispatcher you specify in <code>WithDispatcher</code> and the dispatcher property in the deployment configuration is in fact a path into your configuration. So in this example it's a top-level section, but you could for instance put it as a sub-section, where you'd use periods to denote sub-sections, like this: "foo.bar.my-dispatcher"</p>
 </blockquote>
 
 <h2>
@@ -151,8 +151,6 @@ The dispatcher you specify in withDispatcher and the dispatcher property in the 
 <li>Sharability: Unlimited</li>
 <li>Mailboxes: Any, creates one per Actor</li>
 <li>Use cases: Default dispatcher, Bulkheading</li>
-<li>Driven by: java.util.concurrent.ExecutorService
-specify using "executor" using "fork-join-executor", "thread-pool-executor" or the FQCN of an akka.dispatcher.ExecutorServiceConfigurator</li>
 </ul>
 </li>
 <li>
@@ -163,8 +161,6 @@ specify using "executor" using "fork-join-executor", "thread-pool-executor" or t
 <li>Sharability: None</li>
 <li>Mailboxes: Any, creates one per Actor</li>
 <li>Use cases: Bulkheading</li>
-<li>Driven by: Any <code>Akka.Dispatch.ThreadPoolExecutorConfigurator</code>
-by default a "thread-pool-executor"</li>
 </ul>
 </li>
 <li>
@@ -184,7 +180,6 @@ by default a "thread-pool-executor"</li>
 <p>Configuring a <code>PinnedDispatcher</code>:</p>
 
 <pre><code>my-pinned-dispatcher {
-  executor = "thread-pool-executor"
   type = PinnedDispatcher
 }
 </code></pre>
@@ -195,7 +190,7 @@ by default a "thread-pool-executor"</li>
     <span class="p">.</span><span class="n">WithDispatcher</span><span class="p">(</span><span class="s">"my-pinned-dispatcher"</span><span class="p">));</span>
 </pre></div>
 
-<p>Note that <code>thread-pool-executor</code> configuration as per the above <code>my-thread-pool-dispatcher</code> example is NOT applicable. This is because every actor will have its own thread pool when using PinnedDispatcher, and that pool will have only one thread.</p>
+<p>Note that <code>thread-pool-executor</code> configuration as per the above <code>my-thread-pool-dispatcher</code> example is NOT applicable. This is because every actor will have its own thread pool when using <code>PinnedDispatcher</code>, and that pool will have only one thread.</p>
 
 <p>Note that it's not guaranteed that the same thread is used over time, since the core pool timeout is used for <code>PinnedDispatcher</code> to keep resource usage down in case of idle actors. To use the same thread all the time you need to add <code>thread-pool-executor.allow-core-timeout=off</code> to the configuration of the <code>PinnedDispatcher</code>.</p>
     
@@ -251,13 +246,18 @@ by default a "thread-pool-executor"</li>
 
 <ul class="task-list">
 <li><a class="internal present" href="Actors">Actors</a></li>
-<li><a class="internal present" href="Untyped-actors">Untyped Actors</a></li>
+<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
+<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
 <li>Typed Actors</li>
+<li><a href="FSM">Finite State Machines</a></li>
 <li>Fault Tolerance</li>
 <li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
-<li>Mailboxes</li>
+<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
 <li><a class="internal present" href="Routing">Routing</a></li>
-<li><a href="FSM">Building Finite State Machine Actors</a></li>
+<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
+<li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
+<li><a class="internal present" href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>
 <li>Testing Actor Systems</li>
 </ul><hr><h4>

@@ -42,7 +42,7 @@
 
 <blockquote>
 <p><strong>Note</strong><br>
-An <code>ActorSystem</code> is a heavyweight structure that will allocate 1…N Threads, so create one per logical application.</p>
+An <code>ActorSystem</code> is a heavyweight structure that will allocate 1...N Threads, so create one per logical application.</p>
 </blockquote>
 
 <h2>
@@ -73,7 +73,7 @@ There are of course always exceptions to these rules, but no matter whether you 
 
 <ol class="task-list">
 <li>Actors should be like nice co-workers: do their job efficiently without bothering everyone else needlessly and avoid hogging resources. Translated to programming this means to process events and generate responses (or more requests) in an event-driven manner. Actors should not block (i.e. passively wait while occupying a Thread) on some external entity—which might be a lock, a network socket, etc.—unless it is unavoidable; in the latter case see below.</li>
-<li>Do not pass mutable objects between actors. In order to ensure that, prefer immutable messages. If the encapsulation of actors is broken by exposing their mutable state to the outside, you are back in normal Java concurrency land with all the drawbacks.</li>
+<li>Do not pass mutable objects between actors. In order to ensure that, prefer immutable messages. If the encapsulation of actors is broken by exposing their mutable state to the outside, you are back in normal .NET concurrency land with all the drawbacks.</li>
 <li>Actors are made to be containers for behavior and state, embracing this means to not routinely send behavior within messages (which may be tempting using Scala closures). One of the risks is to accidentally share mutable state between actors, and this violation of the actor model unfortunately breaks all the properties which make programming in actors such a nice experience.</li>
 <li>Top-level actors are the innermost part of your Error Kernel, so create them sparingly and prefer truly hierarchical systems. This has benefits with respect to fault-handling (both considering the granularity of configuration and the performance) and it also reduces the strain on the guardian actor, which is a single point of contention if over-used.</li>
 </ol><h2>
@@ -84,7 +84,7 @@ There are of course always exceptions to these rules, but no matter whether you 
 <p>The non-exhaustive list of adequate solutions to the “blocking problem” includes the following suggestions:</p>
 
 <ul class="task-list">
-<li>Do the blocking call within an actor (or a set of actors managed by a router [Java, Scala]), making sure to configure a thread pool which is either dedicated for this purpose or sufficiently sized.</li>
+<li>Do the blocking call within an actor (or a set of actors managed by a <a href="Routing">router</a>), making sure to configure a thread pool which is either dedicated for this purpose or sufficiently sized.</li>
 <li>Do the blocking call within a Future, ensuring an upper bound on the number of such calls at any point in time (submitting an unbounded number of tasks of this nature will exhaust your memory or thread limits).</li>
 <li>Do the blocking call within a Future, providing a thread pool with an upper limit on the number of threads which is appropriate for the hardware on which the application runs.</li>
 <li>Dedicate a single thread to manage a set of blocking resources (e.g. a NIO selector driving multiple channels) and dispatch events as they occur as actor messages.</li>
@@ -92,7 +92,7 @@ There are of course always exceptions to these rules, but no matter whether you 
 
 <blockquote>
 <p><strong>Note</strong><br>
-Configuring thread pools is a task best delegated to Akka, simply configure in the application.conf and instantiate through an ActorSystem [Java, Scala]</p>
+Configuring thread pools is a task best delegated to Akka, simply configure in the application.conf and instantiate through an ActorSystem.</p>
 </blockquote>
 
 <h2>
@@ -152,13 +152,18 @@ Configuring thread pools is a task best delegated to Akka, simply configure in t
 
 <ul class="task-list">
 <li><a class="internal present" href="Actors">Actors</a></li>
-<li><a class="internal present" href="Untyped-actors">Untyped Actors</a></li>
+<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
+<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
 <li>Typed Actors</li>
+<li><a href="FSM">Finite State Machines</a></li>
 <li>Fault Tolerance</li>
 <li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
-<li>Mailboxes</li>
+<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
 <li><a class="internal present" href="Routing">Routing</a></li>
-<li><a href="FSM">Building Finite State Machine Actors</a></li>
+<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
+<li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
+<li><a class="internal present" href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>
 <li>Testing Actor Systems</li>
 </ul><hr><h4>

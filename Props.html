@@ -38,8 +38,90 @@
         <div class="row">
             <div class="span9" id="main">
                 
-      <p>Actors needs props in order to act.
-In Akka.NET, props describe how the actor should be created and configured.</p>
+      <h2>
+<a name="user-content-props" class="anchor" href="#props" aria-hidden="true"><span class="octicon octicon-link"></span></a>Props</h2>
+
+<p>Props is a configuration class to specify options for the creation of actors, think of it as an immutable and thus freely shareable recipe for creating an actor including associated deployment information (e.g. which dispatcher to use, see more below). Here are some examples of how to create a Props instance.</p>
+
+<div class="highlight highlight-csharp"><pre>  <span class="n">Props</span> <span class="n">props1</span> <span class="p">=</span> <span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">MyActor</span><span class="p">));</span>
+  <span class="n">Props</span> <span class="n">props2</span> <span class="p">=</span> <span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">MyActor</span><span class="p">(..),</span> <span class="s">"..."</span><span class="p">);</span>
+  <span class="n">Props</span> <span class="n">props3</span> <span class="p">=</span> <span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">&lt;</span><span class="n">MyActor</span><span class="p">&gt;();</span>
+</pre></div>
+
+<blockquote>
+<p><strong>Warning</strong><br>
+In the second line, using <code>new</code>; Do note that the arguments passed in will be evaluated <em>once</em>, when the <code>Props</code> are created. 
+This is because the arguments can be passed to remote systems for <a href="Remote%20deploy">remote deployment</a>.
+The behavior is somewhat odd since a lambda containing a <code>new</code> statement generally evaluate the entire expression every time it is invoked.</p>
+</blockquote>
+
+<h3>
+<a name="user-content-recommended-practices" class="anchor" href="#recommended-practices" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recommended Practices</h3>
+
+<p>It is a good idea to provide static factory methods on the UntypedActor which help keeping the creation of suitable Props as close to the actor definition as possible. This also allows usage of the Creator-based methods which statically verify that the used constructor actually exists instead relying only on a runtime check.</p>
+
+<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">DemoActor</span> <span class="n">extends</span> <span class="n">UntypedActor</span> <span class="p">{</span>
+
+  <span class="cm">/**</span>
+<span class="cm">   * Create Props for an actor of this type.</span>
+<span class="cm">   * @param magicNumber The magic number to be passed to this actor’s constructor.</span>
+<span class="cm">   * @return a Props for creating this actor, which can then be further configured</span>
+<span class="cm">   *         (e.g. calling `.withDispatcher()` on it)</span>
+<span class="cm">   */</span>
+  <span class="k">public</span> <span class="k">static</span> <span class="n">Props</span> <span class="nf">props</span><span class="p">(</span><span class="n">final</span> <span class="kt">int</span> <span class="n">magicNumber</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">Props</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="k">new</span> <span class="n">Creator</span><span class="p">&lt;</span><span class="n">DemoActor</span><span class="p">&gt;()</span> <span class="p">{</span>
+      <span class="k">private</span> <span class="k">static</span> <span class="n">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="p">=</span> <span class="m">1L</span><span class="p">;</span>
+
+      <span class="n">@Override</span>
+      <span class="k">public</span> <span class="n">DemoActor</span> <span class="nf">create</span><span class="p">()</span> <span class="n">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">DemoActor</span><span class="p">(</span><span class="n">magicNumber</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="n">final</span> <span class="kt">int</span> <span class="n">magicNumber</span><span class="p">;</span>
+
+  <span class="k">public</span> <span class="nf">DemoActor</span><span class="p">(</span><span class="kt">int</span> <span class="n">magicNumber</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">magicNumber</span> <span class="p">=</span> <span class="n">magicNumber</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">@Override</span>
+  <span class="k">public</span> <span class="k">void</span> <span class="nf">onReceive</span><span class="p">(</span><span class="n">Object</span> <span class="n">msg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// some behavior here</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="n">system</span><span class="p">.</span><span class="n">actorOf</span><span class="p">(</span><span class="n">DemoActor</span><span class="p">.</span><span class="n">props</span><span class="p">(</span><span class="m">42</span><span class="p">),</span> <span class="s">"demo"</span><span class="p">);</span>
+</pre></div>
+
+<h3>
+<a name="user-content-creating-actors-with-props" class="anchor" href="#creating-actors-with-props" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Actors with Props</h3>
+
+<p>Actors are created by passing a Props instance into the actorOf factory method which is available on ActorSystem and ActorContext.</p>
+
+<div class="highlight highlight-csharp"><pre><span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">ActorRef</span><span class="p">;</span>
+<span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">ActorSystem</span><span class="p">;</span>
+<span class="c1">// ActorSystem is a heavy object: create only one per application</span>
+<span class="n">final</span> <span class="n">ActorSystem</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+<span class="n">final</span> <span class="n">ActorRef</span> <span class="n">myActor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">actorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">MyUntypedActor</span><span class="p">.</span><span class="n">class</span><span class="p">),</span>
+  <span class="s">"myactor"</span><span class="p">);</span>
+<span class="n">Using</span> <span class="n">the</span> <span class="n">ActorSystem</span> <span class="n">will</span> <span class="n">create</span> <span class="n">top</span><span class="p">-</span><span class="n">level</span> <span class="n">actors</span><span class="p">,</span> <span class="n">supervised</span> <span class="n">by</span> <span class="n">the</span> <span class="n">actor</span> <span class="n">system</span><span class="err">’</span><span class="n">s</span> <span class="n">provided</span> <span class="n">guardian</span> <span class="n">actor</span><span class="p">,</span> <span class="k">while</span> <span class="k">using</span> <span class="nn">an</span> <span class="n">actor</span><span class="err">’</span><span class="n">s</span> <span class="n">context</span> <span class="n">will</span> <span class="n">create</span> <span class="n">a</span> <span class="n">child</span> <span class="n">actor</span><span class="p">.</span>
+
+<span class="k">class</span> <span class="nc">A</span> <span class="n">extends</span> <span class="n">UntypedActor</span> <span class="p">{</span>
+  <span class="n">final</span> <span class="n">ActorRef</span> <span class="n">child</span> <span class="p">=</span>
+      <span class="n">getContext</span><span class="p">().</span><span class="n">actorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">MyUntypedActor</span><span class="p">.</span><span class="n">class</span><span class="p">),</span> <span class="s">"myChild"</span><span class="p">);</span>
+  <span class="c1">// plus some behavior ...</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see Actor Systems.</p>
+
+<p>The call to <code>ActorOf</code> returns an instance of <code>ActorRef</code>. This is a handle to the actor instance and the only way to interact with it. The <code>ActorRef</code> is immutable and has a one to one relationship with the Actor it represents. The <code>ActorRef</code> is also serializable and network-aware. This means that you can serialize it, send it over the wire and use it on a remote host and it will still be representing the same Actor on the original node, across the network.</p>
+
+<p>The name parameter is optional, but you should preferably name your actors, since that is used in log messages and for identifying actors. The name must not be empty or start with $, but it may contain URL encoded characters (eg. %20 for a blank space). If the given name is already in use by another child to the same parent an <code>InvalidActorNameException</code> is thrown.</p>
+
+<p>Actors are automatically started asynchronously when created.</p>
     
                 <div id="disqus_thread"></div>
                 <script type="text/javascript">
@@ -93,13 +175,18 @@ In Akka.NET, props describe how the actor should be created and configured.</p>
 
 <ul class="task-list">
 <li><a class="internal present" href="Actors">Actors</a></li>
-<li><a class="internal present" href="Untyped-actors">Untyped Actors</a></li>
+<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
+<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
 <li>Typed Actors</li>
+<li><a href="FSM">Finite State Machines</a></li>
 <li>Fault Tolerance</li>
 <li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
-<li>Mailboxes</li>
+<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
 <li><a class="internal present" href="Routing">Routing</a></li>
-<li><a href="FSM">Building Finite State Machine Actors</a></li>
+<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
+<li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
+<li><a class="internal present" href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>
 <li>Testing Actor Systems</li>
 </ul><hr><h4>
