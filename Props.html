@@ -60,7 +60,7 @@ The behavior is somewhat odd since a lambda containing a <code>new</code> statem
 
 <p>It is a good idea to provide static factory methods on the UntypedActor which help keeping the creation of suitable Props as close to the actor definition as possible. This also allows usage of the Creator-based methods which statically verify that the used constructor actually exists instead relying only on a runtime check.</p>
 
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">DemoActor</span> <span class="n">extends</span> <span class="n">UntypedActor</span> <span class="p">{</span>
+<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">DemoActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span> <span class="p">{</span>
 
   <span class="cm">/**</span>
 <span class="cm">   * Create Props for an actor of this type.</span>
@@ -68,58 +68,50 @@ The behavior is somewhat odd since a lambda containing a <code>new</code> statem
 <span class="cm">   * @return a Props for creating this actor, which can then be further configured</span>
 <span class="cm">   *         (e.g. calling `.withDispatcher()` on it)</span>
 <span class="cm">   */</span>
-  <span class="k">public</span> <span class="k">static</span> <span class="n">Props</span> <span class="nf">props</span><span class="p">(</span><span class="n">final</span> <span class="kt">int</span> <span class="n">magicNumber</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="n">Props</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="k">new</span> <span class="n">Creator</span><span class="p">&lt;</span><span class="n">DemoActor</span><span class="p">&gt;()</span> <span class="p">{</span>
-      <span class="k">private</span> <span class="k">static</span> <span class="n">final</span> <span class="kt">long</span> <span class="n">serialVersionUID</span> <span class="p">=</span> <span class="m">1L</span><span class="p">;</span>
-
-      <span class="n">@Override</span>
-      <span class="k">public</span> <span class="n">DemoActor</span> <span class="nf">create</span><span class="p">()</span> <span class="n">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="nf">DemoActor</span><span class="p">(</span><span class="n">magicNumber</span><span class="p">);</span>
-      <span class="p">}</span>
-    <span class="p">});</span>
+  <span class="k">public</span> <span class="k">static</span> <span class="n">Props</span> <span class="nf">Props</span><span class="p">(</span><span class="kt">int</span> <span class="n">magicNumber</span><span class="p">)</span> 
+  <span class="p">{</span>
+    <span class="k">return</span> <span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">DemoActor</span><span class="p">(</span><span class="n">magicNumber</span><span class="p">));</span>
   <span class="p">}</span>
 
-  <span class="n">final</span> <span class="kt">int</span> <span class="n">magicNumber</span><span class="p">;</span>
+  <span class="k">private</span> <span class="kt">int</span> <span class="n">magicNumber</span><span class="p">;</span>
 
-  <span class="k">public</span> <span class="nf">DemoActor</span><span class="p">(</span><span class="kt">int</span> <span class="n">magicNumber</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">public</span> <span class="nf">DemoActor</span><span class="p">(</span><span class="kt">int</span> <span class="n">magicNumber</span><span class="p">)</span> 
+  <span class="p">{</span>
     <span class="k">this</span><span class="p">.</span><span class="n">magicNumber</span> <span class="p">=</span> <span class="n">magicNumber</span><span class="p">;</span>
+    <span class="p">...</span><span class="n">some</span> <span class="n">receive</span> <span class="n">declarations</span> <span class="n">here</span>
+    <span class="c1">//Receive&lt;string&gt;(str =&gt; ..);</span>
   <span class="p">}</span>
-
-  <span class="n">@Override</span>
-  <span class="k">public</span> <span class="k">void</span> <span class="nf">onReceive</span><span class="p">(</span><span class="n">Object</span> <span class="n">msg</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// some behavior here</span>
-  <span class="p">}</span>
-
 <span class="p">}</span>
 
-<span class="n">system</span><span class="p">.</span><span class="n">actorOf</span><span class="p">(</span><span class="n">DemoActor</span><span class="p">.</span><span class="n">props</span><span class="p">(</span><span class="m">42</span><span class="p">),</span> <span class="s">"demo"</span><span class="p">);</span>
+<span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">(</span><span class="n">DemoActor</span><span class="p">.</span><span class="n">Props</span><span class="p">(</span><span class="m">42</span><span class="p">),</span> <span class="s">"demo"</span><span class="p">);</span>
 </pre></div>
 
 <h3>
 <a name="user-content-creating-actors-with-props" class="anchor" href="#creating-actors-with-props" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Actors with Props</h3>
 
-<p>Actors are created by passing a Props instance into the actorOf factory method which is available on ActorSystem and ActorContext.</p>
+<p>Actors are created by passing a Props instance into the <code>ActorOf</code> factory method which is available on <code>ActorSystem</code> and <code>ActorContext</code>.</p>
 
-<div class="highlight highlight-csharp"><pre><span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">ActorRef</span><span class="p">;</span>
-<span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">ActorSystem</span><span class="p">;</span>
-<span class="c1">// ActorSystem is a heavy object: create only one per application</span>
-<span class="n">final</span> <span class="n">ActorSystem</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
-<span class="n">final</span> <span class="n">ActorRef</span> <span class="n">myActor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">actorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">MyUntypedActor</span><span class="p">.</span><span class="n">class</span><span class="p">),</span>
+<div class="highlight highlight-csharp"><pre><span class="c1">// ActorSystem is a heavy object: create only one per application</span>
+<span class="n">ActorSystem</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+<span class="n">ActorRef</span> <span class="n">myActor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">MyActor</span><span class="p">)),</span>
   <span class="s">"myactor"</span><span class="p">);</span>
-<span class="n">Using</span> <span class="n">the</span> <span class="n">ActorSystem</span> <span class="n">will</span> <span class="n">create</span> <span class="n">top</span><span class="p">-</span><span class="n">level</span> <span class="n">actors</span><span class="p">,</span> <span class="n">supervised</span> <span class="n">by</span> <span class="n">the</span> <span class="n">actor</span> <span class="n">system</span><span class="err">’</span><span class="n">s</span> <span class="n">provided</span> <span class="n">guardian</span> <span class="n">actor</span><span class="p">,</span> <span class="k">while</span> <span class="k">using</span> <span class="nn">an</span> <span class="n">actor</span><span class="err">’</span><span class="n">s</span> <span class="n">context</span> <span class="n">will</span> <span class="n">create</span> <span class="n">a</span> <span class="n">child</span> <span class="n">actor</span><span class="p">.</span>
+</pre></div>
 
-<span class="k">class</span> <span class="nc">A</span> <span class="n">extends</span> <span class="n">UntypedActor</span> <span class="p">{</span>
-  <span class="n">final</span> <span class="n">ActorRef</span> <span class="n">child</span> <span class="p">=</span>
-      <span class="n">getContext</span><span class="p">().</span><span class="n">actorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">MyUntypedActor</span><span class="p">.</span><span class="n">class</span><span class="p">),</span> <span class="s">"myChild"</span><span class="p">);</span>
+<p>Using the ActorSystem will create top-level actors, supervised by the actor system’s provided guardian actor, while using an actor’s context will create a child actor.</p>
+
+<div class="highlight highlight-csharp"><pre><span class="k">class</span> <span class="nc">A</span> <span class="p">:</span> <span class="n">ReceiveActor</span> 
+<span class="p">{</span>
+  <span class="n">ActorRef</span> <span class="n">child</span> <span class="p">=</span>
+      <span class="n">Context</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">MyActor</span><span class="p">)),</span> <span class="s">"myChild"</span><span class="p">);</span>
   <span class="c1">// plus some behavior ...</span>
 <span class="p">}</span>
 </pre></div>
 
-<p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see Actor Systems.</p>
+<p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see <a class="internal present" href="Actor-Systems">Actor Systems</a>.</p>
 
 <p>The call to <code>ActorOf</code> returns an instance of <code>ActorRef</code>. This is a handle to the actor instance and the only way to interact with it. The <code>ActorRef</code> is immutable and has a one to one relationship with the Actor it represents. The <code>ActorRef</code> is also serializable and network-aware. This means that you can serialize it, send it over the wire and use it on a remote host and it will still be representing the same Actor on the original node, across the network.</p>
 
-<p>The name parameter is optional, but you should preferably name your actors, since that is used in log messages and for identifying actors. The name must not be empty or start with $, but it may contain URL encoded characters (eg. %20 for a blank space). If the given name is already in use by another child to the same parent an <code>InvalidActorNameException</code> is thrown.</p>
+<p>The name parameter is optional, but you should preferably name your actors, since that is used in log messages and for identifying actors. The name must not be empty or start with $, but it may contain URL encoded characters (eg. <code>%20</code> for a blank space). If the given name is already in use by another child to the same parent an <code>InvalidActorNameException</code> is thrown.</p>
 
 <p>Actors are automatically started asynchronously when created.</p>
     
