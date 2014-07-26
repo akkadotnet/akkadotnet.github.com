@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--
+         The FAKE - F# Make - A DSL for build tasks
+    parameters will be replaced with the
+         document title extracted from the <h1> element or
+         file name, if there is no <h1> heading
+       -->
+    <title>
+        Akka.NET
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Akka.NET">
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="content/style.css" />
+    <script src="content/tips.js" type="text/javascript"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="https://github.com/akkadotnet/">github page</a></li>
+            </ul>
+            <h3 class="muted">Akka.NET</h3>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="span9" id="main">
+                
+      <p>Akka has a built-in Extension for serialization, and it is both possible to use the built-in serializers and to write your own.</p>
+
+<p>The serialization mechanism is both used by Akka internally to serialize messages, and available for ad-hoc serialization of whatever you might need it for.</p>
+
+<h2>
+<a name="user-content-usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Configuration
+For Akka to know which Serializer to use for what, you need edit your Configuration, in the "akka.actor.serializers"-section you bind names to implementations of the akka.serialization.Serializer you wish to use, like this:</p>
+
+<pre><code>akka {
+  actor {
+    serializers {
+      java = "akka.serialization.JavaSerializer"
+      proto = "akka.remote.serialization.ProtobufSerializer"
+      myown = "docs.serialization.MyOwnSerializer"
+    }
+  }
+}
+</code></pre>
+
+<p>After you've bound names to different implementations of Serializer you need to wire which classes should be serialized using which Serializer, this is done in the "akka.actor.serialization-bindings"-section:</p>
+
+<pre><code>akka {
+  actor {
+    serializers {
+      java = "akka.serialization.JavaSerializer"
+      proto = "akka.remote.serialization.ProtobufSerializer"
+      myown = "docs.serialization.MyOwnSerializer"
+    }
+
+    serialization-bindings {
+      "java.lang.String" = java
+      "docs.serialization.Customer" = java
+      "com.google.protobuf.Message" = proto
+      "docs.serialization.MyOwnSerializable" = myown
+      "java.lang.Boolean" = myown
+    }
+  }
+}
+</code></pre>
+
+<p>You only need to specify the name of an interface or abstract base class of the messages. In case of ambiguity, i.e. the message implements several of the configured classes, the most specific configured class will be used, i.e. the one of which all other candidates are superclasses. If this condition cannot be met, because e.g. java.io.Serializable and MyOwnSerializable both apply and neither is a subtype of the other, a warning will be issued.</p>
+
+<p>Akka provides serializers for java.io.Serializable and protobuf com.google.protobuf.GeneratedMessage by default (the latter only if depending on the akka-remote module), so normally you don't need to add configuration for that; since com.google.protobuf.GeneratedMessage implements java.io.Serializable, protobuf messages will always by serialized using the protobuf protocol unless specifically overridden. In order to disable a default serializer, map its marker type to “none”:</p>
+
+<pre><code>akka.actor.serialization-bindings {
+  "java.io.Serializable" = none
+}
+</code></pre>
+
+<p>Verification
+If you want to verify that your messages are serializable you can enable the following config option:</p>
+
+<pre><code>akka {
+  actor {
+    serialize-messages = on
+  }
+}
+</code></pre>
+
+<blockquote>
+<p><strong>Warning</strong><br>
+We only recommend using the config option turned on when you're running tests. It is completely pointless to have it turned on in other scenarios.</p>
+</blockquote>
+
+<p>If you want to verify that your Props are serializable you can enable the following config option:</p>
+
+<pre><code>akka {
+  actor {
+    serialize-creators = on
+  }
+}`
+</code></pre>
+
+<blockquote>
+<p><strong>Warning</strong><br>
+We only recommend using the config option turned on when you're running tests. It is completely pointless to have it turned on in other scenarios.</p>
+</blockquote>
+
+<h3>
+<a name="user-content-programmatic" class="anchor" href="#programmatic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Programmatic</h3>
+
+<p>If you want to programmatically serialize/deserialize using Akka Serialization, here's some examples:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.*;</span>
+<span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">serialization</span><span class="p">.*;</span>
+<span class="n">ActorSystem</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">"example"</span><span class="p">);</span>
+
+<span class="c1">// Get the Serialization Extension</span>
+<span class="n">Serialization</span> <span class="n">serialization</span> <span class="p">=</span> <span class="n">SerializationExtension</span><span class="p">.</span><span class="k">get</span><span class="p">(</span><span class="n">system</span><span class="p">);</span>
+
+<span class="c1">// Have something to serialize</span>
+<span class="n">String</span> <span class="n">original</span> <span class="p">=</span> <span class="s">"woohoo"</span><span class="p">;</span>
+
+<span class="c1">// Find the Serializer for it</span>
+<span class="n">Serializer</span> <span class="n">serializer</span> <span class="p">=</span> <span class="n">serialization</span><span class="p">.</span><span class="n">findSerializerFor</span><span class="p">(</span><span class="n">original</span><span class="p">);</span>
+
+<span class="c1">// Turn it into bytes</span>
+<span class="kt">byte</span><span class="p">[]</span> <span class="n">bytes</span> <span class="p">=</span> <span class="n">serializer</span><span class="p">.</span><span class="n">toBinary</span><span class="p">(</span><span class="n">original</span><span class="p">);</span>
+
+<span class="c1">// Turn it back into an object,</span>
+<span class="c1">// the nulls are for the class manifest and for the classloader</span>
+<span class="n">String</span> <span class="n">back</span> <span class="p">=</span> <span class="p">(</span><span class="n">String</span><span class="p">)</span> <span class="n">serializer</span><span class="p">.</span><span class="n">fromBinary</span><span class="p">(</span><span class="n">bytes</span><span class="p">);</span>
+
+<span class="c1">// Voilá!</span>
+<span class="n">assertEquals</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">back</span><span class="p">);</span>
+</pre></div>
+
+<p>For more information, have a look at the ScalaDoc for akka.serialization._</p>
+
+<h3>
+<a name="user-content-customization" class="anchor" href="#customization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Customization</h3>
+
+<p>So, lets say that you want to create your own Serializer, you saw the docs.serialization.MyOwnSerializer in the config example above?</p>
+
+<h3>
+<a name="user-content-creating-new-serializers" class="anchor" href="#creating-new-serializers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating new Serializers</h3>
+
+<p>First you need to create a class definition of your Serializer, which is done by extending akka.serialization.JSerializer, like this:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.*;</span>
+<span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">serialization</span><span class="p">.*;</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">MyOwnSerializer</span> <span class="n">extends</span> <span class="n">JSerializer</span> <span class="p">{</span>
+
+  <span class="c1">// This is whether "fromBinary" requires a "clazz" or not</span>
+  <span class="n">@Override</span> <span class="k">public</span> <span class="n">boolean</span> <span class="nf">includeManifest</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// Pick a unique identifier for your Serializer,</span>
+  <span class="c1">// you've got a couple of billions to choose from,</span>
+  <span class="c1">// 0 - 16 is reserved by Akka itself</span>
+  <span class="n">@Override</span> <span class="k">public</span> <span class="kt">int</span> <span class="nf">identifier</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="m">1234567</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// "toBinary" serializes the given object to an Array of Bytes</span>
+  <span class="n">@Override</span> <span class="k">public</span> <span class="kt">byte</span><span class="p">[]</span> <span class="nf">toBinary</span><span class="p">(</span><span class="n">Object</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Put the code that serializes the object here</span>
+    <span class="c1">// ... ...</span>
+  <span class="p">}</span>
+
+  <span class="c1">// "fromBinary" deserializes the given array,</span>
+  <span class="c1">// using the type hint (if any, see "includeManifest" above)</span>
+  <span class="n">@Override</span> <span class="k">public</span> <span class="n">Object</span> <span class="nf">fromBinaryJava</span><span class="p">(</span><span class="kt">byte</span><span class="p">[]</span> <span class="n">bytes</span><span class="p">,</span>
+                                         <span class="n">Class</span><span class="p">&lt;?&gt;</span> <span class="n">clazz</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Put your code that deserializes here</span>
+    <span class="c1">// ... ...</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Then you only need to fill in the blanks, bind it to a name in your Configuration and then list which classes that should be serialized using it.</p>
+
+<h3>
+<a name="user-content-serializing-actorrefs" class="anchor" href="#serializing-actorrefs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Serializing ActorRefs</h3>
+
+<p>All ActorRefs are serializable using JavaSerializer, but in case you are writing your own serializer, you might want to know how to serialize and deserialize them properly. In the general case, the local address to be used depends on the type of remote address which shall be the recipient of the serialized information. Use Serialization.serializedActorPath(actorRef) like this:</p>
+
+<pre><code>import akka.actor.*;
+import akka.serialization.*;
+// Serialize
+// (beneath toBinary)
+String identifier = Serialization.serializedActorPath(theActorRef);
+
+// Then just serialize the identifier however you like
+
+// Deserialize
+// (beneath fromBinary)
+final ActorRef deserializedActorRef = extendedSystem.provider().resolveActorRef(
+  identifier);
+// Then just use the ActorRef
+</code></pre>
+
+<p>This assumes that serialization happens in the context of sending a message through the remote transport. There are other uses of serialization, though, e.g. storing actor references outside of an actor application (database, etc.). In this case, it is important to keep in mind that the address part of an actor’s path determines how that actor is communicated with. Storing a local actor path might be the right choice if the retrieval happens in the same logical context, but it is not enough when deserializing it on a different network host: for that it would need to include the system’s remote transport address. An actor system is not limited to having just one remote transport per se, which makes this question a bit more interesting. To find out the appropriate address to use when sending to remoteAddr you can use ActorRefProvider.getExternalAddressFor(remoteAddr) like this:</p>
+
+<pre lang="chsarp"><code>public class ExternalAddressExt implements Extension {
+  private final ExtendedActorSystem system;
+
+  public ExternalAddressExt(ExtendedActorSystem system) {
+    this.system = system;
+  }
+
+  public Address getAddressFor(Address remoteAddress) {
+    final scala.Option&lt;Address&gt; optAddr = system.provider()
+      .getExternalAddressFor(remoteAddress);
+    if (optAddr.isDefined()) {
+      return optAddr.get();
+    } else {
+      throw new UnsupportedOperationException(
+        "cannot send to remote address " + remoteAddress);
+    }
+  }
+}
+
+public class ExternalAddress extends
+  AbstractExtensionId&lt;ExternalAddressExt&gt; implements ExtensionIdProvider {
+  public static final ExternalAddress ID = new ExternalAddress();
+
+  public ExternalAddress lookup() {
+    return ID;
+  }
+
+  public ExternalAddressExt createExtension(ExtendedActorSystem system) {
+    return new ExternalAddressExt(system);
+  }
+}
+
+public class ExternalAddressExample {
+  public String serializeTo(ActorRef ref, Address remote) {
+    return ref.path().toSerializationFormatWithAddress(
+        ExternalAddress.ID.get(system).getAddressFor(remote));
+  }
+}
+</code></pre>
+
+<blockquote>
+<p><strong>Note</strong><br><code>ActorPath.ToSerializationFormatWithAddress</code> differs from <code>ToString</code> if the address does not already have host and port components, i.e. it only inserts address information for local addresses.</p>
+</blockquote>
+
+<p><code>ToSerializationFormatWithAddress</code> also adds the unique id of the actor, which will change when the actor is stopped and then created again with the same name. Sending messages to a reference pointing the old actor will not be delivered to the new actor. If you do not want this behavior, e.g. in case of long term storage of the reference, you can use <code>ToStringWithAddress</code>, which does not include the unique id.</p>
+
+<p>This requires that you know at least which type of address will be supported by the system which will deserialize the resulting actor reference; if you have no concrete address handy you can create a dummy one for the right protocol using new Address(protocol, "", "", 0) (assuming that the actual transport used is as lenient as Akka’s RemoteActorRefProvider).</p>
+
+<p>There is also a default remote address which is the one used by cluster support (and typical systems have just this one); you can get it like this:</p>
+
+<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">DefaultAddressExt</span> <span class="n">implements</span> <span class="n">Extension</span> <span class="p">{</span>
+  <span class="k">private</span> <span class="n">final</span> <span class="n">ExtendedActorSystem</span> <span class="n">system</span><span class="p">;</span>
+
+  <span class="k">public</span> <span class="nf">DefaultAddressExt</span><span class="p">(</span><span class="n">ExtendedActorSystem</span> <span class="n">system</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="n">system</span> <span class="p">=</span> <span class="n">system</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="n">Address</span> <span class="nf">getAddress</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">system</span><span class="p">.</span><span class="n">provider</span><span class="p">().</span><span class="n">getDefaultAddress</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">DefaultAddress</span> <span class="n">extends</span>
+    <span class="n">AbstractExtensionId</span><span class="p">&lt;</span><span class="n">DefaultAddressExt</span><span class="p">&gt;</span> <span class="n">implements</span> <span class="n">ExtensionIdProvider</span> <span class="p">{</span>
+  <span class="k">public</span> <span class="k">static</span> <span class="n">final</span> <span class="n">DefaultAddress</span> <span class="n">ID</span> <span class="p">=</span> <span class="k">new</span> <span class="n">DefaultAddress</span><span class="p">();</span>
+
+  <span class="k">public</span> <span class="n">DefaultAddress</span> <span class="nf">lookup</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">ID</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">public</span> <span class="n">DefaultAddressExt</span> <span class="nf">createExtension</span><span class="p">(</span><span class="n">ExtendedActorSystem</span> <span class="n">system</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nf">DefaultAddressExt</span><span class="p">(</span><span class="n">system</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="user-content-deep-serialization-of-actors" class="anchor" href="#deep-serialization-of-actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deep serialization of Actors</h3>
+
+<p>The recommended approach to do deep serialization of internal actor state is to use Akka Persistence.</p>
+    
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function () {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            <div class="span3">
+                 <a href="index.html">
+                <img src="images/akkanet.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;border-radius:10px;" />
+                </a>
+                <ul class="nav nav-list" id="menu">
+                    <li class="nav-header">Table of contents</li>
+                    <li><a href="index.html">Home page</a></li>
+                    <li class="divider"></li>
+                    
+          <h4>
+<a name="user-content-introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h4>
+
+<ul class="task-list">
+<li><a href="What-is-Akka">What is Akka?</a></li>
+<li><a href="Why-Akka">Why Akka?</a></li>
+<li><a href="Getting-started">Getting Started</a></li>
+<li><a href="The-Obligatory-Hello-World">The Obligatory Hello World</a></li>
+<li><a href="Use-case-and-Deployment-Scenarios">Use-case and Deployment Scenarios</a></li>
+<li><a href="Examples-of-use-cases-for-Akka">Examples of use-cases for Akka</a></li>
+</ul><hr><h4>
+<a name="user-content-general" class="anchor" href="#general" aria-hidden="true"><span class="octicon octicon-link"></span></a>General</h4>
+
+<ul class="task-list">
+<li><a href="Terminology">Terminology, Concepts</a></li>
+<li><a href="Actor-Systems">Actor Systems</a></li>
+<li><a href="Actors">What is an Actor?</a></li>
+<li><a href="Supervision">Supervision and Monitoring</a></li>
+<li><a href="Addressing">Actor References, Paths and Addresses</a></li>
+<li><a href="Remoting">Location Transparency</a></li>
+<li>Akka and the Java Memory Model</li>
+<li><a href="Message-Delivery-Reliability">Message Delivery Reliability</a></li>
+<li><a href="Configuration">Configuration</a></li>
+</ul><hr><h4>
+<a name="user-content-actors" class="anchor" href="#actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actors</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Actors">Actors</a></li>
+<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
+<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
+<li>Typed Actors</li>
+<li><a href="FSM">Finite State Machines</a></li>
+<li>Fault Tolerance</li>
+<li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
+<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
+<li><a class="internal present" href="Routing">Routing</a></li>
+<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
+<li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
+<li><a class="internal present" href="Stash">Stash</a></li>
+<li>Persistence (Not ported to Akka.NET yet)</li>
+<li>Testing Actor Systems</li>
+</ul><hr><h4>
+<a name="user-content-networking" class="anchor" href="#networking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Networking</h4>
+
+<ul class="task-list">
+<li>Cluster Specification (Not ported to Akka.NET yet)</li>
+<li>Cluster Usage (Not ported to Akka.NET yet)</li>
+<li><a class="internal present" href="Remoting">Remoting</a></li>
+<li><a class="internal present" href="Serialization">Serialization</a></li>
+<li>I/O (Not ported to Akka.NET yet)</li>
+<li>Using TCP</li>
+<li>Using UDP</li>
+</ul><hr><h4>
+<a name="user-content-utilities" class="anchor" href="#utilities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Utilities</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="EventBus">EventBus</a></li>
+<li><a class="internal present" href="Logging">Logging</a></li>
+<li><a class="internal present" href="Scheduler">Scheduler</a></li>
+<li><a class="internal present" href="Circuit-Breaker">Circuit Breaker</a></li>
+</ul><hr><h4>
+<a name="user-content-howto-common-patterns" class="anchor" href="#howto-common-patterns" aria-hidden="true"><span class="octicon octicon-link"></span></a>HowTo: Common Patterns</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Scheduling-Periodic-Messages">Scheduling Periodic Messages</a></li>
+<li><a class="internal absent" href="Single-Use-Actor-Trees-with-High-Level-Error-Reporting">Single-Use Actor Trees with High-Level Error Reporting</a></li>
+</ul><hr><h4>
+<a name="user-content-experimental-modules" class="anchor" href="#experimental-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Experimental Modules</h4>
+
+<ul class="task-list">
+<li>
+<a class="internal absent" href="Persistence">Persistence</a>(Not ported to Akka.NET yet)</li>
+<li><a class="internal absent" href="Multi-Node-Testing">Multi Node Testing</a></li>
+</ul><hr><h4>
+<a name="user-content-information-for-akka-developers" class="anchor" href="#information-for-akka-developers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Information for Akka Developers</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Building-and-Distributing-Akka.NET">Building and Distributing Akka.NET</a></li>
+<li><a class="internal present" href="Developer-Guidelines">Developer Guidelines</a></li>
+<li><a class="internal absent" href="Documentation-Guidelines">Documentation Guidelines</a></li>
+<li><a class="internal present" href="Team">Team</a></li>
+</ul><hr><h4>
+<a name="user-content-project-information" class="anchor" href="#project-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Information</h4>
+
+<ul class="task-list">
+<li><a href="https://github.com/akkadotnet/akka.net/issues?state=open">Issue Tracking</a></li>
+<li><a class="internal present" href="Licenses">Licenses</a></li>
+<li><a class="internal present" href="Sponsors">Sponsors</a></li>
+<li><a class="internal present" href="Project">Project</a></li>
+</ul><hr><h4>
+<a name="user-content-additional-information" class="anchor" href="#additional-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional Information</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Frequently-Asked-Questions">Frequently Asked Questions</a></li>
+<li><a class="internal present" href="Books">Books</a></li>
+</ul>
+        
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12" id="forum">
+                
+            </div>
+        </div>
+    </div>
+    <a href="https://github.com/akkadotnet/Akka.NET"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>   
+</body>
+</html>

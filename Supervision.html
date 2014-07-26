@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--
+         The FAKE - F# Make - A DSL for build tasks
+    parameters will be replaced with the
+         document title extracted from the <h1> element or
+         file name, if there is no <h1> heading
+       -->
+    <title>
+        Akka.NET
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Akka.NET">
+    <script src="https://code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="content/style.css" />
+    <script src="content/tips.js" type="text/javascript"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <div class="container">
+        <div class="masthead">
+            <ul class="nav nav-pills pull-right">
+                <li><a href="https://github.com/akkadotnet/">github page</a></li>
+            </ul>
+            <h3 class="muted">Akka.NET</h3>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="span9" id="main">
+                
+      <p>This chapter outlines the concept behind supervision, the primitives offered and their semantics. For details on how that translates into real code, please refer to the corresponding chapters for Scala and Java APIs.</p>
+
+<h2>
+<a name="user-content-what-supervision-means" class="anchor" href="#what-supervision-means" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Supervision Means</h2>
+
+<p>As described in Actor Systems supervision describes a dependency relationship between actors: the supervisor delegates tasks to subordinates and therefore must respond to their failures. When a subordinate detects a failure (i.e. throws an exception), it suspends itself and all its subordinates and sends a message to its supervisor, signaling failure. Depending on the nature of the work to be supervised and the nature of the failure, the supervisor has a choice of the following four options:</p>
+
+<p>Resume the subordinate, keeping its accumulated internal state
+Restart the subordinate, clearing out its accumulated internal state
+Stop the subordinate permanently
+Escalate the failure, thereby failing itself
+It is important to always view an actor as part of a supervision hierarchy, which explains the existence of the fourth choice (as a supervisor also is subordinate to another supervisor higher up) and has implications on the first three: resuming an actor resumes all its subordinates, restarting an actor entails restarting all its subordinates (but see below for more details), similarly terminating an actor will also terminate all its subordinates. It should be noted that the default behavior of the preRestart hook of the Actor class is to terminate all its children before restarting, but this hook can be overridden; the recursive restart applies to all children left after this hook has been executed.</p>
+
+<p>Each supervisor is configured with a function translating all possible failure causes (i.e. exceptions) into one of the four choices given above; notably, this function does not take the failed actor’s identity as an input. It is quite easy to come up with examples of structures where this might not seem flexible enough, e.g. wishing for different strategies to be applied to different subordinates. At this point it is vital to understand that supervision is about forming a recursive fault handling structure. If you try to do too much at one level, it will become hard to reason about, hence the recommended way in this case is to add a level of supervision.</p>
+
+<p>Akka implements a specific form called “parental supervision”. Actors can only be created by other actors—where the top-level actor is provided by the library—and each created actor is supervised by its parent. This restriction makes the formation of actor supervision hierarchies implicit and encourages sound design decisions. It should be noted that this also guarantees that actors cannot be orphaned or attached to supervisors from the outside, which might otherwise catch them unawares. In addition, this yields a natural and clean shutdown procedure for (sub-trees of) actor applications.</p>
+
+<blockquote>
+<p><strong>Warning</strong><br>
+Supervision related parent-child communication happens by special system messages that have their own <br>
+mailboxes separate from user messages. This implies that supervision related events are not deterministically <br>
+ordered relative to ordinary messages. In general, the user cannot influence the order of normal messages and <br>
+failure notifications. For details and example see the Discussion: Message Ordering section.<br></p>
+</blockquote>
+
+<h2>
+<a name="user-content-the-top-level-supervisors" class="anchor" href="#the-top-level-supervisors" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Top-Level Supervisors</h2>
+
+<p><img src="images/TopLevelSupervisors.png"></p>
+
+<p>An actor system will during its creation start at least three actors, shown in the image above. For more information about the consequences for actor paths see Top-Level Scopes for Actor Paths.</p>
+
+<h3>
+<a name="user-content-user-the-guardian-actor" class="anchor" href="#user-the-guardian-actor" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>/user</code>: The Guardian Actor</h3>
+
+<p>The actor which is probably most interacted with is the parent of all user-created actors, the guardian named <code>"/user"</code>. Actors created using <code>system.ActorOf()</code> are children of this actor. This means that when this guardian terminates, all normal actors in the system will be shutdown, too. It also means that this guardian’s supervisor strategy determines how the top-level normal actors are supervised. Since Akka.NET 1.0 it is possible to configure this using the setting <code>akka.actor.guardian-supervisor-strategy</code>, which takes the fully-qualified class-name of a <code>SupervisorStrategyConfigurator</code>. When the guardian escalates a failure, the root guardian’s response will be to terminate the guardian, which in effect will shut down the whole actor system.</p>
+
+<h3>
+<a name="user-content-system-the-system-guardian" class="anchor" href="#system-the-system-guardian" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>/system</code>: The System Guardian</h3>
+
+<p>This special guardian has been introduced in order to achieve an orderly shut-down sequence where logging remains active while all normal actors terminate, even though logging itself is implemented using actors. This is realized by having the system guardian watch the user guardian and initiate its own shut-down upon reception of the <code>Terminated</code> message. The top-level system actors are supervised using a strategy which will restart indefinitely upon all types of Exception except for <code>ActorInitializationException</code> and <code>ActorKilledException</code>, which will terminate the child in question. All other exceptions are escalated, which will shut down the whole actor system.</p>
+
+<h3>
+<a name="user-content--the-root-guardian" class="anchor" href="#-the-root-guardian" aria-hidden="true"><span class="octicon octicon-link"></span></a><code>/</code>: The Root Guardian</h3>
+
+<p>The root guardian is the grand-parent of all so-called “top-level” actors and supervises all the special actors mentioned in Top-Level Scopes for Actor Paths using the <code>SupervisorStrategy.StoppingStrategy</code>, whose purpose is to terminate the child upon any type of Exception. All other throwables will be escalated … but to whom? Since every real actor has a supervisor, the supervisor of the root guardian cannot be a real actor. And because this means that it is “outside of the bubble”, it is called the “bubble-walker”. This is a synthetic ActorRef which in effect stops its child upon the first sign of trouble and sets the actor system’s isTerminated status to true as soon as the root guardian is fully terminated (all children recursively stopped).</p>
+
+<h2>
+<a name="user-content-what-restarting-means" class="anchor" href="#what-restarting-means" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Restarting Means</h2>
+
+<p>When presented with an actor which failed while processing a certain message, causes for the failure fall into three categories:</p>
+
+<ul class="task-list">
+<li>Systematic (i.e. programming) error for the specific message received</li>
+<li>(Transient) failure of some external resource used during processing the message</li>
+<li>Corrupt internal state of the actor</li>
+</ul><p>Unless the failure is specifically recognizable, the third cause cannot be ruled out, which leads to the conclusion that the internal state needs to be cleared out. If the supervisor decides that its other children or itself is not affected by the corruption—e.g. because of conscious application of the error kernel pattern—it is therefore best to restart the child. This is carried out by creating a new instance of the underlying Actor class and replacing the failed instance with the fresh one inside the child’s <code>ActorRef</code>; the ability to do this is one of the reasons for encapsulating actors within special references. The new actor then resumes processing its mailbox, meaning that the restart is not visible outside of the actor itself with the notable exception that the message during which the failure occurred is not re-processed.</p>
+
+<p>The precise sequence of events during a restart is the following:</p>
+
+<ol class="task-list">
+<li>Suspend the actor (which means that it will not process normal messages until resumed), and recursively suspend all children.</li>
+<li>Call the old instance’s <code>PreRestart</code> hook (defaults to sending termination requests to all children and calling postStop)</li>
+<li>Wait for all children which were requested to terminate (using <code>context.Stop()</code>) during <code>PreRestart</code> to actually terminate; this—like all actor operations—is non-blocking, the termination notice from the last killed child will effect the progression to the next step.</li>
+<li>Create new actor instance by invoking the originally provided factory again.</li>
+<li>Invoke <code>PostRestart</code> on the new instance (which by default also calls <code>PreStart</code>)</li>
+<li>Send restart request to all children which were not killed in step 3; restarted children will follow the same process recursively, from step 2</li>
+<li>Resume the actor.</li>
+</ol><h2>
+<a name="user-content-what-lifecycle-monitoring-means" class="anchor" href="#what-lifecycle-monitoring-means" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Lifecycle Monitoring Means</h2>
+
+<blockquote>
+<p><strong>Note</strong><br>
+Lifecycle Monitoring in Akka is usually referred to as <code>DeathWatch</code></p>
+</blockquote>
+
+<p>In contrast to the special relationship between parent and child described above, each actor may monitor any other actor. Since actors emerge from creation fully alive and restarts are not visible outside of the affected supervisors, the only state change available for monitoring is the transition from alive to dead. Monitoring is thus used to tie one actor to another so that it may react to the other actor’s termination, in contrast to supervision which reacts to failure.</p>
+
+<p>Lifecycle monitoring is implemented using a <code>Terminated</code> message to be received by the monitoring actor, where the default behavior is to throw a special <code>DeathPactException</code> if not otherwise handled. In order to start listening for Terminated messages, invoke <code>ActorContext.Watch(targetActorRef)</code>. To stop listening, invoke <code>ActorContext.Unwatch(targetActorRef)</code>. One important property is that the message will be delivered irrespective of the order in which the monitoring request and target’s termination occur, i.e. you still get the message even if at the time of registration the target is already dead.</p>
+
+<p>Monitoring is particularly useful if a supervisor cannot simply restart its children and has to terminate them, e.g. in case of errors during actor initialization. In that case it should monitor those children and re-create them or schedule itself to retry this at a later time.</p>
+
+<p>Another common use case is that an actor needs to fail in the absence of an external resource, which may also be one of its own children. If a third party terminates a child by way of the <code>system.Stop(child)</code> method or sending a <code>PoisonPill</code>, the supervisor might well be affected.</p>
+
+<h3>
+<a name="user-content-one-for-one-strategy-vs-all-for-one-strategy" class="anchor" href="#one-for-one-strategy-vs-all-for-one-strategy" aria-hidden="true"><span class="octicon octicon-link"></span></a>One-For-One Strategy vs. All-For-One Strategy</h3>
+
+<p>There are two classes of supervision strategies which come with Akka: <code>OneForOneStrategy</code> and <code>AllForOneStrategy</code>. Both are configured with a mapping from exception type to supervision directive (see above) and limits on how often a child is allowed to fail before terminating it. The difference between them is that the former applies the obtained directive only to the failed child, whereas the latter applies it to all siblings as well. Normally, you should use the <code>OneForOneStrategy</code>, which also is the default if none is specified explicitly.</p>
+
+<p><img src="images/OneForOne.png"></p>
+
+<p>The <code>AllForOneStrategy</code> is applicable in cases where the ensemble of children has such tight dependencies among them, that a failure of one child affects the function of the others, i.e. they are inextricably linked. Since a restart does not clear out the mailbox, it often is best to terminate the children upon failure and re-create them explicitly from the supervisor (by watching the children’s lifecycle); otherwise you have to make sure that it is no problem for any of the actors to receive a message which was queued before the restart but processed afterwards.</p>
+
+<p><img src="images/AllForOne.png"></p>
+
+<p>Normally stopping a child (i.e. not in response to a failure) will not automatically terminate the other children in an all-for-one strategy; this can easily be done by watching their lifecycle: if the <code>Terminated</code> message is not handled by the supervisor, it will throw a <code>DeathPactException</code> which (depending on its supervisor) will restart it, and the default <code>PreRestart</code> action will terminate all children. Of course this can be handled explicitly as well.</p>
+
+<p>Please note that creating one-off actors from an all-for-one supervisor entails that failures escalated by the temporary actor will affect all the permanent ones. If this is not desired, install an intermediate supervisor; this can very easily be done by declaring a router of size 1 for the worker, see <a class="internal present" href="Routing">Routing</a>.</p>
+
+<h4>
+<a name="user-content-example-supervisor-strategy" class="anchor" href="#example-supervisor-strategy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example supervisor strategy</h4>
+
+<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">MyActor</span> <span class="p">:</span> <span class="n">UntypedActor</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="n">ActorRef</span> <span class="n">logger</span> <span class="p">=</span> <span class="n">Context</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">LogActor</span><span class="p">&gt;();</span>
+
+    <span class="c1">// if any child, e.g. the logger above. throws an exception</span>
+    <span class="c1">// apply the rules below</span>
+    <span class="c1">// e.g. Restart the child, if 10 exceptions occur in 30 seconds or </span>
+    <span class="c1">// less, then stop the actor</span>
+    <span class="k">protected</span> <span class="k">override</span> <span class="n">SupervisorStrategy</span> <span class="nf">SupervisorStrategy</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">OneForOneStrategy</span><span class="p">(</span> <span class="c1">//or AllForOneStrategy</span>
+            <span class="n">maxNumberOfRetries</span><span class="p">:</span> <span class="m">10</span><span class="p">,</span> 
+            <span class="n">duration</span><span class="p">:</span> <span class="n">TimeSpan</span><span class="p">.</span><span class="n">FromSeconds</span><span class="p">(</span><span class="m">30</span><span class="p">),</span> 
+            <span class="n">decider</span><span class="p">:</span> <span class="n">x</span> <span class="p">=&gt;</span>
+            <span class="p">{</span>
+                <span class="c1">//Maybe we consider ArithmeticException to not be application critical</span>
+                <span class="c1">//so we just ignore the error and keep going.</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="k">is</span> <span class="n">ArithmeticException</span><span class="p">)</span> <span class="k">return</span> <span class="n">Directive</span><span class="p">.</span><span class="n">Resume</span><span class="p">;</span>
+
+                <span class="c1">//Error that we cannot recover from, stop the failing actor</span>
+                <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">x</span> <span class="k">is</span> <span class="n">NotSupportedException</span><span class="p">)</span> <span class="k">return</span> <span class="n">Directive</span><span class="p">.</span><span class="n">Stop</span><span class="p">;</span>
+
+                <span class="c1">//In all other cases, just restart the failing actor</span>
+                <span class="k">else</span> <span class="k">return</span> <span class="n">Directive</span><span class="p">.</span><span class="n">Restart</span><span class="p">;</span>
+            <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+    
+                <div id="disqus_thread"></div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function () {
+                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+            </div>
+            <div class="span3">
+                 <a href="index.html">
+                <img src="images/akkanet.png" style="width:140px;height:140px;margin:10px 0px 0px 35px;border-style:none;border-radius:10px;" />
+                </a>
+                <ul class="nav nav-list" id="menu">
+                    <li class="nav-header">Table of contents</li>
+                    <li><a href="index.html">Home page</a></li>
+                    <li class="divider"></li>
+                    
+          <h4>
+<a name="user-content-introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h4>
+
+<ul class="task-list">
+<li><a href="What-is-Akka">What is Akka?</a></li>
+<li><a href="Why-Akka">Why Akka?</a></li>
+<li><a href="Getting-started">Getting Started</a></li>
+<li><a href="The-Obligatory-Hello-World">The Obligatory Hello World</a></li>
+<li><a href="Use-case-and-Deployment-Scenarios">Use-case and Deployment Scenarios</a></li>
+<li><a href="Examples-of-use-cases-for-Akka">Examples of use-cases for Akka</a></li>
+</ul><hr><h4>
+<a name="user-content-general" class="anchor" href="#general" aria-hidden="true"><span class="octicon octicon-link"></span></a>General</h4>
+
+<ul class="task-list">
+<li><a href="Terminology">Terminology, Concepts</a></li>
+<li><a href="Actor-Systems">Actor Systems</a></li>
+<li><a href="Actors">What is an Actor?</a></li>
+<li><a href="Supervision">Supervision and Monitoring</a></li>
+<li><a href="Addressing">Actor References, Paths and Addresses</a></li>
+<li><a href="Remoting">Location Transparency</a></li>
+<li>Akka and the Java Memory Model</li>
+<li><a href="Message-Delivery-Reliability">Message Delivery Reliability</a></li>
+<li><a href="Configuration">Configuration</a></li>
+</ul><hr><h4>
+<a name="user-content-actors" class="anchor" href="#actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actors</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Actors">Actors</a></li>
+<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
+<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
+<li>Typed Actors</li>
+<li><a href="FSM">Finite State Machines</a></li>
+<li>Fault Tolerance</li>
+<li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
+<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
+<li><a class="internal present" href="Routing">Routing</a></li>
+<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
+<li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
+<li><a class="internal present" href="Stash">Stash</a></li>
+<li>Persistence (Not ported to Akka.NET yet)</li>
+<li>Testing Actor Systems</li>
+</ul><hr><h4>
+<a name="user-content-networking" class="anchor" href="#networking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Networking</h4>
+
+<ul class="task-list">
+<li>Cluster Specification (Not ported to Akka.NET yet)</li>
+<li>Cluster Usage (Not ported to Akka.NET yet)</li>
+<li><a class="internal present" href="Remoting">Remoting</a></li>
+<li><a class="internal present" href="Serialization">Serialization</a></li>
+<li>I/O (Not ported to Akka.NET yet)</li>
+<li>Using TCP</li>
+<li>Using UDP</li>
+</ul><hr><h4>
+<a name="user-content-utilities" class="anchor" href="#utilities" aria-hidden="true"><span class="octicon octicon-link"></span></a>Utilities</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="EventBus">EventBus</a></li>
+<li><a class="internal present" href="Logging">Logging</a></li>
+<li><a class="internal present" href="Scheduler">Scheduler</a></li>
+<li><a class="internal present" href="Circuit-Breaker">Circuit Breaker</a></li>
+</ul><hr><h4>
+<a name="user-content-howto-common-patterns" class="anchor" href="#howto-common-patterns" aria-hidden="true"><span class="octicon octicon-link"></span></a>HowTo: Common Patterns</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Scheduling-Periodic-Messages">Scheduling Periodic Messages</a></li>
+<li><a class="internal absent" href="Single-Use-Actor-Trees-with-High-Level-Error-Reporting">Single-Use Actor Trees with High-Level Error Reporting</a></li>
+</ul><hr><h4>
+<a name="user-content-experimental-modules" class="anchor" href="#experimental-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Experimental Modules</h4>
+
+<ul class="task-list">
+<li>
+<a class="internal absent" href="Persistence">Persistence</a>(Not ported to Akka.NET yet)</li>
+<li><a class="internal absent" href="Multi-Node-Testing">Multi Node Testing</a></li>
+</ul><hr><h4>
+<a name="user-content-information-for-akka-developers" class="anchor" href="#information-for-akka-developers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Information for Akka Developers</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Building-and-Distributing-Akka.NET">Building and Distributing Akka.NET</a></li>
+<li><a class="internal present" href="Developer-Guidelines">Developer Guidelines</a></li>
+<li><a class="internal absent" href="Documentation-Guidelines">Documentation Guidelines</a></li>
+<li><a class="internal present" href="Team">Team</a></li>
+</ul><hr><h4>
+<a name="user-content-project-information" class="anchor" href="#project-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Information</h4>
+
+<ul class="task-list">
+<li><a href="https://github.com/akkadotnet/akka.net/issues?state=open">Issue Tracking</a></li>
+<li><a class="internal present" href="Licenses">Licenses</a></li>
+<li><a class="internal present" href="Sponsors">Sponsors</a></li>
+<li><a class="internal present" href="Project">Project</a></li>
+</ul><hr><h4>
+<a name="user-content-additional-information" class="anchor" href="#additional-information" aria-hidden="true"><span class="octicon octicon-link"></span></a>Additional Information</h4>
+
+<ul class="task-list">
+<li><a class="internal present" href="Frequently-Asked-Questions">Frequently Asked Questions</a></li>
+<li><a class="internal present" href="Books">Books</a></li>
+</ul>
+        
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12" id="forum">
+                
+            </div>
+        </div>
+    </div>
+    <a href="https://github.com/akkadotnet/Akka.NET"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>   
+</body>
+</html>
