@@ -81,14 +81,14 @@ The special <code>Broadcast</code> Messages will send to all of a router's route
 
 <p>The broadcast router will as the name implies, broadcast any message to all of its routees.</p>
 
-<p><img src="images/BroadcastRouter.png" height="200px"></p>
+<p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/BroadcastRouter.png" alt="Broadcast Router"></p>
 
 <h3>
 <a name="user-content-roundrobin" class="anchor" href="#roundrobin" aria-hidden="true"><span class="octicon octicon-link"></span></a>RoundRobin</h3>
 
 <p>A Router that uses round-robin to select a connection. For concurrent calls, round robin is just a best effort. </p>
 
-<p><img src="images/RoundRobinRouter.png" height="200px"></p>
+<p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/RoundRobinRouter.png" alt="Round Robin Router"></p>
 
 <h3>
 <a name="user-content-consistenthash" class="anchor" href="#consistenthash" aria-hidden="true"><span class="octicon octicon-link"></span></a>ConsistentHash</h3>
@@ -103,7 +103,7 @@ The special <code>Broadcast</code> Messages will send to all of a router's route
 <li>The messages can be be wrapped in a <code>Akka.Routing.ConsistentHashingRouter.ConsistentHashableEnvelope</code> to define what data to use for the consistent hash key. The sender knows the key to use.</li>
 </ol><p>These ways to define the consistent hash key can be use together and at the same time for one router. The hashMapping is tried first.</p>
 
-<p><img src="images/ConsistentHashRouter.png" height="200px"></p>
+<p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ConsistentHashRouter.png" alt="ConsistentHash Router"></p>
 
 <h4>
 <a name="user-content-usecase" class="anchor" href="#usecase" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usecase</h4>
@@ -111,12 +111,12 @@ The special <code>Broadcast</code> Messages will send to all of a router's route
 <p><code>ConsistentHash</code> can be very useful when dealing with <strong>"Commands"</strong> in the sense of <strong>CQRS</strong> or <strong>Domain Driven Design</strong>.
 For example, let's assume we have the following incoming sequence of <strong>"Customer Commands"</strong>:</p>
 
-<p><img src="images/ConsistentHash1.png" width="500px"></p>
+<p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ConsistentHash1.png" alt="ConsistentHash Router example"></p>
 
 <p>In this case we might want to group all messages based on <strong>"Customer ID"</strong> (ID in the diagram).
 By using a <code>ConsistentHash</code> router we can now process multiple commands in parallel for different Customers, while still processing messages for each specific Customer in ordered sequence, and thus preventing us from getting race conditions with ourselves when applying each command on each customer entity.</p>
 
-<p><img src="images/ConsistentHash2.png"></p>
+<p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ConsistentHash2.png" alt="ConsistentHash Router example"></p>
 
 <h3>
 <a name="user-content-scattergatherfirstcompleted" class="anchor" href="#scattergatherfirstcompleted" aria-hidden="true"><span class="octicon octicon-link"></span></a>ScatterGatherFirstCompleted</h3>
@@ -124,7 +124,7 @@ By using a <code>ConsistentHash</code> router we can now process multiple comman
 <p>Simple router that broadcasts the message to all routees, and replies with the first response. 
 You have to defin the 'within: Duration' parameter (f.e: within = 10 seconds). </p>
 
-<p><img src="images/ScatterGatherFirstCompletedRouter.png" height="200px"></p>
+<p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ScatterGatherFirstCompletedRouter.png" alt="ScatterGatherFirstCompleted Router"></p>
 
 <h3>
 <a name="user-content-random" class="anchor" href="#random" aria-hidden="true"><span class="octicon octicon-link"></span></a>Random</h3>
@@ -143,7 +143,7 @@ You have to defin the 'within: Duration' parameter (f.e: within = 10 seconds). <
 <li>Pick any routee with empty mailbox</li>
 <li>Pick routee with fewest pending messages in mailbox</li>
 <li>Pick any remote routee, remote actors are consider lowest priority, since their mailbox size is unknown</li>
-</ul><p><img src="images/SmallestMailbox.png" width="400px"></p>
+</ul><p><img src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/SmallestMailbox.png" alt="SmallestMailbox Router"></p>
 
 <h2>
 <a name="user-content-pools-vs-groups" class="anchor" href="#pools-vs-groups" aria-hidden="true"><span class="octicon octicon-link"></span></a>Pools vs. Groups</h2>
@@ -242,6 +242,7 @@ You have to defin the 'within: Duration' parameter (f.e: within = 10 seconds). <
 <li><a class="internal present" href="Routing">Routing</a></li>
 <li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
 <li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Receive-timeout">Receive timeout</a></li>
 <li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
 <li><a class="internal present" href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>

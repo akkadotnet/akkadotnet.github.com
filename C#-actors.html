@@ -400,41 +400,6 @@ When using future callbacks, inside actors you need to carefully avoid closing o
 </pre></div>
 
 <h2>
-<a name="user-content-receive-timeout" class="anchor" href="#receive-timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a>Receive timeout</h2>
-
-<p>The UntypedActorContext setReceiveTimeout defines the inactivity timeout after which the sending of a ReceiveTimeout message is triggered. When specified, the receive function should be able to handle an akka.actor.ReceiveTimeout message. 1 millisecond is the minimum supported timeout.</p>
-
-<p>Please note that the receive timeout might fire and enqueue the ReceiveTimeout message right after another message was enqueued; hence it is not guaranteed that upon reception of the receive timeout there must have been an idle period beforehand as configured via this method.</p>
-
-<p>Once set, the receive timeout stays in effect (i.e. continues firing repeatedly after inactivity periods). Pass in Duration.Undefined to switch off this feature.</p>
-
-<div class="highlight highlight-csharp"><pre><span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">ActorRef</span><span class="p">;</span>
-<span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">ReceiveTimeout</span><span class="p">;</span>
-<span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">UntypedActor</span><span class="p">;</span>
-<span class="n">import</span> <span class="n">scala</span><span class="p">.</span><span class="n">concurrent</span><span class="p">.</span><span class="n">duration</span><span class="p">.</span><span class="n">Duration</span><span class="p">;</span>
-
-<span class="k">public</span> <span class="k">class</span> <span class="nc">MyReceiveTimeoutUntypedActor</span> <span class="n">extends</span> <span class="n">UntypedActor</span> <span class="p">{</span>
-
-  <span class="k">public</span> <span class="nf">MyReceiveTimeoutUntypedActor</span><span class="p">()</span> <span class="p">{</span>
-    <span class="c1">// To set an initial delay</span>
-    <span class="n">getContext</span><span class="p">().</span><span class="n">setReceiveTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">"30 seconds"</span><span class="p">));</span>
-  <span class="p">}</span>
-
-  <span class="k">public</span> <span class="k">void</span> <span class="nf">onReceive</span><span class="p">(</span><span class="n">Object</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="k">equals</span><span class="p">(</span><span class="s">"Hello"</span><span class="p">))</span> <span class="p">{</span>
-      <span class="c1">// To set in a response to a message</span>
-      <span class="n">getContext</span><span class="p">().</span><span class="n">setReceiveTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s">"1 second"</span><span class="p">));</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">message</span> <span class="n">instanceof</span> <span class="n">ReceiveTimeout</span><span class="p">)</span> <span class="p">{</span>
-      <span class="c1">// To turn it off</span>
-      <span class="n">getContext</span><span class="p">().</span><span class="n">setReceiveTimeout</span><span class="p">(</span><span class="n">Duration</span><span class="p">.</span><span class="n">Undefined</span><span class="p">());</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="n">unhandled</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
 <a name="user-content-stopping-actors" class="anchor" href="#stopping-actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stopping actors</h2>
 
 <p>Actors are stopped by invoking the stop method of a ActorRefFactory, i.e. ActorContext or ActorSystem. Typically the context is used for stopping child actors and the system for stopping top level actors. The actual termination of the actor is performed asynchronously, i.e. stop may return before the actor is stopped.</p>
@@ -788,6 +753,7 @@ This pattern should be used with care, and applied only when none of the pattern
 <li><a class="internal present" href="Routing">Routing</a></li>
 <li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
 <li><a class="internal present" href="Props">Props</a></li>
+<li><a class="internal present" href="Receive-timeout">Receive timeout</a></li>
 <li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
 <li><a class="internal present" href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>
