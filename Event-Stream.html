@@ -30,14 +30,8 @@
     <div class="container">
         <div class="masthead">
             <ul class="nav nav-pills pull-right">
-                <li><a href="https://github.com/akkadotnet/">github page</a></li>
-            </ul>
-            <h3 class="muted">Akka.NET</h3>
-        </div>
-        <hr />
-        <div class="row">
-            <div class="span9" id="main">
-                <script>
+                <li>
+                    <script>
     (function () {
         var cx = '008890940075640760838:lcpey0sxwhg';
         var gcse = document.createElement('script');
@@ -48,12 +42,15 @@
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(gcse, s);
     })();
-                </script>
-                <gcse:search></gcse:search>
-
-
-
-
+                    </script>
+                    <gcse:search></gcse:search>
+                </li>
+            </ul>
+            <h3 class="muted">Akka.NET</h3>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="span9" id="main">
                 
       <div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
 <span class="kt">var</span> <span class="n">subscriber</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">SomeActor</span><span class="p">&gt;();</span>
