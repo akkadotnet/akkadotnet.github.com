@@ -1,0 +1,12 @@
+---
+layout: default
+---
+
+      <div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">subscriber</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">SomeActor</span><span class="p">&gt;();</span>
+<span class="c1">//Subscribe to messages of type string</span>
+<span class="n">system</span><span class="p">.</span><span class="n">EventStream</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="n">subscriber</span><span class="p">,</span><span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">));</span>
+<span class="c1">//send a message</span>
+<span class="n">system</span><span class="p">.</span><span class="n">EventStream</span><span class="p">.</span><span class="n">Publish</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span> <span class="c1">//this will be forwarded to subscriber</span>
+</pre></div>
+    

@@ -1,0 +1,40 @@
+---
+layout: default
+---
+
+      <h4>
+<a name="user-content-how-to-write-your-first-actor" class="anchor" href="#how-to-write-your-first-actor" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to write your first actor:</h4>
+
+<div class="highlight highlight-csharp"><pre><span class="c1">//Create an (immutable) message type that your actor will respond to</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Greet</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">Greet</span><span class="p">(</span><span class="kt">string</span> <span class="n">who</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Who</span> <span class="p">=</span> <span class="n">who</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="n">Who</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span><span class="k">private</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">//Create the actor class</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">GreetingActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">GreetingActor</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">Receive</span><span class="p">&lt;</span><span class="n">Greet</span><span class="p">&gt;(</span><span class="n">greet</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Hello {0}"</span><span class="p">,</span> <span class="n">greet</span><span class="p">.</span><span class="n">Who</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="user-content-usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage:</h4>
+
+<div class="highlight highlight-csharp"><pre><span class="c1">//create a new actor system (a container for your actors)</span>
+<span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+<span class="c1">//create your actor and get a reference to it.</span>
+<span class="c1">//this will be an "ActorRef", which is not a reference to the actual actor instance</span>
+<span class="c1">//but rather a client or proxy to it</span>
+<span class="kt">var</span> <span class="n">greeter</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">GreetingActor</span><span class="p">&gt;(</span><span class="s">"greeter"</span><span class="p">);</span>
+<span class="c1">//send a message to the actor</span>
+<span class="n">greeter</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="k">new</span> <span class="n">Greet</span><span class="p">(</span><span class="s">"Roger"</span><span class="p">));</span>
+</pre></div>
+    

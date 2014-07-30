@@ -1,0 +1,47 @@
+---
+layout: default
+---
+
+      <h1>
+<a name="user-content-scheduler" class="anchor" href="#scheduler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scheduler</h1>
+
+<p>Sometimes the need for making things happen in the future arises, and where do
+you go look then?  Look no further than <code>ActorSystem</code>! There you find the
+<code>Scheduler</code> property that returns an instance of
+<code>Akka.Actor.Scheduler</code>, this instance is unique per ActorSystem and is
+used internally for scheduling things to happen at specific points in time.</p>
+
+<p>You can schedule sending of messages to actors and execution of tasks
+(Action delegate).  You will get a <code>Task</code> back.
+By providing a <code>CancellationTokenSource</code> you can cancel the scheduled task.</p>
+
+<blockquote>
+<p><strong>warning</strong><br>
+Scheduling timing is inexact.</p>
+</blockquote>
+
+<h2>
+<a name="user-content-some-examples" class="anchor" href="#some-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some examples</h2>
+
+<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">someActor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">SomeActor</span><span class="p">&gt;(</span><span class="s">"someActor"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">someMessage</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SomeMessage</span><span class="p">()</span> <span class="p">{...};</span>
+<span class="n">system</span>
+   <span class="p">.</span><span class="n">Scheduler</span>
+   <span class="p">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">TimeSpan</span><span class="p">.</span><span class="n">FromSeconds</span><span class="p">(</span><span class="m">0</span><span class="p">),</span>
+             <span class="n">TimeSpan</span><span class="p">.</span><span class="n">FromSeconds</span><span class="p">(</span><span class="m">5</span><span class="p">),</span>
+             <span class="n">someActor</span><span class="p">,</span> <span class="n">someMessage</span><span class="p">);</span>
+</pre></div>
+
+<p>The above example will schedule "someMessage" to be sent to "someActor" every 5 seconds.</p>
+
+<blockquote>
+<p><strong>warning</strong><br>
+If you schedule a closure you should be extra careful
+to not pass or close over unstable references. In practice this means that you should
+not call methods on the enclosing Actor from within the closure.
+If you need to schedule an invocation it is better to use the <code>Schedule()</code>
+variant accepting a message and an <code>ActorRef</code> to schedule a message to self
+(containing the necessary parameters) and then call the method when the message is received.</p>
+</blockquote>
+    

@@ -1,11 +1,11 @@
 # Name of your blog (this will show up at the top of your page and in the RSS feed)
-name: Sample Jekyll Blog
+name: Akka.NET
 
 # Short description (goes below the title; it will also be used in the RSS feed)
 description: This is a sample Jekyll Blog.
 
 # Your name, as you want it to appear underneath each post and in the footer
-author: Your Name
+author: Akka.NET Team
 
 # Your email if you want it to be linked on the contact page
 author_email: you@example.com
