@@ -3,20 +3,23 @@ layout: default
 ---
 An Akka `MessageDispatcher` is what makes Akka Actors "tick", it is the engine of the machine so to speak. All `MessageDispatcher` implementations are also an `ExecutionContext`, which means that they can be used to execute arbitrary code, for instance `Futures`.
 
-##Default dispatcher
+## Default dispatcher
 Every `ActorSystem` will have a default dispatcher that will be used in case nothing else is configured for an Actor. The default dispatcher can be configured using `akka.actor.default-dispatcher`, and is by default a `Dispatcher`.
-####Actors multiplexing on .NET thread pool
+
+#### Actors multiplexing on .NET thread pool
 [[/images/ThreadMultiplex.png]]
 
-##Looking up a Dispatcher
+## Looking up a Dispatcher
 Dispatchers implement the ExecutionContext interface and can thus be used to run Future invocations etc.
+
 ```csharp
 // this is scala.concurrent.ExecutionContext
 // for use with Futures, Scheduler, etc.
 ExecutionContext ex = system.Dispatchers.Lookup("my-dispatcher");
 ```
-##Setting the dispatcher for an Actor
+## Setting the dispatcher for an Actor
 So in case you want to give your Actor a different dispatcher than the default, you need to do two things, of which the first is is to configure the dispatcher:
+
 ```
 my-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
@@ -38,7 +41,9 @@ my-dispatcher {
   throughput = 100
 }
 ```
+
 And here's another example that uses the `"thread-pool-executor"`:
+
 ```
 my-thread-pool-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
@@ -63,6 +68,7 @@ my-thread-pool-dispatcher {
 For more options, see the `default-dispatcher` section of the Configuration.
 
 Then you create the actor as usual and define the dispatcher in the deployment configuration.
+
 ```csharp
 ActorRef myActor =
   system.ActorOf(Props.Create(typeof(MyUntypedActor)),
@@ -76,7 +82,9 @@ akka.actor.deployment {
   }
 }
 ```
+
 An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.
+
 ```csharp
 ActorRef myActor =
   system.ActorOf(Props.Create(typeof(MyUntypedActor)).WithDispatcher("my-dispatcher"),
@@ -86,7 +94,7 @@ ActorRef myActor =
 >**Note**<br/>
 >The dispatcher you specify in `WithDispatcher` and the dispatcher property in the deployment configuration is in fact a path into your configuration. So in this example it's a top-level section, but you could for instance put it as a sub-section, where you'd use periods to denote sub-sections, like this: "foo.bar.my-dispatcher"
 
-##Types of dispatchers
+## Types of dispatchers
 There are 4 different types of message dispatchers:
 
 * Dispatcher
@@ -110,12 +118,15 @@ There are 4 different types of message dispatchers:
 
 ### More dispatcher configuration examples
 Configuring a `PinnedDispatcher`:
+
 ```
 my-pinned-dispatcher {
   type = PinnedDispatcher
 }
 ```
+
 And then using it:
+
 ```csharp
 ActorRef myActor = system.ActorOf(Props.Create(typeof(MyUntypedActor));
     .WithDispatcher("my-pinned-dispatcher"));
