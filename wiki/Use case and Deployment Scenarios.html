@@ -1,0 +1,39 @@
+---
+layout: default
+---
+
+      <h2>
+<a name="user-content-host-your-actorsystem-using" class="anchor" href="#host-your-actorsystem-using" aria-hidden="true"><span class="octicon octicon-link"></span></a>Host your <code>ActorSystem</code> using:</h2>
+
+<h3>
+<a name="user-content-console-application" class="anchor" href="#console-application" aria-hidden="true"><span class="octicon octicon-link"></span></a>Console Application</h3>
+
+<div class="highlight highlight-csharp"><pre><span class="k">namespace</span> <span class="nn">Foo.Bar</span>
+<span class="p">{</span>
+    <span class="k">class</span> <span class="nc">Program</span>
+    <span class="p">{</span>
+        <span class="k">static</span> <span class="k">void</span> <span class="nf">Main</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">args</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">//configure remoting for localhost:8081</span>
+            <span class="kt">var</span> <span class="n">fluentConfig</span> <span class="p">=</span> <span class="n">FluentConfig</span><span class="p">.</span><span class="n">Begin</span><span class="p">()</span>
+                <span class="p">.</span><span class="n">StartRemotingOn</span><span class="p">(</span><span class="s">"localhost"</span><span class="p">,</span> <span class="m">8081</span><span class="p">)</span>
+                <span class="p">.</span><span class="n">Build</span><span class="p">();</span>
+
+            <span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"my-actor-server"</span><span class="p">,</span> <span class="n">fluentConfig</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="c1">//start two services </span>
+                <span class="kt">var</span> <span class="n">service1</span><span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">Service1</span><span class="p">&gt;(</span><span class="s">"service1"</span><span class="p">);</span>
+                <span class="kt">var</span> <span class="n">service2</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">Service2</span><span class="p">&gt;(</span><span class="s">"service2"</span><span class="p">);</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="user-content-windows-service" class="anchor" href="#windows-service" aria-hidden="true"><span class="octicon octicon-link"></span></a>Windows Service</h3>
+
+<h3>
+<a name="user-content-aspnet" class="anchor" href="#aspnet" aria-hidden="true"><span class="octicon octicon-link"></span></a>Asp.NET</h3>
+    

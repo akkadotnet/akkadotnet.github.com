@@ -1,0 +1,10 @@
+---
+layout: default
+---
+
+      <div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">scope</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RemoteScope</span><span class="p">(</span><span class="k">new</span> <span class="n">Address</span><span class="p">(</span><span class="s">"akka.tcp"</span><span class="p">,</span> <span class="s">"remote-system"</span><span class="p">,</span> <span class="s">"localhost"</span><span class="p">,</span> <span class="m">8080</span><span class="p">));</span>
+<span class="kt">var</span> <span class="n">deploy</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Deploy</span><span class="p">(</span><span class="n">scope</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">remote</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">SomeActor</span><span class="p">(</span><span class="s">"some arg"</span><span class="p">,</span> <span class="m">123</span><span class="p">))</span>
+     <span class="p">.</span><span class="n">WithDeploy</span><span class="p">(</span><span class="n">deploy</span><span class="p">)</span> <span class="p">,</span> <span class="s">"remoteactor"</span><span class="p">);</span>
+</pre></div>
+    

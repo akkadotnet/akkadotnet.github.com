@@ -1,0 +1,30 @@
+---
+layout: default
+---
+
+      <h2>
+<a name="user-content-receive-timeout" class="anchor" href="#receive-timeout" aria-hidden="true"><span class="octicon octicon-link"></span></a>Receive timeout</h2>
+
+<p>The <code>IActorContext</code> <code>SetReceiveTimeout</code> defines the inactivity timeout after which the sending of a <code>ReceiveTimeout</code> message is triggered. When specified, the receive function should be able to handle an <code>Akka.Actor.ReceiveTimeout</code> message.</p>
+
+<blockquote>
+<p><strong>Note</strong><br>
+Please note that the receive timeout might fire and enqueue the ReceiveTimeout message right after another message was enqueued; hence it is not guaranteed that upon reception of the receive timeout there must have been an idle period beforehand as configured via this method.</p>
+</blockquote>
+
+<p>Once set, the receive timeout stays in effect (i.e. continues firing repeatedly after inactivity periods). Pass in <code>null</code> to <code>SetReceiveTimeout</code> to switch off this feature.</p>
+
+<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">MyActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="nf">MyActor</span><span class="p">()</span>
+    <span class="p">{</span>
+          <span class="c1">//trigger a receive timeout after 3 seconds of message silence.</span>
+          <span class="n">SetReceiveTimeout</span><span class="p">(</span><span class="n">Timespan</span><span class="p">.</span><span class="n">FromSeconds</span><span class="p">(</span><span class="m">3</span><span class="p">));</span>
+          <span class="c1">//your own message handlers</span>
+          <span class="n">Receive</span><span class="p">&lt;</span><span class="n">MyMessage</span><span class="p">&gt;(</span><span class="n">message</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"I am working.."</span><span class="p">));</span>
+          <span class="c1">//do something with the timeout message</span>
+          <span class="n">Receive</span><span class="p">&lt;</span><span class="n">ReceiveTimeout</span><span class="p">&gt;(</span><span class="n">timeout</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"I have timed out"</span><span class="p">));</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+    
