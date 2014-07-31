@@ -1,6 +1,6 @@
-
-# I have no layout!!
-abc
+---
+layout: default
+---
 ## this is a markdown page
 
 ```csharp
