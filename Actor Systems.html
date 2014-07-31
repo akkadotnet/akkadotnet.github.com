@@ -2,7 +2,7 @@
 layout: default
 ---
 
-      <p><a class="internal present" href="/akkadotnet/akka.net/wiki/Actors">Actors</a> are objects which encapsulate state and behavior, they communicate exclusively by exchanging messages which are placed into the recipient’s mailbox. In a sense, actors are the most stringent form of object-oriented programming, but it serves better to view them as persons: while modeling a solution with actors, envision a group of people and assign sub-tasks to them, arrange their functions into an organizational structure and think about how to escalate failure (all with the benefit of not actually dealing with people, which means that we need not concern ourselves with their emotional state or moral issues). The result can then serve as a mental scaffolding for building the software implementation.</p>
+      <p><a class="internal present" href="/Actors">Actors</a> are objects which encapsulate state and behavior, they communicate exclusively by exchanging messages which are placed into the recipient’s mailbox. In a sense, actors are the most stringent form of object-oriented programming, but it serves better to view them as persons: while modeling a solution with actors, envision a group of people and assign sub-tasks to them, arrange their functions into an organizational structure and think about how to escalate failure (all with the benefit of not actually dealing with people, which means that we need not concern ourselves with their emotional state or moral issues). The result can then serve as a mental scaffolding for building the software implementation.</p>
 
 <blockquote>
 <p><strong>Note</strong><br>
@@ -16,7 +16,7 @@ An <code>ActorSystem</code> is a heavyweight structure that will allocate 1...N 
 
 <p>The quintessential feature of actor systems is that tasks are split up and delegated until they become small enough to be handled in one piece. In doing so, not only is the task itself clearly structured, but the resulting actors can be reasoned about in terms of which messages they should process, how they should react normally and how failure should be handled. If one actor does not have the means for dealing with a certain situation, it sends a corresponding failure message to its supervisor, asking for help. The recursive structure then allows to handle failure at the right level.</p>
 
-<p><img src="/akkadotnet/akka.net/wiki/images/ErrorKernel.png"></p>
+<p><img src="/images/ErrorKernel.png"></p>
 
 <p>Compare this to layered software design which easily devolves into defensive programming with the aim of not leaking any failure out: if the problem is communicated to the right person, a better solution can be found than if trying to keep everything “under the carpet”.</p>
 

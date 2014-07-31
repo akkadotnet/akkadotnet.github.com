@@ -183,7 +183,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 <span class="p">}</span>
 </pre></div>
 
-<p>You can also acquire an ActorRef for an ActorSelection with the resolveOne method of the ActorSelection. It returns a Future of the matching ActorRef if such an actor exists. It is completed with failure <a class="internal absent" href="/akkadotnet/akka.net/wiki/akka.actor.ActorNotFound">akka.actor.ActorNotFound</a> if no such actor exists or the identification didn't complete within the supplied timeout.</p>
+<p>You can also acquire an ActorRef for an ActorSelection with the resolveOne method of the ActorSelection. It returns a Future of the matching ActorRef if such an actor exists. It is completed with failure <a class="internal absent" href="/akka.actor.ActorNotFound">akka.actor.ActorNotFound</a> if no such actor exists or the identification didn't complete within the supplied timeout.</p>
 
 <p>Remote actor addresses may also be looked up, if remoting is enabled:</p>
 
