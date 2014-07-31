@@ -208,72 +208,66 @@
 
                 </div>
                 
-      <p>Akka.NET comes with an extended F# API.
-This extension lets you send and ask messages using the <code>&lt;!</code> tell and <code>&lt;?</code> ask operators.</p>
+      <h3>
+<a name="user-content-scalable-real-time-transaction-processing" class="anchor" href="#scalable-real-time-transaction-processing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scalable real-time transaction processing</h3>
 
-<div class="highlight highlight-fsharp"><pre><span class="k">open</span> <span class="nn">Akka.Actor</span>
-<span class="k">open</span> <span class="nn">Akka.FSharp</span>
-<span class="k">open</span> <span class="nn">Akka.Configuration</span>
-<span class="k">open</span> <span class="nn">System</span>
+<p>We believe that writing correct concurrent, fault-tolerant and scalable applications is too hard. Most of the time it's because we are using the wrong tools and the wrong level of abstraction. Akka is here to change that. Using the Actor Model we raise the abstraction level and provide a better platform to build scalable, resilient and responsive applications—see the Reactive Manifesto for more details. For fault-tolerance we adopt the "let it crash" model which the telecom industry has used with great success to build applications that self-heal and systems that never stop. Actors also provide the abstraction for transparent distribution and the basis for truly scalable and fault-tolerant applications.</p>
 
-<span class="k">type</span> <span class="nc">SomeActorMessages</span> <span class="o">=</span>
-    <span class="o">|</span> <span class="n">Greet</span> <span class="k">of</span> <span class="kt">string</span>
-    <span class="o">|</span> <span class="n">Hi</span>
+<p>Akka is Open Source and available under the Apache 2 License.</p>
 
-<span class="k">type</span> <span class="nc">SomeActor</span><span class="bp">()</span> <span class="o">=</span>    
-    <span class="k">inherit</span> <span class="n">Actor</span><span class="bp">()</span>
+<p>Download from <a href="https://github.com/akkadotnet/akka.net">https://github.com/akkadotnet/akka.net</a>.</p>
 
-    <span class="k">override</span> <span class="n">x</span><span class="p">.</span><span class="nf">OnReceive</span> <span class="n">message</span> <span class="o">=</span>
-        <span class="k">match</span> <span class="n">message</span> <span class="k">with</span>
-        <span class="o">|</span> <span class="o">:?</span> <span class="n">SomeActorMessages</span> <span class="k">as</span> <span class="n">m</span> <span class="o">-&gt;</span>  
-            <span class="k">match</span> <span class="n">m</span> <span class="k">with</span>
-            <span class="o">|</span> <span class="n">Greet</span><span class="o">(</span><span class="n">name</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="nn">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="o">(</span><span class="s">"Hello {0}"</span><span class="o">,</span><span class="n">name</span><span class="o">)</span>
-            <span class="o">|</span> <span class="n">Hi</span> <span class="o">-&gt;</span> <span class="nn">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="o">(</span><span class="s">"Hello from F#!"</span><span class="o">)</span>
-        <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s">"unknown message"</span>
+<p>Please note that all code samples compile, so if you want direct access to the sources, have a look over at the Akka Docs subproject on github: for Java and Scala.</p>
 
-<span class="k">let</span> <span class="nv">system</span> <span class="o">=</span>  
-    <span class="nn">ConfigurationFactory</span><span class="p">.</span><span class="n">Default</span><span class="bp">()</span> 
-    <span class="o">|&gt;</span> <span class="nn">System</span><span class="p">.</span><span class="n">create</span> <span class="s">"FSharpActors"</span>
+<h2>
+<a name="user-content-akka-implements-a-unique-hybrid" class="anchor" href="#akka-implements-a-unique-hybrid" aria-hidden="true"><span class="octicon octicon-link"></span></a>Akka implements a unique hybrid</h2>
 
-<span class="k">let</span> <span class="nv">actor</span> <span class="o">=</span> 
-    <span class="n">spawn</span> <span class="n">system</span> <span class="s">"MyActor"</span>
-    <span class="o">&lt;|</span> <span class="k">fun</span> <span class="n">mailbox</span> <span class="o">-&gt;</span>
-        <span class="k">let</span> <span class="nv">rec</span> <span class="n">again</span> <span class="n">name</span> <span class="o">=</span>
-            <span class="n">actor</span> <span class="o">{</span>
-                <span class="k">let!</span> <span class="nv">message</span> <span class="o">=</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">Receive</span><span class="bp">()</span>
-                <span class="k">match</span> <span class="n">message</span> <span class="k">with</span>
-                <span class="o">|</span> <span class="n">Greet</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="k">when</span> <span class="n">n</span> <span class="o">=</span> <span class="n">name</span> <span class="o">-&gt;</span>
-                    <span class="n">printfn</span> <span class="s">"Hello again, %s"</span> <span class="n">name</span>
-                    <span class="k">return</span><span class="o">!</span> <span class="n">again</span> <span class="n">name</span>
-                <span class="o">|</span> <span class="n">Greet</span><span class="o">(</span><span class="n">n</span><span class="o">)</span> <span class="o">-&gt;</span> 
-                    <span class="n">printfn</span> <span class="s">"Hello %s"</span> <span class="n">n</span>
-                    <span class="k">return</span><span class="o">!</span> <span class="n">again</span> <span class="n">n</span>
-                <span class="o">|</span> <span class="n">Hi</span> <span class="o">-&gt;</span> 
-                    <span class="n">printfn</span> <span class="s">"Hello from F#!"</span>
-                    <span class="k">return</span><span class="o">!</span> <span class="n">again</span> <span class="n">name</span> <span class="o">}</span>
-        <span class="ow">and</span> <span class="n">loop</span><span class="bp">()</span> <span class="o">=</span>
-            <span class="n">actor</span> <span class="o">{</span>
-                <span class="k">let!</span> <span class="nv">message</span> <span class="o">=</span> <span class="n">mailbox</span><span class="o">.</span><span class="n">Receive</span><span class="bp">()</span>
-                <span class="k">match</span> <span class="n">message</span> <span class="k">with</span>
-                <span class="o">|</span> <span class="n">Greet</span><span class="o">(</span><span class="n">name</span><span class="o">)</span> <span class="o">-&gt;</span> 
-                    <span class="n">printfn</span> <span class="s">"Hello %s"</span> <span class="n">name</span>
-                    <span class="k">return</span><span class="o">!</span> <span class="n">again</span> <span class="n">name</span>
-                <span class="o">|</span> <span class="n">Hi</span> <span class="o">-&gt;</span>
-                    <span class="n">printfn</span> <span class="s">"Hello from F#!"</span>
-                    <span class="k">return</span><span class="o">!</span> <span class="n">loop</span><span class="bp">()</span> <span class="o">}</span> 
-        <span class="n">loop</span><span class="bp">()</span>
+<h3>
+<a name="user-content-actors" class="anchor" href="#actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actors</h3>
 
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Greet</span> <span class="s">"Aaron"</span>
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Hi</span>
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Greet</span> <span class="s">"Roger"</span>
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Hi</span>
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Greet</span> <span class="s">"Håkan"</span>
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Hi</span>
-<span class="n">actor</span> <span class="o">&lt;!</span> <span class="n">Greet</span> <span class="s">"Jeremie"</span>
+<p>Actors give you:</p>
 
-<span class="nn">System</span><span class="p">.</span><span class="nn">Console</span><span class="p">.</span><span class="n">ReadKey</span><span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+<ul class="task-list">
+<li>Simple and high-level abstractions for concurrency and parallelism.</li>
+<li>Asynchronous, non-blocking and highly performant event-driven programming model.</li>
+<li>Very lightweight event-driven processes (several million actors per GB of heap memory).
+See the chapter for C# or F#.</li>
+</ul><h3>
+<a name="user-content-fault-tolerance" class="anchor" href="#fault-tolerance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fault Tolerance</h3>
 
-</pre></div>
+<ul class="task-list">
+<li>Supervisor hierarchies with "let-it-crash" semantics.</li>
+<li>Supervisor hierarchies can span over multiple JVMs to provide truly fault-tolerant systems.</li>
+<li>Excellent for writing highly fault-tolerant systems that self-heal and never stop.
+See Fault Tolerance (Scala) and Fault Tolerance (Java).</li>
+</ul><h3>
+<a name="user-content-location-transparency" class="anchor" href="#location-transparency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Location Transparency</h3>
+
+<p>Everything in Akka is designed to work in a distributed environment: all interactions of actors use pure message passing and everything is asynchronous.</p>
+
+<p>For an overview of the cluster support see the Java and Scala documentation chapters.</p>
+
+<h3>
+<a name="user-content-persistence" class="anchor" href="#persistence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Persistence</h3>
+
+<p>Messages received by an actor can optionally be persisted and replayed when the actor is started or restarted. This allows actors to recover their state, even after JVM crashes or when being migrated to another node.</p>
+
+<p>You can find more details in the respective chapter for Java or Scala.</p>
+
+<h2>
+<a name="user-content-c-and-f-apis" class="anchor" href="#c-and-f-apis" aria-hidden="true"><span class="octicon octicon-link"></span></a>C# and F# APIs</h2>
+
+<p>Akka has both a C# Documentation and a F# Documentation.</p>
+
+<h2>
+<a name="user-content-akka-can-be-used-in-two-different-ways" class="anchor" href="#akka-can-be-used-in-two-different-ways" aria-hidden="true"><span class="octicon octicon-link"></span></a>Akka can be used in two different ways</h2>
+
+<p>TODO</p>
+
+<h2>
+<a name="user-content-commercial-support" class="anchor" href="#commercial-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Commercial Support</h2>
+
+<p>TODO</p>
     
                 <div id="disqus_thread"></div>
                 <script type="text/javascript">
@@ -303,43 +297,42 @@ This extension lets you send and ask messages using the <code>&lt;!</code> tell 
 <a name="user-content-introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h4>
 
 <ul class="task-list">
-<li><a href="What-is-Akka">What is Akka?</a></li>
-<li><a href="Why-Akka">Why Akka?</a></li>
-<li><a href="Getting-started">Getting Started</a></li>
-<li><a href="The-Obligatory-Hello-World">The Obligatory Hello World</a></li>
-<li><a href="Use-case-and-Deployment-Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples-of-use-cases-for-Akka">Examples of use-cases for Akka</a></li>
+<li><a href="What%20is%20Akka">What is Akka?</a></li>
+<li><a href="Why%20Akka">Why Akka?</a></li>
+<li><a href="Getting%20started">Getting Started</a></li>
+<li><a href="The%20Obligatory%20Hello%20World">The Obligatory Hello World</a></li>
+<li><a href="Use-case%20and%20Deployment%20Scenarios">Use-case and Deployment Scenarios</a></li>
+<li><a href="Examples%20of%20use-cases%20for%20Akka">Examples of use-cases for Akka</a></li>
 </ul><hr><h4>
 <a name="user-content-general" class="anchor" href="#general" aria-hidden="true"><span class="octicon octicon-link"></span></a>General</h4>
 
 <ul class="task-list">
 <li><a href="Terminology">Terminology, Concepts</a></li>
-<li><a href="Actor-Systems">Actor Systems</a></li>
+<li><a href="Actor%20Systems">Actor Systems</a></li>
 <li><a href="Actors">What is an Actor?</a></li>
 <li><a href="Supervision">Supervision and Monitoring</a></li>
 <li><a href="Addressing">Actor References, Paths and Addresses</a></li>
 <li><a href="Remoting">Location Transparency</a></li>
-<li>Akka and the Java Memory Model</li>
-<li><a href="Message-Delivery-Reliability">Message Delivery Reliability</a></li>
+<li><a href="Message%20Delivery%20Reliability">Message Delivery Reliability</a></li>
 <li><a href="Configuration">Configuration</a></li>
 </ul><hr><h4>
 <a name="user-content-actors" class="anchor" href="#actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actors</h4>
 
 <ul class="task-list">
-<li><a class="internal present" href="Actors">Actors</a></li>
-<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
-<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
-<li>Typed Actors</li>
+<li><a href="Actors">Actors</a></li>
+<li><a href="C#%20Actors">C# Actors</a></li>
+<li><a href="F#%20Actors">F# Actors</a></li>
+<li><a href="Typed%20actors">Typed Actors</a></li>
 <li><a href="FSM">Finite State Machines</a></li>
 <li>Fault Tolerance</li>
-<li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
-<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
-<li><a class="internal present" href="Routing">Routing</a></li>
-<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
-<li><a class="internal present" href="Props">Props</a></li>
-<li><a class="internal present" href="Receive-timeout">Receive timeout</a></li>
-<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
-<li><a class="internal present" href="Stash">Stash</a></li>
+<li><a href="Dispatchers">Dispatchers</a></li>
+<li><a href="Mailboxes">Mailboxes</a></li>
+<li><a href="Routing">Routing</a></li>
+<li><a href="Actor%20lifecycle">Actor lifecycle</a></li>
+<li><a href="Props">Props</a></li>
+<li><a href="Receive%20timeout">Receive timeout</a></li>
+<li><a href="Dependency%20injection">Dependency injection</a></li>
+<li><a href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>
 <li>Testing Actor Systems</li>
 </ul><hr><h4>

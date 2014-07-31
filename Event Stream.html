@@ -208,94 +208,13 @@
 
                 </div>
                 
-      <h2>
-<a name="user-content-actor-lifecycle" class="anchor" href="#actor-lifecycle" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actor Lifecycle</h2>
-
-<p><img src="images/actor_lifecycle.png"></p>
-
-<p>A path in an actor system represents a "place" which might be occupied by a living actor. Initially (apart from system initialized actors) a path is empty. When <code>ActorOf()</code> is called it assigns an incarnation of the actor described by the passed <code>Props</code> to the given path. An actor incarnation is identified by the path and a UID. A restart only swaps the Actor instance defined by the Props but the incarnation and hence the UID remains the same.</p>
-
-<p>The lifecycle of an incarnation ends when the actor is stopped. At that point the appropriate lifecycle events are called and watching actors are notified of the termination. After the incarnation is stopped, the path can be reused again by creating an actor with <code>ActorOf()</code>. In this case the name of the new incarnation will be the same as the previous one but the UIDs will differ.</p>
-
-<p>An <code>ActorRef</code> always represents an incarnation (path and UID) not just a given path. Therefore if an actor is stopped and a new one with the same name is created an ActorRef of the old incarnation will not point to the new one.</p>
-
-<p><code>ActorSelection</code> on the other hand points to the path (or multiple paths if wildcards are used) and is completely oblivious to which incarnation is currently occupying it. <code>ActorSelection</code> cannot be watched for this reason. It is possible to resolve the current incarnation's ActorRef living under the path by sending an <code>Identify</code> message to the <code>ActorSelection</code> which will be replied to with an <code>ActorIdentity</code> containing the correct reference (see Identifying Actors via Actor Selection). This can also be done with the resolveOne method of the <code>ActorSelection</code>, which returns a <code>Task</code> of the matching <code>ActorRef</code>.</p>
-
-<h3>
-<a name="user-content-lifecycle-monitoring-aka-deathwatch" class="anchor" href="#lifecycle-monitoring-aka-deathwatch" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lifecycle Monitoring aka DeathWatch</h3>
-
-<p>In order to be notified when another actor terminates (i.e. stops permanently, not temporary failure and restart), an actor may register itself for reception of the Terminated message dispatched by the other actor upon termination (see Stopping Actors). This service is provided by the DeathWatch component of the actor system.</p>
-
-<p>Registering a monitor is easy (see fourth line, the rest is for demonstrating the whole functionality):</p>
-
-<div class="highlight highlight-csharp"><pre><span class="n">import</span> <span class="n">akka</span><span class="p">.</span><span class="n">actor</span><span class="p">.</span><span class="n">Terminated</span><span class="p">;</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">WatchActor</span> <span class="n">extends</span> <span class="n">UntypedActor</span> <span class="p">{</span>
-  <span class="n">final</span> <span class="n">ActorRef</span> <span class="n">child</span> <span class="p">=</span> <span class="k">this</span><span class="p">.</span><span class="n">getContext</span><span class="p">().</span><span class="n">actorOf</span><span class="p">(</span><span class="n">Props</span><span class="p">.</span><span class="n">empty</span><span class="p">(),</span> <span class="s">"child"</span><span class="p">);</span>
-  <span class="p">{</span>
-    <span class="k">this</span><span class="p">.</span><span class="n">getContext</span><span class="p">().</span><span class="n">watch</span><span class="p">(</span><span class="n">child</span><span class="p">);</span> <span class="c1">// &lt;-- the only call needed for registration</span>
-  <span class="p">}</span>
-  <span class="n">ActorRef</span> <span class="n">lastSender</span> <span class="p">=</span> <span class="n">getContext</span><span class="p">().</span><span class="n">system</span><span class="p">().</span><span class="n">deadLetters</span><span class="p">();</span>
-
-  <span class="n">@Override</span>
-  <span class="k">public</span> <span class="k">void</span> <span class="nf">onReceive</span><span class="p">(</span><span class="n">Object</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="k">equals</span><span class="p">(</span><span class="s">"kill"</span><span class="p">))</span> <span class="p">{</span>
-      <span class="n">getContext</span><span class="p">().</span><span class="n">stop</span><span class="p">(</span><span class="n">child</span><span class="p">);</span>
-      <span class="n">lastSender</span> <span class="p">=</span> <span class="n">getSender</span><span class="p">();</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">message</span> <span class="n">instanceof</span> <span class="n">Terminated</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">final</span> <span class="n">Terminated</span> <span class="n">t</span> <span class="p">=</span> <span class="p">(</span><span class="n">Terminated</span><span class="p">)</span> <span class="n">message</span><span class="p">;</span>
-      <span class="k">if</span> <span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">getActor</span><span class="p">()</span> <span class="p">==</span> <span class="n">child</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">lastSender</span><span class="p">.</span><span class="n">tell</span><span class="p">(</span><span class="s">"finished"</span><span class="p">,</span> <span class="n">getSelf</span><span class="p">());</span>
-      <span class="p">}</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-      <span class="n">unhandled</span><span class="p">(</span><span class="n">message</span><span class="p">);</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
-<span class="p">}</span>
+      <div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
+<span class="kt">var</span> <span class="n">subscriber</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">SomeActor</span><span class="p">&gt;();</span>
+<span class="c1">//Subscribe to messages of type string</span>
+<span class="n">system</span><span class="p">.</span><span class="n">EventStream</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="n">subscriber</span><span class="p">,</span><span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">));</span>
+<span class="c1">//send a message</span>
+<span class="n">system</span><span class="p">.</span><span class="n">EventStream</span><span class="p">.</span><span class="n">Publish</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span> <span class="c1">//this will be forwarded to subscriber</span>
 </pre></div>
-
-<p>It should be noted that the Terminated message is generated independent of the order in which registration and termination occur. In particular, the watching actor will receive a Terminated message even if the watched actor has already been terminated at the time of registration.</p>
-
-<p>Registering multiple times does not necessarily lead to multiple messages being generated, but there is no guarantee that only exactly one such message is received: if termination of the watched actor has generated and queued the message, and another registration is done before this message has been processed, then a second message will be queued, because registering for monitoring of an already terminated actor leads to the immediate generation of the Terminated message.</p>
-
-<p>It is also possible to deregister from watching another actor’s liveliness using getContext().unwatch(target). This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no Terminated message for that actor will be processed anymore.</p>
-
-<h3>
-<a name="user-content-start-hook" class="anchor" href="#start-hook" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start Hook</h3>
-
-<p>Right after starting the actor, its preStart method is invoked.</p>
-
-<pre lang="chsarp"><code>@Override
-public void preStart() {
-  child = getContext().actorOf(Props.empty());
-}
-</code></pre>
-
-<p>This method is called when the actor is first created. During restarts it is called by the default implementation of postRestart, which means that by overriding that method you can choose whether the initialization code in this method is called only exactly once for this actor or for every restart. Initialization code which is part of the actor’s constructor will always be called when an instance of the actor class is created, which happens at every restart.</p>
-
-<h3>
-<a name="user-content-restart-hooks" class="anchor" href="#restart-hooks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Restart Hooks</h3>
-
-<p>All actors are supervised, i.e. linked to another actor with a fault handling strategy. Actors may be restarted in case an exception is thrown while processing a message (see Supervision and Monitoring). This restart involves the hooks mentioned above:</p>
-
-<p>The old actor is informed by calling preRestart with the exception which caused the restart and the message which triggered that exception; the latter may be None if the restart was not caused by processing a message, e.g. when a supervisor does not trap the exception and is restarted in turn by its supervisor, or if an actor is restarted due to a sibling’s failure. If the message is available, then that message’s sender is also accessible in the usual way (i.e. by calling getSender()).</p>
-
-<p>This method is the best place for cleaning up, preparing hand-over to the fresh actor instance, etc. By default it stops all children and calls postStop.</p>
-
-<p>The initial factory from the actorOf call is used to produce the fresh instance.</p>
-
-<p>The new actor’s postRestart method is invoked with the exception which caused the restart. By default the preStart is called, just as in the normal start-up case.</p>
-
-<p>An actor restart replaces only the actual actor object; the contents of the mailbox is unaffected by the restart, so processing of messages will resume after the postRestart hook returns. The message that triggered the exception will not be received again. Any message sent to an actor while it is being restarted will be queued to its mailbox as usual.</p>
-
-<blockquote>
-<p><strong>Warning</strong><br>
-Be aware that the ordering of failure notifications relative to user messages is not deterministic. In particular, a parent might restart its child before it has processed the last messages sent by the child before the failure. See Discussion: Message Ordering for details.</p>
-</blockquote>
-
-<h3>
-<a name="user-content-stop-hook" class="anchor" href="#stop-hook" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stop Hook</h3>
-
-<p>After stopping an actor, its postStop hook is called, which may be used e.g. for deregistering this actor from other services. This hook is guaranteed to run after message queuing has been disabled for this actor, i.e. messages sent to a stopped actor will be redirected to the deadLetters of the ActorSystem.</p>
     
                 <div id="disqus_thread"></div>
                 <script type="text/javascript">
@@ -325,43 +244,42 @@ Be aware that the ordering of failure notifications relative to user messages is
 <a name="user-content-introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h4>
 
 <ul class="task-list">
-<li><a href="What-is-Akka">What is Akka?</a></li>
-<li><a href="Why-Akka">Why Akka?</a></li>
-<li><a href="Getting-started">Getting Started</a></li>
-<li><a href="The-Obligatory-Hello-World">The Obligatory Hello World</a></li>
-<li><a href="Use-case-and-Deployment-Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples-of-use-cases-for-Akka">Examples of use-cases for Akka</a></li>
+<li><a href="What%20is%20Akka">What is Akka?</a></li>
+<li><a href="Why%20Akka">Why Akka?</a></li>
+<li><a href="Getting%20started">Getting Started</a></li>
+<li><a href="The%20Obligatory%20Hello%20World">The Obligatory Hello World</a></li>
+<li><a href="Use-case%20and%20Deployment%20Scenarios">Use-case and Deployment Scenarios</a></li>
+<li><a href="Examples%20of%20use-cases%20for%20Akka">Examples of use-cases for Akka</a></li>
 </ul><hr><h4>
 <a name="user-content-general" class="anchor" href="#general" aria-hidden="true"><span class="octicon octicon-link"></span></a>General</h4>
 
 <ul class="task-list">
 <li><a href="Terminology">Terminology, Concepts</a></li>
-<li><a href="Actor-Systems">Actor Systems</a></li>
+<li><a href="Actor%20Systems">Actor Systems</a></li>
 <li><a href="Actors">What is an Actor?</a></li>
 <li><a href="Supervision">Supervision and Monitoring</a></li>
 <li><a href="Addressing">Actor References, Paths and Addresses</a></li>
 <li><a href="Remoting">Location Transparency</a></li>
-<li>Akka and the Java Memory Model</li>
-<li><a href="Message-Delivery-Reliability">Message Delivery Reliability</a></li>
+<li><a href="Message%20Delivery%20Reliability">Message Delivery Reliability</a></li>
 <li><a href="Configuration">Configuration</a></li>
 </ul><hr><h4>
 <a name="user-content-actors" class="anchor" href="#actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actors</h4>
 
 <ul class="task-list">
-<li><a class="internal present" href="Actors">Actors</a></li>
-<li><a class="internal present" href="C%23-actors">C# Actors</a></li>
-<li><a class="internal present" href="F%23-Actors">F# Actors</a></li>
-<li>Typed Actors</li>
+<li><a href="Actors">Actors</a></li>
+<li><a href="C#%20Actors">C# Actors</a></li>
+<li><a href="F#%20Actors">F# Actors</a></li>
+<li><a href="Typed%20actors">Typed Actors</a></li>
 <li><a href="FSM">Finite State Machines</a></li>
 <li>Fault Tolerance</li>
-<li><a class="internal present" href="Dispatchers">Dispatchers</a></li>
-<li><a class="internal present" href="Mailboxes">Mailboxes</a></li>
-<li><a class="internal present" href="Routing">Routing</a></li>
-<li><a class="internal present" href="Actor-lifecycle">Actor lifecycle</a></li>
-<li><a class="internal present" href="Props">Props</a></li>
-<li><a class="internal present" href="Receive-timeout">Receive timeout</a></li>
-<li><a class="internal present" href="Dependency-injection">Dependency injection</a></li>
-<li><a class="internal present" href="Stash">Stash</a></li>
+<li><a href="Dispatchers">Dispatchers</a></li>
+<li><a href="Mailboxes">Mailboxes</a></li>
+<li><a href="Routing">Routing</a></li>
+<li><a href="Actor%20lifecycle">Actor lifecycle</a></li>
+<li><a href="Props">Props</a></li>
+<li><a href="Receive%20timeout">Receive timeout</a></li>
+<li><a href="Dependency%20injection">Dependency injection</a></li>
+<li><a href="Stash">Stash</a></li>
 <li>Persistence (Not ported to Akka.NET yet)</li>
 <li>Testing Actor Systems</li>
 </ul><hr><h4>
