@@ -4,7 +4,7 @@ layout: default
 
       <p>This chapter describes how actors are identified and located within a possibly distributed actor system. It ties into the central idea that Actor Systems form intrinsic supervision hierarchies as well as that communication between actors is transparent with respect to their placement across multiple network nodes.</p>
 
-<p><img src="/images/ActorPath.png"></p>
+<p><img src="/wiki/images/ActorPath.png"></p>
 
 <p>The above image displays the relationship between the most important entities within an actor system, please read on for the details.</p>
 
@@ -153,7 +153,7 @@ What the above sections described in some detail can be summarized and memorized
 
 <p>When an actor creates a child, the actor system’s deployer will decide whether the new actor resides in the same CLR or on another node. In the second case, creation of the actor will be triggered via a network connection to happen in a different CLR and consequently within a different actor system. The remote system will place the new actor below a special path reserved for this purpose and the supervisor of the new actor will be a remote actor reference (representing that actor which triggered its creation). In this case, context.parent (the supervisor reference) and context.path.parent (the parent node in the actor’s path) do not represent the same actor. However, looking up the child’s name within the supervisor will find it on the remote node, preserving logical structure e.g. when sending to an unresolved actor reference.</p>
 
-<p><img src="/images/RemoteDeployment.png"></p>
+<p><img src="/wiki/images/RemoteDeployment.png"></p>
 
 <h2>
 <a name="user-content-what-is-the-address-part-used-for" class="anchor" href="#what-is-the-address-part-used-for" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is the Address part used for?</h2>
