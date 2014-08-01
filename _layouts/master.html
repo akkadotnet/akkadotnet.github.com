@@ -35,7 +35,19 @@
 
     <div id="wrap">
         <div id="main">
-            {{ content }}
+            <div class="container clear-top  bs-docs-container">
+                <div class="col-md-3">
+                    <div id="sidebar" class="sidebar-class bs-sidebar hidden-print affix">
+                        
+
+<ul class="nav bs-sidenav"><li class="active"><a href="#anchor1">How it works</a><ul class="nav"><li><a href="#anchor2">1. We crawl and scrape your dynamic pages</a></li><li><a href="#anchor3">2. You transfer search requests to us</a></li><li><a href="#anchor4">3. We return your page to the search agent</a></li></ul></li><li><a href="#anchor5">Integration</a><ul class="nav"><li><a href="#anchor6">Using HTACCESS file</a></li><li><a href="#anchor7">IIS URL Rewrite 2.0</a></li><li><a href="#anchor8">ASP.NET MVC4 - C# - HashBang Url scheme</a></li><li><a href="#anchor9">ASP.NET MVC4 - C# - HTML5 PushState</a></li><li><a href="#anchor10">PHP</a></li><li><a href="#anchor11">NodeJS</a></li></ul></li></ul>
+                        
+                    </div>
+                </div>
+                <div id="maincontent" class="col-md-9">
+                    {{ content }}    
+                </div>
+            </div>          
         </div>        
     </div>
     <footer>
