@@ -6,8 +6,8 @@ layout: default
 <a name="user-content-scheduler" class="anchor" href="#scheduler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scheduler</h1>
 
 <p>Sometimes the need for making things happen in the future arises, and where do
-you go look then?  Look no further than <code>ActorSystem</code>! There you find the
-<code>Scheduler</code> property that returns an instance of
+you go look then?  Look no further than <code><a href="/wiki/ActorSystem">ActorSystem</a></code>! There you find the
+<code><a href="/wiki/Scheduler">Scheduler</a></code> property that returns an instance of
 <code>Akka.Actor.Scheduler</code>, this instance is unique per ActorSystem and is
 used internally for scheduling things to happen at specific points in time.</p>
 
@@ -41,7 +41,7 @@ If you schedule a closure you should be extra careful
 to not pass or close over unstable references. In practice this means that you should
 not call methods on the enclosing Actor from within the closure.
 If you need to schedule an invocation it is better to use the <code>Schedule()</code>
-variant accepting a message and an <code>ActorRef</code> to schedule a message to self
+variant accepting a message and an <code><a href="/wiki/ActorRef">ActorRef</a></code> to schedule a message to self
 (containing the necessary parameters) and then call the method when the message is received.</p>
 </blockquote>
     

@@ -15,7 +15,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 <h3>
 <a name="user-content-defining-an-actor-class" class="anchor" href="#defining-an-actor-class" aria-hidden="true"><span class="octicon octicon-link"></span></a>Defining an Actor class</h3>
 
-<p>Actors in C# are implemented by extending the <code>ReceiveActor</code> class and configuring what messages to receive using the <code>Receive&lt;TMessage&gt;</code> method.</p>
+<p>Actors in C# are implemented by extending the <code><a href="/wiki/ReceiveActor">ReceiveActor</a></code> class and configuring what messages to receive using the <code>Receive&lt;TMessage&gt;</code> method.</p>
 
 <p>Here is an example:</p>
 
@@ -41,7 +41,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 <h3>
 <a name="user-content-the-inbox" class="anchor" href="#the-inbox" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Inbox</h3>
 
-<p>When writing code outside of actors which shall communicate with actors, the ask pattern can be a solution (see below), but there are two thing it cannot do: receiving multiple replies (e.g. by subscribing an <code>ActorRef</code> to a notification service) and watching other actors’ lifecycle. For these purposes there is the Inbox class:</p>
+<p>When writing code outside of actors which shall communicate with actors, the ask pattern can be a solution (see below), but there are two thing it cannot do: receiving multiple replies (e.g. by subscribing an <code><a href="/wiki/ActorRef">ActorRef</a></code> to a notification service) and watching other actors’ lifecycle. For these purposes there is the Inbox class:</p>
 
 <div class="highlight highlight-csharp"><pre><span class="n">final</span> <span class="n">Inbox</span> <span class="n">inbox</span> <span class="p">=</span> <span class="n">Inbox</span><span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="n">system</span><span class="p">);</span>
 <span class="n">inbox</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="s">"hello"</span><span class="p">);</span>
@@ -74,7 +74,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 <p>In addition, it offers:</p>
 
 <ul class="task-list">
-<li><p><code>Self</code> reference to the <code>ActorRef</code> of the actor</p></li>
+<li><p><code>Self</code> reference to the <code><a href="/wiki/ActorRef">ActorRef</a></code> of the actor</p></li>
 <li><p><code>Sender</code> reference sender Actor of the last received message, typically used as described in Reply to messages</p></li>
 <li><p>SupervisorStrategy user overridable definition the strategy to use for supervising child actors</p></li>
 </ul><p>This strategy is typically declared inside the actor in order to have access to the actor’s internal state within the decider function: since failure is communicated as a message sent to the supervisor and processed like other messages (albeit outside of the normal behavior), all values and variables within the actor are available, as is the getSender() reference (which will be the immediate child reporting the failure; if the original failure occurred within a distant descendant it is still reported one level up at a time).</p>

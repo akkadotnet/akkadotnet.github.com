@@ -11,7 +11,7 @@ layout: default
 <h2>
 <a name="user-content-what-is-an-actor-reference" class="anchor" href="#what-is-an-actor-reference" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is an Actor Reference?</h2>
 
-<p>An actor reference is a subtype of <code>ActorRef</code>, whose foremost purpose is to support sending messages to the actor it represents. Each actor has access to its canonical (local) reference through the self field; this reference is also included as sender reference by default for all messages sent to other actors. Conversely, during message processing the actor has access to a reference representing the sender of the current message through the sender method.</p>
+<p>An actor reference is a subtype of <code><a href="/wiki/ActorRef">ActorRef</a></code>, whose foremost purpose is to support sending messages to the actor it represents. Each actor has access to its canonical (local) reference through the self field; this reference is also included as sender reference by default for all messages sent to other actors. Conversely, during message processing the actor has access to a reference representing the sender of the current message through the sender method.</p>
 
 <p>There are several different types of actor references that are supported depending on the configuration of the actor system:</p>
 
@@ -94,7 +94,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 <h3>
 <a name="user-content-absolute-vs-relative-paths" class="anchor" href="#absolute-vs-relative-paths" aria-hidden="true"><span class="octicon octicon-link"></span></a>Absolute vs. Relative Paths</h3>
 
-<p>In addition to ActorSystem.actorSelection there is also ActorContext.actorSelection, which is available inside any actor as context.actorSelection. This yields an actor selection much like its twin on <code>ActorSystem</code>, but instead of looking up the path starting from the root of the actor tree it starts out on the current actor. <code>Path</code> elements consisting of two dots ("..") may be used to access the parent actor. You can for example send a message to a specific sibling:</p>
+<p>In addition to ActorSystem.actorSelection there is also ActorContext.actorSelection, which is available inside any actor as context.actorSelection. This yields an actor selection much like its twin on <code><a href="/wiki/ActorSystem">ActorSystem</a></code>, but instead of looking up the path starting from the root of the actor tree it starts out on the current actor. <code>Path</code> elements consisting of two dots ("..") may be used to access the parent actor. You can for example send a message to a specific sibling:</p>
 
 <div class="highlight highlight-csharp"><pre><span class="n">Context</span><span class="p">.</span><span class="n">ActorSelection</span><span class="p">(</span><span class="s">"../brother"</span><span class="p">).</span><span class="n">Tell</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
 </pre></div>
@@ -135,7 +135,7 @@ What the above sections described in some detail can be summarized and memorized
 <h2>
 <a name="user-content-actor-reference-and-path-equality" class="anchor" href="#actor-reference-and-path-equality" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actor Reference and Path Equality</h2>
 
-<p>Equality of <code>ActorRef</code> match the intention that an <code>ActorRef</code> corresponds to the target actor incarnation. Two actor references are compared equal when they have the same path and point to the same actor incarnation. A reference pointing to a terminated actor does not compare equal to a reference pointing to another (re-created) actor with the same path. Note that a restart of an actor caused by a failure still means that it is the same actor incarnation, i.e. a restart is not visible for the consumer of the <code>ActorRef</code>.</p>
+<p>Equality of <code><a href="/wiki/ActorRef">ActorRef</a></code> match the intention that an <code><a href="/wiki/ActorRef">ActorRef</a></code> corresponds to the target actor incarnation. Two actor references are compared equal when they have the same path and point to the same actor incarnation. A reference pointing to a terminated actor does not compare equal to a reference pointing to another (re-created) actor with the same path. Note that a restart of an actor caused by a failure still means that it is the same actor incarnation, i.e. a restart is not visible for the consumer of the <code><a href="/wiki/ActorRef">ActorRef</a></code>.</p>
 
 <p>If you need to keep track of actor references in a collection and do not care about the exact actor incarnation you can use the <code>ActorPath</code> as key, because the identifier of the target actor is not taken into account when comparing actor paths.</p>
 
