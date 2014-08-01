@@ -22,9 +22,9 @@ Akka implements a specific form called “parental supervision”. Actors can on
 >ordered relative to ordinary messages. In general, the user cannot influence the order of normal messages and <br/>
 >failure notifications. For details and example see the Discussion: Message Ordering section.<br/>
 
-##The Top-Level Supervisors
+## The Top-Level Supervisors
 
-[[/images/TopLevelSupervisors.png]]
+![Top level supervisors](https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/TopLevelSupervisors.png)
 
 An actor system will during its creation start at least three actors, shown in the image above. For more information about the consequences for actor paths see Top-Level Scopes for Actor Paths.
 
@@ -71,11 +71,11 @@ Another common use case is that an actor needs to fail in the absence of an exte
 ###One-For-One Strategy vs. All-For-One Strategy
 There are two classes of supervision strategies which come with Akka: `OneForOneStrategy` and `AllForOneStrategy`. Both are configured with a mapping from exception type to supervision directive (see above) and limits on how often a child is allowed to fail before terminating it. The difference between them is that the former applies the obtained directive only to the failed child, whereas the latter applies it to all siblings as well. Normally, you should use the `OneForOneStrategy`, which also is the default if none is specified explicitly.
 
-[[/images/OneForOne.png]]
+![One for one](https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/OneForOne.png)
 
 The `AllForOneStrategy` is applicable in cases where the ensemble of children has such tight dependencies among them, that a failure of one child affects the function of the others, i.e. they are inextricably linked. Since a restart does not clear out the mailbox, it often is best to terminate the children upon failure and re-create them explicitly from the supervisor (by watching the children’s lifecycle); otherwise you have to make sure that it is no problem for any of the actors to receive a message which was queued before the restart but processed afterwards.
 
-[[/images/AllForOne.png]]
+![All for one](https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/AllForOne.png)
 
 Normally stopping a child (i.e. not in response to a failure) will not automatically terminate the other children in an all-for-one strategy; this can easily be done by watching their lifecycle: if the `Terminated` message is not handled by the supervisor, it will throw a `DeathPactException` which (depending on its supervisor) will restart it, and the default `PreRestart` action will terminate all children. Of course this can be handled explicitly as well.
 

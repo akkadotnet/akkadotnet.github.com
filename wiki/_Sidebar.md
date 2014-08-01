@@ -28,8 +28,8 @@ layout: default
 #### Actors
 
 - [Actors](Actors)
-- [C# Actors](C# Actors)
-- [F# Actors](F# Actors)
+- [C# Actors](C%23 Actors)
+- [F# Actors](F%23 Actors)
 - [Typed Actors](Typed actors)
 - [Finite State Machines](FSM)
 - Fault Tolerance
