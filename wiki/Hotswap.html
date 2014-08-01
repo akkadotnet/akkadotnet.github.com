@@ -1,0 +1,27 @@
+---
+layout: default
+---
+
+      <div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">GreetingActor</span> <span class="p">:</span> <span class="n">UntypedActor</span>
+<span class="p">{</span>
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">OnReceive</span><span class="p">(</span><span class="kt">object</span> <span class="n">message</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Pattern</span><span class="p">.</span><span class="n">Match</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">With</span><span class="p">&lt;</span><span class="n">Greet</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Hello {0}"</span><span class="p">,</span> <span class="n">m</span><span class="p">.</span><span class="n">Who</span><span class="p">);</span>
+                <span class="c1">//this could also be a lambda</span>
+                <span class="n">Become</span><span class="p">(</span><span class="n">OtherReceive</span><span class="p">);</span>
+            <span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="k">void</span> <span class="nf">OtherReceive</span><span class="p">(</span><span class="kt">object</span> <span class="n">message</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Pattern</span><span class="p">.</span><span class="n">Match</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+            <span class="p">.</span><span class="n">With</span><span class="p">&lt;</span><span class="n">Greet</span><span class="p">&gt;(</span><span class="n">m</span> <span class="p">=&gt;</span> <span class="p">{</span>
+                <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"You already said hello!"</span><span class="p">);</span>
+                <span class="c1">//Unbecome() to revert to old behavior</span>
+            <span class="p">});</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+    

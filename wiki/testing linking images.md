@@ -1,4 +1,0 @@
----
-layout: default
----
-![alt](/akkadotnet/akka.net/wiki/images/actor.png)

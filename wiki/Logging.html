@@ -1,0 +1,22 @@
+---
+layout: default
+---
+
+      <p>For more info see real Akka's documentation: <a href="/wiki/http://doc.akka.io/docs/akka/2.0/scala/logging.html">http://doc.akka.io/docs/akka/2.0/scala/logging.html</a></p>
+
+<p>Akka .NET comes with three built in loggers.</p>
+
+<ul class="task-list">
+<li>StandardOutLogger</li>
+<li>BusLogging</li>
+<li>Slf4NetLogger</li>
+</ul><h2>
+<a name="user-content-configuring-custom-loggers" class="anchor" href="#configuring-custom-loggers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuring Custom Loggers</h2>
+
+<p>To configure a custom logger inside your Akka.Config, you need to use a fully qualified .NET class name like this:</p>
+
+<pre><code>akka {
+    loggers = [""NameSpace.ClassName,AssemblyName""]
+}
+</code></pre>
+    
