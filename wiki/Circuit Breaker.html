@@ -115,8 +115,7 @@ call as well as a synchronous one:</p>
 <p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.java
    :include: circuit-breaker-usage</p>
 
-<blockquote>
-<p><strong>Node</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 Using the :class:<code>CircuitBreaker</code> companion object's <code>apply</code> or <code>create</code> methods
 will return a :class:<code>CircuitBreaker</code> where callbacks are executed in the caller's thread.
 This can be useful if the asynchronous :class:<code>Future</code> behavior is unnecessary, for
