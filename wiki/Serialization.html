@@ -217,7 +217,7 @@ public class ExternalAddressExample {
 }
 </code></pre>
 
-<div class="alert alert-info"><p><strong>Note</strong><br><code>ActorPath.ToSerializationFormatWithAddress</code> differs from <code>ToString</code> if the address does not already have host and port components, i.e. it only inserts address information for local addresses.</p>
+<div class="alert alert-default"><p><strong>Note</strong><br><code>ActorPath.ToSerializationFormatWithAddress</code> differs from <code>ToString</code> if the address does not already have host and port components, i.e. it only inserts address information for local addresses.</p>
 </div>
 
 <p><code>ToSerializationFormatWithAddress</code> also adds the unique id of the actor, which will change when the actor is stopped and then created again with the same name. Sending messages to a reference pointing the old actor will not be delivered to the new actor. If you do not want this behavior, e.g. in case of long term storage of the reference, you can use <code>ToStringWithAddress</code>, which does not include the unique id.</p>

@@ -7,7 +7,7 @@ layout: default
 
 <p>The UntypedActorWithStash class enables an actor to temporarily stash away messages that can not or should not be handled using the actor's current behavior. Upon changing the actor's message handler, i.e., right before invoking getContext().become() or getContext().unbecome(), all stashed messages can be "unstashed", thereby prepending them to the actor's mailbox. This way, the stashed messages can be processed in the same order as they have been received originally. An actor that extends UntypedActorWithStash will automatically get a deque-based mailbox.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 The abstract class UntypedActorWithStash implements the marker interface RequiresMessageQueue which requests the system to automatically choose a deque based mailbox implementation for the actor. If you want more control over the mailbox, see the documentation on mailboxes: Mailboxes.</p>
 </div>
 
@@ -45,7 +45,7 @@ The abstract class UntypedActorWithStash implements the marker interface Require
 
 <p>Note that the stash is part of the ephemeral actor state, unlike the mailbox. Therefore, it should be managed like other parts of the actor's state which have the same property. The <code>UntypedActorWithStash</code> implementation of <code>PreRestart</code> will call <code>UnstashAll()</code>, which is usually the desired behavior.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 If you want to enforce that your actor can only work with an unbounded stash, then you should use the UntypedActorWithUnboundedStash class instead.</p>
 </div>
     

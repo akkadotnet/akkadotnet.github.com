@@ -4,7 +4,7 @@ layout: default
 
       <p>This chapter describes how actors are identified and located within a possibly distributed actor system. It ties into the central idea that Actor Systems form intrinsic supervision hierarchies as well as that communication between actors is transparent with respect to their placement across multiple network nodes.</p>
 
-<p><img class="img-responsive"src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ActorPath.png" alt="Actor path"></p>
+<p><img class="img-responsive fadeInUp"src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ActorPath.png" alt="Actor path"></p>
 
 <p>The above image displays the relationship between the most important entities within an actor system, please read on for the details.</p>
 
@@ -39,7 +39,7 @@ The first logging service started before actually firing up actor creation facil
 
 <p>An actor reference designates a single actor and the life-cycle of the reference matches that actor’s life-cycle; an actor path represents a name which may or may not be inhabited by an actor and the path itself does not have a life-cycle, it never becomes invalid. You can create an actor path without creating an actor, but you cannot create an actor reference without creating corresponding actor.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 That definition does not hold for actorFor, which is one of the reasons why actorFor is deprecated in favor of actorSelection.</p>
 </div>
 
@@ -85,7 +85,7 @@ That definition does not hold for actorFor, which is one of the reasons why acto
 
 <p>To acquire an ActorRef that is bound to the life-cycle of a specific actor you need to send a message, such as the built-in <code>Identify</code> message, to the actor and use the <code>.Sender</code> reference of a reply from the actor.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 actorFor is deprecated in favor of actorSelection because actor references acquired with actorFor behave differently for local and remote actors. In the case of a local actor reference, the named actor needs to exist before the lookup, or else the acquired reference will be an EmptyLocalActorRef. This will be true even if an actor with that exact path is created after acquiring the actor reference. For remote actor references acquired with actorFor the behaviour is different and sending messages to such a reference will under the hood look up the actor by path on the remote system for every message send.</p>
 </div>
 
@@ -118,7 +118,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 <a name="user-content-summary-actorof-vs-actorselection" class="anchor" href="#summary-actorof-vs-actorselection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary: <code>ActorOf</code> vs. <code>ActorSelection</code>
 </h2>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 What the above sections described in some detail can be summarized and memorized easily as follows:</p>
 
 <ul class="task-list">
@@ -150,7 +150,7 @@ What the above sections described in some detail can be summarized and memorized
 
 <p>When an actor creates a child, the actor system’s deployer will decide whether the new actor resides in the same CLR or on another node. In the second case, creation of the actor will be triggered via a network connection to happen in a different CLR and consequently within a different actor system. The remote system will place the new actor below a special path reserved for this purpose and the supervisor of the new actor will be a remote actor reference (representing that actor which triggered its creation). In this case, context.parent (the supervisor reference) and context.path.parent (the parent node in the actor’s path) do not represent the same actor. However, looking up the child’s name within the supervisor will find it on the remote node, preserving logical structure e.g. when sending to an unresolved actor reference.</p>
 
-<p><img class="img-responsive"src="/wiki/images/RemoteDeployment.png"></p>
+<p><img class="img-responsive fadeInUp"src="/wiki/images/RemoteDeployment.png"></p>
 
 <h2>
 <a name="user-content-what-is-the-address-part-used-for" class="anchor" href="#what-is-the-address-part-used-for" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is the Address part used for?</h2>

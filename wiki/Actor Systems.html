@@ -4,7 +4,7 @@ layout: default
 
       <p><a href="/wiki/Actors">Actors</a> are objects which encapsulate state and behavior, they communicate exclusively by exchanging messages which are placed into the recipient’s mailbox. In a sense, actors are the most stringent form of object-oriented programming, but it serves better to view them as persons: while modeling a solution with actors, envision a group of people and assign sub-tasks to them, arrange their functions into an organizational structure and think about how to escalate failure (all with the benefit of not actually dealing with people, which means that we need not concern ourselves with their emotional state or moral issues). The result can then serve as a mental scaffolding for building the software implementation.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 An <code><a href="/wiki/ActorSystem">^ActorSystem</a></code> is a heavyweight structure that will allocate 1...N Threads, so create one per logical application.</p>
 </div>
 
@@ -15,7 +15,7 @@ An <code><a href="/wiki/ActorSystem">^ActorSystem</a></code> is a heavyweight st
 
 <p>The quintessential feature of actor systems is that tasks are split up and delegated until they become small enough to be handled in one piece. In doing so, not only is the task itself clearly structured, but the resulting actors can be reasoned about in terms of which messages they should process, how they should react normally and how failure should be handled. If one actor does not have the means for dealing with a certain situation, it sends a corresponding failure message to its supervisor, asking for help. The recursive structure then allows to handle failure at the right level.</p>
 
-<p><img class="img-responsive"src="/wiki/images/ErrorKernel.png"></p>
+<p><img class="img-responsive fadeInUp"src="/wiki/images/ErrorKernel.png"></p>
 
 <p>Compare this to layered software design which easily devolves into defensive programming with the aim of not leaking any failure out: if the problem is communicated to the right person, a better solution can be found than if trying to keep everything “under the carpet”.</p>
 
@@ -53,7 +53,7 @@ There are of course always exceptions to these rules, but no matter whether you 
 <li>Dedicate a single thread to manage a set of blocking resources (e.g. a NIO selector driving multiple channels) and dispatch events as they occur as actor messages.</li>
 </ul><p>The first possibility is especially well-suited for resources which are single-threaded in nature, like database handles which traditionally can only execute one outstanding query at a time and use internal synchronization to ensure this. A common pattern is to create a router for N actors, each of which wraps a single DB connection and handles queries as sent to the router. The number N must then be tuned for maximum throughput, which will vary depending on which DBMS is deployed on what hardware.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 Configuring thread pools is a task best delegated to Akka, simply configure in the application.conf and instantiate through an ActorSystem.</p>
 </div>
 

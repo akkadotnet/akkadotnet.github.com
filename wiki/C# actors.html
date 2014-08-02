@@ -7,7 +7,7 @@ layout: default
 <h2>
 <a name="user-content-creating-actors" class="anchor" href="#creating-actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Actors</h2>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 Since Akka.NET enforces parental supervision every actor is supervised and (potentially) the supervisor of its children, it is advisable that you familiarize yourself with <a href="/wiki/Actor%20Systems">Actor Systems</a> and <a href="/wiki/Supervision">Supervision and Monitoring</a> and it may also help to read <a href="/wiki/Addressing">Actor References, Paths and Addresses</a>.</p>
 </div>
 
@@ -191,7 +191,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 
 <p>An example demonstrating remote actor look-up is given in Remoting Sample.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 actorFor is deprecated in favor of actorSelection because actor references acquired with actorFor behave differently for local and remote actors. In the case of a local actor reference, the named actor needs to exist before the lookup, or else the acquired reference will be an EmptyLocalActorRef. This will be true even if an actor with that exact path is created after acquiring the actor reference. For remote actor references acquired with actorFor the behaviour is different and sending messages to such a reference will under the hood look up the actor by path on the remote system for every message send.</p>
 </div>
 
@@ -230,7 +230,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 ask sends a message asynchronously and returns a Future representing a possible reply.
 Message ordering is guaranteed on a per-sender basis.</p>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 There are performance implications of using ask since something needs to keep track of when it times out, there needs to be something that bridges a Promise into an ActorRef and it also needs to be reachable through remoting. So always prefer tell for performance, and only ask if you must.</p>
 </div>
 
@@ -377,7 +377,7 @@ When using future callbacks, inside actors you need to carefully avoid closing o
 <span class="p">}</span>
 </pre></div>
 
-<div class="alert alert-info"><p><strong>Note</strong><br>
+<div class="alert alert-default"><p><strong>Note</strong><br>
 Since stopping an actor is asynchronous, you cannot immediately reuse the name of the child you just stopped; this will result in an InvalidActorNameException. Instead, watch the terminating actor and create its replacement in response to the Terminated message which will eventually arrive.</p>
 </div>
 
