@@ -192,3 +192,10 @@ blockquote {
   border: 0px;
   padding: 0px;
 }
+
+code {
+  color: #c7254e
+}
+code a {
+  color: #c7254e
+}
