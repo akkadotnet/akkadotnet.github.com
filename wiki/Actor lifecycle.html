@@ -5,7 +5,7 @@ layout: default
       <h2>
 <a name="user-content-actor-lifecycle" class="anchor" href="#actor-lifecycle" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actor Lifecycle</h2>
 
-<p><img src="/wiki/images/actor_lifecycle.png"></p>
+<p><img class="img-responsive"src="/wiki/images/actor_lifecycle.png"></p>
 
 <p>A path in an actor system represents a "place" which might be occupied by a living actor. Initially (apart from system initialized actors) a path is empty. When <code>ActorOf()</code> is called it assigns an incarnation of the actor described by the passed <code><a href="/wiki/Props">^Props</a></code> to the given path. An actor incarnation is identified by the path and a UID. A restart only swaps the Actor instance defined by the Props but the incarnation and hence the UID remains the same.</p>
 
