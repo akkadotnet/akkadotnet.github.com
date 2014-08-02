@@ -18,7 +18,7 @@ By providing a <code>CancellationTokenSource</code> you can cancel the scheduled
 <blockquote>
 <p><strong>warning</strong><br>
 Scheduling timing is inexact.</p>
-</blockquote>
+</div>
 
 <h2>
 <a name="user-content-some-examples" class="anchor" href="#some-examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Some examples</h2>
@@ -43,5 +43,5 @@ not call methods on the enclosing Actor from within the closure.
 If you need to schedule an invocation it is better to use the <code>Schedule()</code>
 variant accepting a message and an <code><a href="/wiki/ActorRef">^ActorRef</a></code> to schedule a message to self
 (containing the necessary parameters) and then call the method when the message is received.</p>
-</blockquote>
+</div>
     

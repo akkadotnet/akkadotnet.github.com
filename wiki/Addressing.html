@@ -42,7 +42,7 @@ The first logging service started before actually firing up actor creation facil
 <blockquote>
 <p><strong>Note</strong><br>
 That definition does not hold for actorFor, which is one of the reasons why actorFor is deprecated in favor of actorSelection.</p>
-</blockquote>
+</div>
 
 <p>You can create an actor, terminate it, and then create a new actor with the same actor path. The newly created actor is a new incarnation of the actor. It is not the same actor. An actor reference to the old incarnation is not valid for the new incarnation. Messages sent to the old actor reference will not be delivered to the new incarnation even though they have the same path.</p>
 
@@ -89,7 +89,7 @@ That definition does not hold for actorFor, which is one of the reasons why acto
 <blockquote>
 <p><strong>Note</strong><br>
 actorFor is deprecated in favor of actorSelection because actor references acquired with actorFor behave differently for local and remote actors. In the case of a local actor reference, the named actor needs to exist before the lookup, or else the acquired reference will be an EmptyLocalActorRef. This will be true even if an actor with that exact path is created after acquiring the actor reference. For remote actor references acquired with actorFor the behaviour is different and sending messages to such a reference will under the hood look up the actor by path on the remote system for every message send.</p>
-</blockquote>
+</div>
 
 <h3>
 <a name="user-content-absolute-vs-relative-paths" class="anchor" href="#absolute-vs-relative-paths" aria-hidden="true"><span class="octicon octicon-link"></span></a>Absolute vs. Relative Paths</h3>
@@ -130,7 +130,7 @@ What the above sections described in some detail can be summarized and memorized
 <li>
 <code>ActorSelection</code> only ever looks up existing actors when messages are delivered, i.e. does not create actors, or verify existence of actors when the selection is created.</li>
 </ul>
-</blockquote>
+</div>
 
 <h2>
 <a name="user-content-actor-reference-and-path-equality" class="anchor" href="#actor-reference-and-path-equality" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actor Reference and Path Equality</h2>

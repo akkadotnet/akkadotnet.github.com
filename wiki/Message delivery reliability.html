@@ -137,7 +137,7 @@ messages are enqueued into the recipient’s mailbox. If the mailbox
 implementation does not respect FIFO order (e.g. a <code>PriorityMailbox</code>),
 then the order of processing by the actor can deviate from the enqueueing
 order.</p>
-</blockquote>
+</div>
 
 <p>Please note that this rule is <strong>not transitive</strong>:</p>
 
@@ -164,7 +164,7 @@ where the message might arrive too early would be to create a remote-deployed
 actor R1, send its reference to another remote actor R2 and have R2 send a
 message to R1. An example of well-defined ordering is a parent which creates
 an actor and immediately sends a message to it.</p>
-</blockquote>
+</div>
 
 <h3>
 <a name="user-content-communication-of-failure" class="anchor" href="#communication-of-failure" aria-hidden="true"><span class="octicon octicon-link"></span></a>Communication of failure</h3>

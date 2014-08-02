@@ -25,7 +25,7 @@ Supervision related parent-child communication happens by special system message
 mailboxes separate from user messages. This implies that supervision related events are not deterministically <br>
 ordered relative to ordinary messages. In general, the user cannot influence the order of normal messages and <br>
 failure notifications. For details and example see the Discussion: Message Ordering section.<br></p>
-</blockquote>
+</div>
 
 <h2>
 <a name="user-content-the-top-level-supervisors" class="anchor" href="#the-top-level-supervisors" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Top-Level Supervisors</h2>
@@ -76,7 +76,7 @@ failure notifications. For details and example see the Discussion: Message Order
 <blockquote>
 <p><strong>Note</strong><br>
 Lifecycle Monitoring in Akka is usually referred to as <code>DeathWatch</code></p>
-</blockquote>
+</div>
 
 <p>In contrast to the special relationship between parent and child described above, each actor may monitor any other actor. Since actors emerge from creation fully alive and restarts are not visible outside of the affected supervisors, the only state change available for monitoring is the transition from alive to dead. Monitoring is thus used to tie one actor to another so that it may react to the other actor’s termination, in contrast to supervision which reacts to failure.</p>
 
