@@ -115,7 +115,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 <p>will send msg to all siblings including the current actor. As for references obtained using actorFor, a traversal of the supervision hierarchy is done in order to perform the message send. As the exact set of actors which match a selection may change even while a message is making its way to the recipients, it is not possible to watch a selection for liveliness changes. In order to do that, resolve the uncertainty by sending a request and gathering all answers, extracting the sender references, and then watch all discovered concrete actors. This scheme of resolving a selection may be improved upon in a future release.</p>
 
 <h2>
-<a name="user-content-summary-actorof-vs-actorselection" class="anchor" href="#summary-actorof-vs-actorselection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary: <code>ActorOf</code> vs. <code>ActorSelection</code>
+<a name="user-content-summary-actorof-vs-actorselection" class="anchor" href="#summary-actorof-vs-actorselection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary: <code><a href="/wiki/ActorOf">^ActorOf</a></code> vs. <code><a href="/wiki/ActorSelection">^ActorSelection</a></code>
 </h2>
 
 <div class="alert alert-default"><p><strong>Note</strong><br>
@@ -123,9 +123,9 @@ What the above sections described in some detail can be summarized and memorized
 
 <ul class="task-list">
 <li>
-<code>ActorOf</code> only ever creates a new actor, and it creates it as a direct child of the context on which this method is invoked (which may be any actor or actor system).</li>
+<code><a href="/wiki/ActorOf">^ActorOf</a></code> only ever creates a new actor, and it creates it as a direct child of the context on which this method is invoked (which may be any actor or actor system).</li>
 <li>
-<code>ActorSelection</code> only ever looks up existing actors when messages are delivered, i.e. does not create actors, or verify existence of actors when the selection is created.</li>
+<code><a href="/wiki/ActorSelection">^ActorSelection</a></code> only ever looks up existing actors when messages are delivered, i.e. does not create actors, or verify existence of actors when the selection is created.</li>
 </ul>
 </div>
 

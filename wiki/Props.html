@@ -52,7 +52,7 @@ The behavior is somewhat odd since a lambda containing a <code>new</code> statem
 <h3>
 <a name="user-content-creating-actors-with-props" class="anchor" href="#creating-actors-with-props" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Actors with Props</h3>
 
-<p>Actors are created by passing a Props instance into the <code>ActorOf</code> factory method which is available on <code><a href="/wiki/ActorSystem">^ActorSystem</a></code> and <code>ActorContext</code>.</p>
+<p>Actors are created by passing a Props instance into the <code><a href="/wiki/ActorOf">^ActorOf</a></code> factory method which is available on <code><a href="/wiki/ActorSystem">^ActorSystem</a></code> and <code>ActorContext</code>.</p>
 
 <div class="highlight highlight-csharp"><pre><span class="c1">// ActorSystem is a heavy object: create only one per application</span>
 <span class="n">ActorSystem</span> <span class="n">system</span> <span class="p">=</span> <span class="n">ActorSystem</span><span class="p">.</span><span class="n">Create</span><span class="p">(</span><span class="s">"MySystem"</span><span class="p">);</span>
@@ -72,7 +72,7 @@ The behavior is somewhat odd since a lambda containing a <code>new</code> statem
 
 <p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see <a class="internal present" href="/Actor-Systems">Actor Systems</a>.</p>
 
-<p>The call to <code>ActorOf</code> returns an instance of <code><a href="/wiki/ActorRef">^ActorRef</a></code>. This is a handle to the actor instance and the only way to interact with it. The <code><a href="/wiki/ActorRef">^ActorRef</a></code> is immutable and has a one to one relationship with the Actor it represents. The <code><a href="/wiki/ActorRef">^ActorRef</a></code> is also serializable and network-aware. This means that you can serialize it, send it over the wire and use it on a remote host and it will still be representing the same Actor on the original node, across the network.</p>
+<p>The call to <code><a href="/wiki/ActorOf">^ActorOf</a></code> returns an instance of <code><a href="/wiki/ActorRef">^ActorRef</a></code>. This is a handle to the actor instance and the only way to interact with it. The <code><a href="/wiki/ActorRef">^ActorRef</a></code> is immutable and has a one to one relationship with the Actor it represents. The <code><a href="/wiki/ActorRef">^ActorRef</a></code> is also serializable and network-aware. This means that you can serialize it, send it over the wire and use it on a remote host and it will still be representing the same Actor on the original node, across the network.</p>
 
 <p>The name parameter is optional, but you should preferably name your actors, since that is used in log messages and for identifying actors. The name must not be empty or start with $, but it may contain URL encoded characters (eg. <code>%20</code> for a blank space). If the given name is already in use by another child to the same parent an <code>InvalidActorNameException</code> is thrown.</p>
 
