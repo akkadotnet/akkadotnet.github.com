@@ -104,21 +104,10 @@
 						</button>
 
 						<!-- Search -->
-						<div style="width:200px">
-	                        <script>
-	                            (function () {
-	                                var cx = '008890940075640760838:ywajim4iapm';
-	                                var gcse = document.createElement('script');
-	                                gcse.type = 'text/javascript';
-	                                gcse.async = true;
-	                                gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-	                                    '//www.google.com/cse/cse.js?cx=' + cx;
-	                                var s = document.getElementsByTagName('script')[0];
-	                                s.parentNode.insertBefore(gcse, s);
-	                            })();
-	                        </script>
-	                        <gcse:searchbox></gcse:searchbox>
-	                    </div>
+						<form class="search" method="get" action="search.html">
+							<input type="text" class="form-control" name="s" value="" placeholder="Search">
+							<button class="fa fa-search"></button>
+						</form>
 						<!-- /Search -->
 
 						<!-- Top Nav -->
@@ -504,9 +493,7 @@
 
 						<!-- LEFT COLUMNS -->
 						<div class="col-md-9">
-							<div>
-								<gcse:searchresults></gcse:searchresults>
-							</div>
+
 							<div>
 								{{ content }}
 
@@ -524,7 +511,6 @@
 				                </script>
 				                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 				                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
 							</div>
 
 						</div>
