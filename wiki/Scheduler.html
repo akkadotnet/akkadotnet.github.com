@@ -15,8 +15,7 @@ used internally for scheduling things to happen at specific points in time.</p>
 (Action delegate).  You will get a <code>Task</code> back.
 By providing a <code>CancellationTokenSource</code> you can cancel the scheduled task.</p>
 
-<blockquote>
-<p><strong>warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 Scheduling timing is inexact.</p>
 </div>
 
@@ -35,8 +34,7 @@ Scheduling timing is inexact.</p>
 
 <p>The above example will schedule "someMessage" to be sent to "someActor" every 5 seconds.</p>
 
-<blockquote>
-<p><strong>warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 If you schedule a closure you should be extra careful
 to not pass or close over unstable references. In practice this means that you should
 not call methods on the enclosing Actor from within the closure.
