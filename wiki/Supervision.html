@@ -19,8 +19,7 @@ It is important to always view an actor as part of a supervision hierarchy, whic
 
 <p>Akka implements a specific form called “parental supervision”. Actors can only be created by other actors—where the top-level actor is provided by the library—and each created actor is supervised by its parent. This restriction makes the formation of actor supervision hierarchies implicit and encourages sound design decisions. It should be noted that this also guarantees that actors cannot be orphaned or attached to supervisors from the outside, which might otherwise catch them unawares. In addition, this yields a natural and clean shutdown procedure for (sub-trees of) actor applications.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 Supervision related parent-child communication happens by special system messages that have their own <br>
 mailboxes separate from user messages. This implies that supervision related events are not deterministically <br>
 ordered relative to ordinary messages. In general, the user cannot influence the order of normal messages and <br>
@@ -73,8 +72,7 @@ failure notifications. For details and example see the Discussion: Message Order
 </ol><h2>
 <a name="user-content-what-lifecycle-monitoring-means" class="anchor" href="#what-lifecycle-monitoring-means" aria-hidden="true"><span class="octicon octicon-link"></span></a>What Lifecycle Monitoring Means</h2>
 
-<blockquote>
-<p><strong>Note</strong><br>
+<div class="alert alert-info"><p><strong>Note</strong><br>
 Lifecycle Monitoring in Akka is usually referred to as <code>DeathWatch</code></p>
 </div>
 

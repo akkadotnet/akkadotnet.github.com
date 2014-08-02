@@ -81,8 +81,7 @@ public void preStart() {
 
 <p>An actor restart replaces only the actual actor object; the contents of the mailbox is unaffected by the restart, so processing of messages will resume after the postRestart hook returns. The message that triggered the exception will not be received again. Any message sent to an actor while it is being restarted will be queued to its mailbox as usual.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 Be aware that the ordering of failure notifications relative to user messages is not deterministic. In particular, a parent might restart its child before it has processed the last messages sent by the child before the failure. See Discussion: Message Ordering for details.</p>
 </div>
 

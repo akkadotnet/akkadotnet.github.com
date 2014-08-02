@@ -12,8 +12,7 @@ layout: default
   <span class="n">Props</span> <span class="n">props3</span> <span class="p">=</span> <span class="n">Props</span><span class="p">.</span><span class="n">Create</span><span class="p">&lt;</span><span class="n">MyActor</span><span class="p">&gt;();</span>
 </pre></div>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 In the second line, using <code>new</code>; Do note that the arguments passed in will be evaluated <em>once</em>, when the <code><a href="/wiki/Props">^Props</a></code> are created. 
 This is because the arguments can be passed to remote systems for <a href="/wiki/Remote%20deploy">remote deployment</a>.
 The behavior is somewhat odd since a lambda containing a <code>new</code> statement generally evaluate the entire expression every time it is invoked.</p>

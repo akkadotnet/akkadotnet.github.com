@@ -63,8 +63,7 @@ If you want to verify that your messages are serializable you can enable the fol
 }
 </code></pre>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 We only recommend using the config option turned on when you're running tests. It is completely pointless to have it turned on in other scenarios.</p>
 </div>
 
@@ -77,8 +76,7 @@ We only recommend using the config option turned on when you're running tests. I
 }`
 </code></pre>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 We only recommend using the config option turned on when you're running tests. It is completely pointless to have it turned on in other scenarios.</p>
 </div>
 
@@ -219,8 +217,7 @@ public class ExternalAddressExample {
 }
 </code></pre>
 
-<blockquote>
-<p><strong>Note</strong><br><code>ActorPath.ToSerializationFormatWithAddress</code> differs from <code>ToString</code> if the address does not already have host and port components, i.e. it only inserts address information for local addresses.</p>
+<div class="alert alert-info"><p><strong>Note</strong><br><code>ActorPath.ToSerializationFormatWithAddress</code> differs from <code>ToString</code> if the address does not already have host and port components, i.e. it only inserts address information for local addresses.</p>
 </div>
 
 <p><code>ToSerializationFormatWithAddress</code> also adds the unique id of the actor, which will change when the actor is stopped and then created again with the same name. Sending messages to a reference pointing the old actor will not be delivered to the new actor. If you do not want this behavior, e.g. in case of long term storage of the reference, you can use <code>ToStringWithAddress</code>, which does not include the unique id.</p>

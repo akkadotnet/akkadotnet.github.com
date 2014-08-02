@@ -7,8 +7,7 @@ layout: default
 <h2>
 <a name="user-content-creating-actors" class="anchor" href="#creating-actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Actors</h2>
 
-<blockquote>
-<p><strong>Note</strong><br>
+<div class="alert alert-info"><p><strong>Note</strong><br>
 Since Akka.NET enforces parental supervision every actor is supervised and (potentially) the supervisor of its children, it is advisable that you familiarize yourself with <a href="/wiki/Actor%20Systems">Actor Systems</a> and <a href="/wiki/Supervision">Supervision and Monitoring</a> and it may also help to read <a href="/wiki/Addressing">Actor References, Paths and Addresses</a>.</p>
 </div>
 
@@ -192,8 +191,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 
 <p>An example demonstrating remote actor look-up is given in Remoting Sample.</p>
 
-<blockquote>
-<p><strong>Note</strong><br>
+<div class="alert alert-info"><p><strong>Note</strong><br>
 actorFor is deprecated in favor of actorSelection because actor references acquired with actorFor behave differently for local and remote actors. In the case of a local actor reference, the named actor needs to exist before the lookup, or else the acquired reference will be an EmptyLocalActorRef. This will be true even if an actor with that exact path is created after acquiring the actor reference. For remote actor references acquired with actorFor the behaviour is different and sending messages to such a reference will under the hood look up the actor by path on the remote system for every message send.</p>
 </div>
 
@@ -232,8 +230,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 ask sends a message asynchronously and returns a Future representing a possible reply.
 Message ordering is guaranteed on a per-sender basis.</p>
 
-<blockquote>
-<p><strong>Note</strong><br>
+<div class="alert alert-info"><p><strong>Note</strong><br>
 There are performance implications of using ask since something needs to keep track of when it times out, there needs to be something that bridges a Promise into an ActorRef and it also needs to be reachable through remoting. So always prefer tell for performance, and only ask if you must.</p>
 </div>
 
@@ -289,8 +286,7 @@ There are performance implications of using ask since something needs to keep tr
 
 <p>Using ask will send a message to the receiving Actor as with tell, and the receiving actor must reply with getSender().tell(reply, getSelf()) in order to complete the returned Future with a value. The ask operation involves creating an internal actor for handling this reply, which needs to have a timeout after which it is destroyed in order not to leak resources; see more below.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 To complete the future with an exception you need send a Failure message to the sender. This is not done automatically when an actor throws an exception while processing a message.</p>
 </div>
 
@@ -309,8 +305,7 @@ To complete the future with an exception you need send a Failure message to the 
 
 <p>The onComplete, onSuccess, or onFailure methods of the Future can be used to register a callback to get a notification when the Future completes. Gives you a way to avoid blocking.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 When using future callbacks, inside actors you need to carefully avoid closing over the containing actor’s reference, i.e. do not call methods or access mutable state on the enclosing actor from within the callback. This would break the actor encapsulation and may introduce synchronization bugs and race conditions because the callback will be scheduled concurrently to the enclosing actor. Unfortunately there is not yet a way to detect these illegal accesses at compile time. See also: Actors and shared mutable state</p>
 </div>
 
@@ -382,8 +377,7 @@ When using future callbacks, inside actors you need to carefully avoid closing o
 <span class="p">}</span>
 </pre></div>
 
-<blockquote>
-<p><strong>Note</strong><br>
+<div class="alert alert-info"><p><strong>Note</strong><br>
 Since stopping an actor is asynchronous, you cannot immediately reuse the name of the child you just stopped; this will result in an InvalidActorNameException. Instead, watch the terminating actor and create its replacement in response to the Terminated message which will eventually arrive.</p>
 </div>
 
@@ -448,8 +442,7 @@ Since stopping an actor is asynchronous, you cannot immediately reuse the name o
 
 <p>In the above example a custom Manager.SHUTDOWN message is sent to the target actor to initiate the process of stopping the actor. You can use PoisonPill for this, but then you have limited possibilities to perform interactions with other actors before stopping the target actor. Simple cleanup tasks can be handled in postStop.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 Keep in mind that an actor stopping and its name being deregistered are separate events which happen asynchronously from each other. Therefore it may be that you will find the name still in use after gracefulStop() returned. In order to guarantee proper deregistration, only reuse names from within a supervisor you control and only in response to a Terminated message, i.e. not for top-level actors.</p>
 </div>
 
@@ -461,8 +454,7 @@ Keep in mind that an actor stopping and its name being deregistered are separate
 
 <p>Akka supports hotswapping the Actor’s message loop (e.g. its implementation) at runtime. Use the getContext().become method from within the Actor. The hotswapped code is kept in a Stack which can be pushed (replacing or adding at the top) and popped.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 Please note that the actor will revert to its original behavior when restarted by its Supervisor.</p>
 </div>
 
@@ -650,8 +642,7 @@ Please note that the actor will revert to its original behavior when restarted b
 
 <p>If the actor may receive messages before it has been initialized, a useful tool can be the Stash to save messages until the initialization finishes, and replaying them after the actor became initialized.</p>
 
-<blockquote>
-<p><strong>Warning</strong><br>
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
 This pattern should be used with care, and applied only when none of the patterns above are applicable. One of the potential issues is that messages might be lost when sent to remote actors. Also, publishing an ActorRef in an uninitialized state might lead to the condition that it receives a user message before the initialization has been done.</p>
 </div>
     
