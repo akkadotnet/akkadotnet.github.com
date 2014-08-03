@@ -10,7 +10,8 @@ layout: master
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/index.html">Home</a></li>
-							<li class="active">Wiki</li>
+							<li><a href="/wiki/index.html">Wiki</a></li>
+							<li class="active">{% if page.title %} {{ page.title }} | {% endif %} {{ site.name }}</li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
