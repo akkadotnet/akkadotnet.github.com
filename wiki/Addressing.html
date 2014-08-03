@@ -151,7 +151,7 @@ What the above sections described in some detail can be summarized and memorized
 
 <p>When an actor creates a child, the actor system’s deployer will decide whether the new actor resides in the same CLR or on another node. In the second case, creation of the actor will be triggered via a network connection to happen in a different CLR and consequently within a different actor system. The remote system will place the new actor below a special path reserved for this purpose and the supervisor of the new actor will be a remote actor reference (representing that actor which triggered its creation). In this case, context.parent (the supervisor reference) and context.path.parent (the parent node in the actor’s path) do not represent the same actor. However, looking up the child’s name within the supervisor will find it on the remote node, preserving logical structure e.g. when sending to an unresolved actor reference.</p>
 
-<p><img class="img-responsive appear-animation" data-animation="fadeInUp" src="/wiki/images/RemoteDeployment.png"></p>
+<p><img class="img-responsive appear-animation" data-animation="fadeInUp" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/RemoteDeployment.png" alt="Remote Deployment"></p>
 
 <h2>
 <a name="user-content-what-is-the-address-part-used-for" class="anchor" href="#what-is-the-address-part-used-for" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is the Address part used for?</h2>
