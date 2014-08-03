@@ -419,6 +419,7 @@ a.social								{
 		 -o-transition: all 0.2s;
 			transition: all 0.2s;
 }
+a.social.fa-stack-overflow:hover		{ background:#f0f0f0!important; color:#fff!important; }
 a.social.fa-twitter:hover				{ background:#41b7d8!important; color:#fff!important; }
 a.social.fa-facebook:hover 				{ background:#3b5997!important; color:#fff!important; }
 a.social.fa-google-plus:hover 			{ background:#d64937!important; color:#fff!important; }
