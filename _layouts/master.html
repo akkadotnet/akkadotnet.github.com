@@ -209,7 +209,7 @@
 						<!-- col #3 -->
 						<div class="spaced col-md-3 col-sm-4">
 							<h4>Recent <strong>Tweets</strong></h4>
-							<ul class="list-unstyled fsize13">
+							<ul class="list-unstyled fsize13" id="recent_tweets">
 								<li>
 									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Pilsum dolor lorem sit consectetur adipiscing orem sequat <small class="ago">8 mins ago</small>
 								</li>
@@ -302,7 +302,7 @@
 				});
 
 
-				
+
 		      $.getJSON("http://cdn.syndication.twimg.com/widgets/timelines/495982116597796864?dnt=true&domain=unquietcode.com&lang=en&callback=?", function(data) {
 		        var tweets = $(data.body).find('li.tweet');
 		        Tweets = [];
@@ -320,6 +320,19 @@
 		          Tweets.push(tweet);
 		      }
 		          console.info(Tweets);
+
+
+				var tweetsContainer = $('#recent_tweets')
+				$.each(Tweets, function(i)
+				{
+				    var li = $('<li/>')
+				        .appendTo(tweetsContainer);
+				    var aaa = $('<span/>')
+				        .text(Tweets[i].text)
+				        .appendTo(li);
+				});
+
+
 		      });
 		    });
 		</script>
