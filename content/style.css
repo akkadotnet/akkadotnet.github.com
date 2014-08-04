@@ -222,14 +222,23 @@ code a {
 }
 
 #toc .toc-h2 {
-    padding-left: 10px;
-}
-
-#toc .toc-h3 {
     padding-left: 20px;
 }
 
+#toc .toc-h3 {
+    padding-left: 40px;
+}
+
+#toc .toc-h4 {
+    padding-left: 60px;
+}
+
+#toc .toc-h5 {
+    padding-left: 80px;
+}
+
+
 #toc .toc-active {
-    background: #336699;
+    background: #f0f0f0;
     box-shadow: inset -5px 0px 10px -5px #000;
 }
