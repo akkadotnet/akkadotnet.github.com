@@ -315,8 +315,8 @@
 				        .appendTo(li);
 
 				    $('<a/>')
-				    	.attr('href',Tweets[i].authorUserName)
-				    	.text(' @' + Tweets[i].authorUserName + " ")
+				    	.attr('href', 'https://twitter.com/' + Tweets[i].authorUserName)
+				    	.html('<strong>@' + Tweets[i].authorUserName + " </strong>")
 				        .appendTo(li);
 
 				    $('<span/>')
