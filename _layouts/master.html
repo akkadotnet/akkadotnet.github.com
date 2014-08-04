@@ -310,12 +310,15 @@
 				{
 				    var li = $('<li/>')
 				        .appendTo(tweetsContainer);
+
 					$('<i class="fa fa-twitter"/>')
 				        .appendTo(li);
+
 				    $('<a/>')
-				    	.attr('href',)
+				    	.attr('href')
 				        .html(Tweets[i].authorUserName)
 				        .appendTo(li);
+
 				    $('<span/>')
 				        .html(Tweets[i].text)
 				        .appendTo(li);
