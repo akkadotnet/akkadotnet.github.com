@@ -264,7 +264,7 @@
 		<script>
 			$(function() {
 				$('#toc').toc({
-					'listType': '<ul class="collapse in" />',
+					'listType': '<ul class="side-nav list-group" />',
 				    'selectors': 'h1,h2,h3', //elements to use as headings
 				    'container': '#main_content', //element to find all selectors in
 	//			    'smoothScrolling': true, //enable or disable smooth scrolling on click
@@ -279,7 +279,7 @@
 				        return $heading.text();
 				    },
 					'itemClass': function(i, heading, $heading, prefix) { // custom function for item class
-					  return "toc-" + $heading[0].tagName.toLowerCase();
+					  return "list-group-item toc-" + $heading[0].tagName.toLowerCase();
 					}
 				});
 
