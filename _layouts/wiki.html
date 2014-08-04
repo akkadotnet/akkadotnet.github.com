@@ -33,12 +33,19 @@ layout: master
 
 						<!-- RIGHT COLUMNS -->
 						<div class="col-md-3" >	
-							<div id ="toc">
+							<h4>Categories</h4>
 							<ul class="side-nav list-group">
 
-								<li class="list-group-item list-toggle">   <!-- NOTE: "active" to be open on page load -->                
-									<a data-toggle="collapse" data-parent="#sidebar-nav" href="#collapse-1">Content</a>
-									
+								<li class="list-group-item list-toggle toc-active">   <!-- NOTE: "active" to be open on page load -->                
+									<a data-toggle="collapse" data-parent="#sidebar-nav" href="#collapse-1">Pages</a>
+									<ul id="collapse-1" class="collapse in"><!-- NOTE: "collapse in" to be open on page load -->
+										<li class=""><a href="page-full.html"><i class="fa fa-angle-right"></i> Full Width</a></li>
+										<li class="active">
+											<span class="badge">New</span>
+											<a href="page-left-sidebar.html"><i class="fa fa-angle-right"></i> Left Sidebar</a>
+										</li>
+										<li><a href="page-right-sidebar.html"><i class="fa fa-angle-right"></i> Right Sidebar</a></li>
+									</ul>
 								</li>
 
 								<li class="list-group-item"><a href="#">Category #1</a></li>
