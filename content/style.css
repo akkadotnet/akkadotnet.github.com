@@ -203,23 +203,24 @@ code a {
 
 
 
-#toc {
+
+/*#toc {
 
 }
 
-#toc ul {
+toc ul {
     margin: 0;
     padding: 0;
     list-style: none;
-}
+}*/
 
-#toc li {
+/*#toc li {
     padding: 5px 10px;
 }
 
 #toc a {
     display: block;
-}
+}*/
 
 #toc .toc-h1 {
     padding-left: 0px;
