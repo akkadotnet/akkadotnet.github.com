@@ -139,7 +139,7 @@ $.fn.toc = function(options) {
 
       ul.append(li);
     });
-    el.html(ul);
+    el.append(ul);
   });
 };
 

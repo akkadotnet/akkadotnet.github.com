@@ -223,7 +223,6 @@ code a {
 
 #toc .toc-h1 {
     padding-left: 0px;
-    font-weight: bold;
 }
 
 #toc .toc-h2 {
@@ -232,14 +231,6 @@ code a {
 
 #toc .toc-h3 {
     padding-left: 40px;
-}
-
-#toc .toc-h4 {
-    padding-left: 60px;
-}
-
-#toc .toc-h5 {
-    padding-left: 80px;
 }
 
 
