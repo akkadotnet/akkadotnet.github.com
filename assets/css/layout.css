@@ -150,6 +150,10 @@ textarea, select {
 		margin-top:-30px; /* wrapper margin */
 	}
 
+	body.boxed #header.sticky.affix #topNav.translucent {
+		margin-top:30px !important;
+	}
+
 @media only screen and (max-width: 768px) {
 	body.boxed #topBar,
 	body.boxed #wrapper {
@@ -608,6 +612,14 @@ section.brands {
 	}
 }
 
+/* bootstrap IE fix */
+.img-responsive, 
+.thumbnail>img, 
+.thumbnail a>img, 
+.carousel-inner>.item>img, 
+.carousel-inner>.item>a>img {
+	width:inherit;
+}
 
 
 /**	Maps
@@ -960,6 +972,9 @@ section.brands {
 	line-height:18px;
 	color:#fff;
 }
+	.box-content.thumbnail img {
+		width:100%; /* IE fix */
+	}
 .box-content.thumbnail  h3 span {
 	display:inline-block;
 	background-color:rgba(0,0,0,0.8);
