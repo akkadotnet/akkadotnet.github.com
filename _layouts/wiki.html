@@ -62,10 +62,8 @@ layout: master
 						<!-- /LEFT COLUMNS -->
 
 						<!-- RIGHT COLUMNS -->
-						<div class="col-md-3">
+						<div class="col-md-3" id="toc">
 
-							{% include Sidebar.html %}
-							
 						</div>
 						<!-- /RIGHT COLUMNS -->
 
@@ -74,3 +72,7 @@ layout: master
 				</div>
 			</section>
 			<!-- /CONTENT -->
+
+<script>
+	$('#toc').toc();
+</script
