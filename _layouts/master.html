@@ -106,7 +106,7 @@
 
 						<!-- Search -->
 						<form class="search" method="get" action="/search.html">
-							<input type="text" class="form-control" name="s" value="" placeholder="Search">
+							<input type="text" class="form-control" name="q" value="" placeholder="Search">
 							<button class="fa fa-search"></button>
 						</form>
 						<!-- /Search -->
@@ -125,13 +125,14 @@
 										<a href="#">HOME</a>
 									</li>
 								-->
+								{% assign current = page.url | downcase | split: '/' %}
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/index.html">
 											HOME <span>welcome</span>
 										</a>
 									</li>
-									<li class="mega-menu">
+									<li class="mega-menu{% if current[1] == 'wiki' %} active{% endif %}">										
 										<a href="/wiki/index.html">DOCUMENTATION <span>Wiki</span></a>
 									</li>
 									<li class="mega-menu">
