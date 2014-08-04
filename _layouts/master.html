@@ -264,8 +264,8 @@
 		<script>
 			$(function() {
 				$('#toc').toc({
-					'listType': '<ul class="list-icon angle-right" />',
-				    'selectors': 'h1,h2,h3', //elements to use as headings
+					'listType': '<ul class="side-nav list-group" />',
+				    'selectors': 'h1,h2,h3,h4', //elements to use as headings
 				    'container': '#main_content', //element to find all selectors in
 	//			    'smoothScrolling': true, //enable or disable smooth scrolling on click
 	//			    'prefix': 'toc', //prefix for anchor tags and class names
@@ -278,9 +278,9 @@
 				    'headerText': function(i, heading, $heading) { //custom function building the header-item text
 				        return $heading.text();
 				    }
-	//			'itemClass': function(i, heading, $heading, prefix) { // custom function for item class
-	//			  return $heading[0].tagName.toLowerCase();
-	//			}
+				'itemClass': function(i, heading, $heading, prefix) { // custom function for item class
+				  return "list-group-item";
+				}
 				});
 
 
