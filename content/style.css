@@ -221,8 +221,14 @@ code a {
     display: block;
 }
 
+#toc .toc-h1 {
+    padding-left: 0px;
+    font-weight: bold;
+}
+
 #toc .toc-h2 {
     padding-left: 20px;
+    font-weight: bold;
 }
 
 #toc .toc-h3 {
