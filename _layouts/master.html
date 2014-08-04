@@ -299,7 +299,7 @@
 		          tweet.text = $.trim(cur.find("p.e-entry-title").html());
 		 
 		          Tweets.push(tweet);
-		          if (i>3)
+		          if (i>=3)
 		          	break;
 		      }
 		          console.info(Tweets);
@@ -310,6 +310,12 @@
 				{
 				    var li = $('<li/>')
 				        .appendTo(tweetsContainer);
+					var aaa = $('<i class="fa fa-twitter"/>')
+				        .appendTo(li);
+				    var aaa = $('<a/>')
+				    	.attr('href',)
+				        .html(Tweets[i].authorUserName)
+				        .appendTo(li);
 				    var aaa = $('<span/>')
 				        .html(Tweets[i].text)
 				        .appendTo(li);
