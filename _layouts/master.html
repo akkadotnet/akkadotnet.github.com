@@ -127,7 +127,7 @@
 									</li>
 								-->
 								{% assign current = page.url | downcase | split: '/' %}
-								<!-- isnil {{ "fooo" }} -->
+								<!-- isnil {{ page.url }} -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu{% if current[1].nil? %} active{% endif %}">
 										<a href="/">
