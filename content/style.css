@@ -28,7 +28,7 @@ span.fsi { color:#808080; }
 
 /* omitted */
 span.omitted {
-	background:#3c4e52;
+	background:#4c5e62;
   	border-radius:5px;
 	color:#808080;
 	padding:0px 0px 1px 0px;
@@ -36,41 +36,44 @@ span.omitted {
 /* tool tip */
 div.tip {
 	background:#475b5f;
-  border-radius:4px;
-  font:11pt 'Droid Sans', arial, sans-serif;
+	border-radius:4px;
+	font:11pt 'Droid Sans', arial, sans-serif;
 	padding:6px 8px 6px 8px;
 	display:none;
-  color:#d1d1d1;
+	color:#d1d1d1;
+}
+div.highlight {
+	border: 0px;
 }
 div.highlight pre {
-  padding:0px;
-  margin:0px;
-  border:none;
+	padding:0px;
+	margin:0px;
+	border: 0px;
 }
 div.highlight, pre.fssnip, pre {
-  line-height:13pt;
-  border:1px solid #d8d8d8;
-  border-collapse:separate;
-  white-space:pre;
-  font: 9pt 'Droid Sans Mono',consolas,monospace;
-  margin:10px 20px 20px 20px;
-  background-color:#212d30;
-  padding:10px;
-  border-radius:5px;
-  color:#d1d1d1;
-  margin-left:0px;
-  margin-right:0px;
+	line-height:13pt;
+	border:1px solid #d8d8d8;
+	border-collapse:separate;
+	white-space:pre;
+	font: 9pt 'Droid Sans Mono',consolas,monospace;
+	margin:10px 20px 20px 20px;
+	background-color:#212d30;
+	padding:10px;
+	border-radius:5px;
+	color:#d1d1d1;
+	margin-left:0px;
+	margin-right:0px;
 }
 div.highlight pre {
-  padding:0px;
-  margin:0px;
-  border-radius:0px;
-  width: 100%;
+	padding:0px;
+	margin:0px;
+	border-radius:0px;
+	width: 100%;
 }
 div.highlight td {
-  padding:0px;
-  white-space:normal;
-  margin:0px;
+	padding:0px;
+	white-space:normal;
+	margin:0px;
 }
 
 /*--------------------------------------------------------------------------
