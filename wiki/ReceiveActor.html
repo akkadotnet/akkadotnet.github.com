@@ -3,5 +3,313 @@ layout: wiki
 title: ReceiveActor
 ---
 
-      <p>yadda yadda receive actor</p>
+      <h2>
+<a name="user-content-using-receive" class="anchor" href="#using-receive" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using Receive</h2>
+
+<h3>
+<a name="user-content-inherit-from-receiveactor" class="anchor" href="#inherit-from-receiveactor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inherit from ReceiveActor</h3>
+
+<p>In order to use the <code>Receive()</code> method inside an actor the actor must inherit from <code><a href="/wiki/ReceiveActor">^ReceiveActor</a></code>.</p>
+
+<div class="highlight highlight-c#"><pre><span class="k">private</span> <span class="k">class</span> <span class="nc">MyActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Inside the constructor, add a call to <code>Receive&lt;T&gt;(Action&lt;T&gt; handler)</code> for every type of message you want to handle:</p>
+
+<div class="highlight highlight-c#"><pre><span class="k">private</span> <span class="k">class</span> <span class="nc">MyActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">MyActor</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">));</span> <span class="c1">//1</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received integer: "</span> <span class="p">+</span> <span class="n">i</span><span class="p">));</span>   <span class="c1">//2</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Whenever a message of typ <code>string</code> is sent to <strong>MyActor</strong> the first handler is invoked and for messages of type <code>int</code> the second handler is used.</p>
+
+<h3>
+<a name="user-content-handler-priority" class="anchor" href="#handler-priority" aria-hidden="true"><span class="octicon octicon-link"></span></a>Handler priority</h3>
+
+<p>If more than one handler matches, the one that appears first is used, and the others are not called.</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="p">)</span><span class="n">s</span><span class="p">);</span>      <span class="c1">//1</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Also received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">));</span> <span class="c1">//2</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received object: "</span> <span class="p">+</span> <span class="n">o</span><span class="p">));</span>      <span class="c1">//3</span>
+</pre></div>
+
+<p><strong>Example</strong>: The actor receives a message of type <code>string</code>. Only the first handler is invoked, even though all three handlers can handle that message.</p>
+
+<h3>
+<a name="user-content-using-predicates" class="anchor" href="#using-predicates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using predicates</h3>
+
+<p>By specifying a predicate, you can choose which messages to handle.</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">);</span>
+</pre></div>
+
+<p>The handler above will only be invoked if the length of the string is greater than 20.</p>
+
+<p>If the predicate do not match, the next matching handler will be used.</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"1: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">));</span>    <span class="c1">//1</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">2</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"2: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">));</span>    <span class="c1">//2</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"3: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">));</span>                     <span class="c1">//3</span>
+</pre></div>
+
+<p><strong>Example</strong>: The actor receives the message "123456". Since the length of is 6, the predicate specified for the first handler will return true, and the first handler will be invoked resulting in "1: 123456" being written to the console.</p>
+
+<div class="alert alert-default"><p><strong>Note</strong><br> that even though the predicate for the second handler matches, and that the third handler matches all messages of type <code>string</code> only the first handler is invoked.</p>
+</div>
+
+<p><strong>Example</strong>: If the actor receives the message "1234", then "2: 1234" will be written to the console.</p>
+
+<p><strong>Example</strong>: If the actor receives the message "12", then "3: 12" will be written on the console.</p>
+
+<h4>
+<a name="user-content-predicates-position" class="anchor" href="#predicates-position" aria-hidden="true"><span class="octicon octicon-link"></span></a>Predicates position</h4>
+
+<p>Predicates can be specified <em>before</em> the action handler or <em>after</em>. These two declarations are equivalent:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">));</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">));</span>
+</pre></div>
+
+<h3>
+<a name="user-content-receive-using-funcs" class="anchor" href="#receive-using-funcs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Receive using Funcs</h3>
+
+<p>More complex handlers can be specified using the <code>Receive&lt;T&gt;(Func&lt;T,bool&gt; handler)</code> overload. These are invoked if the message is of the specified type. If the func returns <code>true</code>, the message is considered handled, and no more handlers will be invoked.</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> 
+  <span class="p">{</span> 
+    <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"1: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+  <span class="p">});</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"2: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">);</span>
+</pre></div>
+
+<p><strong>Example</strong>: The actor receives the message "123". Since it's a <code>string</code>, the first handler is invoked. The length is only 3 so the if clause will be false and <code>false</code> is returned. Since <code>false</code> was returned the next matching handler will be invoked, and "2: 123" will be written to the console.
+<strong>Example</strong>: The actor receives the message "123456". Since it's a <code>string</code>, the first handler is invoked. The length is greater than 5 so the if body will be called, and "1: 123456" will be written to the console. The handler returns <code>true</code> and therefore no more handlers will be invoked.</p>
+
+<h3>
+<a name="user-content-unmatched-messages" class="anchor" href="#unmatched-messages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Unmatched messages</h3>
+
+<p>If the actor receives a message for which no handler matches, the unhandled message is published to the <code><a href="/wiki/EventStream">^EventStream</a></code> wrapped in an <code>UnhandledMessage</code>. To change this behavior override <code>Unhandled(object message)</code></p>
+
+<div class="highlight highlight-c#"><pre><span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Unhandled</span><span class="p">(</span><span class="kt">object</span> <span class="n">message</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">//Do something with the message.</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Another option is to add a handler last that matches all messages, using <code>ReceiveAny()</code>.</p>
+
+<h3>
+<a name="user-content-receiveany" class="anchor" href="#receiveany" aria-hidden="true"><span class="octicon octicon-link"></span></a>ReceiveAny</h3>
+
+<p>To catch messages of any type the <code>ReceiveAny(Action&lt;object&gt; handler)</code> overload can be specified.</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">);</span>
+<span class="n">ReceiveAny</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received object: "</span> <span class="p">+</span> <span class="n">o</span><span class="p">);</span>
+</pre></div>
+
+<p>Since it handles everything, it must be specified last. Specifying handlers it after will cause an exception.</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">ReceiveAny</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received object: "</span> <span class="p">+</span> <span class="n">o</span><span class="p">);</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received string: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">);</span>  <span class="c1">//This will cause an exception</span>
+</pre></div>
+
+<div class="alert alert-default"><p><strong>Note</strong><br> that <code>Receive&lt;object&gt;(Action&lt;object&gt; handler)</code> behaves the same as <code>ReceiveAny()</code> as it catches all messages. These two are equivalent:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">ReceiveAny</span><span class="p">(</span><span class="n">o</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received object: "</span> <span class="p">+</span> <span class="n">o</span><span class="p">);</span>
+<span class="n">Receive</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;(</span><span class="m">0</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Received object: "</span> <span class="p">+</span> <span class="n">o</span><span class="p">);</span> 
+</pre></div>
+</div>
+
+<h3>
+<a name="user-content-non-generic-overloads" class="anchor" href="#non-generic-overloads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Non generic overloads</h3>
+
+<p><code>Receive</code> has non generic overloads:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">),</span> <span class="n">obj</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">ToString</span><span class="p">())</span> <span class="p">);</span>
+</pre></div>
+
+<p>Predicates can go before or after the handler:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">),</span> <span class="n">obj</span><span class="p">=&gt;</span> <span class="p">((</span><span class="kt">string</span><span class="p">)</span> <span class="n">obj</span><span class="p">).</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">,</span> <span class="n">obj</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">ToString</span><span class="p">())</span> <span class="p">);</span>
+<span class="n">Receive</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">),</span> <span class="n">obj</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">ToString</span><span class="p">()),</span> <span class="n">obj</span><span class="p">=&gt;</span> <span class="p">((</span><span class="kt">string</span><span class="p">)</span> <span class="n">obj</span><span class="p">).</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span> <span class="p">);</span>
+</pre></div>
+
+<p>And the non generic Func</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="kt">string</span><span class="p">),</span> <span class="n">obj</span> <span class="p">=&gt;</span> 
+  <span class="p">{</span> 
+    <span class="kt">var</span> <span class="n">s</span> <span class="p">=</span> <span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="n">obj</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">Length</span><span class="p">&gt;</span><span class="m">5</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"1: "</span> <span class="p">+</span> <span class="n">s</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+  <span class="p">});</span>
+</pre></div>
+
+<h3>
+<a name="user-content-become" class="anchor" href="#become" aria-hidden="true"><span class="octicon octicon-link"></span></a>Become</h3>
+
+<p>You can switch the handler at runtime using <code>Become()</code> which replaces the current handler with a new one.</p>
+
+<div class="highlight highlight-c#"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">MoodActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">MoodActor</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm neutral"</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Happy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Happy</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Angry"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Angry</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">Happy</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm happy"</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Happy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm already happy!"</span><span class="p">,</span> <span class="n">Self</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Angry"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Angry</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">Angry</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm angry"</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Angry"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm already angry!"</span><span class="p">,</span> <span class="n">Self</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Happy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Happy</span><span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Using MoodActor:</p>
+
+<div class="highlight highlight-c#"><pre><span class="kt">var</span> <span class="n">moodActor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">MoodActor</span><span class="p">&gt;();</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Mood?"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: "I'm neutral"</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Happy"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: becomes Happy</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Mood?"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: "I'm happy"</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Happy"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: "I'm already happy!"</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Angry"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: becomes Angry</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Mood?"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: "I'm Angry"</span>
+</pre></div>
+
+<p>You may use lambdas if you don't want separate methods:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Grumpy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(()</span> <span class="p">=&gt;</span>
+<span class="p">{</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Leave me alone. I'm Grumpy!"</span><span class="p">));</span>
+<span class="p">}));</span>
+</pre></div>
+
+<h3>
+<a name="user-content-becomeunbecome" class="anchor" href="#becomeunbecome" aria-hidden="true"><span class="octicon octicon-link"></span></a>Become/Unbecome</h3>
+
+<p>In the examples above the receive handlers are replaced when <code>Become()</code> is called. The other way of using <code>Become</code> pushes the current handler on a stack making it possible to switch back to it using <code>Unbecome</code>:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Grumpy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Grumpy</span><span class="p">,</span> <span class="n">discardOld</span><span class="p">:</span> <span class="k">false</span><span class="p">));</span>
+<span class="p">...</span>
+<span class="k">private</span> <span class="k">void</span> <span class="nf">Grumpy</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Snap out of it!"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Unbecome</span><span class="p">());</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm grumpy!"</span><span class="p">));</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Leave me alone. I'm Grumpy!"</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Using MoodActor:</p>
+
+<div class="highlight highlight-c#"><pre><span class="kt">var</span> <span class="n">moodActor</span> <span class="p">=</span> <span class="n">system</span><span class="p">.</span><span class="n">ActorOf</span><span class="p">&lt;</span><span class="n">MoodActor</span><span class="p">&gt;();</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Mood?"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>            <span class="c1">// Result: "I'm neutral"</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Grumpy"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>           <span class="c1">// Result: becomes Grumpy</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Mood?"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>            <span class="c1">// Result: "I'm Grumpy"</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Happy"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>            <span class="c1">// Result: "Leave me alone. I'm Grumpy!"</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Snap out of it!"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">// Result: reverts back to neutral using Unbecome</span>
+<span class="n">moodActor</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Mood?"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>            <span class="c1">// Result: "I'm neutral"</span>
+</pre></div>
+
+<div class="alert alert-default"><p><strong>Note</strong><br> In this case care must be taken to ensure that the number of <code>Unbecome()</code> matches the number of <code>Become(..., discardOld: false)</code> ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).</p>
+</div>
+
+<p>You can reuse Receive-specifications:</p>
+
+<div class="highlight highlight-c#"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">MoodActor</span> <span class="p">:</span> <span class="n">ReceiveActor</span>
+<span class="p">{</span>
+  <span class="k">public</span> <span class="nf">MoodActor</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm neutral"</span><span class="p">));</span>
+    <span class="n">ReceiveMoodSwitchers</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">Happy</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm happy"</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Happy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm already happy!"</span><span class="p">,</span> <span class="n">Self</span><span class="p">));</span>
+    <span class="n">ReceiveMoodSwitchers</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">Angry</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Mood?"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm angry"</span><span class="p">));</span> 
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Angry"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I'm already angry!"</span><span class="p">,</span> <span class="n">Self</span><span class="p">));</span>
+    <span class="n">ReceiveMoodSwitchers</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">Grumpy</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Snap out of it!"</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Unbecome</span><span class="p">());</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Leave me alone. I'm Grumpy!"</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="k">private</span> <span class="k">void</span> <span class="nf">ReceiveMoodSwitchers</span><span class="p">()</span>
+  <span class="p">{</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Happy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Happy</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Angry"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Angry</span><span class="p">));</span>
+    <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Grumpy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Grumpy</span><span class="p">,</span> <span class="n">discardOld</span><span class="p">:</span> <span class="k">false</span><span class="p">));</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<div class="alert alert-danger"><p><strong>Warning</strong><br>
+Do not add other statements than Receive in Become-declarations. The result of doing so is undefined.</p>
+</div>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Grumpy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> <span class="n">Become</span><span class="p">(</span><span class="n">Grumpy</span><span class="p">,</span> <span class="n">discardOld</span><span class="p">:</span> <span class="k">false</span><span class="p">));</span>
+<span class="p">...</span>
+<span class="k">private</span> <span class="k">void</span> <span class="nf">Grumpy</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">_state</span> <span class="p">=</span> <span class="n">State</span><span class="p">.</span><span class="n">Grumpy</span><span class="p">;</span>                      <span class="c1">//DO NOT do this</span>
+  <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I just became grumpy"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>  <span class="c1">//DO NOT do this</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Snap out of it!"</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Unbecome</span><span class="p">());</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Leave me alone. I'm Grumpy!"</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Any state changes or message sends should be in the handler:</p>
+
+<div class="highlight highlight-c#"><pre><span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Grumpy"</span><span class="p">,</span> <span class="n">_</span> <span class="p">=&gt;</span> 
+  <span class="p">{</span>
+    <span class="n">_state</span> <span class="p">=</span> <span class="n">State</span><span class="p">.</span><span class="n">Grumpy</span><span class="p">;</span>
+    <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"I just became grumpy"</span><span class="p">,</span> <span class="n">Self</span><span class="p">);</span>
+    <span class="n">Become</span><span class="p">(</span><span class="n">Grumpy</span><span class="p">,</span> <span class="n">discardOld</span><span class="p">:</span> <span class="k">false</span><span class="p">));</span>
+  <span class="p">});</span>
+<span class="p">...</span>
+<span class="k">private</span> <span class="k">void</span> <span class="nf">Grumpy</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">s</span> <span class="p">==</span> <span class="s">"Snap out of it!"</span><span class="p">,</span> <span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Unbecome</span><span class="p">());</span>
+  <span class="n">Receive</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;(</span><span class="n">s</span> <span class="p">=&gt;</span> <span class="n">Sender</span><span class="p">.</span><span class="n">Tell</span><span class="p">(</span><span class="s">"Leave me alone. I'm Grumpy!"</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3>
+<a name="user-content-actorbase-vs-receiveactor" class="anchor" href="#actorbase-vs-receiveactor" aria-hidden="true"><span class="octicon octicon-link"></span></a>ActorBase vs ReceiveActor</h3>
+
+<p>TODO</p>
     

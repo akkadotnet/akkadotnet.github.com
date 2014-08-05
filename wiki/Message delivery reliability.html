@@ -353,7 +353,7 @@ guaranteed delivery. </p>
 <a name="user-content-how-do-i-receive-dead-letters" class="anchor" href="#how-do-i-receive-dead-letters" aria-hidden="true"><span class="octicon octicon-link"></span></a>How do I Receive Dead Letters?</h3>
 
 <p>An actor can subscribe to class <code>Akka.Actor.DeadLetter</code> on the event
-stream, see <a class="internal present" href="/Event-Stream">event stream</a> for how to do that. The subscribed actor will then receive all dead
+stream, see <a class="internal absent" href="/event-stream">event stream</a> for how to do that. The subscribed actor will then receive all dead
 letters published in the (local) system from that point onwards. Dead letters
 are not propagated over the network, if you want to collect them in one place
 you will have to subscribe one actor per network node and forward them

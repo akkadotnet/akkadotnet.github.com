@@ -77,7 +77,7 @@ That definition does not hold for actorFor, which is one of the reasons why acto
 <h3>
 <a name="user-content-creating-actors" class="anchor" href="#creating-actors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating Actors</h3>
 
-<p>An actor system is typically started by creating actors beneath the guardian actor using the <code>ActorSystem.ActorOf</code> method and then using <code>ActorContext.ActorOf</code> from within the created actors to spawn the actor tree. These methods return a reference to the newly created actor. Each actor has direct access (through its <code>ActorContext</code>) to references for its parent, itself and its children. These references may be sent within messages to other actors, enabling those to reply directly.</p>
+<p>An actor system is typically started by creating actors beneath the guardian actor using the <code>ActorSystem.ActorOf</code> method and then using <code>ActorContext.ActorOf</code> from within the created actors to spawn the actor tree. These methods return a reference to the newly created actor. Each actor has direct access (through its <code><a href="/wiki/ActorContext">^ActorContext</a></code>) to references for its parent, itself and its children. These references may be sent within messages to other actors, enabling those to reply directly.</p>
 
 <h3>
 <a name="user-content-looking-up-actors-by-concrete-path" class="anchor" href="#looking-up-actors-by-concrete-path" aria-hidden="true"><span class="octicon octicon-link"></span></a>Looking up Actors by Concrete Path</h3>
