@@ -1,7 +1,7 @@
 /** ********************************************** **
 	@Author			Dorin Grigoras
 	@Website		www.stepofweb.com
-	@Last Update	Wednesday, June 18, 2014
+	@Last Update	Saturday, August 02, 2014
 
 	NOTE! 	Do not change anything here if you want to
 			be able to update in the future! Please use
@@ -10,40 +10,58 @@
 
 	TABLE CONTENTS
 	-------------------------------
-	01. Top Nav
-	02. Animate
-	03. Superslides
-	04. OWL Carousel
-	05. Popover
-	06. Lightbox
-	07. ScrollTo
-	08. Parallax
-	09. Masonry Filter
-	10. Toggle
-	11. Background Image
-	12. Global Search
-	13. Quick Cart
-	14. Placeholder
-	15. Word Rotate
-	16. Bottom Footer
-	17. Misc
-	18. Datepicker
-	19. Colorpicker
-	20. Bootstrap Slider
-	21. Contact Google Map
+		01. Top Nav
+		02. Animate
+		03. OWL Carousel
+		04. Popover
+		05. LightBox
+		06. ScrollTo
+		07. Parallax
+		08. Masonry Filter
+		09. Toggle
+		10. Background Image
+		11. Quick Cart
+		12. Placeholder
+		13. Word Rotate
+		14. Misc
+		15. Datepicker
+		16. Colorpicker
+		17. Contact Google Map
+		18. Newsletter Subscribe
 
-	AFTER RESIZE
-	COUNT TO
-	WAIT FOR IMAGES [used by masonry]
-	BROWSER DETECT
-	SMOOTHSCROLL
-	Datepicker
-	Colorpicker
-	Bootstrap Slider
-	Appear
-	Parallax
-	jQuery Easing
-	Backstretch
+	INLINE SCRIPTS
+	-------------------------------
+
+		COUNT TO
+			https://github.com/mhuggins/jquery-countTo
+
+		WAIT FOR IMAGES [used by masonry]
+			https://github.com/alexanderdickson/waitForImages
+
+		BROWSER DETECT
+
+		SMOOTHSCROLL V1.2.1
+
+		Datepicker v1.3.7
+			https://github.com/dangrossman/bootstrap-daterangepicker
+
+		Colorpicker v2.0
+			http://mjolnic.github.io/bootstrap-colorpicker/
+			
+		bootstrap-slider.js v3.0.0
+			https://github.com/seiyria/bootstrap-slider
+
+		Appear
+			https://github.com/bas2k/jquery.appear/
+			
+		Parallax
+			http://www.ianlunn.co.uk/plugins/jquery-parallax/
+
+		jQuery Easing v1.3
+			http://gsgd.co.uk/sandbox/jquery/easing/
+
+		Backstretch v2.0.4
+			http://srobbin.com/jquery-plugins/backstretch/
 *************************************************** **/
 
 	/* Init */
@@ -55,9 +73,10 @@
 /** Core
  **************************************************************** **/
 	function Epona() {
+		jQuery.browserDetect();
+
 		_topNav();
 		_animate();
-		_superslide();
 		_owl_carousel();
 		_popover();
 		_lightbox();
@@ -66,23 +85,22 @@
 		_masonry();
 		_toggle();
 		_bgimage();
-		_globalSearch();
 		_quickCart();
 		_placeholder();
 		_wrotate();
 		_misc();
 		_datepicker();
 		_colorpicker();
-		_bslider();
+		_newsletterSubscribe();
 
 		// Special Actions!
 		if(/(iPad|iPhone|iPod)/g.test( navigator.userAgent )) {
-			
+			window.navigator = 'apple';
+		} else {
+			window.navigator = null;
 		}
 
 		/* --- */
-		jQuery.browserDetect();
-
 		if(jQuery("html").hasClass("chrome") && jQuery("body").hasClass("smoothscroll")) {
 			jQuery.smoothScroll();
 		}
@@ -114,15 +132,25 @@
             jQuery(this).toggleClass("active");
         });
 
-		/** Sticky Header **/
-		jQuery('#header.sticky').affix({
-			offset: {
-				top: jQuery("#header").outerHeight(true)
-			},
-			bottom: function () {
-				return (this.bottom = jQuery('#footer').outerHeight(true))
-			  }
-		});
+		/** 
+			Sticky Header 
+			IE has strange bugs - we avoid sticky header on IE boxed version!
+		**/
+		if(jQuery('html').hasClass('ie') && jQuery('body').hasClass('boxed')) {} else {
+
+			jQuery('#header.sticky').affix({
+
+				offset: {
+					top: jQuery("#header").outerHeight(true)
+				},
+
+				bottom: function () {
+					return (this.bottom = jQuery('#footer').outerHeight(true))
+				}
+
+			});
+
+		}
 
 	}
 
@@ -179,8 +207,15 @@ function _topNav() {
 		e.stopPropagation();
 	});
 
-
+	// IE11 Bugfix
+	// Version 1.1
+	// Wednesday, July 23, 2014
+	if(jQuery("html").hasClass("ie") || jQuery("html").hasClass("ff3")) {
+		jQuery("#topNav ul.nav > li.mega-menu div").addClass('block');
+		jQuery("#topNav ul.nav > li.mega-menu div div").addClass('pull-left');
+	}
 }
+
 
 
 /** 02. Animate
@@ -204,7 +239,7 @@ function _animate() {
 					_t.addClass("animation-visible");
 				}, delay);
 
-			}, {accX: 0, accY: -150});
+			}, {accX: 0, accY: (window.navigator == 'apple') ? 0 : -150});
 
 		} else {
 
@@ -239,7 +274,7 @@ function _animate() {
 
 				}, _delay);
 
-			}, {accX: 0, accY: -150});
+			}, {accX: 0, accY: (window.navigator == 'apple') ? 0 : -150});
 
 		} else {
 
@@ -270,7 +305,7 @@ function _animate() {
 
 			}, _delay);
 
-		}, {accX: 0, accY: -50});
+		}, {accX: 0, accY: (window.navigator == 'apple') ? 0 : -50});
 
 	});
 
@@ -283,7 +318,7 @@ function _animate() {
 
 			$_t.countTo();
 
-		}, {accX:0, accY:-150});
+		}, {accX:0, accY: (window.navigator == 'apple') ? 0 : -100});
 
 	});
 
@@ -332,69 +367,7 @@ function _animate() {
 
 
 
-
-/** 03. Superslides
- **************************************************************** **/
-function _superslide() {
-
-	if(jQuery("#slider").length > 0) {
-
-		var data_autoplay 		= jQuery("#slider").attr('data-autoplay'),
-			data_mouseover_stop = jQuery("#slider").attr('data-mouseover-stop');
-
-			if(data_autoplay) {
-				if(data_autoplay == '') {
-					var data_autoplay = false;
-				} else {
-					var data_autoplay = parseInt(data_autoplay);
-				}
-			} else {
-				var data_autoplay = false;
-			}
-
-			if(!data_autoplay) {
-				data_mouseover_stop = false;
-			}
-
-		jQuery("#slider").superslides({
-			animation: "fade", 				// slide|fade
-			pagination: true, 				// true|false
-			play: data_autoplay,	 		// false to disable autoplay -OR- miliseconds (eg.: 1000 = 1s)
-			animation_speed: 600,			// animation transition
-
-			elements: {
-			  preserve: '.preserve',
-			  nav: '.slides-navigation',
-			  container: '.slides-container',
-			  pagination: '.slides-pagination'
-			}
-		});
-
-		if(data_mouseover_stop == 'true') {
-
-			// Stop on mouse over ! 
-			jQuery('#slider').on('mouseenter', function() {
-				jQuery(this).superslides('stop');
-				// console.log('Stopped')
-			});
-			jQuery('#slider').on('mouseleave', function() {
-				jQuery(this).superslides('start');
-				// console.log('_start')
-			});
-
-		}
-
-		jQuery(window).load(function () {
-			jQuery("#slider").css({"background":"none"});
-		});
-
-	}
-}
-
-
-
-
-/** 04. OWL Carousel
+/** 03. OWL Carousel
  **************************************************************** **/
 function _owl_carousel() {
 
@@ -549,7 +522,7 @@ function _owl_carousel() {
 
 
 
-/** 05. Popover
+/** 04. Popover
  **************************************************************** **/
 function _popover() {
 
@@ -616,8 +589,7 @@ function _popover() {
 
 
 
-
-/** 06. LightBox
+/** 05. LightBox
  **************************************************************** **/
 function _lightbox() {
 
@@ -686,7 +658,7 @@ function _lightbox() {
 
 
 
-/** 07. ScrollTo
+/** 06. ScrollTo
  **************************************************************** **/
 function _scrollTo() {
 
@@ -709,7 +681,7 @@ function _scrollTo() {
 
 
 
-/** 08. Parallax
+/** 07. Parallax
  **************************************************************** **/
 	function _parallax() {
 
@@ -742,7 +714,7 @@ function _scrollTo() {
 
 
 
-/** 09. Masonry Filter
+/** 08. Masonry Filter
  **************************************************************** **/
 function _masonry() {
 
@@ -818,8 +790,7 @@ function _masonry() {
 
 
 
-
-/** 10. Toggle
+/** 09. Toggle
  **************************************************************** **/
 function _toggle() {
 
@@ -870,8 +841,7 @@ function _toggle() {
 
 
 
-
-/** 11. Background Image
+/** 10. Background Image
 	class="boxed" should be added to body.
 	Add to body - example: data-background="assets/images/boxed_background/1.jpg"
  **************************************************************** **/
@@ -890,61 +860,7 @@ function _toggle() {
 
 
 
-
-/** 12. Global Search
- **************************************************************** **/
-	function _globalSearch() {
-
-		jQuery('li.search, li.search input').bind("click", function(e) {
-			e.stopPropagation();
-		});
-
-		jQuery('li.search input').bind("click", function() {
-			return false;
-		});
-
-		jQuery('li.search').bind("click", function() {
-
-			if(jQuery(this).hasClass('open')) {
-
-				disable_overlay();
-				enable_scroll();
-				jQuery(this).removeClass('open');
-
-			} else {
-
-				enable_overlay();
-				disable_scroll();
-				jQuery(this).addClass('open');
-				jQuery('li.quick-cart').removeClass('open'); // close quick cart
-
-			}
-
-		});
-
-		// 'esc' key
-		jQuery(document).keydown(function(e) {
-			var code = e.keyCode ? e.keyCode : e.which;
-			if(code == 27) {
-				jQuery('li.search, li.quick-cart').removeClass('open');
-				disable_overlay();
-				enable_scroll();
-			}
-		});
-
-		jQuery(document).bind("click", function() {
-			if(jQuery('li.search').hasClass('open')) {
-				jQuery('li.search, li.quick-cart').removeClass('open');
-				disable_overlay();
-				enable_scroll();
-			}
-		});
-
-	}
-
-
-
-/** 13. Quick Cart
+/** 11. Quick Cart
  **************************************************************** **/
 	function _quickCart() {
 
@@ -994,9 +910,7 @@ function _toggle() {
 
 
 
-
-
-/** 14. Placeholder
+/** 12. Placeholder
  **************************************************************** **/
 	function _placeholder() {
 
@@ -1027,7 +941,7 @@ function _toggle() {
 
 
 
-/** 15. Word Rotate
+/** 13. Word Rotate
  **************************************************************** **/
 	function _wrotate() {
 		jQuery(".word-rotator").each(function() {
@@ -1064,60 +978,7 @@ function _toggle() {
 
 
 
-
-
-/** 16. Bottom Footer
- **************************************************************** **/
-	if(!jQuery("body").hasClass("boxed")) {
-
-		jQuery(window).load(function() {
-
-				function _bottomFooter() {
-					jQuery("#footer").removeClass("bottom");
-
-					var _h 	= parseInt(jQuery(document).height()),
-						_wh	= parseInt(jQuery("#wrapper").height());
-
-
-					if(_h > _wh) {
-
-						jQuery("#footer").addClass("bottom");
-
-
-					} else {
-
-						jQuery("#footer").removeClass("bottom");
-
-					}
-
-				}	_bottomFooter();
-
-
-				// On Resize
-				jQuery(window).resize(function() {
-
-					if(window.afterResize) {
-						clearTimeout(window.afterResize);
-					}
-
-					window.afterResize = setTimeout(function() {
-
-						/**
-							After Resize Code
-							.................
-						**/	_bottomFooter();
-
-					}, 500);
-
-				});
-
-		});
-	}
-
-
-
-
-/** 17. Misc
+/** 14. Misc
  **************************************************************** **/
 	function _misc() {
 
@@ -1141,7 +1002,7 @@ function _toggle() {
 
 
 
-/** 18. Datepicker
+/** 15. Datepicker
  **************************************************************** **/
 	function _datepicker() {
 		jQuery('.demo-datepicker').daterangepicker({ singleDatePicker: true }, function(start, end, label) {});
@@ -1150,7 +1011,7 @@ function _toggle() {
 
 
 
-/** 19. Colorpicker
+/** 16. Colorpicker
  **************************************************************** **/
 	function _colorpicker() {
 		jQuery('.colorpicker').colorpicker();
@@ -1158,61 +1019,8 @@ function _toggle() {
 	}
 
 
-/** 20. Bootstrap Slider
- **************************************************************** **/
-	function _bslider() {
 
-		// Basic Horizontal
-		jQuery("input.bslider, input.bslider-bind").slider({
-			formater: function(value) {
-				return value;
-			}
-		});
-
-		// Vertical
-		jQuery("input.bslider-vertical").slider({
-			formater: function(value) {
-				return value;
-			},
-			reversed : true
-		});
-
-		// Bind 
-		jQuery("input.bslider-bind").on('slide', function(slideEvt) {
-			var bindTo = jQuery(this).attr('data-for');
-			jQuery("#"+bindTo).text(slideEvt.value);
-		});
-
-		// Color
-		var RGBChange = function() {
-			jQuery('#RGB').css('background', 'rgb('+r.getValue()+','+g.getValue()+','+b.getValue()+')')
-		};
-
-		var r = jQuery('#R').slider().on('slide', RGBChange).data('slider');
-		var g = jQuery('#G').slider().on('slide', RGBChange).data('slider');
-		var b = jQuery('#B').slider().on('slide', RGBChange).data('slider');
-
-		// Tootltip Always On
-		jQuery("input.bslider-tooltip").slider({
-			formater: function(value) {
-				return value;
-			},
-			tooltip: 'always'
-		});
-
-		// Precision
-		jQuery("input.bslider-precision").slider({
-			precision: 2,
-			value: 8.115 // Slider will instantiate showing 8.12 due to specified precision
-		});
-
-	}
-
-
-
-
-
-/**	Contact Google Map
+/**	17. Contact Google Map
 *************************************************** **/
 	function contactMap() {
 
@@ -1269,6 +1077,62 @@ function _toggle() {
 
 
 
+/**	18. Newsletter Subscribe
+*************************************************** **/
+	function _newsletterSubscribe() {
+
+		jQuery("form#newsletterSubscribe button").bind("click", function(e) {
+				e.preventDefault();
+
+				var email 			= jQuery("form#newsletterSubscribe input").val(),				// required
+					_action			= jQuery("#newsletterSubscribe").attr('action'),	// form action URL
+					_method			= jQuery("#newsletterSubscribe").attr('method');	// form method
+
+				// SEND VIA AJAX
+				$.ajax({
+					url: 	_action,
+					data: 	{ajax:"true", action:'newsletter_subscribe', email:email},
+					type: 	_method,
+					error: 	function(XMLHttpRequest, textStatus, errorThrown) {
+
+						alert('Server Internal Error'); // usualy on headers 404
+
+					},
+
+					success: function(data) {
+						data = data.trim(); // remove output spaces
+
+
+						// PHP RETURN: Mandatory Fields
+						if(data == '_required_') {
+							alert('Please complete all fields!');
+						} else
+
+						// PHP RETURN: INVALID EMAIL
+						if(data == '_invalid_email_') {
+							alert('Invalid Email!');
+						} else
+
+						// VALID EMAIL
+						if(data == '_ok_') {
+
+							jQuery("#newsletter_email").val('');
+							// modal
+							alert('Thank You!');
+
+						} else {
+
+							// PHPMAILER ERROR
+							alert(data); 
+
+						}
+					}
+				});
+
+		});
+
+	}
+
 
 /** **************************************************************************************************************** **/
 /** **************************************************************************************************************** **/
@@ -1304,269 +1168,6 @@ function _toggle() {
 	function disable_overlay() {
 		jQuery("span.global-overlay").remove();
 	}
-
-
-
-/**	MEDIA ELEMENTS
-*************************************************** **/
-	if(jQuery().mediaelementplayer && jQuery('video').length > 0 && jQuery(".fullscreenbanner video").length < 1 && jQuery(".fullwidthbanner video").length < 1) { // exclude revolution slider videos
-		jQuery('video').mediaelementplayer({
-			// if the <video width> is not specified, this is the default
-			defaultVideoWidth: 480,
-			// if the <video height> is not specified, this is the default
-			defaultVideoHeight: 270,
-			// if set, overrides <video width>
-			videoWidth: '100%', // -1
-			// if set, overrides <video height>
-			videoHeight: '100%', // -1
-			// width of audio player
-			audioWidth: 400,
-			// height of audio player
-			audioHeight: 30,
-			// initial volume when the player starts
-			startVolume: 0.8,
-			// useful for <audio> player loops
-			loop: true,
-			// enables Flash and Silverlight to resize to content size
-			enableAutosize: true,
-			// the order of controls you want on the control bar (and other plugins below)
-			features: ['playpause','progress','current','duration','tracks','volume','fullscreen'],
-			// Hide controls when playing and mouse is not over the video
-			alwaysShowControls: false,
-			// force iPad's native controls
-			iPadUseNativeControls: false,
-			// force iPhone's native controls
-			iPhoneUseNativeControls: false, 
-			// force Android's native controls
-			AndroidUseNativeControls: false,
-			// forces the hour marker (##:00:00)
-			alwaysShowHours: false,
-			// show framecount in timecode (##:00:00:00)
-			showTimecodeFrameCount: false,
-			// used when showTimecodeFrameCount is set to true
-			framesPerSecond: 25,
-			// turns keyboard support on and off for this instance
-			enableKeyboard: true,
-			// when this player starts, it will pause other players
-			pauseOtherPlayers: true,
-			// array of keyboard commands
-			keyActions: []
-
-		});
-
-		setTimeout('eventClickTrigger()', 1000);
-		function eventClickTrigger() {
-			jQuery('video').trigger('click');
-			// resizeToCover();
-		}
-
-		// VOVER STYLE
-		var min_w = 300; // minimum video width allowed
-		var vid_w_orig;  // original video dimensions
-		var vid_h_orig;
-
-		jQuery(function() { // runs after DOM has loaded
-			vid_w_orig = parseInt(jQuery('video, source').attr('width'));
-			vid_h_orig = parseInt(jQuery('video, source').attr('height'));
-			jQuery(window).resize(function () { resizeToCover(); });
-		});
-
-		function resizeToCover() {
-
-			// set the video viewport to the window size
-			jQuery('.video-wrap').width(jQuery(window).width());
-			jQuery('.video-wrap').height(jQuery(window).height());
-
-			// use largest scale factor of horizontal/vertical
-			var scale_h = jQuery(window).width() / vid_w_orig;
-			var scale_v = jQuery(window).height() / vid_h_orig;
-			var scale = scale_h > scale_v ? scale_h: scale_v;
-
-			// don't allow scaled width < minimum video width
-			if (scale * vid_w_orig < min_w) {scale = min_w / vid_w_orig;};
-
-			// now scale the video
-			jQuery('video, source').width(scale * vid_w_orig);
-			jQuery('video, source').height(scale * vid_h_orig);
-
-			// and center it by scrolling the video viewport
-			jQuery('.video-wrap').scrollLeft((jQuery('video').width() - jQuery(window).width()) / 2);
-			jQuery('.video-wrap').scrollTop((jQuery('video').height() - jQuery(window).height()) / 2);
-		}	
-
-	}
-
-
-
-
-/**	@Facebook
-*************************************************** **/
-	/*
-		https://developers.facebook.com/docs/plugins/like-button/
-
-		ADD TO YOUR CODE (just change data-href, that's all):
-
-		<div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false"></div>
-	*/
-	if(jQuery("div.fb-like").length > 0) {
-
-		jQuery('body').append('<div id="fb-root"></div>');
-
-		(function(d, s, id) {
-			var js, fjs = d.getElementsByTagName(s)[0];
-			if (d.getElementById(id)) return;
-			js = d.createElement(s); js.id = id;
-			js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-			fjs.parentNode.insertBefore(js, fjs);
-		}(document, 'script', 'facebook-jssdk'));
-
-	}
-
-/**	@Google Plus
-*************************************************** **/
-	/*
-		https://developers.google.com/+/web/+1button/
-
-		<!-- Place this tag where you want the +1 button to render. -->
-		<div class="g-plusone" data-size="medium" data-annotation="inline" data-width="300"></div>
-	*/
-	if(jQuery("div.g-plusone").length > 0) {
-
-		(function() {
-			var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-			po.src = 'https://apis.google.com/js/platform.js';
-			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		})();
-
-	}
-
-/**	@Twitter
-*************************************************** **/
-	/*
-		https://dev.twitter.com/docs/tweet-button
-
-		<!-- Place this tag where you want the twitter button to render. -->
-		<a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">Tweet</a>
-	*/
-	if(jQuery("a.twitter-share-button").length > 0) {
-
-		!function(d,s,id){
-			var js,fjs=d.getElementsByTagName(s)[0];
-			if(!d.getElementById(id)){js=d.createElement(s);
-			js.id=id;js.src="https://platform.twitter.com/widgets.js";
-			fjs.parentNode.insertBefore(js,fjs);}
-		}(document,"script","twitter-wjs");
-
-	}
-	
-
-
-
-
-/** AFTER RESIZE
-	http://www.mcshaman.com/afterresize-js-jquery-plugin/
- **************************************************************** **/
-
-( function( $ ) {
-	"use strict";
-	
-	// Define default settings
-	var defaults = {
-		action: function() {},
-		runOnLoad: false,
-		duration: 500
-	};
-	
-	// Define global variables
-	var settings = defaults,
-		running = false,
-		start;
-	
-	var methods = {};
-	
-	// Initial plugin configuration
-	methods.init = function() {
-		
-		// Allocate passed arguments to settings based on type
-		for( var i = 0; i <= arguments.length; i++ ) {
-			var arg = arguments[i];
-			switch ( typeof arg ) {
-				case "function":
-					settings.action = arg;
-					break;
-				case "boolean":
-					settings.runOnLoad = arg;
-					break;
-				case "number":
-					settings.duration = arg;
-					break;
-			}
-		}
-	
-		// Process each matching jQuery object
-		return this.each(function() {
-		
-			if( settings.runOnLoad ) { settings.action(); }
-			
-			jQuery(this).resize( function() {
-				
-				methods.timedAction.call( this );
-				
-			} );
-		
-		} );
-	};
-	
-	methods.timedAction = function( code, millisec ) {
-		
-		var doAction = function() {
-			var remaining = settings.duration;
-			
-			if( running ) {
-				var elapse = new Date() - start;
-				remaining = settings.duration - elapse;
-				if( remaining <= 0 ) {
-					// Clear timeout and reset running variable
-					clearTimeout(running);
-					running = false;
-					// Perform user defined function
-					settings.action();
-				
-					return;
-				}
-			}
-			wait( remaining );
-		};
-		
-		var wait = function( time ) {
-			running = setTimeout( doAction, time );
-		};
-		
-		// Define new action starting time
-		start = new Date();
-		
-		// Define runtime settings if function is run directly
-		if( typeof millisec === 'number' ) { settings.duration = millisec; }
-		if( typeof code === 'function' ) { settings.action = code; }
-		
-		// Only run timed loop if not already running
-		if( !running ) { doAction(); }
-		
-	};
-
-	
-	$.fn.afterResize = function( method ) {
-		
-		if( methods[method] ) {
-			return methods[method].apply( this, Array.prototype.slice.call( arguments, 1 ) );
-		} else {
-			return methods.init.apply( this, arguments );
-		}
-		
-	};
-	
-})(jQuery);
-
 
 
 
@@ -1653,9 +1254,6 @@ function _toggle() {
 		return value.toFixed(settings.decimals);
 	}
 }(jQuery));
-
-
-
 
 
 /** WAIT FOR IMAGES [used by masonry]
@@ -1796,9 +1394,7 @@ function _toggle() {
 }(jQuery));
 
 
-
-
-/** Browser Detect
+/** BROWSER DETECT
 	Add browser to html class
  **************************************************************** **/
 (function($) {
@@ -1833,9 +1429,8 @@ function _toggle() {
 	});
 })(jQuery);
 
-
-
-/** SmoothScroll v1.2.1
+ 
+/** SMOOTHSCROLL V1.2.1
 	Licensed under the terms of the MIT license.
  **************************************************************** **/
 (function($) {
