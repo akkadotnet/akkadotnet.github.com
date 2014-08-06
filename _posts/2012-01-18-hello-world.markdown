@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: wiki
 title: Hello World!
 category: Meta
 
