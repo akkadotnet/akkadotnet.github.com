@@ -1,5 +1,5 @@
 ---
-layout: master
+layout: wiki
 ---
 
 # some header
@@ -18,3 +18,4 @@ public void apa()
 * ghi
 
 [abc](def)
+
