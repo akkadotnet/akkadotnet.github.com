@@ -52,5 +52,5 @@ $(function() {
 	    });
 	});
 	
-	$("#main_content").find("img").addClass("img-responsive appear-animation fadeInUp animation-visible");
+	$("#main_content").find("img").addClass("img-responsive appear-animation fadeInUp");
 });
