@@ -56,7 +56,7 @@ $(function() {
 	main.find("img").addClass("img-responsive appear-animation fadeInUp");
 	main.find("table").addClass("table table-bordered");
 	var warnings = main.find('blockquote > p > strong')
-	.filter(function(){ return $(this).text().toLowerCase() === 'warning';})
+	.filter(function(){ return $(this).text().toLowerCase() === 'warning';}).parent().parent();
 	var notes = main.find('blockquote > p > strong')
-	.filter(function(){ return $(this).text().toLowerCase() === 'note';})
+	.filter(function(){ return $(this).text().toLowerCase() === 'note';}).parent().parent();
 });
