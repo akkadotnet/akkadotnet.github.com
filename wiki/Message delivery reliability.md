@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Message delivery reliability
 ---
 # Message Delivery Reliability

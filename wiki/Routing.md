@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Routing
 ---
 ## TL;DR RoundRobin Group router example

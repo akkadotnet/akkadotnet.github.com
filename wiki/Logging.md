@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Logging
 ---
 For more info see real Akka's documentation: http://doc.akka.io/docs/akka/2.0/scala/logging.html

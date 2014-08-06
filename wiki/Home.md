@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Home
 ---
 Welcome to the Akka.NET Wiki!

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: FSharp API
 ---
 Akka.NET comes with an extended F# API.

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Getting started
 ---
 # Getting started with Akka.NET

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: The Obligatory Hello World
 ---
 ## Hello World using the C# API

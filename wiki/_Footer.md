@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: _Footer
 ---
 Back to [[Documentation]]

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Examples of use cases for Akka
 ---
 >**Note**<br/>

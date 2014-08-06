@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Building and Distributing Akka.NET
 ---
 Akka.Net has an official beta [NuGet package](http://www.nuget.org/packages/Akka).

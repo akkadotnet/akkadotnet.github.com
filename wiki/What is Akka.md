@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: What is Akka
 ---
 # What is Akka?

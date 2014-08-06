@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: Use case and Deployment Scenarios
 ---
 ## Host your `ActorSystem` using:

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: wiki
 title: HOCON
 ---
 # HOCON (Human-Optimized Config Object Notation)
