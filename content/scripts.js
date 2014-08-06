@@ -59,4 +59,7 @@ $(function() {
 	.filter(function(){ return $(this).text().toLowerCase() === 'warning';}).parent().parent();
 	var notes = main.find('blockquote > p > strong')
 	.filter(function(){ return $(this).text().toLowerCase() === 'note';}).parent().parent();
+	
+	warnings.addClass("alert alert-warning");
+	notes.addClass("alert alert-success");
 });
