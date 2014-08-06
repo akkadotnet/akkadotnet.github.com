@@ -60,6 +60,11 @@ $(function() {
 	var notes = main.find('blockquote > p > strong')
 	.filter(function(){ return $(this).text().toLowerCase() === 'note';}).parent().parent();
 	
-	warnings.addClass("alert alert-warning");
-	notes.addClass("alert alert-success");
+	warnings.replaceWith(function () {
+    		return $("<div />", attrs).append($(this).contents());
+	}).addClass("alert alert-warning");
+	
+	notes.replaceWith(function () {
+    		return $("<div />", attrs).append($(this).contents());
+	}).addClass("alert alert-success");
 });
