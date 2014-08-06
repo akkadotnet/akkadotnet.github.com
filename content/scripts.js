@@ -61,10 +61,10 @@ $(function() {
 	.filter(function(){ return $(this).text().toLowerCase() === 'note';}).parent().parent();
 	
 	warnings.replaceWith(function () {
-    		return $("<div />", attrs).append($(this).contents());
+    		return $("<div />").append($(this).contents());
 	}).addClass("alert alert-warning");
 	
 	notes.replaceWith(function () {
-    		return $("<div />", attrs).append($(this).contents());
+    		return $("<div />").append($(this).contents());
 	}).addClass("alert alert-success");
 });
