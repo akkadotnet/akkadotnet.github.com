@@ -1,5 +1,6 @@
 ---
 layout: wiki
+title: foo
 ---
 
 |Name               | Role |
