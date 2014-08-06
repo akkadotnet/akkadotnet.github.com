@@ -14,7 +14,7 @@ title: index
 ### General
 
 - [Terminology, Concepts](Terminology)
-- [Actor Systems](Actor Systems)
+- [Actor Systems](ActorSystem)
 - [What is an Actor?](Actors)
 - [Supervision and Monitoring](Supervision)
 - [Actor References, Paths and Addresses](Addressing)
