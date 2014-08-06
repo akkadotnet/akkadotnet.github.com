@@ -3,7 +3,6 @@ layout: wiki
 ---
 
 # some header
-
 ```c#
 public void apa()
 {
