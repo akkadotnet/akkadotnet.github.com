@@ -61,7 +61,7 @@ $(function() {
 	.filter(function(){ return $(this).text().toLowerCase() === 'note';}).parent().parent();
 	
 	warnings.replaceWith(function () {
-    		return $("<div class='alert alert-danger' />").append($(this).contents());
+    		return $("<div class='alert alert-warning' />").append($(this).contents());
 	});
 	
 	notes.replaceWith(function () {
