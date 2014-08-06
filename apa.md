@@ -12,9 +12,7 @@ title: foo
 |Bartosz Sypytkowski| Core Team |
 |David Smith        | Core Team |
 
-
-
-
+'ActorSystem*
 
 This chapter outlines the concept behind supervision, the primitives offered and their semantics. For details on how that translates into real code, please refer to the corresponding chapters for Scala and Java APIs.
 
