@@ -51,4 +51,6 @@ $(function() {
 	            .appendTo(li);
 	    });
 	});
+	
+	$("#main_content").find("img").addClass("img-responsive appear-animation fadeInUp animation-visible");
 });
