@@ -53,4 +53,5 @@ $(function() {
 	});
 	
 	$("#main_content").find("img").addClass("img-responsive appear-animation fadeInUp");
+	$("#main_content").find("table").addClass("table table-bordered");
 });
