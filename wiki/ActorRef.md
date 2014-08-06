@@ -1,5 +1,5 @@
 ---
 layout: default
-title: %TITLE%
+title: ActorRef
 ---
 bla bla actorref

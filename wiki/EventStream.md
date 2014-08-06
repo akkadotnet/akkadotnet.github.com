@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: EventStream
 ---
 ```csharp
 var system = ActorSystem.Create("MySystem");

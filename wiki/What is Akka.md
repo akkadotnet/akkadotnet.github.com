@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: What is Akka
 ---
 # What is Akka?
 

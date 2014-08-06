@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Message delivery reliability
 ---
 # Message Delivery Reliability
 

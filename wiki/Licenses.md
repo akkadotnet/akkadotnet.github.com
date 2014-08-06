@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Licenses
 ---
 ## Akka.NET License
 ```

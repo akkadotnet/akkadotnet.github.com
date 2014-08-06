@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: FSharp API
 ---
 Akka.NET comes with an extended F# API.
 This extension lets you send and ask messages using the `<!` tell and `<?` ask operators.

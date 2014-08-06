@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Contributor guidelines
 ---
 # Contributor guidelines
 

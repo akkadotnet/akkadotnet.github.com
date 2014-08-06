@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Home
 ---
 Welcome to the Akka.NET Wiki!
 

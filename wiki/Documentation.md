@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Documentation
 ---
 >**Note:**<br/>
 >This is a community driven port and is not affiliated with Typesafe who makes the original Java/Scala version.

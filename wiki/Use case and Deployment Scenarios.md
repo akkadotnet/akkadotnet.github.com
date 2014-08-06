@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Use case and Deployment Scenarios
 ---
 ## Host your `ActorSystem` using:
 

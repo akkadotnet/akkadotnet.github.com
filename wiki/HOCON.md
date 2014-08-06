@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: HOCON
 ---
 # HOCON (Human-Optimized Config Object Notation)
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Hotswap
 ---
 ```csharp
 public class GreetingActor : UntypedActor

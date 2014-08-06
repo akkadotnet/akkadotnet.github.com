@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: _Footer
 ---
 Back to [[Documentation]]
 

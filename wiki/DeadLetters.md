@@ -1,5 +1,5 @@
 ---
 layout: default
-title: %TITLE%
+title: DeadLetters
 ---
 info info

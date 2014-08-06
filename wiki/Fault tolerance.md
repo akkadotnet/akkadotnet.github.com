@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Fault tolerance
 ---
 # Fault Tolerance
 

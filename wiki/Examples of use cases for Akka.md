@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Examples of use cases for Akka
 ---
 >**Note**<br/>
 This describes how JVM Akka has been used.

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Remote deploy
 ---
 
 ```csharp

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Working with actors
 ---
 # Working with actors
 

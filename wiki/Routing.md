@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Routing
 ---
 ## TL;DR RoundRobin Group router example
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: Getting started
 ---
 # Getting started with Akka.NET
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: %TITLE%
+title: The Obligatory Hello World
 ---
 ## Hello World using the C# API
 ####Define a message:
