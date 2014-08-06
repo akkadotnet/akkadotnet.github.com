@@ -32,3 +32,5 @@ end
 aadasdas
 
 foo bar http://www.aftonbladet.se
+
+hello "world" is this 'a string' ?
