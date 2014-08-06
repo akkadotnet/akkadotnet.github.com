@@ -52,6 +52,8 @@ $(function() {
 	    });
 	});
 	
-	$("#main_content").find("img").addClass("img-responsive appear-animation fadeInUp");
-	$("#main_content").find("table").addClass("table table-bordered");
+	var main = $("#main_content");
+	main.find("img").addClass("img-responsive appear-animation fadeInUp");
+	main.find("table").addClass("table table-bordered");
+	main.find('blockquote > p > strong :contains("Warning")').style('border:2px solid red;');
 });
