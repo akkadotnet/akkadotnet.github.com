@@ -55,5 +55,8 @@ $(function() {
 	var main = $("#main_content");
 	main.find("img").addClass("img-responsive appear-animation fadeInUp");
 	main.find("table").addClass("table table-bordered");
-	main.find('blockquote > p > strong :contains("Warning")').style('border:2px solid red;');
+	var warnings = main.find('blockquote > p > strong')
+	.filter(function(){ return $(this).text().toLowerCase() === 'warning';})
+	var notes = main.find('blockquote > p > strong')
+	.filter(function(){ return $(this).text().toLowerCase() === 'note';})
 });
