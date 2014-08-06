@@ -28,3 +28,5 @@ class Fixnum
   end
 end
 ```
+
+foo bar http://www.aftonbladet.se
