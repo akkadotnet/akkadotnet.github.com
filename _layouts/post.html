@@ -109,11 +109,6 @@ layout: master
 									<ul class="nav nav-tabs nav-justified">
 										<li class="active">
 											<a href="#tab1" data-toggle="tab">
-												Popular
-											</a>
-										</li>
-										<li>
-											<a href="#tab2" data-toggle="tab">
 												Recent
 											</a>
 										</li>
@@ -122,27 +117,18 @@ layout: master
 									<!-- tabs content -->
 									<div class="tab-content">
 										<div id="tab1" class="tab-pane active">
-											<div class="embed-responsive embed-responsive-16by9">
-												<iframe class="embed-responsive-item" src="http://player.vimeo.com/video/8408210" width="800" height="450"></iframe>
-											</div>
-											<ul>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> This is a Gallery Post</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> Blog Post With Text Only</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> This is an Audio Post</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> This is a Video Post</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> An awsome post</a> <small>23 June 2013 / 12:43</small></li>
+											<ul class="posts">  
+												{% for post in site.posts limit:20 %}  
+												   <li>  
+													   <a href="{{ BASE_PATH }}{{ post.url }}"> 
+													   <i class="fa fa-sign-out"></i> 
+													   {{ post.title }}</a>
+													   <small>{{ post.date | date_to_string }}</small>
+												   </li>  
+												{% endfor %}  
 											</ul>
 										</div>
 
-										<div id="tab2" class="tab-pane"><!-- tab content -->
-											<ul>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> This is a Gallery Post</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> Blog Post With Text Only</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> This is an Audio Post</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> This is a Video Post</a> <small>23 June 2013 / 12:43</small></li>
-												<li><a href="blog-single-sidebar.html"><i class="fa fa-sign-out"></i> An awsome post</a> <small>23 June 2013 / 12:43</small></li>
-											</ul>
-										</div>
 									</div>
 
 								</div>
