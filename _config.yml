@@ -39,7 +39,7 @@ category_dir: blog/categories
 #redcarpet:
 #  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript","tables", "with_toc_data"]
 
-markdown: kramdown 
+markdown: KramdownPygments
 
 kramdown: 
   input: GFM 
