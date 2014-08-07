@@ -14,7 +14,18 @@ class Jekyll::Converters::Markdown::RedcarpetMod
   end
 
   def convert(content)
-    markdown = Redcarpet::Markdown.new(BootstrapTables, :tables => true)
+    
+    extensions = {
+      fenced_code_blocks: true,
+      no_intra_emphasis: 	true,
+      autolink:         	true,
+      superscript:     		true,
+      tables: 			      true,
+      strikethrough:		  true,
+      with_toc_data:		  true
+    }
+
+    markdown = Redcarpet::Markdown.new(BootstrapTables, extensions)
     markdown.render(content)
   end
 end
