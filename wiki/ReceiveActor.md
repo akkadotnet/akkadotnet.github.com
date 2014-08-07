@@ -8,7 +8,7 @@ title: ReceiveActor
 
 In order to use the `Receive()` method inside an actor the actor must inherit from `ReceiveActor`.
 
-```c#
+```csharp
 private class MyActor : ReceiveActor
 {
 }
@@ -16,7 +16,7 @@ private class MyActor : ReceiveActor
 
 Inside the constructor, add a call to `Receive<T>(Action<T> handler)` for every type of message you want to handle:
 
-```c#
+```csharp
 private class MyActor : ReceiveActor
 {
   public MyActor()
@@ -32,7 +32,7 @@ Whenever a message of typ `string` is sent to **MyActor** the first handler is i
 ### Handler priority
 If more than one handler matches, the one that appears first is used, and the others are not called.
 
-```c#
+```csharp
 Receive<string>(s => Console.WriteLine("Received string: " + )s);      //1
 Receive<string>(s => Console.WriteLine("Also received string: " + s)); //2
 Receive<object>(o => Console.WriteLine("Received object: " + o));      //3
@@ -41,14 +41,15 @@ Receive<object>(o => Console.WriteLine("Received object: " + o));      //3
 
 ### Using predicates
 By specifying a predicate, you can choose which messages to handle.
-```c#
+
+```csharp
 Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s);
 ```
 The handler above will only be invoked if the length of the string is greater than 20.
 
 If the predicate do not match, the next matching handler will be used.
 
-```c#
+```csharp
 Receive<string>(s => s.Length>5, s => Console.WriteLine("1: " + s));    //1
 Receive<string>(s => s.Length>2, s => Console.WriteLine("2: " + s));    //2
 Receive<string>(s => Console.WriteLine("3: " + s));                     //3
@@ -63,14 +64,16 @@ Receive<string>(s => Console.WriteLine("3: " + s));                     //3
 
 #### Predicates position
 Predicates can be specified *before* the action handler or *after*. These two declarations are equivalent:
-```c#
+
+```csharp
 Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s));
 Receive<string>(s => Console.WriteLine("Received string: " + s, s => s.Length>5));
 ```
 
 ### Receive using Funcs
 More complex handlers can be specified using the `Receive<T>(Func<T,bool> handler)` overload. These are invoked if the message is of the specified type. If the func returns `true`, the message is considered handled, and no more handlers will be invoked.
-```c#
+
+```csharp
 Receive<string>(s => 
   { 
     if(s.Length>5)
@@ -88,7 +91,8 @@ Receive<string>(s => Console.WriteLine("2: " + s);
 
 ### Unmatched messages
 If the actor receives a message for which no handler matches, the unhandled message is published to the `EventStream` wrapped in an `UnhandledMessage`. To change this behavior override `Unhandled(object message)`
-```c#
+
+```csharp
 protected override void Unhandled(object message)
 {
   //Do something with the message.
@@ -98,35 +102,41 @@ protected override void Unhandled(object message)
 Another option is to add a handler last that matches all messages, using `ReceiveAny()`.
 ### ReceiveAny
 To catch messages of any type the `ReceiveAny(Action<object> handler)` overload can be specified.
-```c#
+
+```csharp
 Receive<string>(s => Console.WriteLine("Received string: " + s);
 ReceiveAny(o => Console.WriteLine("Received object: " + o);
 ```
 
 Since it handles everything, it must be specified last. Specifying handlers it after will cause an exception.
-```c#
+
+```csharp
 ReceiveAny(o => Console.WriteLine("Received object: " + o);
 Receive<string>(s => Console.WriteLine("Received string: " + s);  //This will cause an exception
 ```
 
 >**Note**<br/> that `Receive<object>(Action<object> handler)` behaves the same as `ReceiveAny()` as it catches all messages. These two are equivalent:
-```c#
+
+```csharp
 ReceiveAny(o => Console.WriteLine("Received object: " + o);
 Receive<object>(0 => Console.WriteLine("Received object: " + o); 
 ```
 
 ###Non generic overloads
 `Receive` has non generic overloads:
-```c#
+
+```csharp
 Receive(typeof(string), obj => Console.WriteLine(obj.ToString()) );
 ```
 Predicates can go before or after the handler:
-```c#
+
+```csharp
 Receive(typeof(string), obj=> ((string) obj).Length>5, obj => Console.WriteLine(obj.ToString()) );
 Receive(typeof(string), obj => Console.WriteLine(obj.ToString()), obj=> ((string) obj).Length>5 );
 ```
 And the non generic Func
-```c#
+
+```csharp
 Receive(typeof(string), obj => 
   { 
     var s = (string) obj;
@@ -141,7 +151,8 @@ Receive(typeof(string), obj =>
 
 ### Become
 You can switch the handler at runtime using `Become()` which replaces the current handler with a new one.
-```c#
+
+```csharp
 public class MoodActor : ReceiveActor
 {
   public MoodActor()
@@ -167,7 +178,8 @@ public class MoodActor : ReceiveActor
 }
 ```
 Using MoodActor:
-```c#
+
+```csharp
 var moodActor = system.ActorOf<MoodActor>();
 moodActor.Tell("Mood?", Self);  // Result: "I'm neutral"
 moodActor.Tell("Happy", Self);  // Result: becomes Happy
@@ -178,7 +190,8 @@ moodActor.Tell("Mood?", Self);  // Result: "I'm Angry"
 ```
 
 You may use lambdas if you don't want separate methods:
-```c#
+
+```csharp
 Receive<string>(s => s == "Grumpy", _ => Become(() =>
 {
   Receive<string>(s => Sender.Tell("Leave me alone. I'm Grumpy!"));
@@ -187,7 +200,8 @@ Receive<string>(s => s == "Grumpy", _ => Become(() =>
 
 ### Become/Unbecome
 In the examples above the receive handlers are replaced when `Become()` is called. The other way of using `Become` pushes the current handler on a stack making it possible to switch back to it using `Unbecome`:
-```c#
+
+```csharp
 Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
 ...
 private void Grumpy()
@@ -198,7 +212,8 @@ private void Grumpy()
 }
 ```
 Using MoodActor:
-```c#
+
+```csharp
 var moodActor = system.ActorOf<MoodActor>();
 moodActor.Tell("Mood?", Self);            // Result: "I'm neutral"
 moodActor.Tell("Grumpy", Self);           // Result: becomes Grumpy
@@ -211,7 +226,8 @@ moodActor.Tell("Mood?", Self);            // Result: "I'm neutral"
 >**Note**<br/> In this case care must be taken to ensure that the number of `Unbecome()` matches the number of `Become(..., discardOld: false)` ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).
 
 You can reuse Receive-specifications:
-```c#
+
+```csharp
 public class MoodActor : ReceiveActor
 {
   public MoodActor()
@@ -252,7 +268,7 @@ public class MoodActor : ReceiveActor
 >**Warning**<br/>
 Do not add other statements than Receive in Become-declarations. The result of doing so is undefined.
 
-```c#
+```csharp
 Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
 ...
 private void Grumpy()
@@ -264,7 +280,8 @@ private void Grumpy()
 }
 ```
 Any state changes or message sends should be in the handler:
-```c#
+
+```csharp
 Receive<string>(s => s == "Grumpy", _ => 
   {
     _state = State.Grumpy;
