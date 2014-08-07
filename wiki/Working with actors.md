@@ -352,11 +352,13 @@ Since stopping an actor is asynchronous, you cannot immediately reuse the name o
 You can also send an actor the akka.actor.PoisonPill message, which will stop the actor when the message is processed. PoisonPill is enqueued as ordinary messages and will be handled after messages that were already queued in the mailbox.
 
 Use it like this:
+
 ```csharp
 myActor.Tell(Akka.Actor.PoisonPill.Instance, Sender);
 ```
 ### Graceful Stop
 gracefulStop is useful if you need to wait for termination or compose ordered termination of several actors:
+
 ```csharp
 import static akka.pattern.Patterns.gracefulStop;
 import scala.concurrent.Await;
