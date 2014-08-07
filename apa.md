@@ -19,7 +19,9 @@ title: foo
 # Also header
 
 ~~~ruby
-def foo
+def foo()
+    #jkhjh
+    ///kgk
 end
 ~~~
 
