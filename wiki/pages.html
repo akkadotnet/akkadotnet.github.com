@@ -1,9 +1,9 @@
 ---
 ---
-
-all pages
-
+{
+	pages = [
 {% for p in site.pages %}  
-       {{ p.title }}
-       {{ p.url }}
-{% endfor %}  
+       "{{ p.title }}",
+{% endfor %} ]
+		"dummy"
+}
