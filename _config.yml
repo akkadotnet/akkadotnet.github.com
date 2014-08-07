@@ -34,6 +34,7 @@ plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
 markdown: kramdown
+markdown_ext: foo
 
 kramdown:
   input: GFM
