@@ -75,6 +75,7 @@ namespace ConsoleApplication11
 ```
 
 Once we have the message type, we can create our Actor:
+
 ```csharp
 using System;
 using System.Collections.Generic;
