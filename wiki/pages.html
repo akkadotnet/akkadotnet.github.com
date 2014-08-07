@@ -1,9 +1,8 @@
 ---
 ---
 {
-	pages = [
-{% for p in site.pages %}  
-       "{{ p.title }}",
-{% endfor %} ]
-		"dummy"
+	"pages" : [
+{% for p in site.pages %}"{{ p.title }}",
+{% endfor %} 
+		"dummy" ]
 }
