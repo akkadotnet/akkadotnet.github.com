@@ -3,7 +3,8 @@ layout: wiki
 title: The Obligatory Hello World
 ---
 ## Hello World using the C# API
-####Define a message:
+#### Define a message:
+
 ```csharp
 //Create an (immutable) message type that your actor will respond to
 public class Greet
@@ -16,6 +17,7 @@ public class Greet
 }
 ```
 #### Define your actor using the `ReceiveActor` API
+
 ```csharp
 //Create the actor class
 public class GreetingActor : ReceiveActor
@@ -28,6 +30,7 @@ public class GreetingActor : ReceiveActor
 ```
 
 #### ..or using the `TypedActor` API
+
 ```csharp
 public class GreetingActor : TypedActor , IHandle<Greet>
 {
@@ -40,6 +43,7 @@ public class GreetingActor : TypedActor , IHandle<Greet>
 
 
 #### Usage:
+
 ```csharp
 //create a new actor system (a container for your actors)
 var system = ActorSystem.Create("MySystem");
@@ -50,9 +54,6 @@ var greeter = system.ActorOf<GreetingActor>("greeter");
 //send a message to the actor
 greeter.Tell(new Greet("World"));
 ```
-See also:
-- [[Untyped actors]].
-- [[Typed actors]].
 
 ## Hello World using the F# API
 
