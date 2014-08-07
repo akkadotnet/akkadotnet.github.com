@@ -33,7 +33,7 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-markdown: kramdown
+markdown: redcarpet
 markdown_ext: foo
 
 kramdown:
@@ -46,8 +46,8 @@ kramdown:
   use_coderay:   false
 
 
-#redcarpet:
-#  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript","tables", "with_toc_data"]
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript","tables", "with_toc_data"]
 
 highlighter: pygments # default python pygments have been replaced by pygments.rb
 
