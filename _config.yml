@@ -33,7 +33,16 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-#markdown: redcarpet
+markdown: kramdown
+
+kramdown:
+  auto_ids:      true
+  footnote_nr:   1
+  entity_output: as_char
+  toc_levels:    1..6
+  smart_quotes:  lsquo,rsquo,ldquo,rdquo
+  use_coderay:   true
+
 
 #redcarpet:
 #  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "strikethrough", "superscript","tables", "with_toc_data"]
