@@ -14,6 +14,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 Actors in C# are implemented by extending the `ReceiveActor` class and configuring what messages to receive using the `Receive<TMessage>` method.
 
 Here is an example:
+
 ```csharp
 using Akka;
 using Akka.Actor;
@@ -47,6 +48,7 @@ try {
 }
 ```
 The send method wraps a normal tell and supplies the internal actor’s reference as the sender. This allows the reply to be received on the last line. Watching an actor is quite simple as well:
+
 ```csharp
 final Inbox inbox = Inbox.create(system);
 inbox.watch(target);
@@ -82,6 +84,7 @@ This strategy is typically declared inside the actor in order to have access to 
   * hotswap behavior stack as described in HotSwap
 
 The remaining visible methods are user-overridable life-cycle hooks which are described in the following:
+
 ```csharp
 public override void PreStart() {
 }
@@ -116,6 +119,7 @@ Context.ActorSelection("../joe");
 The supplied path is parsed as a `System.URI`, which basically means that it is split on / into path elements. If the path starts with /, it is absolute and the look-up starts at the root guardian (which is the parent of "/user"); otherwise it starts at the current actor. If a path element equals .., the look-up will take a step “up” towards the supervisor of the currently traversed actor, otherwise it will step “down” to the named child. It should be noted that the .. in actor paths here always means the logical structure, i.e. the supervisor.
 
 The path elements of an actor selection may contain wildcard patterns allowing for broadcasting of messages to that section:
+
 ```csharp
 // will look all children to serviceB with names starting with worker
 Context.ActorSelection("/user/serviceB/worker*");
@@ -172,8 +176,9 @@ public class Follower extends UntypedActor {
 You can also acquire an ActorRef for an ActorSelection with the resolveOne method of the ActorSelection. It returns a Future of the matching ActorRef if such an actor exists. It is completed with failure `akka.actor.ActorNotFound` if no such actor exists or the identification didn't complete within the supplied timeout.
 
 Remote actor addresses may also be looked up, if remoting is enabled:
+
 ```csharp
-getContext().actorSelection("akka.tcp://app@otherhost:1234/user/serviceB");
+Context().ActorSelection("akka.tcp://app@otherhost:1234/user/serviceB");
 ```
 An example demonstrating remote actor look-up is given in Remoting Sample.
 
@@ -184,6 +189,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 **IMPORTANT:** Messages can be any kind of object but have to be immutable. Akka can’t enforce immutability (yet) so this has to be by convention.
 
 Here is an example of an immutable message:
+
 ```csharp
 public class ImmutableMessage {
   private final int sequenceNumber;
@@ -217,6 +223,7 @@ In all these methods you have the option of passing along your own ActorRef. Mak
 
 ### Tell: Fire-forget
 This is the preferred way of sending messages. No blocking waiting for a message. This gives the best concurrency and scalability characteristics.
+
 ```csharp
 // don’t forget to think about who is the sender (2nd argument)
 target.tell(message, getSelf());
@@ -225,6 +232,7 @@ The sender reference is passed along with the message and available within the r
 
 ### Ask: Send-And-Receive-Future
 The ask pattern involves actors as well as futures, hence it is offered as a use pattern rather than a method on ActorRef:
+
 ```csharp
 import static akka.pattern.Patterns.ask;
 import static akka.pattern.Patterns.pipe;
@@ -282,8 +290,9 @@ When using future callbacks, inside actors you need to carefully avoid closing o
 
 ### Forward message
 You can forward a message from one actor to another. This means that the original sender address/reference is maintained even though the message is going through a 'mediator'. This can be useful when writing actors that work as routers, load-balancers, replicators etc. You need to pass along your context variable as well.
+
 ```csharp
-target.forward(result, getContext());
+target.Forward(result, Context());
 ```
 ## Receive messages
 When an actor receives a message it is passed into the onReceive method, this is an abstract method on the UntypedActor base class that needs to be defined.
@@ -522,6 +531,7 @@ Using the constructor for initialization has various benefits. First of all, it 
 The method preStart() of an actor is only called once directly during the initialization of the first instance, that is, at creation of its ActorRef. In the case of restarts, preStart() is called from postRestart(), therefore if not overridden, preStart() is called on every incarnation. However, overriding postRestart() one can disable this behavior, and ensure that there is only one call to preStart().
 
 One useful usage of this pattern is to disable creation of new ActorRefs for children during restarts. This can be achieved by overriding preRestart():
+
 ```csharp
 @Override
 public void preStart() {
@@ -550,6 +560,7 @@ For more information see What Restarting Means.
 
 ### Initialization via message passing
 There are cases when it is impossible to pass all the information needed for actor initialization in the constructor, for example in the presence of circular dependencies. In this case the actor should listen for an initialization message, and use become() or a finite state-machine state transition to encode the initialized and uninitialized states of the actor.
+
 ```csharp
 private String initializeMe = null;
  
