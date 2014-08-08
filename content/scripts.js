@@ -54,7 +54,8 @@ $(function() {
 
 
 	    $.get( "/wiki/pages.html", function( data ) {
-		  console.info(data);
+	   	  var files = JSON.parse( data );
+		  console.info(files);
 		});
 	});
 	
