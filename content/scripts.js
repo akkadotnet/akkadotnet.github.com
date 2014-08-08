@@ -9,7 +9,7 @@ $(function() {
 		'itemClass': function(i, heading, $heading, prefix) { // custom function for item class
 		  return "toc toc-" + $heading[0].tagName.toLowerCase();
 		},
-		activeClass: "active"
+		activeClass: "toc-active"
 	});
 
 	$.getJSON("http://cdn.syndication.twimg.com/widgets/timelines/495982116597796864?dnt=true&domain=unquietcode.com&lang=en&callback=?", function(data) {
