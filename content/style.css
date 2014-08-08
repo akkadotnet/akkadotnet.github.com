@@ -247,3 +247,9 @@ toc ul {
 /*#toc .toc-active {
     background: #f8f8f8;
 }*/
+
+.toc-container {
+  background-color: #f5f5f5;
+  padding:15px;
+  border-radius: 10px;
+}
