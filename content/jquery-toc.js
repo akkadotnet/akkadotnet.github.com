@@ -6,7 +6,7 @@ window.onload = function () {
     var level = 0;
 
     document.getElementById("main_content").innerHTML =
-        document.getElementById("contents").innerHTML.replace(
+        document.getElementById("main_content").innerHTML.replace(
             /<h([\d])>([^<]+)<\/h([\d])>/gi,
             function (str, openLevel, titleText, closeLevel) {
                 if (openLevel != closeLevel) {
