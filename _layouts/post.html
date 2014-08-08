@@ -41,10 +41,10 @@ layout: master
 								{{ page.date | date: "%-d" }} <small>{{ page.date | date: %B %Y" }}</small>
 							</span>
 							<span class="info hidden-xs">
-								<span class="block"><i class="fa fa-user"></i> BY <a href="blog-author.html">{{ post.author }}</a></span>
-								<span class="block"><i class="fa fa-folder-open-o"></i> POSTED IN <a href="blog.html">{{ post.category }}</a></span>
-								<span class="block"><i class="fa fa-comments"></i> WITH <a href="blog-single-sidebar.html#comments">3 COMMENTS</a></span>
-								<span class="block"><i class="fa fa-link"></i> <a href="blog-single-sidebar.html">PERMALINK</a></span>
+								<span class="block"><i class="fa fa-user"></i> BY <a href="blog-author.html">{{ page.author }}</a></span>
+								<span class="block"><i class="fa fa-folder-open-o"></i> POSTED IN <a href="blog.html">{{ page.category }}</a></span>
+								<span class="block"><i class="fa fa-comments"></i> WITH <a href="blog-single-sidebar.html#comments">_ COMMENTS</a></span>
+								<span class="block"><i class="fa fa-link"></i> <a href="{{ page.url }}">PERMALINK</a></span>
 							</span>
 						</div>
 
