@@ -110,9 +110,28 @@ $.fn.toc = function(options) {
     var el = $(this);
     var ul = $(opts.listType);
 
+    var root = ul;
+    var parents = [];
+    var prev = 2;
+    parents.push({ level: 1, element: root });
+
     headings.each(function(i, heading) {
+      var parent = parents[parents.length - 1];      
       var $h = $(heading);
+      var currentLevel = parseInt($h.nodeName.substr(1)) * 2;
+
       headingOffsets.push($h.offset().top - opts.highlightOffset);
+
+      if (currentLevel > parent.level + 1) {
+          var parentElement = $('<ul />').appendTo(parent.element);
+          parent = { level: parent.level + 1, element: parentElement };
+          parents.push(parent);
+      } else {
+          while (parent.level >= currentLevel) {
+              parent = parents.pop();
+          }
+          parents.push(parent);
+      }
 
       var anchorName = opts.anchorName(i, heading, opts.prefix);
 
@@ -137,7 +156,12 @@ $.fn.toc = function(options) {
         .addClass(opts.itemClass(i, heading, $h, opts.prefix))
         .append(a);
 
-      ul.append(li);
+      parent.element.append(li);
+
+      parent = { level: currentLevel, element: li };
+      parents.push(parent);
+
+      
     });
     el.append(ul);
   });
