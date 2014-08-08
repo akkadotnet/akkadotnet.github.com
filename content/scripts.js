@@ -73,14 +73,12 @@ $(function() {
 	});
 
 	$.get( "/wiki/pages.html", function( data ) {
-		var files = JSON.parse( data );
-		window.roger = files;
+		var files = JSON.parse( data ).pages;
 		console.info(files);
 		var codes = main.find("code").filter(function() { 
 			console.info("matching " + $(this).text() + " in arry " + $.inArray($(this).text(), files));
 			return $.inArray($(this).text(), files) != -1;
 		});
-		codes.css("border","3px solid green");
 		codes.replaceWith(function() {
 		    var file = $.trim($(this).text());
 		    return '<code><a href="/wiki/' + file + '" target="_blank">^' + file + '</a></code>';
