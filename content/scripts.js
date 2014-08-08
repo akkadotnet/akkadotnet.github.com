@@ -1,6 +1,6 @@
 $(function() {
 	$('#toc').toc({
-		'listType': '<ul class="side-nav list-group" />',
+		'listType': '<ul class="side-nav list-group toc-container" />',
 		'selectors': 'h1,h2,h3', //elements to use as headings
 		'container': '#main_content', //element to find all selectors in
 		'headerText': function(i, heading, $heading) { //custom function building the header-item text
