@@ -7,7 +7,7 @@ $(function() {
 		return $heading.text();
 	    },
 		'itemClass': function(i, heading, $heading, prefix) { // custom function for item class
-		  return "toc-" + $heading[0].tagName.toLowerCase();
+		  return "toc toc-" + $heading[0].tagName.toLowerCase();
 		},
 		activeClass: "active"
 	});
