@@ -75,8 +75,8 @@ $(function() {
 	$.get( "/wiki/pages.html", function( data ) {
 		var files = JSON.parse( data );
 		console.info(files);
-		var codes = main.find("p > code").filter(function() { 
-			return $.inArray($(this).text(), files);
+		var codes = main.find("code").filter(function() { 
+			return $.inArray($(this).text(), files) > 0;
 		});
 		codes.css("border","3px solid green");
 		codes.replaceWith(function() {
