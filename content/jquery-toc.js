@@ -118,7 +118,8 @@ $.fn.toc = function(options) {
     headings.each(function(i, heading) {
       var parent = parents[parents.length - 1];      
       var $h = $(heading);
-      var currentLevel = parseInt($h.nodeName.substr(1)) * 2;
+      var self = $(this);
+      var currentLevel = parseInt(self[0].nodeName.substr(1)) * 2
 
       headingOffsets.push($h.offset().top - opts.highlightOffset);
 
