@@ -248,7 +248,7 @@ toc ul {
     background: #f8f8f8;
 }*/
 
-.side-nav .toc-container {
+div .toc-container {
   background-color: #f5f5f5;
   padding:15px;
   border-radius: 10px;
