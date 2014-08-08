@@ -79,5 +79,9 @@ $(function() {
 			return $.inArray($(this).text(), files);
 		});
 		codes.css("border","3px solid green");
+		codes.replaceWith(function() {
+		    var file = $.trim($(this).text());
+		    return '<code><a href="/wiki/' + url + '" target="_blank">^' + url + '</a></code>';
+		});
 	});
 });
