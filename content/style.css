@@ -243,6 +243,9 @@ toc ul {
    /*  padding-left: 0px; */
 }
 
+.toc li {
+  padding-right:0;
+}
 
 .toc-active a {
     border-right: 2px solid #A94545;
