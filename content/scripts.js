@@ -60,9 +60,9 @@ $(function() {
 	main.find("img").addClass("img-responsive appear-animation fadeInUp");
 	main.find("table").addClass("table table-bordered");
 	var warnings = main.find('blockquote > p > strong')
-	.filter(function(){ return $(this).text().toLowerCase() === 'warning';}).parent().parent();
+	.filter(function(){ return $(this).text().toLowerCase().indexOf('warning') === 0;}).parent().parent();
 	var notes = main.find('blockquote > p > strong')
-	.filter(function(){ return $(this).text().toLowerCase() === 'note';}).parent().parent();
+	.filter(function(){ return $(this).text().toLowerCase().indexOf('note') === 0;}).parent().parent();
 	
 	warnings.replaceWith(function () {
     		return $("<div class='alert alert-warning' />").append($(this).contents());
