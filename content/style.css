@@ -243,14 +243,6 @@ toc ul {
    /*  padding-left: 0px; */
 }
 
-ul.side-nav ul li.toc {
-  padding-right:0;
-}
-
-.toc-active a {
-    border-right: 2px solid #A94545;
-}
-
 div .toc-container {
   background-color: #f5f5f5;
   padding:15px;
