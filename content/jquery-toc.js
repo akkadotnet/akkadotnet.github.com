@@ -114,7 +114,7 @@ $.fn.toc = function(options) {
     var parents = [];
     var prev = 2;
     parents.push({ level: 1, element: root });
-    var bool first = true;
+    var first = true;
     headings.each(function(i, heading) {
       var parent = parents[parents.length - 1];      
       var $h = $(heading);
