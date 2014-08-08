@@ -74,9 +74,10 @@ $(function() {
 
 	$.get( "/wiki/pages.html", function( data ) {
 		var files = JSON.parse( data );
+		window.roger = files;
 		console.info(files);
 		var codes = main.find("code").filter(function() { 
-			console.info("matching " + $(this).text() + " in arry " + $.inArray($(this).text(), files))
+			console.info("matching " + $(this).text() + " in arry " + $.inArray($(this).text(), files));
 			return $.inArray($(this).text(), files) != -1;
 		});
 		codes.css("border","3px solid green");
