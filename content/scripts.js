@@ -76,12 +76,11 @@ $(function() {
 		var files = JSON.parse( data ).pages;
 		console.info(files);
 		var codes = main.find("code").filter(function() { 
-			console.info("matching " + $(this).text() + " in arry " + $.inArray($(this).text(), files));
 			return $.inArray($(this).text(), files) != -1;
 		});
 		codes.replaceWith(function() {
 		    var file = $.trim($(this).text());
-		    return '<code><a href="/wiki/' + file + '" target="_blank">^' + file + '</a></code>';
+		    return '<code><a href="/wiki/' + file + '" >^' + file + '</a></code>';
 		});
 	});
 });
