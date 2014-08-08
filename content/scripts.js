@@ -76,7 +76,8 @@ $(function() {
 		var files = JSON.parse( data );
 		console.info(files);
 		var codes = main.find("code").filter(function() { 
-			return $.inArray($(this).text(), files) > 0;
+			console.info("matching " + $(this).text() + " in arry " + $.inArray($(this).text(), files))
+			return $.inArray($(this).text(), files) != -1;
 		});
 		codes.css("border","3px solid green");
 		codes.replaceWith(function() {
