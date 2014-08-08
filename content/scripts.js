@@ -50,6 +50,12 @@ $(function() {
 	            .html(Tweets[i].text)
 	            .appendTo(li);
 	    });
+
+
+
+	    $.get( "/wiki/pages.html", function( data ) {
+		  console.info(data);
+		});
 	});
 	
 	var main = $("#main_content");
