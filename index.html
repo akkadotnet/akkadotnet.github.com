@@ -113,8 +113,10 @@ Everything in Akka.NET is designed to work in a distributed setting: all interac
 						<div class="col-md-6">
 							<h2>SupervisionI</h2>
 							<p class="lead">
-Actors form a tree with actors being parents to the actors they've created. As a parent, the actor is responsible for handling its children’s failures (so-called supervision), forming a chain of responsibility, all the way to the top. When an actor crashes, its parent can either restart or stop it, or escalate the failure up the hierarchy of actors.</p>
-							<p>This enables a clean set of semantics for managing failures in a concurrent, distributed system and allows for writing highly fault-tolerant systems that self-heal.</p>
+Actors form a tree with actors being parents to the actors they've created.</p>
+							<p>
+As a parent, the actor is responsible for handling its children’s failures (so-called supervision), forming a chain of responsibility, all the way to the top. When an actor crashes, its parent can either restart or stop it, or escalate the failure up the hierarchy of actors.
+This enables a clean set of semantics for managing failures in a concurrent, distributed system and allows for writing highly fault-tolerant systems that self-heal.</p>
 						</div>
 						
 						<div class="col-md-6 text-center">
