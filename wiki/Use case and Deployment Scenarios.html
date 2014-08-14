@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Contributing to-Akka.NET |  Akka.NET</title>
+		<title> Use case and Deployment Scenarios |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -134,7 +134,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl wiki/Contributing to-Akka.NET -->
+								<!-- pageurl wiki/Use case and Deployment Scenarios -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -174,7 +174,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/wiki/">Wiki</a></li>
-							<li class="active"> Contributing to-Akka.NET  <a href="https://github.com/akkadotnet/akka.net/wiki/Contributing to-Akka.NET/_edit"> (edit)</a></li>							
+							<li class="active"> Use case and Deployment Scenarios  <a href="https://github.com/akkadotnet/akka.net/wiki/Use case and Deployment Scenarios/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -202,19 +202,32 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<p>Akka.NET exposes the Actor model to .NET in a way that has never been done before, and it&#39;s a large project that encompasses a big range of capabilities. Therefore, contributions are welcome and encouraged.</p>
-<h2 id="how-to-send-code-contributions-to-akka-net">How to Send Code Contributions to Akka.NET</h2>
-<p>If you want to contribute code to Akka.NET, here&#39;s how:</p>
-<ol>
-<li>First read the [[Developer Guidelines]]</li>
-<li>Fork this repository.</li>
-<li>Please <a href="http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html">squash your commits into a single commit</a>, if possible - this will make it easier for everyone else to review. And be sure to include a description of your changes along with any <a href="https://github.com/akkadotnet/akka.net/issues">related issues</a>.</li>
-<li>Push changes to your local fork, and when you&#39;re ready to have them reviewed by an AkkaDotNet team member, send a pull request to the <code>dev</code> branch on this repository.</li>
-</ol>
-<h2 id="contribution-guidelines">Contribution Guidelines</h2>
-<p>See <a href="Contributor guidelines">Contributor guidelines</a></p>
-<h2 id="building-akka-net">Building Akka.NET</h2>
-<p>For instructions on how to build Akka.NET, please see <a href="https://github.com/akkadotnet/akka.net/wiki/Building-and-Distributing-Akka.NET">Building Akka .NET</a>.</p>
+								<h2 id="host-your-actorsystem-using-">Host your <code>ActorSystem</code> using:</h2>
+<h3 id="console-application">Console Application</h3>
+<pre><code class="hljs lang-csharp"><span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Foo</span>.<span class="hljs-title">Bar</span>
+</span>{
+    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+    </span>{
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+        {
+            <span class="hljs-comment">//configure remoting for localhost:8081</span>
+            <span class="hljs-keyword">var</span> fluentConfig = FluentConfig.Begin()
+                .StartRemotingOn(<span class="hljs-string">"localhost"</span>, <span class="hljs-number">8081</span>)
+                .Build();
+
+            <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"my-actor-server"</span>, fluentConfig))
+            {
+                <span class="hljs-comment">//start two services </span>
+                <span class="hljs-keyword">var</span> service1= system.ActorOf&lt;Service1&gt;(<span class="hljs-string">"service1"</span>);
+                <span class="hljs-keyword">var</span> service2 = system.ActorOf&lt;Service2&gt;(<span class="hljs-string">"service2"</span>);
+                Console.ReadKey();
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="windows-service">Windows Service</h3>
+<h3 id="asp-net">Asp.NET</h3>
 
 
 								<div class="sky-form boxed">
