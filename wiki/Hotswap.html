@@ -202,7 +202,27 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<pre><code class="hljs lang-csharp">Error Parsing public class GreetingActor : UntypedActor
+								<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "public class GreetingActor : UntypedActor
+{
+    protected override void OnReceive(object message)
+    {
+        Pattern.Match(message)
+            .With<Greet>(m => {
+                Console.WriteLine("Hello {0}", m.Who);
+                //this could also be a lambda
+                Become(OtherReceive);
+            });
+    }
+
+    void OtherReceive(object message)
+    {
+        Pattern.Match(message)
+            .With<Greet>(m => {
+                Console.WriteLine("You already said hello!");
+                //Unbecome() to revert to old behavior
+            });
+    }
+}"public class GreetingActor : UntypedActor
 {
     protected override void OnReceive(object message)
     {

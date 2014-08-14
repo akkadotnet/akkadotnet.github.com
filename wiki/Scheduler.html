@@ -216,7 +216,14 @@ By providing a <code>CancellationTokenSource</code> you can cancel the scheduled
 Scheduling timing is inexact.</p>
 </div>
 <h2 id="some-examples">Some examples</h2>
-<pre><code class="hljs lang-csharp">Error Parsing var system = ActorSystem.Create("MySystem");
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "var system = ActorSystem.Create("MySystem");
+var someActor = system.ActorOf<SomeActor>("someActor");
+var someMessage = new SomeMessage() {...};
+system
+   .Scheduler
+   .Schedule(TimeSpan.FromSeconds(0),
+             TimeSpan.FromSeconds(5),
+             someActor, someMessage);"var system = ActorSystem.Create("MySystem");
 var someActor = system.ActorOf<SomeActor>("someActor");
 var someMessage = new SomeMessage() {...};
 system

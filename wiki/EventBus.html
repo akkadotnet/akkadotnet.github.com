@@ -205,7 +205,12 @@
 								<ul>
 <li>Read more on <a href="http://doc.akka.io/docs/akka/snapshot/java/event-bus.html">http://doc.akka.io/docs/akka/snapshot/java/event-bus.html</a></li>
 </ul>
-<pre><code class="hljs lang-csharp">Error Parsing var system = ActorSystem.Create("MySystem");
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "var system = ActorSystem.Create("MySystem");
+var subscriber = system.ActorOf<SomeActor>();
+//Subscribe to messages of type string
+system.EventStream.Subscribe(subscriber,typeof(string));
+//send a message
+system.EventStream.Publish("hello"); //this will be forwarded to subscriber"var system = ActorSystem.Create("MySystem");
 var subscriber = system.ActorOf<SomeActor>();
 //Subscribe to messages of type string
 system.EventStream.Subscribe(subscriber,typeof(string));

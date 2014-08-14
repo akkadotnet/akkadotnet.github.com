@@ -204,16 +204,16 @@
 
 								<p>Akka.Net has an official beta <a href="http://www.nuget.org/packages/Akka">NuGet package</a>.</p>
 <p>To install Akka.net, run the following command in the Package Manager Console:</p>
-<pre><code>Error Parsing    PM> Install-Package Akka -Pre
+<pre><code>Error Parsing Error: Unknown language: "   PM> Install-Package Akka -Pre"   PM> Install-Package Akka -Pre
 </code></pre><p>You can also build it locally from the source code.</p>
 <h2 id="building-akka-net-with-fake">Building Akka.NET with Fake</h2>
 <p>The build as been ported to <a href="http://fsharp.github.io/FAKE/">Fake</a> to make it even easier to compile.</p>
 <p>Clone the source code from GitHub (currently only on the dev branch):</p>
-<pre><code>Error Parsing     git clone https://github.com/akkadotnet/akka.net.git -b dev
+<pre><code>Error Parsing Error: Unknown language: "    git clone https://github.com/akkadotnet/akka.net.git -b dev"    git clone https://github.com/akkadotnet/akka.net.git -b dev
 </code></pre><h2 id="running-build-task">Running build task</h2>
 <p>There is no need to install anything specific before running the build.</p>
 <p>Once in the directory, run the build.cmd with the target All:</p>
-<pre><code>Error Parsing      build all
+<pre><code>Error Parsing Error: Unknown language: "     build all"     build all
 </code></pre><p>The <code>all</code> targets runs the following targets in order:</p>
 <ul>
 <li>Build</li>
@@ -225,20 +225,20 @@
 <p>The release notes are also used in nuget packages.</p>
 <h3 id="running-tests">Running tests</h3>
 <p>To run unit tests from the command line, run the following command:</p>
-<pre><code>Error Parsing     build test
+<pre><code>Error Parsing Error: Unknown language: "    build test"    build test
 </code></pre><h3 id="creating-nuget-distributions">Creating Nuget distributions</h3>
 <p>To create nuget packages locally, run the following command:</p>
-<pre><code>Error Parsing     build nuget
+<pre><code>Error Parsing Error: Unknown language: "    build nuget"    build nuget
 </code></pre><p>To create and publish packages to nuget.org, specify the nuget key:</p>
-<pre><code>Error Parsing     build nuget nugetkey=<key>
+<pre><code>Error Parsing Error: Unknown language: "    build nuget nugetkey=<key>"    build nuget nugetkey=<key>
 </code></pre><p>or to run also unit tests before publishing:</p>
-<pre><code>Error Parsing    build all nugetkey=<key>
+<pre><code>Error Parsing Error: Unknown language: "   build all nugetkey=<key>"   build all nugetkey=<key>
 </code></pre><h2 id="building-using-rake-albacore">Building using Rake/Albacore</h2>
 <p>Akka.Net can also use <a href="http://albacorebuild.net/">Albacore (Rake)</a> for builds. The commands are simple, but you will need to install Ruby on your system in order to execute any Rake commands.</p>
 <p>We recommend using the <a href="http://railsinstaller.org/">Rails Installer for Windows</a>.</p>
 <h3 id="running-build-tasks">Running Build Tasks</h3>
 <p>To run a basic build a Pigeon, open a command prompt to the root directory of your Pigeon repository and type the following command:</p>
-<pre><code>Error Parsing C:\akka.net> rake
+<pre><code>Error Parsing Error: Unknown language: "C:\akka.net> rake"C:\akka.net> rake
 </code></pre><p>This will automatically invoke a simple MSBuild of your local copy of Pigeon.</p>
 <h3 id="version-management">Version Management</h3>
 <p>Akka.NET&#39;s Rake file includes the ability to increment the version number for new releases.</p>
@@ -252,7 +252,7 @@
 </ul>
 <h3 id="creating-nuget-distributions">Creating NuGet Distributions</h3>
 <p>To create a NuGet distribution, you can run the following command:</p>
-<pre><code>Error Parsing C:\> rake nuget
+<pre><code>Error Parsing Error: Unknown language: "C:\> rake nuget"C:\> rake nuget
 </code></pre><p>This will create a new instance of all Akka.NET NuGet packages in the <code>/build/</code> folder, using Release configuration settings.</p>
 <p>If you need to create a Debug configuration NuGet package, then you can use the <code>nuget_debug</code> command instead.</p>
 

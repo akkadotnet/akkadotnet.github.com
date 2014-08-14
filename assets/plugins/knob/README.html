@@ -5,7 +5,13 @@
 <li>downward compatible ; overloads an input element.</li>
 </ul>
 <h2 id="example">Example</h2>
-<pre><code>Error Parsing <input type="text" value="75" class="dial">
+<pre><code>Error Parsing Error: Unknown language: "<input type="text" value="75" class="dial">
+
+<script>
+$(function() {
+    $(".dial").knob();
+});
+</script>"<input type="text" value="75" class="dial">
 
 <script>
 $(function() {
@@ -14,9 +20,12 @@ $(function() {
 </script>
 </code></pre><h2 id="options">Options</h2>
 <p>Options are provided as attributes &#39;data-option&#39;:</p>
-<pre><code>Error Parsing <input type="text" class="dial" data-min="-50" data-max="50">
+<pre><code>Error Parsing Error: Unknown language: "<input type="text" class="dial" data-min="-50" data-max="50">"<input type="text" class="dial" data-min="-50" data-max="50">
 </code></pre><p>... or in the &quot;knob()&quot; call :</p>
-<pre><code>Error Parsing $(".dial").knob({
+<pre><code>Error Parsing Error: Unknown language: "$(".dial").knob({
+                'min':-50
+                ,'max':50
+                });"$(".dial").knob({
                 'min':-50
                 ,'max':50
                 });
@@ -46,7 +55,11 @@ $(function() {
 <li>bgColor : background color.</li>
 </ul>
 <h2 id="hooks">Hooks</h2>
-<pre><code>Error Parsing <script>
+<pre><code>Error Parsing Error: Unknown language: "<script>
+$(".dial").knob({
+                    'release' : function (v) { /*make something*/ }
+                });
+</script>"<script>
 $(".dial").knob({
                     'release' : function (v) { /*make something*/ }
                 });
@@ -81,7 +94,13 @@ $(".dial").knob({
 </ul>
 <p>The scope (this) of each hook function is the current Knob instance (refer to the demo code).</p>
 <h2 id="example">Example</h2>
-<pre><code>Error Parsing <input type="text" value="75" class="dial">
+<pre><code>Error Parsing Error: Unknown language: "<input type="text" value="75" class="dial">
+
+<script>
+$(".dial").knob({
+                 'change' : function (v) { console.log(v); }
+                });
+</script>"<input type="text" value="75" class="dial">
 
 <script>
 $(".dial").knob({
@@ -89,7 +108,19 @@ $(".dial").knob({
                 });
 </script>
 </code></pre><h2 id="dynamically-configure">Dynamically configure</h2>
-<pre><code>Error Parsing <script>
+<pre><code>Error Parsing Error: Unknown language: "<script>
+$('.dial')
+    .trigger(
+        'configure',
+        {
+        "min":10,
+        "max":40,
+        "fgColor":"#FF0000",
+        "skin":"tron",
+        "cursor":true
+        }
+    );
+</script>"<script>
 $('.dial')
     .trigger(
         'configure',
@@ -103,7 +134,11 @@ $('.dial')
     );
 </script>
 </code></pre><h2 id="set-the-value">Set the value</h2>
-<pre><code>Error Parsing <script>
+<pre><code>Error Parsing Error: Unknown language: "<script>
+$('.dial')
+    .val(27)
+    .trigger('change');
+</script>"<script>
 $('.dial')
     .val(27)
     .trigger('change');

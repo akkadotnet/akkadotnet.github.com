@@ -209,7 +209,28 @@
 The abstract class UntypedActorWithStash implements the marker interface RequiresMessageQueue<DequeBasedMessageQueueSemantics> which requests the system to automatically choose a deque based mailbox implementation for the actor. If you want more control over the mailbox, see the documentation on mailboxes: Mailboxes.</p>
 </div>
 <p>Here is an example of the UntypedActorWithStash class in action:</p>
-<pre><code class="hljs lang-csharp">Error Parsing import akka.actor.UntypedActorWithStash;
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "import akka.actor.UntypedActorWithStash;
+public class ActorWithProtocol extends UntypedActorWithStash {
+  public void onReceive(Object msg) {
+    if (msg.equals("open")) {
+      unstashAll();
+      getContext().become(new Procedure<Object>() {
+        public void apply(Object msg) throws Exception {
+          if (msg.equals("write")) {
+            // do writing...
+          } else if (msg.equals("close")) {
+            unstashAll();
+            getContext().unbecome();
+          } else {
+            stash();
+          }
+        }
+      }, false); // add behavior on top instead of replacing
+    } else {
+      stash();
+    }
+  }
+}"import akka.actor.UntypedActorWithStash;
 public class ActorWithProtocol extends UntypedActorWithStash {
   public void onReceive(Object msg) {
     if (msg.equals("open")) {

@@ -204,7 +204,33 @@
 
 								<h3 id="dependency-injection">Dependency Injection</h3>
 <p>If your UntypedActor has a constructor that takes parameters then those need to be part of the Props as well, as described above. But there are cases when a factory method must be used, for example when the actual constructor arguments are determined by a dependency injection framework.</p>
-<pre><code class="hljs lang-chsarp">Error Parsing import akka.actor.Actor;
+<pre><code class="hljs lang-chsarp">Error Parsing Error: Unknown language: "import akka.actor.Actor;
+import akka.actor.IndirectActorProducer;
+class DependencyInjector implements IndirectActorProducer {
+  final Object applicationContext;
+  final String beanName;
+
+  public DependencyInjector(Object applicationContext, String beanName) {
+    this.applicationContext = applicationContext;
+    this.beanName = beanName;
+  }
+
+  @Override
+  public Class<? extends Actor> actorClass() {
+    return MyActor.class;
+  }
+
+  @Override
+  public MyActor produce() {
+    MyActor result;
+    // obtain fresh Actor instance from DI framework ...
+    return result;
+  }
+}
+
+  final ActorRef myActor = getContext().actorOf(
+    Props.create(DependencyInjector.class, applicationContext, "MyActor"),
+      "myactor3");"import akka.actor.Actor;
 import akka.actor.IndirectActorProducer;
 class DependencyInjector implements IndirectActorProducer {
   final Object applicationContext;

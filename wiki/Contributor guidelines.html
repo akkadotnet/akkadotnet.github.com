@@ -229,7 +229,11 @@
 <li>Name your tests using <code>DisplayName=</code></li>
 </ul>
 <p>e.g.</p>
-<pre><code class="hljs lang-csharp">Error Parsing [Fact(DisplayName=
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "[Fact(DisplayName=
+@"If a parent receives a Terminated event for a child actor, 
+the parent should no longer supervise it")]
+public void ClearChildUponTerminated()
+{"[Fact(DisplayName=
 @"If a parent receives a Terminated event for a child actor, 
 the parent should no longer supervise it")]
 public void ClearChildUponTerminated()

@@ -205,7 +205,20 @@
 								<h2 id="hocon-configuration">HOCON Configuration</h2>
 <p>Read more about the [[HOCON]] spec.</p>
 <h4 id="example-config">Example config</h4>
-<pre><code class="hljs lang-javascript">Error Parsing akka {
+<pre><code class="hljs lang-javascript">Error Parsing Error: Unknown language: "akka {
+    actor {
+        default-dispatcher.throughput = 20
+    }
+    remote {
+          helios.tcp {
+              transport-class = 
+                "Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"
+              transport-protocol = tcp
+              port = 8091
+              hostname = "127.0.0.1"
+          }
+    }
+}"akka {
     actor {
         default-dispatcher.throughput = 20
     }
@@ -221,7 +234,16 @@
 }
 </code></pre>
 <h4 id="using-hardcoded-hocon-config-in-c-api">Using hardcoded HOCON config in C# API</h4>
-<pre><code class="hljs lang-csharp">Error Parsing var config = ConfigurationFactory.ParseString(@"
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "var config = ConfigurationFactory.ParseString(@"
+akka.remote.helios.tcp {
+              transport-class = 
+           ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
+              transport-protocol = tcp
+              port = 8091
+              hostname = ""127.0.0.1""
+          }");
+
+var system = ActorSystem.Create("Mysystem",config);"var config = ConfigurationFactory.ParseString(@"
 akka.remote.helios.tcp {
               transport-class = 
            ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
@@ -238,12 +260,50 @@ var system = ActorSystem.Create("Mysystem",config);
 Be extra careful when copying the configuration from hardcoded strings. Be on alert for double quotation marks, which may cause failures during ActorSystem creation.<br/>
 Example:<br/>
 The below string in the .config file is incorrect.<br/></p>
-<pre><code>Error Parsing provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+<pre><code>Error Parsing Error: Unknown language: "provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote"""provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 </code></pre><p>This is the correct form.</p>
-<pre><code>Error Parsing provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
+<pre><code>Error Parsing Error: Unknown language: "provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote""provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
 </code></pre></div>
 <h5 id="app-config">App.config</h5>
-<pre><code class="hljs lang-xml">Error Parsing <?xml version="1.0" encoding="utf-8" ?>
+<pre><code class="hljs lang-xml">Error Parsing Error: Unknown language: "<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="akka" 
+             type="Akka.Configuration.Hocon.AkkaConfigurationSection, Akka" />
+  </configSections>
+
+  <akka>
+    <hocon>
+      <![CDATA[
+          akka {
+            log-config-on-start = off
+            stdout-loglevel = INFO
+            loglevel = ERROR
+            actor {
+              provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
+              debug {
+                  receive = on
+                  autoreceive = on
+                  lifecycle = on
+                  event-stream = on
+                  unhandled = on
+              }
+            }
+            remote {
+              helios.tcp {
+                  transport-class = 
+            "Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"
+                  #applied-adapters = []
+                  transport-protocol = tcp
+                  port = 8091
+                  hostname = "127.0.0.1"
+              }
+            log-remote-lifecycle-events = INFO
+          }
+      ]]>
+    </hocon>
+  </akka>
+</configuration>"<?xml version="1.0" encoding="utf-8" ?>
 <configuration>
   <configSections>
     <section name="akka" 
@@ -285,7 +345,8 @@ The below string in the .config file is incorrect.<br/></p>
 </code></pre>
 <p>We can now use the <code>ConfigurationManager</code> to retrieve the &quot;akka&quot; section and use it&#39;s <code>AkkaConfig</code> property,
 which contains the configuration in a form that is used by the ActorSystem.</p>
-<pre><code class="hljs lang-csharp">Error Parsing var section = (AkkaConfigurationSection)ConfigurationManager.GetSection("akka");
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "var section = (AkkaConfigurationSection)ConfigurationManager.GetSection("akka");
+var system = ActorSystem.Create("Mysystem", section.AkkaConfig);"var section = (AkkaConfigurationSection)ConfigurationManager.GetSection("akka");
 var system = ActorSystem.Create("Mysystem", section.AkkaConfig);
 </code></pre>
 <h2 id="fluent-configuration">Fluent Configuration</h2>
@@ -293,7 +354,26 @@ var system = ActorSystem.Create("Mysystem", section.AkkaConfig);
 <p><strong>Warning!</strong><br/>
 The fluent configuration support is experimental and might change or be removed.</p>
 </div>
-<pre><code class="hljs lang-csharp">Error Parsing var fluentConfig = FluentConfig.Begin()
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "var fluentConfig = FluentConfig.Begin()
+    .StdOutLogLevel(LogLevel.DebugLevel)
+    .LogConfigOnStart(true)
+    .LogLevel(LogLevel.ErrorLevel)   
+    .LogLocal(
+        receive: true,
+        autoReceive: true,
+        lifecycle: true,
+        eventStream: true,
+        unhandled: true
+    )
+    .LogRemote(
+        lifecycleEvents: LogLevel.DebugLevel,
+        receivedMessages: true,
+        sentMessages: true
+    )
+    .StartRemotingOn("localhost", 8081)
+    .Build();
+
+var system = ActorSystem.Create("MyServer", fluentConfig);"var fluentConfig = FluentConfig.Begin()
     .StdOutLogLevel(LogLevel.DebugLevel)
     .LogConfigOnStart(true)
     .LogLevel(LogLevel.ErrorLevel)   

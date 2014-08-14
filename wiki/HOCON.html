@@ -339,7 +339,14 @@ wins), and then the object falls back to the non-object (no
 merging, object is the new value). So the two objects never see
 each other.</p>
 <p>These two are equivalent:</p>
-<pre><code>Error Parsing {
+<pre><code>Error Parsing Error: Unknown language: "{
+    "foo" : { "a" : 42 },
+    "foo" : { "b" : 43 }
+}
+
+{
+    "foo" : { "a" : 42, "b" : 43 }
+}"{
     "foo" : { "a" : 42 },
     "foo" : { "b" : 43 }
 }
@@ -348,7 +355,15 @@ each other.</p>
     "foo" : { "a" : 42, "b" : 43 }
 }
 </code></pre><p>And these two are equivalent:</p>
-<pre><code>Error Parsing {
+<pre><code>Error Parsing Error: Unknown language: "{
+    "foo" : { "a" : 42 },
+    "foo" : null,
+    "foo" : { "b" : 43 }
+}
+
+{
+    "foo" : { "b" : 43 }
+}"{
     "foo" : { "a" : 42 },
     "foo" : null,
     "foo" : { "b" : 43 }
@@ -498,7 +513,13 @@ overrides the first.</p>
 <p>Arrays and objects cannot be field keys, whether concatenation is
 involved or not.</p>
 <p>Here are several ways to define <code>a</code> to the same object value:</p>
-<pre><code>Error Parsing // one object
+<pre><code>Error Parsing Error: Unknown language: "// one object
+a : { b : 1, c : 2 }
+// two objects that are merged via concatenation rules
+a : { b : 1 } { c : 2 }
+// two fields that are merged
+a : { b : 1 }
+a : { c : 2 }"// one object
 a : { b : 1, c : 2 }
 // two objects that are merged via concatenation rules
 a : { b : 1 } { c : 2 }
@@ -506,7 +527,14 @@ a : { b : 1 } { c : 2 }
 a : { b : 1 }
 a : { c : 2 }
 </code></pre><p>Here are several ways to define <code>a</code> to the same array value:</p>
-<pre><code>Error Parsing // one array
+<pre><code>Error Parsing Error: Unknown language: "// one array
+a : [ 1, 2, 3, 4 ]
+// two arrays that are concatenated
+a : [ 1, 2 ] [ 3, 4 ]
+// a later definition referring to an earlier
+// (see "self-referential substitutions" below)
+a : [ 1, 2 ]
+a : ${a} [ 3, 4 ]"// one array
 a : [ 1, 2, 3, 4 ]
 // two arrays that are concatenated
 a : [ 1, 2 ] [ 3, 4 ]
@@ -515,16 +543,30 @@ a : [ 1, 2 ] [ 3, 4 ]
 a : [ 1, 2 ]
 a : ${a} [ 3, 4 ]
 </code></pre><p>A common use of object concatenation is &quot;inheritance&quot;:</p>
-<pre><code>Error Parsing data-center-generic = { cluster-size = 6 }
+<pre><code>Error Parsing Error: Unknown language: "data-center-generic = { cluster-size = 6 }
+data-center-east = ${data-center-generic} { name = "east" }"data-center-generic = { cluster-size = 6 }
 data-center-east = ${data-center-generic} { name = "east" }
 </code></pre><p>A common use of array concatenation is to add to paths:</p>
-<pre><code>Error Parsing path = [ /bin ]
+<pre><code>Error Parsing Error: Unknown language: "path = [ /bin ]
+path = ${path} [ /usr/bin ]"path = [ /bin ]
 path = ${path} [ /usr/bin ]
 </code></pre><h4 id="note-arrays-without-commas-or-newlines">Note: Arrays without commas or newlines</h4>
 <p>Arrays allow you to use newlines instead of commas, but not
 whitespace instead of commas. Non-newline whitespace will produce
 concatenation rather than separate elements.</p>
-<pre><code>Error Parsing // this is an array with one element, the string "1 2 3 4"
+<pre><code>Error Parsing Error: Unknown language: "// this is an array with one element, the string "1 2 3 4"
+[ 1 2 3 4 ]
+// this is an array of four integers
+[ 1
+  2
+  3
+  4 ]
+
+// an array of one element, the array [ 1, 2, 3, 4 ]
+[ [ 1, 2 ] [ 3, 4 ] ]
+// an array of two arrays
+[ [ 1, 2 ]
+  [ 3, 4 ] ]"// this is an array with one element, the string "1 2 3 4"
 [ 1 2 3 4 ]
 // this is an array of four integers
 [ 1
@@ -539,7 +581,8 @@ concatenation rather than separate elements.</p>
   [ 3, 4 ] ]
 </code></pre><p>If this gets confusing, just use commas. The concatenation
 behavior is useful rather than surprising in cases like:</p>
-<pre><code>Error Parsing [ This is an unquoted string my name is ${name}, Hello ${world} ]
+<pre><code>Error Parsing Error: Unknown language: "[ This is an unquoted string my name is ${name}, Hello ${world} ]
+[ ${a} ${b}, ${x} ${y} ]"[ This is an unquoted string my name is ${name}, Hello ${world} ]
 [ ${a} ${b}, ${x} ${y} ]
 </code></pre><p>Non-newline whitespace is never an element or field separator.</p>
 <h3 id="path-expressions">Path expressions</h3>
@@ -589,23 +632,23 @@ expanded to create an object for each path element other than the
 last. The last path element, combined with the value, becomes a
 field in the most-nested object.</p>
 <p>In other words:</p>
-<pre><code>Error Parsing foo.bar : 42
+<pre><code>Error Parsing Error: Unknown language: "foo.bar : 42"foo.bar : 42
 </code></pre><p>is equivalent to:</p>
-<pre><code>Error Parsing foo { bar : 42 }
+<pre><code>Error Parsing Error: Unknown language: "foo { bar : 42 }"foo { bar : 42 }
 </code></pre><p>and:</p>
-<pre><code>Error Parsing foo.bar.baz : 42
+<pre><code>Error Parsing Error: Unknown language: "foo.bar.baz : 42"foo.bar.baz : 42
 </code></pre><p>is equivalent to:</p>
-<pre><code>Error Parsing foo { bar { baz : 42 } }
+<pre><code>Error Parsing Error: Unknown language: "foo { bar { baz : 42 } }"foo { bar { baz : 42 } }
 </code></pre><p>and so on. These values are merged in the usual way; which implies
 that:</p>
-<pre><code>Error Parsing a.x : 42, a.y : 43
+<pre><code>Error Parsing Error: Unknown language: "a.x : 42, a.y : 43"a.x : 42, a.y : 43
 </code></pre><p>is equivalent to:</p>
-<pre><code>Error Parsing a { x : 42, y : 43 }
+<pre><code>Error Parsing Error: Unknown language: "a { x : 42, y : 43 }"a { x : 42, y : 43 }
 </code></pre><p>Because path expressions work like value concatenations, you can
 have whitespace in keys:</p>
-<pre><code>Error Parsing a b c : 42
+<pre><code>Error Parsing Error: Unknown language: "a b c : 42"a b c : 42
 </code></pre><p>is equivalent to:</p>
-<pre><code>Error Parsing "a b c" : 42
+<pre><code>Error Parsing Error: Unknown language: ""a b c" : 42""a b c" : 42
 </code></pre><p>Because path expressions are always converted to strings, even
 single values that would normally have another type become
 strings.</p>
@@ -634,9 +677,9 @@ environment variables or other external sources of configuration.
 <p>Substitutions are not parsed inside quoted strings. To get a
 string containing a substitution, you must use value concatenation
 with the substitution in the unquoted portion:</p>
-<pre><code>Error Parsing key : ${animal.favorite} is my favorite animal
+<pre><code>Error Parsing Error: Unknown language: "key : ${animal.favorite} is my favorite animal"key : ${animal.favorite} is my favorite animal
 </code></pre><p>Or you could quote the non-substitution portion:</p>
-<pre><code>Error Parsing key : ${animal.favorite}" is my favorite animal"
+<pre><code>Error Parsing Error: Unknown language: "key : ${animal.favorite}" is my favorite animal""key : ${animal.favorite}" is my favorite animal"
 </code></pre><p>Substitutions are resolved by looking up the path in the
 configuration. The path begins with the root configuration object,
 i.e. it is &quot;absolute&quot; rather than &quot;relative.&quot;</p>
@@ -691,7 +734,8 @@ substitutions that&#39;s a link in the cycle)</li>
 </ul>
 <p>The idea is to allow a new value for a field to be based on the
 older value:</p>
-<pre><code>Error Parsing path : "a:b:c"
+<pre><code>Error Parsing Error: Unknown language: "path : "a:b:c"
+path : ${path}":d""path : "a:b:c"
 path : ${path}":d"
 </code></pre><p>A <em>self-referential field</em> is one which:</p>
 <ul>
@@ -744,9 +788,9 @@ nonexistent value.</p>
 <p>Fields may have <code>+=</code> as a separator rather than <code>:</code> or <code>=</code>. A
 field with <code>+=</code> transforms into a self-referential array
 concatenation, like this:</p>
-<pre><code>Error Parsing a += b
+<pre><code>Error Parsing Error: Unknown language: "a += b"a += b
 </code></pre><p>becomes:</p>
-<pre><code>Error Parsing a = ${?a} [b]
+<pre><code>Error Parsing Error: Unknown language: "a = ${?a} [b]"a = ${?a} [b]
 </code></pre><p><code>+=</code> appends an element to a previous array. If the previous value
 was not an array, an error will result just as it would in the
 long form <code>a = ${?a} [b]</code>. Note that the previous value is
@@ -758,20 +802,20 @@ implementation of the config lib which does not support <code>+=</code>.</p>
 <h4 id="examples-of-self-referential-substitutions">Examples of Self-Referential Substitutions</h4>
 <p>In isolation (with no merges involved), a self-referential field
 is an error because the substitution cannot be resolved:</p>
-<pre><code>Error Parsing foo : ${foo} // an error
+<pre><code>Error Parsing Error: Unknown language: "foo : ${foo} // an error"foo : ${foo} // an error
 </code></pre><p>When <code>foo : ${foo}</code> is merged with an earlier value for <code>foo</code>,
 however, the substitution can be resolved to that earlier value.
 When merging two objects, the self-reference in the overriding
 field refers to the overridden field. Say you have:</p>
-<pre><code>Error Parsing foo : { a : 1 }
+<pre><code>Error Parsing Error: Unknown language: "foo : { a : 1 }"foo : { a : 1 }
 </code></pre><p>and then:</p>
-<pre><code>Error Parsing foo : ${foo}
+<pre><code>Error Parsing Error: Unknown language: "foo : ${foo}"foo : ${foo}
 </code></pre><p>Then <code>${foo}</code> resolves to <code>{ a : 1 }</code>, the value of the overridden
 field.</p>
 <p>It would be an error if these two fields were reversed, so first:</p>
-<pre><code>Error Parsing foo : ${foo}
+<pre><code>Error Parsing Error: Unknown language: "foo : ${foo}"foo : ${foo}
 </code></pre><p>and then second:</p>
-<pre><code>Error Parsing foo : { a : 1 }
+<pre><code>Error Parsing Error: Unknown language: "foo : { a : 1 }"foo : { a : 1 }
 </code></pre><p>Here the <code>${foo}</code> self-reference comes before <code>foo</code> has a value,
 so it is undefined, exactly as if the substitution referenced a
 path not found in the document.</p>
@@ -779,11 +823,12 @@ path not found in the document.</p>
 of <code>foo</code> for a value, the error should be treated as &quot;undefined&quot;
 rather than &quot;intractable cycle&quot;; as a result, the optional
 substitution syntax <code>${?foo}</code> does not create a cycle:</p>
-<pre><code>Error Parsing foo : ${?foo} // this field just disappears silently
+<pre><code>Error Parsing Error: Unknown language: "foo : ${?foo} // this field just disappears silently"foo : ${?foo} // this field just disappears silently
 </code></pre><p>If a substitution is hidden by a value that could not be merged
 with it (by a non-object value) then it is never evaluated and no
 error will be reported. So for example:</p>
-<pre><code>Error Parsing foo : ${does-not-exist}
+<pre><code>Error Parsing Error: Unknown language: "foo : ${does-not-exist}
+foo : 42"foo : ${does-not-exist}
 foo : 42
 </code></pre><p>In this case, no matter what <code>${does-not-exist}</code> resolves to, we
 know <code>foo</code> is <code>42</code>, so <code>${does-not-exist}</code> is never evaluated and
@@ -791,7 +836,9 @@ there is no error. The same is true for cycles like <code>foo : ${foo},
 foo : 42</code>, where the initial self-reference must simply be ignored.</p>
 <p>A self-reference resolves to the value &quot;below&quot; even if it&#39;s part
 of a path expression. So for example:</p>
-<pre><code>Error Parsing foo : { a : { c : 1 } }
+<pre><code>Error Parsing Error: Unknown language: "foo : { a : { c : 1 } }
+foo : ${foo.a}
+foo : { a : 2 }"foo : { a : { c : 1 } }
 foo : ${foo.a}
 foo : { a : 2 }
 </code></pre><p>Here, <code>${foo.a}</code> would refer to <code>{ c : 1 }</code> rather than <code>2</code> and so
@@ -803,7 +850,9 @@ self-referential even if there is a reference to the field itself
 inside that object or array.</p>
 <p>Implementations must be careful to allow objects to refer to paths
 within themselves, for example:</p>
-<pre><code>Error Parsing bar : { foo : 42,
+<pre><code>Error Parsing Error: Unknown language: "bar : { foo : 42,
+        baz : ${bar.foo}
+      }"bar : { foo : 42,
         baz : ${bar.foo}
       }
 </code></pre><p>Here, if an implementation resolved all substitutions in <code>bar</code> as
@@ -813,13 +862,21 @@ cycle. The implementation must only resolve the <code>foo</code> field in
 <p>Because there is no inherent cycle here, the substitution must
 &quot;look forward&quot; (including looking at the field currently being
 defined). To make this clearer, <code>bar.baz</code> would be <code>43</code> in:</p>
-<pre><code>Error Parsing bar : { foo : 42,
+<pre><code>Error Parsing Error: Unknown language: "bar : { foo : 42,
+        baz : ${bar.foo}
+      }
+bar : { foo : 43 }"bar : { foo : 42,
         baz : ${bar.foo}
       }
 bar : { foo : 43 }
 </code></pre><p>Mutually-referring objects should also work, and are not
 self-referential (so they look forward):</p>
-<pre><code>Error Parsing // bar.a should end up as 4
+<pre><code>Error Parsing Error: Unknown language: "// bar.a should end up as 4
+bar : { a : ${foo.d}, b : 1 }
+bar.b = 3
+// foo.c should end up as 3
+foo : { c : ${bar.b}, d : 2 }
+foo.d = 4"// bar.a should end up as 4
 bar : { a : ${foo.d}, b : 1 }
 bar.b = 3
 // foo.c should end up as 3
@@ -828,7 +885,7 @@ foo.d = 4
 </code></pre><p>Another tricky case is an optional self-reference in a value
 concatenation, in this example <code>a</code> should be <code>foo</code> not <code>foofoo</code>
 because the self reference has to &quot;look back&quot; to an undefined <code>a</code>:</p>
-<pre><code>Error Parsing a = ${?a}foo
+<pre><code>Error Parsing Error: Unknown language: "a = ${?a}foo"a = ${?a}foo
 </code></pre><p>In general, in resolving a substitution the implementation must:</p>
 <ul>
 <li>lazy-evaluate the substitution target so there&#39;s no
@@ -842,16 +899,22 @@ a cycle, the substitution is missing which is an error unless
 the <code>${?foo}</code> optional-substitution syntax was used.</li>
 </ul>
 <p>For example, this is not possible to resolve:</p>
-<pre><code>Error Parsing bar : ${foo}
+<pre><code>Error Parsing Error: Unknown language: "bar : ${foo}
+foo : ${bar}"bar : ${foo}
 foo : ${bar}
 </code></pre><p>A multi-step loop like this should also be detected as invalid:</p>
-<pre><code>Error Parsing a : ${b}
+<pre><code>Error Parsing Error: Unknown language: "a : ${b}
+b : ${c}
+c : ${a}"a : ${b}
 b : ${c}
 c : ${a}
 </code></pre><p>Some cases have undefined behavior because the behavior depends on
 the order in which two fields are resolved, and that order is not
 defined. For example:</p>
-<pre><code>Error Parsing a : 1
+<pre><code>Error Parsing Error: Unknown language: "a : 1
+b : 2
+a : ${b}
+b : ${a}"a : 1
 b : 2
 a : ${b}
 b : ${a}
@@ -899,16 +962,20 @@ an unquoted string or any other kind of value.</p>
 <p>Unquoted <code>include</code> has no special meaning if it is not the start
 of a key&#39;s path expression.</p>
 <p>It may appear later in the key:</p>
-<pre><code>Error Parsing # this is valid
+<pre><code>Error Parsing Error: Unknown language: "# this is valid
+{ foo include : 42 }
+# equivalent to
+{ "foo include" : 42 }"# this is valid
 { foo include : 42 }
 # equivalent to
 { "foo include" : 42 }
 </code></pre><p>It may appear as an object or array value:</p>
-<pre><code>Error Parsing { foo : include } # value is the string "include"
+<pre><code>Error Parsing Error: Unknown language: "{ foo : include } # value is the string "include"
+[ include ]       # array of one string "include""{ foo : include } # value is the string "include"
 [ include ]       # array of one string "include"
 </code></pre><p>You can quote <code>&quot;include&quot;</code> if you want a key that starts with the
 word <code>&quot;include&quot;</code>, only unquoted <code>include</code> is special:</p>
-<pre><code>Error Parsing { "include" : 42 }
+<pre><code>Error Parsing Error: Unknown language: "{ "include" : 42 }"{ "include" : 42 }
 </code></pre><p>Note: Akka 2.0 (and thus Play 2.0) contains an embedded
 implementation of the config lib which does not support the
 <code>url()</code>/<code>file()</code>/<code>classpath()</code> syntax. Only the heuristic <code>include
@@ -945,15 +1012,18 @@ for single files in isolation.</p>
 <p>Therefore, if an included file contains substitutions, they must
 be &quot;fixed up&quot; to be relative to the app&#39;s configuration root.</p>
 <p>Say for example that the root configuration is this:</p>
-<pre><code>Error Parsing { a : { include "foo.conf" } }
+<pre><code>Error Parsing Error: Unknown language: "{ a : { include "foo.conf" } }"{ a : { include "foo.conf" } }
 </code></pre><p>And &quot;foo.conf&quot; might look like this:</p>
-<pre><code>Error Parsing { x : 10, y : ${x} }
+<pre><code>Error Parsing Error: Unknown language: "{ x : 10, y : ${x} }"{ x : 10, y : ${x} }
 </code></pre><p>If you parsed &quot;foo.conf&quot; in isolation, then <code>${x}</code> would evaluate
 to 10, the value at the path <code>x</code>. If you include &quot;foo.conf&quot; in an
 object at key <code>a</code>, however, then it must be fixed up to be
 <code>${a.x}</code> rather than <code>${x}</code>.</p>
 <p>Say that the root configuration redefines <code>a.x</code>, like this:</p>
-<pre><code>Error Parsing {
+<pre><code>Error Parsing Error: Unknown language: "{
+    a : { include "foo.conf" }
+    a : { x : 42 }
+}"{
     a : { include "foo.conf" }
     a : { x : 42 }
 }
@@ -979,7 +1049,7 @@ Those formats must be compatible with the JSON type system, or
 have some documented mapping to JSON&#39;s type system.</p>
 <p>If an implementation supports multiple formats, then the extension
 may be omitted from the name of included files:</p>
-<pre><code>Error Parsing include "foo"
+<pre><code>Error Parsing Error: Unknown language: "include "foo""include "foo"
 </code></pre><p>If a filename has no extension, the implementation should treat it
 as a basename and try loading the file with all known extensions.</p>
 <p>If the file exists with multiple extensions, they should <em>all</em> be
@@ -987,7 +1057,9 @@ loaded and merged together.</p>
 <p>Files in HOCON format should be parsed last. Files in JSON format
 should be parsed next-to-last.</p>
 <p>In short, <code>include &quot;foo&quot;</code> might be equivalent to:</p>
-<pre><code>Error Parsing include "foo.properties"
+<pre><code>Error Parsing Error: Unknown language: "include "foo.properties"
+include "foo.json"
+include "foo.conf""include "foo.properties"
 include "foo.json"
 include "foo.conf"
 </code></pre><p>This same extension-based behavior is applied to classpath
@@ -1069,11 +1141,12 @@ they do support them they should do so as described above.</p>
 there isn&#39;t a good way to define arrays. To provide some mechanism
 for this, implementations should support converting objects with
 numeric keys into arrays. For example, this object:</p>
-<pre><code>Error Parsing { "0" : "a", "1" : "b" }
+<pre><code>Error Parsing Error: Unknown language: "{ "0" : "a", "1" : "b" }"{ "0" : "a", "1" : "b" }
 </code></pre><p>could be treated as:</p>
-<pre><code>Error Parsing [ "a", "b" ]
+<pre><code>Error Parsing Error: Unknown language: "[ "a", "b" ]"[ "a", "b" ]
 </code></pre><p>This allows creating an array in a properties file like this:</p>
-<pre><code>Error Parsing foo.0 = "a"
+<pre><code>Error Parsing Error: Unknown language: "foo.0 = "a"
+foo.1 = "b""foo.0 = "a"
 foo.1 = "b"
 </code></pre><p>The details:</p>
 <ul>
@@ -1296,7 +1369,8 @@ preserve the order of the file. As a result, there is an
 intractable case where a single key needs to refer to both a
 parent object and a string value. For example, say the Java
 properties file has:</p>
-<pre><code>Error Parsing a=hello
+<pre><code>Error Parsing Error: Unknown language: "a=hello
+a.b=world"a=hello
 a.b=world
 </code></pre><p>In this case, <code>a</code> needs to be both an object and a string value.
 The <em>object</em> must always win in this case... the &quot;object wins&quot;

@@ -205,12 +205,21 @@
 								<h2 id="using-receive">Using Receive</h2>
 <h3 id="inherit-from-receiveactor">Inherit from ReceiveActor</h3>
 <p>In order to use the <code>Receive()</code> method inside an actor the actor must inherit from <code>ReceiveActor</code>.</p>
-<pre><code class="hljs lang-c#">Error Parsing private class MyActor : ReceiveActor
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "private class MyActor : ReceiveActor
+{
+}"private class MyActor : ReceiveActor
 {
 }
 </code></pre>
 <p>Inside the constructor, add a call to <code>Receive&lt;T&gt;(Action&lt;T&gt; handler)</code> for every type of message you want to handle:</p>
-<pre><code class="hljs lang-c#">Error Parsing private class MyActor : ReceiveActor
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "private class MyActor : ReceiveActor
+{
+  public MyActor()
+  {
+    Receive<string>(s => Console.WriteLine("Received string: " + s)); //1
+    Receive<int>(i => Console.WriteLine("Received integer: " + i));   //2
+  }
+}"private class MyActor : ReceiveActor
 {
   public MyActor()
   {
@@ -222,18 +231,22 @@
 <p>Whenever a message of typ <code>string</code> is sent to <strong>MyActor</strong> the first handler is invoked and for messages of type <code>int</code> the second handler is used.</p>
 <h3 id="handler-priority">Handler priority</h3>
 <p>If more than one handler matches, the one that appears first is used, and the others are not called.</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => Console.WriteLine("Received string: " + )s);      //1
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => Console.WriteLine("Received string: " + )s);      //1
+Receive<string>(s => Console.WriteLine("Also received string: " + s)); //2
+Receive<object>(o => Console.WriteLine("Received object: " + o));      //3"Receive<string>(s => Console.WriteLine("Received string: " + )s);      //1
 Receive<string>(s => Console.WriteLine("Also received string: " + s)); //2
 Receive<object>(o => Console.WriteLine("Received object: " + o));      //3
 </code></pre>
 <p><strong>Example</strong>: The actor receives a message of type <code>string</code>. Only the first handler is invoked, even though all three handlers can handle that message.</p>
 <h3 id="using-predicates">Using predicates</h3>
 <p>By specifying a predicate, you can choose which messages to handle.</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s);
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s);"Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s);
 </code></pre>
 <p>The handler above will only be invoked if the length of the string is greater than 20.</p>
 <p>If the predicate do not match, the next matching handler will be used.</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s.Length>5, s => Console.WriteLine("1: " + s));    //1
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s.Length>5, s => Console.WriteLine("1: " + s));    //1
+Receive<string>(s => s.Length>2, s => Console.WriteLine("2: " + s));    //2
+Receive<string>(s => Console.WriteLine("3: " + s));                     //3"Receive<string>(s => s.Length>5, s => Console.WriteLine("1: " + s));    //1
 Receive<string>(s => s.Length>2, s => Console.WriteLine("2: " + s));    //2
 Receive<string>(s => Console.WriteLine("3: " + s));                     //3
 </code></pre>
@@ -245,12 +258,22 @@ Receive<string>(s => Console.WriteLine("3: " + s));                     //3
 <p><strong>Example</strong>: If the actor receives the message &quot;12&quot;, then &quot;3: 12&quot; will be written on the console.</p>
 <h4 id="predicates-position">Predicates position</h4>
 <p>Predicates can be specified <em>before</em> the action handler or <em>after</em>. These two declarations are equivalent:</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s));
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s));
+Receive<string>(s => Console.WriteLine("Received string: " + s, s => s.Length>5));"Receive<string>(s => s.Length>5, s => Console.WriteLine("Received string: " + s));
 Receive<string>(s => Console.WriteLine("Received string: " + s, s => s.Length>5));
 </code></pre>
 <h3 id="receive-using-funcs">Receive using Funcs</h3>
 <p>More complex handlers can be specified using the <code>Receive&lt;T&gt;(Func&lt;T,bool&gt; handler)</code> overload. These are invoked if the message is of the specified type. If the func returns <code>true</code>, the message is considered handled, and no more handlers will be invoked.</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => 
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => 
+  { 
+    if(s.Length>5)
+    {
+      Console.WriteLine("1: " + s);
+      return true;
+    }
+    return false;
+  });
+Receive<string>(s => Console.WriteLine("2: " + s);"Receive<string>(s => 
   { 
     if(s.Length>5)
     {
@@ -265,7 +288,10 @@ Receive<string>(s => Console.WriteLine("2: " + s);
 <strong>Example</strong>: The actor receives the message &quot;123456&quot;. Since it&#39;s a <code>string</code>, the first handler is invoked. The length is greater than 5 so the if body will be called, and &quot;1: 123456&quot; will be written to the console. The handler returns <code>true</code> and therefore no more handlers will be invoked.</p>
 <h3 id="unmatched-messages">Unmatched messages</h3>
 <p>If the actor receives a message for which no handler matches, the unhandled message is published to the <code>EventStream</code> wrapped in an <code>UnhandledMessage</code>. To change this behavior override <code>Unhandled(object message)</code></p>
-<pre><code class="hljs lang-c#">Error Parsing protected override void Unhandled(object message)
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "protected override void Unhandled(object message)
+{
+  //Do something with the message.
+}"protected override void Unhandled(object message)
 {
   //Do something with the message.
 }
@@ -273,29 +299,42 @@ Receive<string>(s => Console.WriteLine("2: " + s);
 <p>Another option is to add a handler last that matches all messages, using <code>ReceiveAny()</code>.</p>
 <h3 id="receiveany">ReceiveAny</h3>
 <p>To catch messages of any type the <code>ReceiveAny(Action&lt;object&gt; handler)</code> overload can be specified.</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => Console.WriteLine("Received string: " + s);
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => Console.WriteLine("Received string: " + s);
+ReceiveAny(o => Console.WriteLine("Received object: " + o);"Receive<string>(s => Console.WriteLine("Received string: " + s);
 ReceiveAny(o => Console.WriteLine("Received object: " + o);
 </code></pre>
 <p>Since it handles everything, it must be specified last. Specifying handlers it after will cause an exception.</p>
-<pre><code class="hljs lang-c#">Error Parsing ReceiveAny(o => Console.WriteLine("Received object: " + o);
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "ReceiveAny(o => Console.WriteLine("Received object: " + o);
+Receive<string>(s => Console.WriteLine("Received string: " + s);  //This will cause an exception"ReceiveAny(o => Console.WriteLine("Received object: " + o);
 Receive<string>(s => Console.WriteLine("Received string: " + s);  //This will cause an exception
 </code></pre>
 <div class="alert alert-success">
 <p><strong>Note</strong><br/> that <code>Receive&lt;object&gt;(Action&lt;object&gt; handler)</code> behaves the same as <code>ReceiveAny()</code> as it catches all messages. These two are equivalent:</p>
-<pre><code class="hljs lang-c#">Error Parsing ReceiveAny(o => Console.WriteLine("Received object: " + o);
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "ReceiveAny(o => Console.WriteLine("Received object: " + o);
+Receive<object>(0 => Console.WriteLine("Received object: " + o);"ReceiveAny(o => Console.WriteLine("Received object: " + o);
 Receive<object>(0 => Console.WriteLine("Received object: " + o);
 </code></pre>
 </div>
 <h3 id="non-generic-overloads">Non generic overloads</h3>
 <p><code>Receive</code> has non generic overloads:</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive(typeof(string), obj => Console.WriteLine(obj.ToString()) );
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive(typeof(string), obj => Console.WriteLine(obj.ToString()) );"Receive(typeof(string), obj => Console.WriteLine(obj.ToString()) );
 </code></pre>
 <p>Predicates can go before or after the handler:</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive(typeof(string), obj=> ((string) obj).Length>5, obj => Console.WriteLine(obj.ToString()) );
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive(typeof(string), obj=> ((string) obj).Length>5, obj => Console.WriteLine(obj.ToString()) );
+Receive(typeof(string), obj => Console.WriteLine(obj.ToString()), obj=> ((string) obj).Length>5 );"Receive(typeof(string), obj=> ((string) obj).Length>5, obj => Console.WriteLine(obj.ToString()) );
 Receive(typeof(string), obj => Console.WriteLine(obj.ToString()), obj=> ((string) obj).Length>5 );
 </code></pre>
 <p>And the non generic Func</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive(typeof(string), obj => 
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive(typeof(string), obj => 
+  { 
+    var s = (string) obj;
+    if(s.Length>5)
+    {
+      Console.WriteLine("1: " + s);
+      return true;
+    }
+    return false;
+  });"Receive(typeof(string), obj => 
   { 
     var s = (string) obj;
     if(s.Length>5)
@@ -308,7 +347,29 @@ Receive(typeof(string), obj => Console.WriteLine(obj.ToString()), obj=> ((string
 </code></pre>
 <h3 id="become">Become</h3>
 <p>You can switch the handler at runtime using <code>Become()</code> which replaces the current handler with a new one.</p>
-<pre><code class="hljs lang-c#">Error Parsing public class MoodActor : ReceiveActor
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "public class MoodActor : ReceiveActor
+{
+  public MoodActor()
+  {
+    Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm neutral"));
+    Receive<string>(s => s == "Happy", _ => Become(Happy));
+    Receive<string>(s => s == "Angry", _ => Become(Angry));
+  }
+
+  private void Happy()
+  {
+    Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm happy"));
+    Receive<string>(s => s == "Happy", _ => Sender.Tell("I'm already happy!", Self));
+    Receive<string>(s => s == "Angry", _ => Become(Angry));
+  }
+
+  private void Angry()
+  {
+    Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm angry"));
+    Receive<string>(s => s == "Angry", _ => Sender.Tell("I'm already angry!", Self));
+    Receive<string>(s => s == "Happy", _ => Become(Happy));
+  }
+}"public class MoodActor : ReceiveActor
 {
   public MoodActor()
   {
@@ -333,7 +394,13 @@ Receive(typeof(string), obj => Console.WriteLine(obj.ToString()), obj=> ((string
 }
 </code></pre>
 <p>Using MoodActor:</p>
-<pre><code class="hljs lang-c#">Error Parsing var moodActor = system.ActorOf<MoodActor>();
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "var moodActor = system.ActorOf<MoodActor>();
+moodActor.Tell("Mood?", Self);  // Result: "I'm neutral"
+moodActor.Tell("Happy", Self);  // Result: becomes Happy
+moodActor.Tell("Mood?", Self);  // Result: "I'm happy"
+moodActor.Tell("Happy", Self);  // Result: "I'm already happy!"
+moodActor.Tell("Angry", Self);  // Result: becomes Angry
+moodActor.Tell("Mood?", Self);  // Result: "I'm Angry""var moodActor = system.ActorOf<MoodActor>();
 moodActor.Tell("Mood?", Self);  // Result: "I'm neutral"
 moodActor.Tell("Happy", Self);  // Result: becomes Happy
 moodActor.Tell("Mood?", Self);  // Result: "I'm happy"
@@ -342,14 +409,24 @@ moodActor.Tell("Angry", Self);  // Result: becomes Angry
 moodActor.Tell("Mood?", Self);  // Result: "I'm Angry"
 </code></pre>
 <p>You may use lambdas if you don&#39;t want separate methods:</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s == "Grumpy", _ => Become(() =>
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s == "Grumpy", _ => Become(() =>
+{
+  Receive<string>(s => Sender.Tell("Leave me alone. I'm Grumpy!"));
+}));"Receive<string>(s => s == "Grumpy", _ => Become(() =>
 {
   Receive<string>(s => Sender.Tell("Leave me alone. I'm Grumpy!"));
 }));
 </code></pre>
 <h3 id="become-unbecome">Become/Unbecome</h3>
 <p>In the examples above the receive handlers are replaced when <code>Become()</code> is called. The other way of using <code>Become</code> pushes the current handler on a stack making it possible to switch back to it using <code>Unbecome</code>:</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
+...
+private void Grumpy()
+{
+  Receive<string>(s => s == "Snap out of it!", _ => Unbecome());
+  Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm grumpy!"));
+  Receive<string>(_ => Sender.Tell("Leave me alone. I'm Grumpy!"));
+}"Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
 ...
 private void Grumpy()
 {
@@ -359,7 +436,13 @@ private void Grumpy()
 }
 </code></pre>
 <p>Using MoodActor:</p>
-<pre><code class="hljs lang-c#">Error Parsing var moodActor = system.ActorOf<MoodActor>();
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "var moodActor = system.ActorOf<MoodActor>();
+moodActor.Tell("Mood?", Self);            // Result: "I'm neutral"
+moodActor.Tell("Grumpy", Self);           // Result: becomes Grumpy
+moodActor.Tell("Mood?", Self);            // Result: "I'm Grumpy"
+moodActor.Tell("Happy", Self);            // Result: "Leave me alone. I'm Grumpy!"
+moodActor.Tell("Snap out of it!", Self);  // Result: reverts back to neutral using Unbecome
+moodActor.Tell("Mood?", Self);            // Result: "I'm neutral""var moodActor = system.ActorOf<MoodActor>();
 moodActor.Tell("Mood?", Self);            // Result: "I'm neutral"
 moodActor.Tell("Grumpy", Self);           // Result: becomes Grumpy
 moodActor.Tell("Mood?", Self);            // Result: "I'm Grumpy"
@@ -371,7 +454,41 @@ moodActor.Tell("Mood?", Self);            // Result: "I'm neutral"
 <p><strong>Note</strong><br/> In this case care must be taken to ensure that the number of <code>Unbecome()</code> matches the number of <code>Become(..., discardOld: false)</code> ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).</p>
 </div>
 <p>You can reuse Receive-specifications:</p>
-<pre><code class="hljs lang-c#">Error Parsing public class MoodActor : ReceiveActor
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "public class MoodActor : ReceiveActor
+{
+  public MoodActor()
+  {
+    Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm neutral"));
+    ReceiveMoodSwitchers();
+  }
+
+  private void Happy()
+  {
+    Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm happy"));
+    Receive<string>(s => s == "Happy", _ => Sender.Tell("I'm already happy!", Self));
+    ReceiveMoodSwitchers();
+  }
+
+  private void Angry()
+  {
+    Receive<string>(s => s == "Mood?", _ => Sender.Tell("I'm angry")); 
+    Receive<string>(s => s == "Angry", _ => Sender.Tell("I'm already angry!", Self));
+    ReceiveMoodSwitchers();
+  }
+
+  private void Grumpy()
+  {
+    Receive<string>(s => s == "Snap out of it!", s => Unbecome());
+    Receive<string>(s => Sender.Tell("Leave me alone. I'm Grumpy!"));
+  }
+
+  private void ReceiveMoodSwitchers()
+  {
+    Receive<string>(s => s == "Happy", _ => Become(Happy));
+    Receive<string>(s => s == "Angry", _ => Become(Angry));
+    Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
+  }
+}"public class MoodActor : ReceiveActor
 {
   public MoodActor()
   {
@@ -411,7 +528,15 @@ moodActor.Tell("Mood?", Self);            // Result: "I'm neutral"
 <p><strong>Warning</strong><br/>
 Do not add other statements than Receive in Become-declarations. The result of doing so is undefined.</p>
 </div>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
+...
+private void Grumpy()
+{
+  _state = State.Grumpy;                      //DO NOT do this
+  Sender.Tell("I just became grumpy", Self);  //DO NOT do this
+  Receive<string>(s => s == "Snap out of it!", s => Unbecome());
+  Receive<string>(s => Sender.Tell("Leave me alone. I'm Grumpy!"));
+}"Receive<string>(s => s == "Grumpy", _ => Become(Grumpy, discardOld: false));
 ...
 private void Grumpy()
 {
@@ -422,7 +547,18 @@ private void Grumpy()
 }
 </code></pre>
 <p>Any state changes or message sends should be in the handler:</p>
-<pre><code class="hljs lang-c#">Error Parsing Receive<string>(s => s == "Grumpy", _ => 
+<pre><code class="hljs lang-c#">Error Parsing Error: Unknown language: "Receive<string>(s => s == "Grumpy", _ => 
+  {
+    _state = State.Grumpy;
+    Sender.Tell("I just became grumpy", Self);
+    Become(Grumpy, discardOld: false));
+  });
+...
+private void Grumpy()
+{
+  Receive<string>(s => s == "Snap out of it!", s => Unbecome());
+  Receive<string>(s => Sender.Tell("Leave me alone. I'm Grumpy!"));
+}"Receive<string>(s => s == "Grumpy", _ => 
   {
     _state = State.Grumpy;
     Sender.Tell("I just became grumpy", Self);

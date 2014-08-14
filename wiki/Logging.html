@@ -211,7 +211,9 @@
 </ul>
 <h2 id="configuring-custom-loggers">Configuring Custom Loggers</h2>
 <p>To configure a custom logger inside your Akka.Config, you need to use a fully qualified .NET class name like this:</p>
-<pre><code>Error Parsing akka {
+<pre><code>Error Parsing Error: Unknown language: "akka {
+    loggers = [""NameSpace.ClassName,AssemblyName""]
+}"akka {
     loggers = [""NameSpace.ClassName,AssemblyName""]
 }
 </code></pre>

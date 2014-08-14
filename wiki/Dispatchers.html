@@ -210,13 +210,33 @@
 <p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ThreadMultiplex.png" alt="Thread Multiplex"></p>
 <h2 id="looking-up-a-dispatcher">Looking up a Dispatcher</h2>
 <p>Dispatchers implement the ExecutionContext interface and can thus be used to run Future invocations etc.</p>
-<pre><code class="hljs lang-csharp">Error Parsing // this is scala.concurrent.ExecutionContext
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "// this is scala.concurrent.ExecutionContext
+// for use with Futures, Scheduler, etc.
+ExecutionContext ex = system.Dispatchers.Lookup("my-dispatcher");"// this is scala.concurrent.ExecutionContext
 // for use with Futures, Scheduler, etc.
 ExecutionContext ex = system.Dispatchers.Lookup("my-dispatcher");
 </code></pre>
 <h2 id="setting-the-dispatcher-for-an-actor">Setting the dispatcher for an Actor</h2>
 <p>So in case you want to give your Actor a different dispatcher than the default, you need to do two things, of which the first is is to configure the dispatcher:</p>
-<pre><code class="hljs lang-json">Error Parsing my-dispatcher {
+<pre><code class="hljs lang-json">Error Parsing Error: Unknown language: "my-dispatcher {
+  # Dispatcher is the name of the event-based dispatcher
+  type = Dispatcher
+  # What kind of ExecutionService to use
+  executor = "fork-join-executor"
+  # Configuration for the fork join pool
+  fork-join-executor {
+    # Min number of threads to cap factor-based parallelism number to
+    parallelism-min = 2
+    # Parallelism (threads) ... ceil(available processors * factor)
+    parallelism-factor = 2.0
+    # Max number of threads to cap factor-based parallelism number to
+    parallelism-max = 10
+  }
+  # Throughput defines the maximum number of messages to be
+  # processed per actor before the thread jumps to the next actor.
+  # Set to 1 for as fair as possible.
+  throughput = 100
+}"my-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
   type = Dispatcher
   # What kind of ExecutionService to use
@@ -237,7 +257,25 @@ ExecutionContext ex = system.Dispatchers.Lookup("my-dispatcher");
 }
 </code></pre>
 <p>And here&#39;s another example that uses the <code>&quot;thread-pool-executor&quot;</code>:</p>
-<pre><code class="hljs lang-json">Error Parsing my-thread-pool-dispatcher {
+<pre><code class="hljs lang-json">Error Parsing Error: Unknown language: "my-thread-pool-dispatcher {
+  # Dispatcher is the name of the event-based dispatcher
+  type = Dispatcher
+  # What kind of ExecutionService to use
+  executor = "thread-pool-executor"
+  # Configuration for the thread pool
+  thread-pool-executor {
+    # minimum number of threads to cap factor-based core number to
+    core-pool-size-min = 2
+    # No of core threads ... ceil(available processors * factor)
+    core-pool-size-factor = 2.0
+    # maximum number of threads to cap factor-based number to
+    core-pool-size-max = 10
+  }
+  # Throughput defines the maximum number of messages to be
+  # processed per actor before the thread jumps to the next actor.
+  # Set to 1 for as fair as possible.
+  throughput = 100
+}"my-thread-pool-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
   type = Dispatcher
   # What kind of ExecutionService to use
@@ -259,18 +297,26 @@ ExecutionContext ex = system.Dispatchers.Lookup("my-dispatcher");
 </code></pre>
 <p>For more options, see the <code>default-dispatcher</code> section of the Configuration.</p>
 <p>Then you create the actor as usual and define the dispatcher in the deployment configuration.</p>
-<pre><code class="hljs lang-csharp">Error Parsing ActorRef myActor =
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "ActorRef myActor =
+  system.ActorOf(Props.Create(typeof(MyUntypedActor)),
+    "myactor");"ActorRef myActor =
   system.ActorOf(Props.Create(typeof(MyUntypedActor)),
     "myactor");
 </code></pre>
-<pre><code class="hljs lang-json">Error Parsing akka.actor.deployment {
+<pre><code class="hljs lang-json">Error Parsing Error: Unknown language: "akka.actor.deployment {
+  /myactor {
+    dispatcher = my-dispatcher
+  }
+}"akka.actor.deployment {
   /myactor {
     dispatcher = my-dispatcher
   }
 }
 </code></pre>
 <p>An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.</p>
-<pre><code class="hljs lang-csharp">Error Parsing ActorRef myActor =
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "ActorRef myActor =
+  system.ActorOf(Props.Create(typeof(MyUntypedActor)).WithDispatcher("my-dispatcher"),
+    "myactor3");"ActorRef myActor =
   system.ActorOf(Props.Create(typeof(MyUntypedActor)).WithDispatcher("my-dispatcher"),
     "myactor3");
 </code></pre>
@@ -309,12 +355,15 @@ The dispatcher you specify in <code>WithDispatcher</code> and the dispatcher pro
 </ul>
 <h3 id="more-dispatcher-configuration-examples">More dispatcher configuration examples</h3>
 <p>Configuring a <code>PinnedDispatcher</code>:</p>
-<pre><code class="hljs lang-json">Error Parsing my-pinned-dispatcher {
+<pre><code class="hljs lang-json">Error Parsing Error: Unknown language: "my-pinned-dispatcher {
+  type = PinnedDispatcher
+}"my-pinned-dispatcher {
   type = PinnedDispatcher
 }
 </code></pre>
 <p>And then using it:</p>
-<pre><code class="hljs lang-csharp">Error Parsing ActorRef myActor = system.ActorOf(Props.Create(typeof(MyUntypedActor));
+<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "ActorRef myActor = system.ActorOf(Props.Create(typeof(MyUntypedActor));
+    .WithDispatcher("my-pinned-dispatcher"));"ActorRef myActor = system.ActorOf(Props.Create(typeof(MyUntypedActor));
     .WithDispatcher("my-pinned-dispatcher"));
 </code></pre>
 <p>Note that <code>thread-pool-executor</code> configuration as per the above <code>my-thread-pool-dispatcher</code> example is NOT applicable. This is because every actor will have its own thread pool when using <code>PinnedDispatcher</code>, and that pool will have only one thread.</p>
