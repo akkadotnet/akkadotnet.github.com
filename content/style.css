@@ -8,7 +8,7 @@ pre {
     padding: 0px;
 }
 
-pre code {
+div pre code {
     padding: 15px;
     border-radius: 10px;
 }
