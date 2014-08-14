@@ -8,9 +8,9 @@ pre {
     padding: 0px;
 }
 
-div pre code {
+.hljs {
     padding: 15px;
-    border-radius: 0px;
+    border-radius: 5px;
 }
 
 /*--------------------------------------------------------------------------
