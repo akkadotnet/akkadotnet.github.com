@@ -202,24 +202,24 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> GreetingActor : UntypedActor
+								<pre><code class="hljs lang-csharp">Error Parsing public class GreetingActor : UntypedActor
 {
-    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-keyword">object</span> message)
+    protected override void OnReceive(object message)
     {
         Pattern.Match(message)
-            .With&lt;Greet&gt;(m =&gt; {
-                Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>, m.Who);
-                <span class="hljs-comment">//this could also be a lambda</span>
+            .With<Greet>(m => {
+                Console.WriteLine("Hello {0}", m.Who);
+                //this could also be a lambda
                 Become(OtherReceive);
             });
     }
 
-    <span class="hljs-keyword">void</span> OtherReceive(<span class="hljs-keyword">object</span> message)
+    void OtherReceive(object message)
     {
         Pattern.Match(message)
-            .With&lt;Greet&gt;(m =&gt; {
-                Console.WriteLine(<span class="hljs-string">"You already said hello!"</span>);
-                <span class="hljs-comment">//Unbecome() to revert to old behavior</span>
+            .With<Greet>(m => {
+                Console.WriteLine("You already said hello!");
+                //Unbecome() to revert to old behavior
             });
     }
 }

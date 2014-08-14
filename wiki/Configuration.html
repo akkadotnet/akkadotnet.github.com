@@ -205,32 +205,32 @@
 								<h2 id="hocon-configuration">HOCON Configuration</h2>
 <p>Read more about the [[HOCON]] spec.</p>
 <h4 id="example-config">Example config</h4>
-<pre><code class="hljs lang-javascript">akka {
+<pre><code class="hljs lang-javascript">Error Parsing akka {
     actor {
-        default-dispatcher.<span class="hljs-variable">throughput =</span> <span class="hljs-number">20</span>
+        default-dispatcher.throughput = 20
     }
     remote {
           helios.tcp {
-              <span class="hljs-variable">transport-class =</span> 
-                <span class="hljs-string">"Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"</span>
-              <span class="hljs-variable">transport-protocol =</span> tcp
-              <span class="hljs-variable">port =</span> <span class="hljs-number">8091</span>
-              <span class="hljs-variable">hostname =</span> <span class="hljs-string">"127.0.0.1"</span>
+              transport-class = 
+                "Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"
+              transport-protocol = tcp
+              port = 8091
+              hostname = "127.0.0.1"
           }
     }
 }
 </code></pre>
 <h4 id="using-hardcoded-hocon-config-in-c-api">Using hardcoded HOCON config in C# API</h4>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> config = ConfigurationFactory.ParseString(<span class="hljs-string">@"
+<pre><code class="hljs lang-csharp">Error Parsing var config = ConfigurationFactory.ParseString(@"
 akka.remote.helios.tcp {
               transport-class = 
            ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
               transport-protocol = tcp
               port = 8091
               hostname = ""127.0.0.1""
-          }"</span>);
+          }");
 
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"Mysystem"</span>,config);
+var system = ActorSystem.Create("Mysystem",config);
 </code></pre>
 <h4 id="using-a-net-config-file-">Using a .NET config file:</h4>
 <div class="alert alert-warning">
@@ -238,21 +238,21 @@ akka.remote.helios.tcp {
 Be extra careful when copying the configuration from hardcoded strings. Be on alert for double quotation marks, which may cause failures during ActorSystem creation.<br/>
 Example:<br/>
 The below string in the .config file is incorrect.<br/></p>
-<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">""</span>Akka.Remote.RemoteActorRefProvider, Akka.Remote<span class="hljs-string">""</span>
+<pre><code>Error Parsing provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
 </code></pre><p>This is the correct form.</p>
-<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
+<pre><code>Error Parsing provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
 </code></pre></div>
 <h5 id="app-config">App.config</h5>
-<pre><code class="hljs lang-xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-title">configuration</span>&gt;</span>
-  <span class="hljs-tag">&lt;<span class="hljs-title">configSections</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">section</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"akka"</span> 
-             <span class="hljs-attribute">type</span>=<span class="hljs-value">"Akka.Configuration.Hocon.AkkaConfigurationSection, Akka"</span> /&gt;</span>
-  <span class="hljs-tag">&lt;/<span class="hljs-title">configSections</span>&gt;</span>
+<pre><code class="hljs lang-xml">Error Parsing <?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <configSections>
+    <section name="akka" 
+             type="Akka.Configuration.Hocon.AkkaConfigurationSection, Akka" />
+  </configSections>
 
-  <span class="hljs-tag">&lt;<span class="hljs-title">akka</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-title">hocon</span>&gt;</span>
-      <span class="hljs-cdata">&lt;![CDATA[
+  <akka>
+    <hocon>
+      <![CDATA[
           akka {
             log-config-on-start = off
             stdout-loglevel = INFO
@@ -278,41 +278,41 @@ The below string in the .config file is incorrect.<br/></p>
               }
             log-remote-lifecycle-events = INFO
           }
-      ]]&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-title">hocon</span>&gt;</span>
-  <span class="hljs-tag">&lt;/<span class="hljs-title">akka</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-title">configuration</span>&gt;</span>
+      ]]>
+    </hocon>
+  </akka>
+</configuration>
 </code></pre>
 <p>We can now use the <code>ConfigurationManager</code> to retrieve the &quot;akka&quot; section and use it&#39;s <code>AkkaConfig</code> property,
 which contains the configuration in a form that is used by the ActorSystem.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> section = (AkkaConfigurationSection)ConfigurationManager.GetSection(<span class="hljs-string">"akka"</span>);
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"Mysystem"</span>, section.AkkaConfig);
+<pre><code class="hljs lang-csharp">Error Parsing var section = (AkkaConfigurationSection)ConfigurationManager.GetSection("akka");
+var system = ActorSystem.Create("Mysystem", section.AkkaConfig);
 </code></pre>
 <h2 id="fluent-configuration">Fluent Configuration</h2>
 <div class="alert alert-warning">
 <p><strong>Warning!</strong><br/>
 The fluent configuration support is experimental and might change or be removed.</p>
 </div>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> fluentConfig = FluentConfig.Begin()
+<pre><code class="hljs lang-csharp">Error Parsing var fluentConfig = FluentConfig.Begin()
     .StdOutLogLevel(LogLevel.DebugLevel)
-    .LogConfigOnStart(<span class="hljs-literal">true</span>)
+    .LogConfigOnStart(true)
     .LogLevel(LogLevel.ErrorLevel)   
     .LogLocal(
-        receive: <span class="hljs-literal">true</span>,
-        autoReceive: <span class="hljs-literal">true</span>,
-        lifecycle: <span class="hljs-literal">true</span>,
-        eventStream: <span class="hljs-literal">true</span>,
-        unhandled: <span class="hljs-literal">true</span>
+        receive: true,
+        autoReceive: true,
+        lifecycle: true,
+        eventStream: true,
+        unhandled: true
     )
     .LogRemote(
         lifecycleEvents: LogLevel.DebugLevel,
-        receivedMessages: <span class="hljs-literal">true</span>,
-        sentMessages: <span class="hljs-literal">true</span>
+        receivedMessages: true,
+        sentMessages: true
     )
-    .StartRemotingOn(<span class="hljs-string">"localhost"</span>, <span class="hljs-number">8081</span>)
+    .StartRemotingOn("localhost", 8081)
     .Build();
 
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MyServer"</span>, fluentConfig);
+var system = ActorSystem.Create("MyServer", fluentConfig);
 </code></pre>
 <p>The fluent configuration support is a simple builder ontop of the HOCON configuration.
 This is because Akka.NET uses HOCON internally inside most of it&#39;s modules, such as routers and remoting.</p>

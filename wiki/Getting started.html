@@ -207,23 +207,23 @@
 <h2 id="set-up-your-project">Set up your project</h2>
 <p>Start visual studio and create a new C# Console Application.
 Once we have our console application, we need to open up the Package Manager Console and type:</p>
-<pre><code><span class="hljs-input"><span class="hljs-prompt">PM&gt;</span> <span class="hljs-constant">Install</span>-<span class="hljs-constant">Package</span> <span class="hljs-constant">Akka</span></span>
+<pre><code>Error Parsing PM> Install-Package Akka
 </code></pre><p>Then we need to add the relevant using statements:</p>
-<pre><code class="hljs lang-c#"><span class="hljs-keyword">using</span> System;
-<span class="hljs-keyword">using</span> System.Collections.Generic;
-<span class="hljs-keyword">using</span> System.Linq;
-<span class="hljs-keyword">using</span> System.Text;
-<span class="hljs-keyword">using</span> System.Threading.Tasks;
+<pre><code class="hljs lang-c#">Error Parsing using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-<span class="hljs-comment">//Add these two lines</span>
-<span class="hljs-keyword">using</span> Akka;
-<span class="hljs-keyword">using</span> Akka.Actor;
+//Add these two lines
+using Akka;
+using Akka.Actor;
 
-<span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApplication11</span>
-</span>{
-    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
-    </span>{
-        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+namespace ConsoleApplication11
+{
+    class Program
+    {
+        static void Main(string[] args)
         {
         }
     }
@@ -231,118 +231,118 @@ Once we have our console application, we need to open up the Package Manager Con
 </code></pre>
 <h2 id="create-your-first-actor">Create your first actor</h2>
 <p>First, we need to create a message type that our actor will respond to:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
-<span class="hljs-keyword">using</span> System.Collections.Generic;
-<span class="hljs-keyword">using</span> System.Linq;
-<span class="hljs-keyword">using</span> System.Text;
-<span class="hljs-keyword">using</span> System.Threading.Tasks;
+<pre><code class="hljs lang-csharp">Error Parsing using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-<span class="hljs-keyword">using</span> Akka;
-<span class="hljs-keyword">using</span> Akka.Actor;
+using Akka;
+using Akka.Actor;
 
 namespace ConsoleApplication11
 {
-    <span class="hljs-comment">//Create an (immutable) message type that your actor will respond to</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Greet
+    //Create an (immutable) message type that your actor will respond to
+    public class Greet
     {
-        <span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-keyword">string</span> who)
+        public Greet(string who)
         {
             Who = who;
         }
-        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Who { <span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+        public string Who { get;private set; }
     }
 
     class Program
     {
-        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+        static void Main(string[] args)
         {
         }
     }
 }
 </code></pre>
 <p>Once we have the message type, we can create our Actor:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
-<span class="hljs-keyword">using</span> System.Collections.Generic;
-<span class="hljs-keyword">using</span> System.Linq;
-<span class="hljs-keyword">using</span> System.Text;
-<span class="hljs-keyword">using</span> System.Threading.Tasks;
+<pre><code class="hljs lang-csharp">Error Parsing using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-<span class="hljs-keyword">using</span> Akka;
-<span class="hljs-keyword">using</span> Akka.Actor;
+using Akka;
+using Akka.Actor;
 
 namespace ConsoleApplication11
 {
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Greet
+    public class Greet
     {
-        <span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-keyword">string</span> who)
+        public Greet(string who)
         {
             Who = who;
         }
-        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Who { <span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+        public string Who { get;private set; }
     }
 
-    <span class="hljs-comment">// Create the actor class</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> GreetingActor : ReceiveActor
+    // Create the actor class
+    public class GreetingActor : ReceiveActor
     {
-        <span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span>()
+        public GreetingActor()
         {
-            <span class="hljs-comment">// Tell the actor to respond </span>
-            <span class="hljs-comment">// to the Greet message</span>
-            Receive&lt;Greet&gt;(greet =&gt; 
-               Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>, greet.Who));
+            // Tell the actor to respond 
+            // to the Greet message
+            Receive<Greet>(greet => 
+               Console.WriteLine("Hello {0}", greet.Who));
         }
     }
 
     class Program
     {
-        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+        static void Main(string[] args)
         {
         }
     }
 </code></pre>
 <p>Now it&#39;s time to consume our actor, we do so by creating an <code>ActorSystem</code> and calling <code>ActorOf</code></p>
-<pre><code class="hljs lang-c#"><span class="hljs-keyword">using</span> System;
-<span class="hljs-keyword">using</span> System.Collections.Generic;
-<span class="hljs-keyword">using</span> System.Linq;
-<span class="hljs-keyword">using</span> System.Text;
-<span class="hljs-keyword">using</span> System.Threading.Tasks;
+<pre><code class="hljs lang-c#">Error Parsing using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-<span class="hljs-keyword">using</span> Akka;
-<span class="hljs-keyword">using</span> Akka.Actor;
+using Akka;
+using Akka.Actor;
 
 namespace ConsoleApplication11
 {
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Greet
+    public class Greet
     {
-        <span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-keyword">string</span> who)
+        public Greet(string who)
         {
             Who = who;
         }
-        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Who { <span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+        public string Who { get;private set; }
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> GreetingActor : ReceiveActor
+    public class GreetingActor : ReceiveActor
     {
-        <span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span>()
+        public GreetingActor()
         {
-            Receive&lt;Greet&gt;(greet =&gt; 
-               Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>, greet.Who));
+            Receive<Greet>(greet => 
+               Console.WriteLine("Hello {0}", greet.Who));
         }
     }
 
     class Program
     {
-        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+        static void Main(string[] args)
         {
-            <span class="hljs-comment">//create a new actor system (a container for your actors)</span>
-            <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-            <span class="hljs-comment">//create your actor and get a reference to it.</span>
-            <span class="hljs-comment">//this will be an "ActorRef", which is not a </span>
-            <span class="hljs-comment">//reference to the actual actor instance</span>
-            <span class="hljs-comment">//but rather a client or proxy to it</span>
-            <span class="hljs-keyword">var</span> greeter = system.ActorOf&lt;GreetingActor&gt;(<span class="hljs-string">"greeter"</span>);
-            <span class="hljs-comment">//send a message to the actor</span>
-            greeter.Tell(<span class="hljs-keyword">new</span> Greet(<span class="hljs-string">"World"</span>));
+            //create a new actor system (a container for your actors)
+            var system = ActorSystem.Create("MySystem");
+            //create your actor and get a reference to it.
+            //this will be an "ActorRef", which is not a 
+            //reference to the actual actor instance
+            //but rather a client or proxy to it
+            var greeter = system.ActorOf<GreetingActor>("greeter");
+            //send a message to the actor
+            greeter.Tell(new Greet("World"));
         }
     }
 }

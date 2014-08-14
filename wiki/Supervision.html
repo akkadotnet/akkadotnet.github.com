@@ -263,30 +263,30 @@ Lifecycle Monitoring in Akka is usually referred to as <code>DeathWatch</code></
 <p>Normally stopping a child (i.e. not in response to a failure) will not automatically terminate the other children in an all-for-one strategy; this can easily be done by watching their lifecycle: if the <code>Terminated</code> message is not handled by the supervisor, it will throw a <code>DeathPactException</code> which (depending on its supervisor) will restart it, and the default <code>PreRestart</code> action will terminate all children. Of course this can be handled explicitly as well.</p>
 <p>Please note that creating one-off actors from an all-for-one supervisor entails that failures escalated by the temporary actor will affect all the permanent ones. If this is not desired, install an intermediate supervisor; this can very easily be done by declaring a router of size 1 for the worker, see [[Routing]].</p>
 <h4 id="example-supervisor-strategy">Example supervisor strategy</h4>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> MyActor : UntypedActor
+<pre><code class="hljs lang-csharp">Error Parsing public class MyActor : UntypedActor
 {
-    <span class="hljs-keyword">private</span> ActorRef logger = Context.ActorOf&lt;LogActor&gt;();
+    private ActorRef logger = Context.ActorOf<LogActor>();
 
-    <span class="hljs-comment">// if any child, e.g. the logger above. throws an exception</span>
-    <span class="hljs-comment">// apply the rules below</span>
-    <span class="hljs-comment">// e.g. Restart the child, if 10 exceptions occur in 30 seconds or </span>
-    <span class="hljs-comment">// less, then stop the actor</span>
-    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> SupervisorStrategy <span class="hljs-title">SupervisorStrategy</span>()
+    // if any child, e.g. the logger above. throws an exception
+    // apply the rules below
+    // e.g. Restart the child, if 10 exceptions occur in 30 seconds or 
+    // less, then stop the actor
+    protected override SupervisorStrategy SupervisorStrategy()
     {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> OneForOneStrategy( <span class="hljs-comment">//or AllForOneStrategy</span>
-            maxNumberOfRetries: <span class="hljs-number">10</span>, 
-            duration: TimeSpan.FromSeconds(<span class="hljs-number">30</span>), 
-            decider: x =&gt;
+        return new OneForOneStrategy( //or AllForOneStrategy
+            maxNumberOfRetries: 10, 
+            duration: TimeSpan.FromSeconds(30), 
+            decider: x =>
             {
-                <span class="hljs-comment">//Maybe we consider ArithmeticException to not be application critical</span>
-                <span class="hljs-comment">//so we just ignore the error and keep going.</span>
-                <span class="hljs-keyword">if</span> (x <span class="hljs-keyword">is</span> ArithmeticException) <span class="hljs-keyword">return</span> Directive.Resume;
+                //Maybe we consider ArithmeticException to not be application critical
+                //so we just ignore the error and keep going.
+                if (x is ArithmeticException) return Directive.Resume;
 
-                <span class="hljs-comment">//Error that we cannot recover from, stop the failing actor</span>
-                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (x <span class="hljs-keyword">is</span> NotSupportedException) <span class="hljs-keyword">return</span> Directive.Stop;
+                //Error that we cannot recover from, stop the failing actor
+                else if (x is NotSupportedException) return Directive.Stop;
 
-                <span class="hljs-comment">//In all other cases, just restart the failing actor</span>
-                <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> Directive.Restart;
+                //In all other cases, just restart the failing actor
+                else return Directive.Restart;
             });
     }
 

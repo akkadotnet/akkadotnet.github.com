@@ -211,25 +211,25 @@
 <h3 id="lifecycle-monitoring-aka-deathwatch">Lifecycle Monitoring aka DeathWatch</h3>
 <p>In order to be notified when another actor terminates (i.e. stops permanently, not temporary failure and restart), an actor may register itself for reception of the Terminated message dispatched by the other actor upon termination (see Stopping Actors). This service is provided by the DeathWatch component of the actor system.</p>
 <p>Registering a monitor is easy (see fourth line, the rest is for demonstrating the whole functionality):</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.actor.Terminated;
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WatchActor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActor</span> </span>{
-  <span class="hljs-keyword">final</span> ActorRef child = <span class="hljs-keyword">this</span>.getContext().actorOf(Props.empty(), <span class="hljs-string">"child"</span>);
+<pre><code class="hljs lang-csharp">Error Parsing import akka.actor.Terminated;
+public class WatchActor extends UntypedActor {
+  final ActorRef child = this.getContext().actorOf(Props.empty(), "child");
   {
-    <span class="hljs-keyword">this</span>.getContext().watch(child); <span class="hljs-comment">// &lt;-- the only call needed for registration</span>
+    this.getContext().watch(child); // <-- the only call needed for registration
   }
   ActorRef lastSender = getContext().system().deadLetters();
 
-  <span class="hljs-annotation">@Override</span>
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) {
-    <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"kill"</span>)) {
+  @Override
+  public void onReceive(Object message) {
+    if (message.equals("kill")) {
       getContext().stop(child);
       lastSender = getSender();
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">instanceof</span> Terminated) {
-      <span class="hljs-keyword">final</span> Terminated t = (Terminated) message;
-      <span class="hljs-keyword">if</span> (t.getActor() == child) {
-        lastSender.tell(<span class="hljs-string">"finished"</span>, getSelf());
+    } else if (message instanceof Terminated) {
+      final Terminated t = (Terminated) message;
+      if (t.getActor() == child) {
+        lastSender.tell("finished", getSelf());
       }
-    } <span class="hljs-keyword">else</span> {
+    } else {
       unhandled(message);
     }
   }
@@ -240,8 +240,8 @@
 <p>It is also possible to deregister from watching another actor’s liveliness using getContext().unwatch(target). This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no Terminated message for that actor will be processed anymore.</p>
 <h3 id="start-hook">Start Hook</h3>
 <p>Right after starting the actor, its preStart method is invoked.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-annotation">@Override</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">preStart</span>() {
+<pre><code class="hljs lang-csharp">Error Parsing @Override
+public void preStart() {
   child = getContext().actorOf(Props.empty());
 }
 </code></pre>

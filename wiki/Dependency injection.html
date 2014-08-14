@@ -204,33 +204,33 @@
 
 								<h3 id="dependency-injection">Dependency Injection</h3>
 <p>If your UntypedActor has a constructor that takes parameters then those need to be part of the Props as well, as described above. But there are cases when a factory method must be used, for example when the actual constructor arguments are determined by a dependency injection framework.</p>
-<pre><code class="hljs lang-chsarp">import akka.actor.Actor;
+<pre><code class="hljs lang-chsarp">Error Parsing import akka.actor.Actor;
 import akka.actor.IndirectActorProducer;
-<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DependencyInjector</span> <span class="hljs-inheritance"><span class="hljs-keyword">implements</span></span> <span class="hljs-title">IndirectActorProducer</span> </span>{
-  <span class="hljs-keyword">final</span> Object applicationContext;
-  <span class="hljs-keyword">final</span> String beanName;
+class DependencyInjector implements IndirectActorProducer {
+  final Object applicationContext;
+  final String beanName;
 
-  <span class="hljs-keyword">public</span> DependencyInjector(Object applicationContext, String beanName) {
-    <span class="hljs-keyword">this</span>.applicationContext = applicationContext;
-    <span class="hljs-keyword">this</span>.beanName = beanName;
+  public DependencyInjector(Object applicationContext, String beanName) {
+    this.applicationContext = applicationContext;
+    this.beanName = beanName;
   }
 
   @Override
-  <span class="hljs-keyword">public</span> Class&lt;? extends Actor&gt; actorClass() {
-    <span class="hljs-keyword">return</span> MyActor.class;
+  public Class<? extends Actor> actorClass() {
+    return MyActor.class;
   }
 
   @Override
-  <span class="hljs-keyword">public</span> MyActor produce() {
+  public MyActor produce() {
     MyActor result;
-    <span class="hljs-comment">// obtain fresh Actor instance from DI framework ...</span>
-    <span class="hljs-keyword">return</span> result;
+    // obtain fresh Actor instance from DI framework ...
+    return result;
   }
 }
 
-  <span class="hljs-keyword">final</span> ActorRef myActor = getContext().actorOf(
-    Props.create(DependencyInjector.class, applicationContext, <span class="hljs-string">"MyActor"</span>),
-      <span class="hljs-string">"myactor3"</span>);
+  final ActorRef myActor = getContext().actorOf(
+    Props.create(DependencyInjector.class, applicationContext, "MyActor"),
+      "myactor3");
 </code></pre>
 <div class="alert alert-warning">
 <p><strong>Warning</strong><br/>

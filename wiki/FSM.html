@@ -204,38 +204,38 @@
 
 								<p>Finite State Machine</p>
 <p>For more info see real Akka FSM documentation: <a href="http://doc.akka.io/docs/akka/snapshot/scala/fsm.html">http://doc.akka.io/docs/akka/snapshot/scala/fsm.html</a></p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> MyFSM : FSM&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">object</span>&gt;
+<pre><code class="hljs lang-csharp">Error Parsing public class MyFSM : FSM<int, object>
 {
-    <span class="hljs-keyword">public</span> <span class="hljs-title">MyFSM</span>(ActorRef target)
+    public MyFSM(ActorRef target)
     {
         Target = target;
-        StartWith(<span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> <span class="hljs-keyword">object</span>());
-        When(<span class="hljs-number">0</span>, @<span class="hljs-keyword">event</span> =&gt;
+        StartWith(0, new object());
+        When(0, @event =>
         {
-            <span class="hljs-keyword">if</span> (@<span class="hljs-keyword">event</span>.FsmEvent.Equals(<span class="hljs-string">"tick"</span>)) <span class="hljs-keyword">return</span> GoTo(<span class="hljs-number">1</span>);
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+            if (@event.FsmEvent.Equals("tick")) return GoTo(1);
+            return null;
         });
 
-        When(<span class="hljs-number">1</span>, @<span class="hljs-keyword">event</span> =&gt;
+        When(1, @event =>
         {
-            <span class="hljs-keyword">if</span> (@<span class="hljs-keyword">event</span>.FsmEvent.Equals(<span class="hljs-string">"tick"</span>)) <span class="hljs-keyword">return</span> GoTo(<span class="hljs-number">0</span>);
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+            if (@event.FsmEvent.Equals("tick")) return GoTo(0);
+            return null;
         });
 
-        WhenUnhandled(@<span class="hljs-keyword">event</span> =&gt;
+        WhenUnhandled(@event =>
         {
-            <span class="hljs-keyword">if</span> (@<span class="hljs-keyword">event</span>.FsmEvent.Equals(<span class="hljs-string">"reply"</span>)) <span class="hljs-keyword">return</span> Stay().Replying(<span class="hljs-string">"reply"</span>);
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+            if (@event.FsmEvent.Equals("reply")) return Stay().Replying("reply");
+            return null;
         });
 
         Initialize();
     }
 
-    <span class="hljs-keyword">public</span> ActorRef Target { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+    public ActorRef Target { get; private set; }
 
-    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span>(Exception reason, <span class="hljs-keyword">object</span> message)
+    protected override void PreRestart(Exception reason, object message)
     {
-        Target.Tell(<span class="hljs-string">"restarted"</span>);
+        Target.Tell("restarted");
     }
 }
 </code></pre>

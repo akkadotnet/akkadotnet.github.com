@@ -204,22 +204,22 @@
 
 								<h2 id="host-your-actorsystem-using-">Host your <code>ActorSystem</code> using:</h2>
 <h3 id="console-application">Console Application</h3>
-<pre><code class="hljs lang-csharp"><span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Foo</span>.<span class="hljs-title">Bar</span>
-</span>{
-    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
-    </span>{
-        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+<pre><code class="hljs lang-csharp">Error Parsing namespace Foo.Bar
+{
+    class Program
+    {
+        static void Main(string[] args)
         {
-            <span class="hljs-comment">//configure remoting for localhost:8081</span>
-            <span class="hljs-keyword">var</span> fluentConfig = FluentConfig.Begin()
-                .StartRemotingOn(<span class="hljs-string">"localhost"</span>, <span class="hljs-number">8081</span>)
+            //configure remoting for localhost:8081
+            var fluentConfig = FluentConfig.Begin()
+                .StartRemotingOn("localhost", 8081)
                 .Build();
 
-            <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"my-actor-server"</span>, fluentConfig))
+            using (var system = ActorSystem.Create("my-actor-server", fluentConfig))
             {
-                <span class="hljs-comment">//start two services </span>
-                <span class="hljs-keyword">var</span> service1= system.ActorOf&lt;Service1&gt;(<span class="hljs-string">"service1"</span>);
-                <span class="hljs-keyword">var</span> service2 = system.ActorOf&lt;Service2&gt;(<span class="hljs-string">"service2"</span>);
+                //start two services 
+                var service1= system.ActorOf<Service1>("service1");
+                var service2 = system.ActorOf<Service2>("service2");
                 Console.ReadKey();
             }
         }

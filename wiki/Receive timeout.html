@@ -209,16 +209,16 @@
 Please note that the receive timeout might fire and enqueue the ReceiveTimeout message right after another message was enqueued; hence it is not guaranteed that upon reception of the receive timeout there must have been an idle period beforehand as configured via this method.</p>
 </div>
 <p>Once set, the receive timeout stays in effect (i.e. continues firing repeatedly after inactivity periods). Pass in <code>null</code> to <code>SetReceiveTimeout</code> to switch off this feature.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> MyActor : ReceiveActor
+<pre><code class="hljs lang-csharp">Error Parsing public class MyActor : ReceiveActor
 {
-    <span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span>()
+    public MyActor()
     {
-          <span class="hljs-comment">//trigger a receive timeout after 3 seconds of message silence.</span>
-          SetReceiveTimeout(Timespan.FromSeconds(<span class="hljs-number">3</span>));
-          <span class="hljs-comment">//your own message handlers</span>
-          Receive&lt;MyMessage&gt;(message =&gt; Console.WriteLine(<span class="hljs-string">"I am working.."</span>));
-          <span class="hljs-comment">//do something with the timeout message</span>
-          Receive&lt;ReceiveTimeout&gt;(timeout =&gt; Console.WriteLine(<span class="hljs-string">"I have timed out"</span>));
+          //trigger a receive timeout after 3 seconds of message silence.
+          SetReceiveTimeout(Timespan.FromSeconds(3));
+          //your own message handlers
+          Receive<MyMessage>(message => Console.WriteLine("I am working.."));
+          //do something with the timeout message
+          Receive<ReceiveTimeout>(timeout => Console.WriteLine("I have timed out"));
     }
 }
 </code></pre>
