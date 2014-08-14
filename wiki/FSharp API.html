@@ -204,127 +204,67 @@
 
 								<p>Akka.NET comes with an extended F# API.
 This extension lets you send and ask messages using the <code>&lt;!</code> tell and <code>&lt;?</code> ask operators.</p>
-<pre><code class="hljs lang-fsharp">Error Parsing Error: Unknown language: "open Akka.Actor
+<pre><code class="hljs lang-fsharp">open Akka.Actor
 open Akka.FSharp
 open Akka.Configuration
 open System
 
 type SomeActorMessages =
-    | Greet of string
+    | Greet <span class="hljs-keyword">of</span> string
     | Hi
 
 type SomeActor() =    
     inherit Actor()
 
     override x.OnReceive message =
-        match message with
-        | :? SomeActorMessages as m ->  
-            match m with
-            | Greet(name) -> Console.WriteLine("Hello {0}",name)
-            | Hi -> Console.WriteLine("Hello from F#!")
-        | _ -> failwith "unknown message"
+        match message <span class="hljs-reserved">with</span>
+        | :? SomeActorMessages as m<span class="hljs-function"> -&gt;</span>  
+            match m <span class="hljs-reserved">with</span>
+            | Greet<span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span> Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>,name)
+            | Hi<span class="hljs-function"> -&gt;</span> Console.WriteLine(<span class="hljs-string">"Hello from F#!"</span>)
+        | _<span class="hljs-function"> -&gt;</span> failwith <span class="hljs-string">"unknown message"</span>
 
-let system =  
+<span class="hljs-reserved">let</span> system =  
     ConfigurationFactory.Default() 
-    |> System.create "FSharpActors"
+    |&gt; System.create <span class="hljs-string">"FSharpActors"</span>
 
-let actor = 
-    spawn system "MyActor"
-    <| fun mailbox ->
-        let rec again name =
+<span class="hljs-reserved">let</span> actor = 
+    spawn system <span class="hljs-string">"MyActor"</span>
+    &lt;| fun mailbox<span class="hljs-function"> -&gt;</span>
+        <span class="hljs-reserved">let</span> rec again name =
             actor {
-                let! message = mailbox.Receive()
-                match message with
-                | Greet(n) when n = name ->
-                    printfn "Hello again, %s" name
-                    return! again name
-                | Greet(n) -> 
-                    printfn "Hello %s" n
-                    return! again n
-                | Hi -> 
-                    printfn "Hello from F#!"
-                    return! again name }
-        and loop() =
+                <span class="hljs-reserved">let</span>! message = mailbox.Receive()
+                match message <span class="hljs-reserved">with</span>
+                | Greet(n) <span class="hljs-keyword">when</span> n = name<span class="hljs-function"> -&gt;</span>
+                    printfn <span class="hljs-string">"Hello again, %s"</span> name
+                    <span class="hljs-keyword">return</span>! again name
+                | Greet<span class="hljs-function"><span class="hljs-params">(n)</span> -&gt;</span> 
+                    printfn <span class="hljs-string">"Hello %s"</span> n
+                    <span class="hljs-keyword">return</span>! again n
+                | Hi<span class="hljs-function"> -&gt;</span> 
+                    printfn <span class="hljs-string">"Hello from F#!"</span>
+                    <span class="hljs-keyword">return</span>! again name }
+        <span class="hljs-keyword">and</span> <span class="hljs-keyword">loop</span>() =
             actor {
-                let! message = mailbox.Receive()
-                match message with
-                | Greet(name) -> 
-                    printfn "Hello %s" name
-                    return! again name
-                | Hi ->
-                    printfn "Hello from F#!"
-                    return! loop() } 
-        loop()
+                <span class="hljs-reserved">let</span>! message = mailbox.Receive()
+                match message <span class="hljs-reserved">with</span>
+                | Greet<span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span> 
+                    printfn <span class="hljs-string">"Hello %s"</span> name
+                    <span class="hljs-keyword">return</span>! again name
+                | Hi<span class="hljs-function"> -&gt;</span>
+                    printfn <span class="hljs-string">"Hello from F#!"</span>
+                    <span class="hljs-keyword">return</span>! <span class="hljs-keyword">loop</span>() } 
+        <span class="hljs-keyword">loop</span>()
 
-actor <! Greet "Aaron"
-actor <! Hi
-actor <! Greet "Roger"
-actor <! Hi
-actor <! Greet "Håkan"
-actor <! Hi
-actor <! Greet "Jeremie"
+actor &lt;! Greet <span class="hljs-string">"Aaron"</span>
+actor &lt;! Hi
+actor &lt;! Greet <span class="hljs-string">"Roger"</span>
+actor &lt;! Hi
+actor &lt;! Greet <span class="hljs-string">"Håkan"</span>
+actor &lt;! Hi
+actor &lt;! Greet <span class="hljs-string">"Jeremie"</span>
 
-System.Console.ReadKey() |> ignore"open Akka.Actor
-open Akka.FSharp
-open Akka.Configuration
-open System
-
-type SomeActorMessages =
-    | Greet of string
-    | Hi
-
-type SomeActor() =    
-    inherit Actor()
-
-    override x.OnReceive message =
-        match message with
-        | :? SomeActorMessages as m ->  
-            match m with
-            | Greet(name) -> Console.WriteLine("Hello {0}",name)
-            | Hi -> Console.WriteLine("Hello from F#!")
-        | _ -> failwith "unknown message"
-
-let system =  
-    ConfigurationFactory.Default() 
-    |> System.create "FSharpActors"
-
-let actor = 
-    spawn system "MyActor"
-    <| fun mailbox ->
-        let rec again name =
-            actor {
-                let! message = mailbox.Receive()
-                match message with
-                | Greet(n) when n = name ->
-                    printfn "Hello again, %s" name
-                    return! again name
-                | Greet(n) -> 
-                    printfn "Hello %s" n
-                    return! again n
-                | Hi -> 
-                    printfn "Hello from F#!"
-                    return! again name }
-        and loop() =
-            actor {
-                let! message = mailbox.Receive()
-                match message with
-                | Greet(name) -> 
-                    printfn "Hello %s" name
-                    return! again name
-                | Hi ->
-                    printfn "Hello from F#!"
-                    return! loop() } 
-        loop()
-
-actor <! Greet "Aaron"
-actor <! Hi
-actor <! Greet "Roger"
-actor <! Hi
-actor <! Greet "Håkan"
-actor <! Hi
-actor <! Greet "Jeremie"
-
-System.Console.ReadKey() |> ignore
+System.Console.ReadKey() |&gt; ignore
 </code></pre>
 
 

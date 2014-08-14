@@ -5,29 +5,20 @@
 <li>downward compatible ; overloads an input element.</li>
 </ul>
 <h2 id="example">Example</h2>
-<pre><code>Error Parsing Error: Unknown language: "<input type="text" value="75" class="dial">
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">input</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"75"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"dial"</span>&gt;</span>
 
-<script>
-$(function() {
-    $(".dial").knob();
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+    $(<span class="hljs-string">".dial"</span>).knob();
 });
-</script>"<input type="text" value="75" class="dial">
-
-<script>
-$(function() {
-    $(".dial").knob();
-});
-</script>
+</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="options">Options</h2>
 <p>Options are provided as attributes &#39;data-option&#39;:</p>
-<pre><code>Error Parsing Error: Unknown language: "<input type="text" class="dial" data-min="-50" data-max="50">"<input type="text" class="dial" data-min="-50" data-max="50">
+<pre><code>&lt;<span class="hljs-built_in">input</span> <span class="hljs-built_in">type</span>=<span class="hljs-string">"text"</span> class=<span class="hljs-string">"dial"</span> data-<span class="hljs-built_in">min</span>=<span class="hljs-string">"-50"</span> data-<span class="hljs-built_in">max</span>=<span class="hljs-string">"50"</span>&gt;
 </code></pre><p>... or in the &quot;knob()&quot; call :</p>
-<pre><code>Error Parsing Error: Unknown language: "$(".dial").knob({
-                'min':-50
-                ,'max':50
-                });"$(".dial").knob({
-                'min':-50
-                ,'max':50
+<pre><code><span class="hljs-variable">$(</span><span class="hljs-string">".dial"</span>).knob({
+                <span class="hljs-string">'min'</span><span class="hljs-symbol">:-</span><span class="hljs-number">50</span>
+                ,<span class="hljs-string">'max'</span><span class="hljs-symbol">:</span><span class="hljs-number">50</span>
                 });
 </code></pre><p>The following options are supported :</p>
 <p>Behaviors :</p>
@@ -55,15 +46,11 @@ $(function() {
 <li>bgColor : background color.</li>
 </ul>
 <h2 id="hooks">Hooks</h2>
-<pre><code>Error Parsing Error: Unknown language: "<script>
-$(".dial").knob({
-                    'release' : function (v) { /*make something*/ }
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-string">".dial"</span>).knob({
+                    <span class="hljs-string">'release'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(v)</span> </span>{ <span class="hljs-comment">/*make something*/</span> }
                 });
-</script>"<script>
-$(".dial").knob({
-                    'release' : function (v) { /*make something*/ }
-                });
-</script>
+</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><ul>
 <li><p>&#39;release&#39; : executed on release</p>
 <p>  Parameters :</p>
@@ -94,55 +81,33 @@ $(".dial").knob({
 </ul>
 <p>The scope (this) of each hook function is the current Knob instance (refer to the demo code).</p>
 <h2 id="example">Example</h2>
-<pre><code>Error Parsing Error: Unknown language: "<input type="text" value="75" class="dial">
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">input</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"75"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"dial"</span>&gt;</span>
 
-<script>
-$(".dial").knob({
-                 'change' : function (v) { console.log(v); }
+<span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-string">".dial"</span>).knob({
+                 <span class="hljs-string">'change'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(v)</span> </span>{ <span class="hljs-built_in">console</span>.log(v); }
                 });
-</script>"<input type="text" value="75" class="dial">
-
-<script>
-$(".dial").knob({
-                 'change' : function (v) { console.log(v); }
-                });
-</script>
+</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="dynamically-configure">Dynamically configure</h2>
-<pre><code>Error Parsing Error: Unknown language: "<script>
-$('.dial')
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-string">'.dial'</span>)
     .trigger(
-        'configure',
+        <span class="hljs-string">'configure'</span>,
         {
-        "min":10,
-        "max":40,
-        "fgColor":"#FF0000",
-        "skin":"tron",
-        "cursor":true
+        <span class="hljs-string">"min"</span>:<span class="hljs-number">10</span>,
+        <span class="hljs-string">"max"</span>:<span class="hljs-number">40</span>,
+        <span class="hljs-string">"fgColor"</span>:<span class="hljs-string">"#FF0000"</span>,
+        <span class="hljs-string">"skin"</span>:<span class="hljs-string">"tron"</span>,
+        <span class="hljs-string">"cursor"</span>:<span class="hljs-literal">true</span>
         }
     );
-</script>"<script>
-$('.dial')
-    .trigger(
-        'configure',
-        {
-        "min":10,
-        "max":40,
-        "fgColor":"#FF0000",
-        "skin":"tron",
-        "cursor":true
-        }
-    );
-</script>
+</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="set-the-value">Set the value</h2>
-<pre><code>Error Parsing Error: Unknown language: "<script>
-$('.dial')
-    .val(27)
-    .trigger('change');
-</script>"<script>
-$('.dial')
-    .val(27)
-    .trigger('change');
-</script>
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-string">'.dial'</span>)
+    .val(<span class="hljs-number">27</span>)
+    .trigger(<span class="hljs-string">'change'</span>);
+</span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="supported-browser">Supported browser</h2>
 <p>Tested on Chrome, Safari, Firefox, IE&gt;=8.0 (IE8.0 with excanvas).</p>
 <p><img class="img-responsive" src="https://raw.github.com/aterrien/jQuery-Knob/master/secretplan.jpg" alt="secretplan"></p>

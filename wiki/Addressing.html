@@ -231,9 +231,8 @@ That definition does not hold for actorFor, which is one of the reasons why acto
 <p>You can create an actor, terminate it, and then create a new actor with the same actor path. The newly created actor is a new incarnation of the actor. It is not the same actor. An actor reference to the old incarnation is not valid for the new incarnation. Messages sent to the old actor reference will not be delivered to the new incarnation even though they have the same path.</p>
 <h3 id="actor-path-anchors">Actor Path Anchors</h3>
 <p>Each actor path has an address component, describing the protocol and location by which the corresponding actor is reachable, followed by the names of the actors in the hierarchy from the root up. Examples are:</p>
-<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: ""akka://my-sys/user/service-a/worker1"                   // purely local
-"akka.tcp://my-sys@host.example.com:5678/user/service-b" // remote""akka://my-sys/user/service-a/worker1"                   // purely local
-"akka.tcp://my-sys@host.example.com:5678/user/service-b" // remote
+<pre><code class="hljs lang-csharp"><span class="hljs-string">"akka://my-sys/user/service-a/worker1"</span>                   <span class="hljs-comment">// purely local</span>
+<span class="hljs-string">"akka.tcp://my-sys@host.example.com:5678/user/service-b"</span> <span class="hljs-comment">// remote</span>
 </code></pre>
 <p>Here, <code>akka.tcp</code> is the default remote transport for the 1.0 release; other transports are pluggable. A remote host using UDP would be accessible by using akka.udp. The interpretation of the host and port part (i.e.<code>serv.example.com:5678</code> in the example) depends on the transport mechanism used, but it must abide by the URI structural rules.</p>
 <h3 id="logical-actor-paths">Logical Actor Paths</h3>
@@ -254,15 +253,15 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 </div>
 <h3 id="absolute-vs-relative-paths">Absolute vs. Relative Paths</h3>
 <p>In addition to ActorSystem.actorSelection there is also ActorContext.actorSelection, which is available inside any actor as context.actorSelection. This yields an actor selection much like its twin on <code>ActorSystem</code>, but instead of looking up the path starting from the root of the actor tree it starts out on the current actor. <code>Path</code> elements consisting of two dots (&quot;..&quot;) may be used to access the parent actor. You can for example send a message to a specific sibling:</p>
-<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "Context.ActorSelection("../brother").Tell(msg);"Context.ActorSelection("../brother").Tell(msg);
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">Context</span>.ActorSelection(<span class="hljs-string">"../brother"</span>).Tell(msg);
 </code></pre>
 <p>Absolute paths may of course also be looked up on context in the usual way, i.e.</p>
-<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "Context.ActorSelection("/user/serviceA").Tell(msg);"Context.ActorSelection("/user/serviceA").Tell(msg);
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">Context</span>.ActorSelection(<span class="hljs-string">"/user/serviceA"</span>).Tell(msg);
 </code></pre>
 <p>will work as expected.</p>
 <h3 id="querying-the-logical-actor-hierarchy">Querying the Logical Actor Hierarchy</h3>
 <p>Since the actor system forms a file-system like hierarchy, matching on paths is possible in the same way as supported by Unix shells: you may replace (parts of) path element names with wildcards («*» and «?») to formulate a selection which may match zero or more actual actors. Because the result is not a single actor reference, it has a different type ActorSelection and does not support the full set of operations an ActorRef does. Selections may be formulated using the ActorSystem.actorSelection and ActorContext.actorSelection methods and do support sending messages:</p>
-<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "Context.ActorSelection("../*").Tell(msg);"Context.ActorSelection("../*").Tell(msg);
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">Context</span>.ActorSelection(<span class="hljs-string">"../*"</span>).Tell(msg);
 </code></pre>
 <p>will send msg to all siblings including the current actor. As for references obtained using actorFor, a traversal of the supervision hierarchy is done in order to perform the message send. As the exact set of actors which match a selection may change even while a message is making its way to the recipients, it is not possible to watch a selection for liveliness changes. In order to do that, resolve the uncertainty by sending a request and gathering all answers, extracting the sender references, and then watch all discovered concrete actors. This scheme of resolving a selection may be improved upon in a future release.</p>
 <h2 id="summary-actorof-vs-actorselection-">Summary: <code>ActorOf</code> vs. <code>ActorSelection</code></h2>

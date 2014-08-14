@@ -209,45 +209,24 @@
 The abstract class UntypedActorWithStash implements the marker interface RequiresMessageQueue<DequeBasedMessageQueueSemantics> which requests the system to automatically choose a deque based mailbox implementation for the actor. If you want more control over the mailbox, see the documentation on mailboxes: Mailboxes.</p>
 </div>
 <p>Here is an example of the UntypedActorWithStash class in action:</p>
-<pre><code class="hljs lang-csharp">Error Parsing Error: Unknown language: "import akka.actor.UntypedActorWithStash;
-public class ActorWithProtocol extends UntypedActorWithStash {
-  public void onReceive(Object msg) {
-    if (msg.equals("open")) {
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.actor.UntypedActorWithStash;
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ActorWithProtocol</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActorWithStash</span> </span>{
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object msg) {
+    <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"open"</span>)) {
       unstashAll();
-      getContext().become(new Procedure<Object>() {
-        public void apply(Object msg) throws Exception {
-          if (msg.equals("write")) {
-            // do writing...
-          } else if (msg.equals("close")) {
+      getContext().become(<span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object msg) <span class="hljs-keyword">throws</span> Exception {
+          <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"write"</span>)) {
+            <span class="hljs-comment">// do writing...</span>
+          } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"close"</span>)) {
             unstashAll();
             getContext().unbecome();
-          } else {
+          } <span class="hljs-keyword">else</span> {
             stash();
           }
         }
-      }, false); // add behavior on top instead of replacing
-    } else {
-      stash();
-    }
-  }
-}"import akka.actor.UntypedActorWithStash;
-public class ActorWithProtocol extends UntypedActorWithStash {
-  public void onReceive(Object msg) {
-    if (msg.equals("open")) {
-      unstashAll();
-      getContext().become(new Procedure<Object>() {
-        public void apply(Object msg) throws Exception {
-          if (msg.equals("write")) {
-            // do writing...
-          } else if (msg.equals("close")) {
-            unstashAll();
-            getContext().unbecome();
-          } else {
-            stash();
-          }
-        }
-      }, false); // add behavior on top instead of replacing
-    } else {
+      }, <span class="hljs-keyword">false</span>); <span class="hljs-comment">// add behavior on top instead of replacing</span>
+    } <span class="hljs-keyword">else</span> {
       stash();
     }
   }
