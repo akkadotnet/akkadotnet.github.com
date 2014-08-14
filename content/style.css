@@ -4,11 +4,13 @@
 
 pre {
     word-wrap: inherit;
+    border: 0px solid white;
+    padding: 0px;
 }
 
-pre code .hljs {
-    padding: 10px;
-    border-radius: 5px;
+pre code {
+    padding: 15px;
+    border-radius: 10px;
 }
 
 /*--------------------------------------------------------------------------
