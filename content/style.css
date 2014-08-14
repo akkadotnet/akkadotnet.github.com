@@ -6,7 +6,7 @@ pre {
     word-wrap: inherit;
 }
 
-pre code {
+pre code .hljs {
     padding: 10px;
     border-radius: 5px;
 }
