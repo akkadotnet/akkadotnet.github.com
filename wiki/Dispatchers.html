@@ -216,7 +216,7 @@ ExecutionContext <span class="hljs-keyword">ex</span> = <span class="hljs-built_
 </code></pre>
 <h2 id="setting-the-dispatcher-for-an-actor">Setting the dispatcher for an Actor</h2>
 <p>So in case you want to give your Actor a different dispatcher than the default, you need to do two things, of which the first is is to configure the dispatcher:</p>
-<pre><code>my-dispatcher {
+<pre><code class="hljs lang-json">my-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
   type = Dispatcher
   # What kind of ExecutionService to <span class="hljs-operator"><span class="hljs-keyword">use</span>
@@ -235,8 +235,9 @@ ExecutionContext <span class="hljs-keyword">ex</span> = <span class="hljs-built_
   # <span class="hljs-keyword">Set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">as</span> fair <span class="hljs-keyword">as</span> possible.
   throughput = <span class="hljs-number">100</span>
 }</span>
-</code></pre><p>And here&#39;s another example that uses the <code>&quot;thread-pool-executor&quot;</code>:</p>
-<pre><code>my-thread-pool-dispatcher {
+</code></pre>
+<p>And here&#39;s another example that uses the <code>&quot;thread-pool-executor&quot;</code>:</p>
+<pre><code class="hljs lang-json">my-thread-pool-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
   type = Dispatcher
   # What kind of ExecutionService to <span class="hljs-operator"><span class="hljs-keyword">use</span>
@@ -255,18 +256,20 @@ ExecutionContext <span class="hljs-keyword">ex</span> = <span class="hljs-built_
   # <span class="hljs-keyword">Set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">as</span> fair <span class="hljs-keyword">as</span> possible.
   throughput = <span class="hljs-number">100</span>
 }</span>
-</code></pre><p>For more options, see the <code>default-dispatcher</code> section of the Configuration.</p>
+</code></pre>
+<p>For more options, see the <code>default-dispatcher</code> section of the Configuration.</p>
 <p>Then you create the actor as usual and define the dispatcher in the deployment configuration.</p>
 <pre><code class="hljs lang-csharp">ActorRef myActor =
   system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)),
     <span class="hljs-string">"myactor"</span>);
 </code></pre>
-<pre><code><span class="hljs-attribute">akka.actor.deployment {
+<pre><code class="hljs lang-json"><span class="hljs-attribute">akka.actor.deployment {
   /myactor {
     dispatcher </span>=<span class="hljs-string"> my-dispatcher
   }
 }</span>
-</code></pre><p>An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.</p>
+</code></pre>
+<p>An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.</p>
 <pre><code class="hljs lang-csharp">ActorRef myActor =
   system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)).WithDispatcher(<span class="hljs-string">"my-dispatcher"</span>),
     <span class="hljs-string">"myactor3"</span>);
@@ -306,10 +309,11 @@ The dispatcher you specify in <code>WithDispatcher</code> and the dispatcher pro
 </ul>
 <h3 id="more-dispatcher-configuration-examples">More dispatcher configuration examples</h3>
 <p>Configuring a <code>PinnedDispatcher</code>:</p>
-<pre><code>my-pinned-dispatcher {
+<pre><code class="hljs lang-json">my-pinned-dispatcher {
   <span class="hljs-keyword">type</span> = PinnedDispatcher
 }
-</code></pre><p>And then using it:</p>
+</code></pre>
+<p>And then using it:</p>
 <pre><code class="hljs lang-csharp">ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor));
     .WithDispatcher(<span class="hljs-string">"my-pinned-dispatcher"</span>));
 </code></pre>
