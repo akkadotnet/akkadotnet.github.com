@@ -238,9 +238,9 @@ akka.remote.helios.tcp {
 Be extra careful when copying the configuration from hardcoded strings. Be on alert for double quotation marks, which may cause failures during ActorSystem creation.<br/>
 Example:<br/>
 The below string in the .config file is incorrect.<br/></p>
-<pre><code>Error: Unknown language: "undefined"provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">""</span>Akka.Remote.RemoteActorRefProvider, Akka.Remote<span class="hljs-string">""</span>
 </code></pre><p>This is the correct form.</p>
-<pre><code>Error: Unknown language: "undefined"provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
+<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
 </code></pre></div>
 <h5 id="app-config">App.config</h5>
 <pre><code class="hljs lang-xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
