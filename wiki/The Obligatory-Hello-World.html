@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Contributing to Akka.NET |  Akka.NET</title>
+		<title> The Obligatory-Hello-World |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -46,10 +46,11 @@
 		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
-		<link href="/content/style.css" rel="stylesheet" type="text/css" />
+		
 		
 		<!-- Highlighting -->
 		<link href="https://highlightjs.org/static/styles/monokai_sublime.css" rel="stylesheet" type="text/css" />
+		<link href="/content/style.css" rel="stylesheet" type="text/css" />
 	
 		<!-- Morenizr -->
 		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
@@ -133,7 +134,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl wiki/Contributing to Akka.NET -->
+								<!-- pageurl wiki/The Obligatory-Hello-World -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -173,7 +174,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/wiki/">Wiki</a></li>
-							<li class="active"> Contributing to Akka.NET  <a href="https://github.com/akkadotnet/akka.net/wiki/Contributing to Akka.NET/_edit"> (edit)</a></li>							
+							<li class="active"> The Obligatory-Hello-World  <a href="https://github.com/akkadotnet/akka.net/wiki/The Obligatory-Hello-World/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -201,19 +202,70 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<p>Akka.NET exposes the Actor model to .NET in a way that has never been done before, and it&#39;s a large project that encompasses a big range of capabilities. Therefore, contributions are welcome and encouraged.</p>
-<h2 id="how-to-send-code-contributions-to-akka-net">How to Send Code Contributions to Akka.NET</h2>
-<p>If you want to contribute code to Akka.NET, here&#39;s how:</p>
-<ol>
-<li>First read the [[Developer Guidelines]]</li>
-<li>Fork this repository.</li>
-<li>Please <a href="http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html">squash your commits into a single commit</a>, if possible - this will make it easier for everyone else to review. And be sure to include a description of your changes along with any <a href="https://github.com/akkadotnet/akka.net/issues">related issues</a>.</li>
-<li>Push changes to your local fork, and when you&#39;re ready to have them reviewed by an AkkaDotNet team member, send a pull request to the <code>dev</code> branch on this repository.</li>
-</ol>
-<h2 id="contribution-guidelines">Contribution Guidelines</h2>
-<p>See <a href="Contributor guidelines">Contributor guidelines</a></p>
-<h2 id="building-akka-net">Building Akka.NET</h2>
-<p>For instructions on how to build Akka.NET, please see <a href="https://github.com/akkadotnet/akka.net/wiki/Building-and-Distributing-Akka.NET">Building Akka .NET</a>.</p>
+								<h2 id="hello-world-using-the-c-api">Hello World using the C# API</h2>
+<h4 id="define-a-message-">Define a message:</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">//Create an (immutable) message type that your actor will respond to</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Greet
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-keyword">string</span> who)
+    {
+        Who = who;
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Who { <span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<h4 id="define-your-actor-using-the-receiveactor-api">Define your actor using the <code>ReceiveActor</code> API</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">//Create the actor class</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> GreetingActor : ReceiveActor
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span>()
+    {
+        Receive&lt;Greet&gt;(greet =&gt; Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>, greet.Who));
+    }
+}
+</code></pre>
+<h4 id="-or-using-the-typedactor-api">..or using the <code>TypedActor</code> API</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> GreetingActor : TypedActor , IHandle&lt;Greet&gt;
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Handle</span>(Greet greet)
+    {
+        Console.WriteLine(<span class="hljs-string">"Hello {0}!"</span>, greet.Who);
+    }
+}
+</code></pre>
+<h4 id="usage-">Usage:</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">//create a new actor system (a container for your actors)</span>
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<span class="hljs-comment">//create your actor and get a reference to it.</span>
+<span class="hljs-comment">//this will be an "ActorRef", which is not a reference to the actual actor instance</span>
+<span class="hljs-comment">//but rather a client or proxy to it</span>
+<span class="hljs-keyword">var</span> greeter = system.ActorOf&lt;GreetingActor&gt;(<span class="hljs-string">"greeter"</span>);
+<span class="hljs-comment">//send a message to the actor</span>
+greeter.Tell(<span class="hljs-keyword">new</span> Greet(<span class="hljs-string">"World"</span>));
+</code></pre>
+<p>See also:</p>
+<ul>
+<li>[[Untyped actors]].</li>
+<li>[[Typed actors]].</li>
+</ul>
+<h2 id="hello-world-using-the-f-api">Hello World using the F# API</h2>
+<pre><code class="hljs lang-fsharp"><span class="hljs-comment">// Create an (immutable) message type that your actor will respond to</span>
+<span class="hljs-keyword">type</span> Greet <span class="hljs-subst">=</span> Greet of <span class="hljs-built_in">string</span>
+
+<span class="hljs-keyword">let</span> system <span class="hljs-subst">=</span> ActorSystem<span class="hljs-built_in">.</span>Create <span class="hljs-string">"MySystem"</span>
+
+<span class="hljs-comment">// Use F# computation expression with tail-recursive loop </span>
+<span class="hljs-comment">// to create an actor message handler and return a reference </span>
+<span class="hljs-keyword">let</span> greeter <span class="hljs-subst">=</span> spawn system <span class="hljs-string">"greeter"</span> <span class="hljs-subst">&lt;|</span> fun mailbox <span class="hljs-subst">-&gt;
+    </span><span class="hljs-keyword">let</span> rec <span class="hljs-keyword">loop</span>() <span class="hljs-subst">=</span> actor {
+        <span class="hljs-keyword">let</span><span class="hljs-subst">!</span> msg <span class="hljs-subst">=</span> mailbox<span class="hljs-built_in">.</span>Receive()
+        <span class="hljs-keyword">match</span> msg <span class="hljs-keyword">with</span>
+        <span class="hljs-subst">|</span> Greet who <span class="hljs-subst">-&gt; </span>printf <span class="hljs-string">"Hello, %s!\n"</span> who
+        <span class="hljs-keyword">return</span><span class="hljs-subst">!</span> <span class="hljs-keyword">loop</span>() }
+    <span class="hljs-keyword">loop</span>()
+
+greeter <span class="hljs-subst">&lt;!</span> Greet <span class="hljs-string">"World"</span>
+</code></pre>
 
 
 								<div class="sky-form boxed">

@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Building and Distributing Akka.NET |  Akka.NET</title>
+		<title> Use case-and-Deployment-Scenarios |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -46,10 +46,11 @@
 		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
-		<link href="/content/style.css" rel="stylesheet" type="text/css" />
+		
 		
 		<!-- Highlighting -->
 		<link href="https://highlightjs.org/static/styles/monokai_sublime.css" rel="stylesheet" type="text/css" />
+		<link href="/content/style.css" rel="stylesheet" type="text/css" />
 	
 		<!-- Morenizr -->
 		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
@@ -133,7 +134,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl wiki/Building and Distributing Akka.NET -->
+								<!-- pageurl wiki/Use case-and-Deployment-Scenarios -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -173,7 +174,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/wiki/">Wiki</a></li>
-							<li class="active"> Building and Distributing Akka.NET  <a href="https://github.com/akkadotnet/akka.net/wiki/Building and Distributing Akka.NET/_edit"> (edit)</a></li>							
+							<li class="active"> Use case-and-Deployment-Scenarios  <a href="https://github.com/akkadotnet/akka.net/wiki/Use case-and-Deployment-Scenarios/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -201,59 +202,32 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<p>Akka.Net has an official beta <a href="http://www.nuget.org/packages/Akka">NuGet package</a>.</p>
-<p>To install Akka.net, run the following command in the Package Manager Console:</p>
-<pre><code>   PM&gt; <span class="hljs-keyword">Install</span>-Package Akka -Pre
-</code></pre><p>You can also build it locally from the source code.</p>
-<h2 id="building-akka-net-with-fake">Building Akka.NET with Fake</h2>
-<p>The build as been ported to <a href="http://fsharp.github.io/FAKE/">Fake</a> to make it even easier to compile.</p>
-<p>Clone the source code from GitHub (currently only on the dev branch):</p>
-<pre><code>    git clone http<span class="hljs-variable">s:</span>//github.<span class="hljs-keyword">com</span>/akkadotnet/akka.net.git -<span class="hljs-keyword">b</span> dev
-</code></pre><h2 id="running-build-task">Running build task</h2>
-<p>There is no need to install anything specific before running the build.</p>
-<p>Once in the directory, run the build.cmd with the target All:</p>
-<pre><code>     build <span class="hljs-literal">all</span>
-</code></pre><p>The <code>all</code> targets runs the following targets in order:</p>
-<ul>
-<li>Build</li>
-<li>Test</li>
-<li>Nuget</li>
-</ul>
-<h3 id="version-management">Version management</h3>
-<p>The build uses the last version number specified in the <a href="https://github.com/akkadotnet/akka.net/blob/dev/RELEASE_NOTES.md">RELEASE_NOTES.md</a> file.</p>
-<p>The release notes are also used in nuget packages.</p>
-<h3 id="running-tests">Running tests</h3>
-<p>To run unit tests from the command line, run the following command:</p>
-<pre><code>    build <span class="hljs-keyword">test</span>
-</code></pre><h3 id="creating-nuget-distributions">Creating Nuget distributions</h3>
-<p>To create nuget packages locally, run the following command:</p>
-<pre><code>    <span class="hljs-title">build</span> nuget
-</code></pre><p>To create and publish packages to nuget.org, specify the nuget key:</p>
-<pre><code><span class="hljs-attribute">    build nuget nugetkey</span>=<span class="hljs-string">&lt;key&gt;</span>
-</code></pre><p>or to run also unit tests before publishing:</p>
-<pre><code><span class="hljs-attribute">   build all nugetkey</span>=<span class="hljs-string">&lt;key&gt;</span>
-</code></pre><h2 id="building-using-rake-albacore">Building using Rake/Albacore</h2>
-<p>Akka.Net can also use <a href="http://albacorebuild.net/">Albacore (Rake)</a> for builds. The commands are simple, but you will need to install Ruby on your system in order to execute any Rake commands.</p>
-<p>We recommend using the <a href="http://railsinstaller.org/">Rails Installer for Windows</a>.</p>
-<h3 id="running-build-tasks">Running Build Tasks</h3>
-<p>To run a basic build a Pigeon, open a command prompt to the root directory of your Pigeon repository and type the following command:</p>
-<pre><code><span class="hljs-input"><span class="hljs-prompt">C:\akka.net&gt;</span> rake</span>
-</code></pre><p>This will automatically invoke a simple MSBuild of your local copy of Pigeon.</p>
-<h3 id="version-management">Version Management</h3>
-<p>Akka.NET&#39;s Rake file includes the ability to increment the version number for new releases.</p>
-<p>Akka.NET follows the standard .NET version number convention: <code>{Major Version}.{Minor Version}.{Revision}.{Build}</code>.</p>
-<p>You can modify the build number using the following commands:</p>
-<ul>
-<li><code>rake bump_build_number</code> - bumps the <strong>build</strong> number.</li>
-<li><code>rake bump_revision_number</code> - bumps the <strong>revision</strong> number.</li>
-<li><code>rake bump_minor_version_number</code> - bumps the <strong>minor version</strong> number.</li>
-<li><code>rake bump_major_version_number</code> - bumps the <strong>major version</strong> number.</li>
-</ul>
-<h3 id="creating-nuget-distributions">Creating NuGet Distributions</h3>
-<p>To create a NuGet distribution, you can run the following command:</p>
-<pre><code><span class="hljs-input"><span class="hljs-prompt">C:\&gt;</span> rake nuget</span>
-</code></pre><p>This will create a new instance of all Akka.NET NuGet packages in the <code>/build/</code> folder, using Release configuration settings.</p>
-<p>If you need to create a Debug configuration NuGet package, then you can use the <code>nuget_debug</code> command instead.</p>
+								<h2 id="host-your-actorsystem-using-">Host your <code>ActorSystem</code> using:</h2>
+<h3 id="console-application">Console Application</h3>
+<pre><code class="hljs lang-csharp"><span class="hljs-class"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Foo</span>.<span class="hljs-title">Bar</span>
+</span>{
+    <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+    </span>{
+        <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+        {
+            <span class="hljs-comment">//configure remoting for localhost:8081</span>
+            <span class="hljs-keyword">var</span> fluentConfig = FluentConfig.Begin()
+                .StartRemotingOn(<span class="hljs-string">"localhost"</span>, <span class="hljs-number">8081</span>)
+                .Build();
+
+            <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"my-actor-server"</span>, fluentConfig))
+            {
+                <span class="hljs-comment">//start two services </span>
+                <span class="hljs-keyword">var</span> service1= system.ActorOf&lt;Service1&gt;(<span class="hljs-string">"service1"</span>);
+                <span class="hljs-keyword">var</span> service2 = system.ActorOf&lt;Service2&gt;(<span class="hljs-string">"service2"</span>);
+                Console.ReadKey();
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="windows-service">Windows Service</h3>
+<h3 id="asp-net">Asp.NET</h3>
 
 
 								<div class="sky-form boxed">
