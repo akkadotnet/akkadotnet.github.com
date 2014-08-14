@@ -216,13 +216,13 @@ By providing a <code>CancellationTokenSource</code> you can cancel the scheduled
 Scheduling timing is inexact.</p>
 </div>
 <h2 id="some-examples">Some examples</h2>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = <span class="hljs-type">ActorSystem</span>.<span class="hljs-type">Create</span>(<span class="hljs-string">"MySystem"</span>);
-<span class="hljs-keyword">var</span> someActor = system.<span class="hljs-type">ActorOf</span>&lt;<span class="hljs-type">SomeActor</span>&gt;(<span class="hljs-string">"someActor"</span>);
-<span class="hljs-keyword">var</span> someMessage = new <span class="hljs-type">SomeMessage</span>() <span class="hljs-decorator">{...}</span>;
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<span class="hljs-keyword">var</span> someActor = system.ActorOf&lt;SomeActor&gt;(<span class="hljs-string">"someActor"</span>);
+<span class="hljs-keyword">var</span> someMessage = <span class="hljs-keyword">new</span> SomeMessage() {...};
 system
-   .<span class="hljs-type">Scheduler</span>
-   .<span class="hljs-type">Schedule</span>(<span class="hljs-type">TimeSpan</span>.<span class="hljs-type">FromSeconds</span>(<span class="hljs-number">0</span>),
-             <span class="hljs-type">TimeSpan</span>.<span class="hljs-type">FromSeconds</span>(<span class="hljs-number">5</span>),
+   .Scheduler
+   .Schedule(TimeSpan.FromSeconds(<span class="hljs-number">0</span>),
+             TimeSpan.FromSeconds(<span class="hljs-number">5</span>),
              someActor, someMessage);
 </code></pre>
 <p>The above example will schedule &quot;someMessage&quot; to be sent to &quot;someActor&quot; every 5 seconds.</p>

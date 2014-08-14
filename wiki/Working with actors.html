@@ -232,20 +232,20 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
 </code></pre>
 <h3 id="the-inbox">The Inbox</h3>
 <p>When writing code outside of actors which shall communicate with actors, the ask pattern can be a solution (see below), but there are two thing it cannot do: receiving multiple replies (e.g. by subscribing an <code>ActorRef</code> to a notification service) and watching other actors’ lifecycle. For these purposes there is the Inbox class:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">final</span> Inbox inbox = Inbox.create(system);
+<pre><code class="hljs lang-csharp">final Inbox inbox = Inbox.create(system);
 inbox.send(target, <span class="hljs-string">"hello"</span>);
 <span class="hljs-keyword">try</span> {
-  <span class="hljs-keyword">assert</span> inbox.receive(Duration.create(<span class="hljs-number">1</span>, TimeUnit.SECONDS)).equals(<span class="hljs-string">"world"</span>);
+  assert inbox.receive(Duration.create(<span class="hljs-number">1</span>, TimeUnit.SECONDS)).equals(<span class="hljs-string">"world"</span>);
 } <span class="hljs-keyword">catch</span> (java.util.concurrent.TimeoutException e) {
   <span class="hljs-comment">// timeout</span>
 }
 </code></pre>
 <p>The send method wraps a normal tell and supplies the internal actor’s reference as the sender. This allows the reply to be received on the last line. Watching an actor is quite simple as well:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">final</span> Inbox inbox = Inbox.create(system);
+<pre><code class="hljs lang-csharp">final Inbox inbox = Inbox.create(system);
 inbox.watch(target);
 target.tell(PoisonPill.getInstance(), ActorRef.noSender());
 <span class="hljs-keyword">try</span> {
-  <span class="hljs-keyword">assert</span> inbox.receive(Duration.create(<span class="hljs-number">1</span>, TimeUnit.SECONDS)) <span class="hljs-keyword">instanceof</span> Terminated;
+  assert inbox.receive(Duration.create(<span class="hljs-number">1</span>, TimeUnit.SECONDS)) instanceof Terminated;
 } <span class="hljs-keyword">catch</span> (java.util.concurrent.TimeoutException e) {
   <span class="hljs-comment">// timeout</span>
 }
@@ -297,25 +297,25 @@ target.tell(PoisonPill.getInstance(), ActorRef.noSender());
 <p>The implementations shown above are the defaults provided by the UntypedActor class.</p>
 <h2 id="identifying-actors-via-actor-selection">Identifying Actors via Actor Selection</h2>
 <p>As described in Actor References, Paths and Addresses, each actor has a unique logical path, which is obtained by following the chain of actors from child to parent until reaching the root of the actor system, and it has a physical path, which may differ if the supervision chain includes any remote supervisors. These paths are used by the system to look up actors, e.g. when a remote message is received and the recipient is searched, but they are also useful more directly: actors may look up other actors by specifying absolute or relative paths—logical or physical—and receive back an ActorSelection with the result:</p>
-<pre><code class="hljs lang-csharp">// will look <span class="hljs-preprocessor">up</span> this <span class="hljs-built_in">absolute</span> path
-Context.ActorSelection(<span class="hljs-string">"/user/serviceA/actor"</span>)<span class="hljs-comment">;</span>
-// will look <span class="hljs-preprocessor">up</span> sibling beneath same supervisor
-Context.ActorSelection(<span class="hljs-string">"../joe"</span>)<span class="hljs-comment">;</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// will look up this absolute path</span>
+Context.ActorSelection(<span class="hljs-string">"/user/serviceA/actor"</span>);
+<span class="hljs-comment">// will look up sibling beneath same supervisor</span>
+Context.ActorSelection(<span class="hljs-string">"../joe"</span>);
 </code></pre>
 <p>The supplied path is parsed as a <code>System.URI</code>, which basically means that it is split on / into path elements. If the path starts with /, it is absolute and the look-up starts at the root guardian (which is the parent of &quot;/user&quot;); otherwise it starts at the current actor. If a path element equals .., the look-up will take a step “up” towards the supervisor of the currently traversed actor, otherwise it will step “down” to the named child. It should be noted that the .. in actor paths here always means the logical structure, i.e. the supervisor.</p>
 <p>The path elements of an actor selection may contain wildcard patterns allowing for broadcasting of messages to that section:</p>
-<pre><code class="hljs lang-csharp">// will look <span class="hljs-keyword">all</span> children <span class="hljs-keyword">to</span> serviceB <span class="hljs-keyword">with</span> names starting <span class="hljs-keyword">with</span> worker
-<span class="hljs-keyword">Context</span>.ActorSelection(<span class="hljs-string">"/user/serviceB/worker*"</span>);
-// will look up <span class="hljs-keyword">all</span> siblings beneath same supervisor
-<span class="hljs-keyword">Context</span>.ActorSelection(<span class="hljs-string">"../*"</span>);
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// will look all children to serviceB with names starting with worker</span>
+Context.ActorSelection(<span class="hljs-string">"/user/serviceB/worker*"</span>);
+<span class="hljs-comment">// will look up all siblings beneath same supervisor</span>
+Context.ActorSelection(<span class="hljs-string">"../*"</span>);
 </code></pre>
 <p>Messages can be sent via the <code>ActorSelection</code> and the path of the <code>ActorSelection</code>is looked up when delivering each message. If the selection does not match any actors the message will be dropped.</p>
 <p>To acquire an <code>AtorRef</code> for an <code>ActorSelection</code> you need to send a message to the selection and use the <code>Sender</code> reference of the reply from the actor. There is a built-in Identify message that all Actors will understand and automatically reply to with a <code>ActorIdentity</code> message containing the ActorRef. This message is handled specially by the actors which are traversed in the sense that if a concrete name lookup fails (i.e. a non-wildcard path element does not correspond to a live actor) then a negative result is generated. Please note that this does not mean that delivery of that reply is guaranteed, it still is a normal message.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.actor.ActorIdentity;
-<span class="hljs-keyword">import</span> akka.actor.ActorSelection;
-<span class="hljs-keyword">import</span> akka.actor.Identify;
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Follower</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActor</span> </span>{
-  <span class="hljs-keyword">final</span> String identifyId = <span class="hljs-string">"1"</span>;
+<pre><code class="hljs lang-csharp">import akka.actor.ActorIdentity;
+import akka.actor.ActorSelection;
+import akka.actor.Identify;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Follower extends UntypedActor {
+  final String identifyId = <span class="hljs-string">"1"</span>;
   {
     ActorSelection selection =
       getContext().actorSelection(<span class="hljs-string">"/user/another"</span>);
@@ -323,27 +323,27 @@ Context.ActorSelection(<span class="hljs-string">"../joe"</span>)<span class="hl
   }
   ActorRef another;
 
-  <span class="hljs-keyword">final</span> ActorRef probe;
+  final ActorRef probe;
   <span class="hljs-keyword">public</span> <span class="hljs-title">Follower</span>(ActorRef probe) {
     <span class="hljs-keyword">this</span>.probe = probe;
   }
 
-  <span class="hljs-annotation">@Override</span>
+  @Override
   <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) {
-    <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">instanceof</span> ActorIdentity) {
+    <span class="hljs-keyword">if</span> (message instanceof ActorIdentity) {
       ActorIdentity identity = (ActorIdentity) message;
       <span class="hljs-keyword">if</span> (identity.correlationId().equals(identifyId)) {
-        ActorRef ref = identity.getRef();
-        <span class="hljs-keyword">if</span> (ref == <span class="hljs-keyword">null</span>)
+        ActorRef <span class="hljs-keyword">ref</span> = identity.getRef();
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">ref</span> == <span class="hljs-keyword">null</span>)
           getContext().stop(getSelf());
         <span class="hljs-keyword">else</span> {
-          another = ref;
+          another = <span class="hljs-keyword">ref</span>;
           getContext().watch(another);
-          probe.tell(ref, getSelf());
+          probe.tell(<span class="hljs-keyword">ref</span>, getSelf());
         }
       }
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">instanceof</span> Terminated) {
-      <span class="hljs-keyword">final</span> Terminated t = (Terminated) message;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (message instanceof Terminated) {
+      final Terminated t = (Terminated) message;
       <span class="hljs-keyword">if</span> (t.getActor().equals(another)) {
         getContext().stop(getSelf());
       }
@@ -355,7 +355,7 @@ Context.ActorSelection(<span class="hljs-string">"../joe"</span>)<span class="hl
 </code></pre>
 <p>You can also acquire an ActorRef for an ActorSelection with the resolveOne method of the ActorSelection. It returns a Future of the matching ActorRef if such an actor exists. It is completed with failure <code>akka.actor.ActorNotFound</code> if no such actor exists or the identification didn&#39;t complete within the supplied timeout.</p>
 <p>Remote actor addresses may also be looked up, if remoting is enabled:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">Context</span>().ActorSelection(<span class="hljs-string">"akka.tcp://app@otherhost:1234/user/serviceB"</span>);
+<pre><code class="hljs lang-csharp">Context().ActorSelection(<span class="hljs-string">"akka.tcp://app@otherhost:1234/user/serviceB"</span>);
 </code></pre>
 <p>An example demonstrating remote actor look-up is given in Remoting Sample.</p>
 <div class="alert alert-success">
@@ -365,9 +365,9 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 <h2 id="messages-and-immutability">Messages and immutability</h2>
 <p><strong>IMPORTANT:</strong> Messages can be any kind of object but have to be immutable. Akka can’t enforce immutability (yet) so this has to be by convention.</p>
 <p>Here is an example of an immutable message:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ImmutableMessage</span> </span>{
-  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> sequenceNumber;
-  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> List&lt;String&gt; values;
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> ImmutableMessage {
+  <span class="hljs-keyword">private</span> final <span class="hljs-keyword">int</span> sequenceNumber;
+  <span class="hljs-keyword">private</span> final List&lt;String&gt; values;
 
   <span class="hljs-keyword">public</span> <span class="hljs-title">ImmutableMessage</span>(<span class="hljs-keyword">int</span> sequenceNumber, List&lt;String&gt; values) {
     <span class="hljs-keyword">this</span>.sequenceNumber = sequenceNumber;
@@ -396,34 +396,34 @@ There are performance implications of using ask since something needs to keep tr
 <h3 id="tell-fire-forget">Tell: Fire-forget</h3>
 <p>This is the preferred way of sending messages. No blocking waiting for a message. This gives the best concurrency and scalability characteristics.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// don’t forget to think about who is the sender (2nd argument)</span>
-target.tell(<span class="hljs-class"><span class="hljs-keyword">message</span>, <span class="hljs-title">getSelf</span>());</span>
+target.tell(message, getSelf());
 </code></pre>
 <p>The sender reference is passed along with the message and available within the receiving actor via its getSender method while processing this message. Inside of an actor it is usually getSelf who shall be the sender, but there can be cases where replies shall be routed to some other actor—e.g. the parent—in which the second argument to tell would be a different one. Outside of an actor and if no reply is needed the second argument can be null; if a reply is needed outside of an actor you can use the ask-pattern described next..</p>
 <h3 id="ask-send-and-receive-future">Ask: Send-And-Receive-Future</h3>
 <p>The ask pattern involves actors as well as futures, hence it is offered as a use pattern rather than a method on ActorRef:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-preprocessor"><span class="hljs-keyword">import</span> static akka.pattern.Patterns.ask;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> static akka.pattern.Patterns.pipe;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> scala.concurrent.Future;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> scala.concurrent.duration.Duration;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.dispatch.Futures;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.dispatch.Mapper;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.util.Timeout;</span>
-<span class="hljs-keyword">final</span> Timeout t = <span class="hljs-keyword">new</span> Timeout(Duration.create(<span class="hljs-number">5</span>, TimeUnit.SECONDS));
+<pre><code class="hljs lang-csharp">import <span class="hljs-keyword">static</span> akka.pattern.Patterns.ask;
+import <span class="hljs-keyword">static</span> akka.pattern.Patterns.pipe;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import akka.dispatch.Futures;
+import akka.dispatch.Mapper;
+import akka.util.Timeout;
+final Timeout t = <span class="hljs-keyword">new</span> Timeout(Duration.create(<span class="hljs-number">5</span>, TimeUnit.SECONDS));
 
-<span class="hljs-keyword">final</span> ArrayList&lt;Future&lt;Object&gt;&gt; futures = <span class="hljs-keyword">new</span> ArrayList&lt;Future&lt;Object&gt;&gt;();
+final ArrayList&lt;Future&lt;Object&gt;&gt; futures = <span class="hljs-keyword">new</span> ArrayList&lt;Future&lt;Object&gt;&gt;();
 futures.add(ask(actorA, <span class="hljs-string">"request"</span>, <span class="hljs-number">1000</span>)); <span class="hljs-comment">// using 1000ms timeout</span>
 futures.add(ask(actorB, <span class="hljs-string">"another request"</span>, t)); <span class="hljs-comment">// using timeout from</span>
                                                 <span class="hljs-comment">// above</span>
 
-<span class="hljs-keyword">final</span> Future&lt;Iterable&lt;Object&gt;&gt; aggregate = Futures.sequence(futures,
+final Future&lt;Iterable&lt;Object&gt;&gt; aggregate = Futures.sequence(futures,
     system.dispatcher());
 
-<span class="hljs-keyword">final</span> Future&lt;Result&gt; transformed = aggregate.map(
+final Future&lt;Result&gt; transformed = aggregate.map(
     <span class="hljs-keyword">new</span> Mapper&lt;Iterable&lt;Object&gt;, Result&gt;() {
-      <span class="hljs-keyword">public</span> Result apply(Iterable&lt;Object&gt; coll) {
-        <span class="hljs-keyword">final</span> Iterator&lt;Object&gt; it = coll.iterator();
-        <span class="hljs-keyword">final</span> String x = (String) it.next();
-        <span class="hljs-keyword">final</span> String s = (String) it.next();
+      <span class="hljs-keyword">public</span> Result <span class="hljs-title">apply</span>(Iterable&lt;Object&gt; coll) {
+        final Iterator&lt;Object&gt; it = coll.iterator();
+        final String x = (String) it.next();
+        final String s = (String) it.next();
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Result(x, s);
       }
     }, system.dispatcher());
@@ -437,11 +437,11 @@ pipe(transformed, system.dispatcher()).to(actorC);
 To complete the future with an exception you need send a Failure message to the sender. This is not done automatically when an actor throws an exception while processing a message.</p>
 </div>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">try</span> {
-  <span class="hljs-type">String</span> <span class="hljs-literal">result</span> = operation();
-  getSender().tell(<span class="hljs-literal">result</span>, getSelf());
-} catch (<span class="hljs-type">Exception</span> e) {
-  getSender().tell(new akka.actor.<span class="hljs-type">Status</span>.<span class="hljs-type">Failure</span>(e), getSelf());
-  throw e;
+  String result = operation();
+  getSender().tell(result, getSelf());
+} <span class="hljs-keyword">catch</span> (Exception e) {
+  getSender().tell(<span class="hljs-keyword">new</span> akka.actor.Status.Failure(e), getSelf());
+  <span class="hljs-keyword">throw</span> e;
 }
 </code></pre>
 <p>If the actor does not complete the future, it will expire after the timeout period, specified as parameter to the ask method; this will complete the Future with an AskTimeoutException.</p>
@@ -453,20 +453,20 @@ When using future callbacks, inside actors you need to carefully avoid closing o
 </div>
 <h3 id="forward-message">Forward message</h3>
 <p>You can forward a message from one actor to another. This means that the original sender address/reference is maintained even though the message is going through a &#39;mediator&#39;. This can be useful when writing actors that work as routers, load-balancers, replicators etc. You need to pass along your context variable as well.</p>
-<pre><code class="hljs lang-csharp">target.<span class="hljs-type">Forward</span>(<span class="hljs-literal">result</span>, <span class="hljs-type">Context</span>());
+<pre><code class="hljs lang-csharp">target.Forward(result, Context());
 </code></pre>
 <h2 id="receive-messages">Receive messages</h2>
 <p>When an actor receives a message it is passed into the onReceive method, this is an abstract method on the UntypedActor base class that needs to be defined.</p>
 <p>Here is an example:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.actor.UntypedActor;
-<span class="hljs-keyword">import</span> akka.event.Logging;
-<span class="hljs-keyword">import</span> akka.event.LoggingAdapter;
+<pre><code class="hljs lang-csharp">import akka.actor.UntypedActor;
+import akka.<span class="hljs-keyword">event</span>.Logging;
+import akka.<span class="hljs-keyword">event</span>.LoggingAdapter;
 
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyUntypedActor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActor</span> </span>{
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> MyUntypedActor extends UntypedActor {
   LoggingAdapter log = Logging.getLogger(getContext().system(), <span class="hljs-keyword">this</span>);
 
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) <span class="hljs-keyword">throws</span> Exception {
-    <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">instanceof</span> String) {
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) throws Exception {
+    <span class="hljs-keyword">if</span> (message instanceof String) {
       log.info(<span class="hljs-string">"Received String message: {}"</span>, message);
       getSender().tell(message, getSelf());
     } <span class="hljs-keyword">else</span>
@@ -477,13 +477,13 @@ When using future callbacks, inside actors you need to carefully avoid closing o
 <p>An alternative to using if-instanceof checks is to use Apache Commons MethodUtils to invoke a named method whose parameter type matches the message type.</p>
 <h2 id="reply-to-messages">Reply to messages</h2>
 <p>If you want to have a handle for replying to a message, you can use getSender(), which gives you an ActorRef. You can reply by sending to that ActorRef with getSender().tell(replyMsg, getSelf()). You can also store the ActorRef for replying later, or passing on to other actors. If there is no sender (a message was sent without an actor or future context) then the sender defaults to a &#39;dead-letter&#39; actor ref.</p>
-<pre><code class="hljs lang-csharp">@<span class="hljs-type">Override</span>
-public <span class="hljs-type">void</span> onReceive(<span class="hljs-type">Object</span> msg) {
-  <span class="hljs-type">Object</span> <span class="hljs-literal">result</span> =
-      // calculate <span class="hljs-literal">result</span> ...
+<pre><code class="hljs lang-csharp">@Override
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object msg) {
+  Object result =
+      <span class="hljs-comment">// calculate result ...</span>
 
-  // <span class="hljs-keyword">do</span> <span class="hljs-keyword">not</span> forget the second argument!
-  getSender().tell(<span class="hljs-literal">result</span>, getSelf());
+  <span class="hljs-comment">// do not forget the second argument!</span>
+  getSender().tell(result, getSelf());
 }
 </code></pre>
 <h2 id="stopping-actors">Stopping actors</h2>
@@ -493,8 +493,8 @@ public <span class="hljs-type">void</span> onReceive(<span class="hljs-type">Obj
 <p>Upon ActorSystem.shutdown, the system guardian actors will be stopped, and the aforementioned process will ensure proper termination of the whole system.</p>
 <p>The postStop hook is invoked after an actor is fully stopped. This enables cleaning up of resources:</p>
 <pre><code class="hljs lang-csharp">@Override
-public void postStop() {
-  // clean up resources here <span class="hljs-keyword">...</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postStop</span>() {
+  <span class="hljs-comment">// clean up resources here ...</span>
 }
 </code></pre>
 <div class="alert alert-success">
@@ -508,11 +508,11 @@ Since stopping an actor is asynchronous, you cannot immediately reuse the name o
 </code></pre>
 <h3 id="graceful-stop">Graceful Stop</h3>
 <p>gracefulStop is useful if you need to wait for termination or compose ordered termination of several actors:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> akka.pattern.Patterns.gracefulStop;
-<span class="hljs-keyword">import</span> scala.concurrent.Await;
-<span class="hljs-keyword">import</span> scala.concurrent.Future;
-<span class="hljs-keyword">import</span> scala.concurrent.duration.Duration;
-<span class="hljs-keyword">import</span> akka.pattern.AskTimeoutException;
+<pre><code class="hljs lang-csharp">import <span class="hljs-keyword">static</span> akka.pattern.Patterns.gracefulStop;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
+import scala.concurrent.duration.Duration;
+import akka.pattern.AskTimeoutException;
 <span class="hljs-keyword">try</span> {
   Future&lt;Boolean&gt; stopped =
     gracefulStop(actorRef, Duration.create(<span class="hljs-number">5</span>, TimeUnit.SECONDS), Manager.SHUTDOWN);
@@ -521,9 +521,9 @@ Since stopping an actor is asynchronous, you cannot immediately reuse the name o
 } <span class="hljs-keyword">catch</span> (AskTimeoutException e) {
   <span class="hljs-comment">// the actor wasn't stopped within 5 seconds</span>
 }
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Manager</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActor</span> </span>{
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Manager extends UntypedActor {
 
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> String SHUTDOWN = <span class="hljs-string">"shutdown"</span>;
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> final String SHUTDOWN = <span class="hljs-string">"shutdown"</span>;
 
   ActorRef worker = getContext().watch(getContext().actorOf(
       Props.create(Cruncher.class), <span class="hljs-string">"worker"</span>));
@@ -538,11 +538,11 @@ Since stopping an actor is asynchronous, you cannot immediately reuse the name o
   }
 
   Procedure&lt;Object&gt; shuttingDown = <span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
-    <span class="hljs-annotation">@Override</span>
+    @Override
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object message) {
       <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"job"</span>)) {
         getSender().tell(<span class="hljs-string">"service unavailable, shutting down"</span>, getSelf());
-      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">instanceof</span> Terminated) {
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (message instanceof Terminated) {
         getContext().stop(getSelf());
       }
     }
@@ -563,11 +563,11 @@ Keep in mind that an actor stopping and its name being deregistered are separate
 Please note that the actor will revert to its original behavior when restarted by its Supervisor.</p>
 </div>
 <p>To hotswap the Actor using <code>getContext().become</code>:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.japi.Procedure;
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HotSwapActor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActor</span> </span>{
+<pre><code class="hljs lang-csharp">import akka.japi.Procedure;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> HotSwapActor extends UntypedActor {
 
   Procedure&lt;Object&gt; angry = <span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
-    <span class="hljs-annotation">@Override</span>
+    @Override
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object message) {
       <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"bar"</span>)) {
         getSender().tell(<span class="hljs-string">"I am already angry?"</span>, getSelf());
@@ -578,7 +578,7 @@ Please note that the actor will revert to its original behavior when restarted b
   };
 
   Procedure&lt;Object&gt; happy = <span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
-    <span class="hljs-annotation">@Override</span>
+    @Override
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object message) {
       <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"bar"</span>)) {
         getSender().tell(<span class="hljs-string">"I am already happy :-)"</span>, getSelf());
@@ -601,23 +601,23 @@ Please note that the actor will revert to its original behavior when restarted b
 </code></pre>
 <p>This variant of the become method is useful for many different things, such as to implement a Finite State Machine (FSM). It will replace the current behavior (i.e. the top of the behavior stack), which means that you do not use unbecome, instead always the next behavior is explicitly installed.</p>
 <p>The other way of using become does not replace but add to the top of the behavior stack. In this case care must be taken to ensure that the number of “pop” operations (i.e. unbecome) matches the number of “push” ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UntypedActorSwapper</span> </span>{
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> UntypedActorSwapper {
 
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Swap</span> </span>{
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> Swap {
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Swap SWAP = <span class="hljs-keyword">new</span> Swap();
 
     <span class="hljs-keyword">private</span> <span class="hljs-title">Swap</span>() {
     }
   }
 
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Swapper</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">UntypedActor</span> </span>{
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> Swapper extends UntypedActor {
     LoggingAdapter log = Logging.getLogger(getContext().system(), <span class="hljs-keyword">this</span>);
 
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) {
       <span class="hljs-keyword">if</span> (message == SWAP) {
         log.info(<span class="hljs-string">"Hi"</span>);
         getContext().become(<span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
-          <span class="hljs-annotation">@Override</span>
+          @Override
           <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object message) {
             log.info(<span class="hljs-string">"Ho"</span>);
             getContext().unbecome(); <span class="hljs-comment">// resets the latest 'become'</span>
@@ -663,23 +663,23 @@ Please note that the actor will revert to its original behavior when restarted b
 <h3 id="initialization-via-prestart">Initialization via preStart</h3>
 <p>The method preStart() of an actor is only called once directly during the initialization of the first instance, that is, at creation of its ActorRef. In the case of restarts, preStart() is called from postRestart(), therefore if not overridden, preStart() is called on every incarnation. However, overriding postRestart() one can disable this behavior, and ensure that there is only one call to preStart().</p>
 <p>One useful usage of this pattern is to disable creation of new ActorRefs for children during restarts. This can be achieved by overriding preRestart():</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-annotation">@Override</span>
+<pre><code class="hljs lang-csharp">@Override
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">preStart</span>() {
   <span class="hljs-comment">// Initialize children here</span>
 }
 
 <span class="hljs-comment">// Overriding postRestart to disable the call to preStart()</span>
 <span class="hljs-comment">// after restarts</span>
-<span class="hljs-annotation">@Override</span>
+@Override
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postRestart</span>(Throwable reason) {
 }
 
 <span class="hljs-comment">// The default implementation of preRestart() stops all the children</span>
 <span class="hljs-comment">// of the actor. To opt-out from stopping the children, we</span>
 <span class="hljs-comment">// have to override preRestart()</span>
-<span class="hljs-annotation">@Override</span>
+@Override
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">preRestart</span>(Throwable reason, Option&lt;Object&gt; message)
-  <span class="hljs-keyword">throws</span> Exception {
+  throws Exception {
   <span class="hljs-comment">// Keep the call to postStop(), but no stopping of children</span>
   postStop();
 }
@@ -690,13 +690,13 @@ Please note that the actor will revert to its original behavior when restarted b
 <p>There are cases when it is impossible to pass all the information needed for actor initialization in the constructor, for example in the presence of circular dependencies. In this case the actor should listen for an initialization message, and use become() or a finite state-machine state transition to encode the initialized and uninitialized states of the actor.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> String initializeMe = <span class="hljs-keyword">null</span>;
 
-<span class="hljs-annotation">@Override</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) <span class="hljs-keyword">throws</span> Exception {
+@Override
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) throws Exception {
   <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"init"</span>)) {
     initializeMe = <span class="hljs-string">"Up and running"</span>;
     getContext().become(<span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
-      <span class="hljs-annotation">@Override</span>
-      <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object message) <span class="hljs-keyword">throws</span> Exception {
+      @Override
+      <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span>(Object message) throws Exception {
         <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"U OK?"</span>))
           getSender().tell(initializeMe, getSelf());
       }

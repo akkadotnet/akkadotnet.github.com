@@ -207,43 +207,43 @@
 <h2 id="usage">Usage</h2>
 <p>Configuration
 For Akka to know which Serializer to use for what, you need edit your Configuration, in the &quot;akka.actor.serializers&quot;-section you bind names to implementations of the akka.serialization.Serializer you wish to use, like this:</p>
-<pre><code><span class="hljs-title">akka</span> {
-  <span class="hljs-title">actor</span> {
-    <span class="hljs-title">serializers</span> {
-      <span class="hljs-title">java</span> = <span class="hljs-string">"akka.serialization.JavaSerializer"</span>
-      proto = <span class="hljs-string">"akka.remote.serialization.ProtobufSerializer"</span>
-      myown = <span class="hljs-string">"docs.serialization.MyOwnSerializer"</span>
+<pre><code>Error: Unknown language: "undefined"akka {
+  actor {
+    serializers {
+      java = "akka.serialization.JavaSerializer"
+      proto = "akka.remote.serialization.ProtobufSerializer"
+      myown = "docs.serialization.MyOwnSerializer"
     }
   }
 }
 </code></pre><p>After you&#39;ve bound names to different implementations of Serializer you need to wire which classes should be serialized using which Serializer, this is done in the &quot;akka.actor.serialization-bindings&quot;-section:</p>
-<pre><code>akka {
+<pre><code>Error: Unknown language: "undefined"akka {
   actor {
     serializers {
-      <span class="hljs-variable">java =</span> <span class="hljs-string">"akka.serialization.JavaSerializer"</span>
-      <span class="hljs-variable">proto =</span> <span class="hljs-string">"akka.remote.serialization.ProtobufSerializer"</span>
-      <span class="hljs-variable">myown =</span> <span class="hljs-string">"docs.serialization.MyOwnSerializer"</span>
+      java = "akka.serialization.JavaSerializer"
+      proto = "akka.remote.serialization.ProtobufSerializer"
+      myown = "docs.serialization.MyOwnSerializer"
     }
 
     serialization-bindings {
-      <span class="hljs-string">"java.lang.String"</span> = java
-      <span class="hljs-string">"docs.serialization.Customer"</span> = java
-      <span class="hljs-string">"com.google.protobuf.Message"</span> = proto
-      <span class="hljs-string">"docs.serialization.MyOwnSerializable"</span> = myown
-      <span class="hljs-string">"java.lang.Boolean"</span> = myown
+      "java.lang.String" = java
+      "docs.serialization.Customer" = java
+      "com.google.protobuf.Message" = proto
+      "docs.serialization.MyOwnSerializable" = myown
+      "java.lang.Boolean" = myown
     }
   }
 }
 </code></pre><p>You only need to specify the name of an interface or abstract base class of the messages. In case of ambiguity, i.e. the message implements several of the configured classes, the most specific configured class will be used, i.e. the one of which all other candidates are superclasses. If this condition cannot be met, because e.g. java.io.Serializable and MyOwnSerializable both apply and neither is a subtype of the other, a warning will be issued.</p>
 <p>Akka provides serializers for java.io.Serializable and protobuf com.google.protobuf.GeneratedMessage by default (the latter only if depending on the akka-remote module), so normally you don&#39;t need to add configuration for that; since com.google.protobuf.GeneratedMessage implements java.io.Serializable, protobuf messages will always by serialized using the protobuf protocol unless specifically overridden. In order to disable a default serializer, map its marker type to “none”:</p>
-<pre><code>akka.actor.serialization-bindings {
-  <span class="hljs-string">"java.io.Serializable"</span> = <span class="hljs-literal">none</span>
+<pre><code>Error: Unknown language: "undefined"akka.actor.serialization-bindings {
+  "java.io.Serializable" = none
 }
 </code></pre><p>Verification
 If you want to verify that your messages are serializable you can enable the following config option:</p>
-<pre><code>akka {
+<pre><code>Error: Unknown language: "undefined"akka {
   actor {
-    serialize-messages = <span class="hljs-command"><span class="hljs-keyword">on</span></span>
+    serialize-messages = on
   }
 }
 </code></pre><div class="alert alert-warning">
@@ -251,9 +251,9 @@ If you want to verify that your messages are serializable you can enable the fol
 We only recommend using the config option turned on when you&#39;re running tests. It is completely pointless to have it turned on in other scenarios.</p>
 </div>
 <p>If you want to verify that your Props are serializable you can enable the following config option:</p>
-<pre><code>akka {
+<pre><code>Error: Unknown language: "undefined"akka {
   actor {
-    serialize-creators = <span class="hljs-command"><span class="hljs-keyword">on</span></span>
+    serialize-creators = on
   }
 }`
 </code></pre><div class="alert alert-warning">
@@ -262,25 +262,25 @@ We only recommend using the config option turned on when you&#39;re running test
 </div>
 <h3 id="programmatic">Programmatic</h3>
 <p>If you want to programmatically serialize/deserialize using Akka Serialization, here&#39;s some examples:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.actor.*;
-<span class="hljs-keyword">import</span> akka.serialization.*;
-<span class="hljs-constant">ActorSystem system</span> = ActorSystem.create(<span class="hljs-string">"example"</span>);
+<pre><code class="hljs lang-csharp">import akka.actor.*;
+import akka.serialization.*;
+ActorSystem system = ActorSystem.create(<span class="hljs-string">"example"</span>);
 
 <span class="hljs-comment">// Get the Serialization Extension</span>
-<span class="hljs-constant">Serialization serialization</span> = SerializationExtension.get(system);
+Serialization serialization = SerializationExtension.<span class="hljs-keyword">get</span>(system);
 
 <span class="hljs-comment">// Have something to serialize</span>
-<span class="hljs-constant">String original</span> = <span class="hljs-string">"woohoo"</span>;
+String original = <span class="hljs-string">"woohoo"</span>;
 
 <span class="hljs-comment">// Find the Serializer for it</span>
-<span class="hljs-constant">Serializer serializer</span> = serialization.findSerializerFor(original);
+Serializer serializer = serialization.findSerializerFor(original);
 
 <span class="hljs-comment">// Turn it into bytes</span>
-byte[] <span class="hljs-built_in">bytes</span> = serializer.toBinary(original);
+<span class="hljs-keyword">byte</span>[] bytes = serializer.toBinary(original);
 
 <span class="hljs-comment">// Turn it back into an object,</span>
 <span class="hljs-comment">// the nulls are for the class manifest and for the classloader</span>
-<span class="hljs-constant">String back</span> = (String) serializer.fromBinary(<span class="hljs-built_in">bytes</span>);
+String back = (String) serializer.fromBinary(bytes);
 
 <span class="hljs-comment">// Voilá!</span>
 assertEquals(original, back);
@@ -290,31 +290,31 @@ assertEquals(original, back);
 <p>So, lets say that you want to create your own Serializer, you saw the docs.serialization.MyOwnSerializer in the config example above?</p>
 <h3 id="creating-new-serializers">Creating new Serializers</h3>
 <p>First you need to create a class definition of your Serializer, which is done by extending akka.serialization.JSerializer, like this:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">import</span> akka.actor.*;
-<span class="hljs-keyword">import</span> akka.serialization.*;
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyOwnSerializer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">JSerializer</span> </span>{
+<pre><code class="hljs lang-csharp">import akka.actor.*;
+import akka.serialization.*;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> MyOwnSerializer extends JSerializer {
 
   <span class="hljs-comment">// This is whether "fromBinary" requires a "clazz" or not</span>
-  <span class="hljs-annotation">@Override</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">includeManifest</span>() {
+  @Override <span class="hljs-keyword">public</span> boolean <span class="hljs-title">includeManifest</span>() {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
   }
 
   <span class="hljs-comment">// Pick a unique identifier for your Serializer,</span>
   <span class="hljs-comment">// you've got a couple of billions to choose from,</span>
   <span class="hljs-comment">// 0 - 16 is reserved by Akka itself</span>
-  <span class="hljs-annotation">@Override</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">identifier</span>() {
+  @Override <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">identifier</span>() {
     <span class="hljs-keyword">return</span> <span class="hljs-number">1234567</span>;
   }
 
   <span class="hljs-comment">// "toBinary" serializes the given object to an Array of Bytes</span>
-  <span class="hljs-annotation">@Override</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">byte</span>[] <span class="hljs-title">toBinary</span>(Object obj) {
+  @Override <span class="hljs-keyword">public</span> <span class="hljs-keyword">byte</span>[] <span class="hljs-title">toBinary</span>(Object obj) {
     <span class="hljs-comment">// Put the code that serializes the object here</span>
     <span class="hljs-comment">// ... ...</span>
   }
 
   <span class="hljs-comment">// "fromBinary" deserializes the given array,</span>
   <span class="hljs-comment">// using the type hint (if any, see "includeManifest" above)</span>
-  <span class="hljs-annotation">@Override</span> <span class="hljs-keyword">public</span> Object <span class="hljs-title">fromBinaryJava</span>(<span class="hljs-keyword">byte</span>[] bytes,
+  @Override <span class="hljs-keyword">public</span> Object <span class="hljs-title">fromBinaryJava</span>(<span class="hljs-keyword">byte</span>[] bytes,
                                          Class&lt;?&gt; clazz) {
     <span class="hljs-comment">// Put your code that deserializes here</span>
     <span class="hljs-comment">// ... ...</span>
@@ -324,55 +324,55 @@ assertEquals(original, back);
 <p>Then you only need to fill in the blanks, bind it to a name in your Configuration and then list which classes that should be serialized using it.</p>
 <h3 id="serializing-actorrefs">Serializing ActorRefs</h3>
 <p>All ActorRefs are serializable using JavaSerializer, but in case you are writing your own serializer, you might want to know how to serialize and deserialize them properly. In the general case, the local address to be used depends on the type of remote address which shall be the recipient of the serialized information. Use Serialization.serializedActorPath(actorRef) like this:</p>
-<pre><code><span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.actor.*;</span>
-<span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.serialization.*;</span>
-<span class="hljs-comment">// Serialize</span>
-<span class="hljs-comment">// (beneath toBinary)</span>
+<pre><code>Error: Unknown language: "undefined"import akka.actor.*;
+import akka.serialization.*;
+// Serialize
+// (beneath toBinary)
 String identifier = Serialization.serializedActorPath(theActorRef);
 
-<span class="hljs-comment">// Then just serialize the identifier however you like</span>
+// Then just serialize the identifier however you like
 
-<span class="hljs-comment">// Deserialize</span>
-<span class="hljs-comment">// (beneath fromBinary)</span>
-<span class="hljs-keyword">final</span> ActorRef deserializedActorRef = extendedSystem.provider().resolveActorRef(
+// Deserialize
+// (beneath fromBinary)
+final ActorRef deserializedActorRef = extendedSystem.provider().resolveActorRef(
   identifier);
-<span class="hljs-comment">// Then just use the ActorRef</span>
+// Then just use the ActorRef
 </code></pre><p>This assumes that serialization happens in the context of sending a message through the remote transport. There are other uses of serialization, though, e.g. storing actor references outside of an actor application (database, etc.). In this case, it is important to keep in mind that the address part of an actor’s path determines how that actor is communicated with. Storing a local actor path might be the right choice if the retrieval happens in the same logical context, but it is not enough when deserializing it on a different network host: for that it would need to include the system’s remote transport address. An actor system is not limited to having just one remote transport per se, which makes this question a bit more interesting. To find out the appropriate address to use when sending to remoteAddr you can use ActorRefProvider.getExternalAddressFor(remoteAddr) like this:</p>
-<pre><code class="hljs lang-chsarp"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExternalAddressExt</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Extension</span> </span>{
-  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ExtendedActorSystem system;
+<pre><code class="hljs lang-chsarp">Error: Unknown language: "chsarp"public class ExternalAddressExt implements Extension {
+  private final ExtendedActorSystem system;
 
-  <span class="hljs-keyword">public</span> <span class="hljs-title">ExternalAddressExt</span>(ExtendedActorSystem system) {
-    <span class="hljs-keyword">this</span>.system = system;
+  public ExternalAddressExt(ExtendedActorSystem system) {
+    this.system = system;
   }
 
-  <span class="hljs-keyword">public</span> Address <span class="hljs-title">getAddressFor</span>(Address remoteAddress) {
-    <span class="hljs-keyword">final</span> scala.Option&lt;Address&gt; optAddr = system.provider()
+  public Address getAddressFor(Address remoteAddress) {
+    final scala.Option<Address> optAddr = system.provider()
       .getExternalAddressFor(remoteAddress);
-    <span class="hljs-keyword">if</span> (optAddr.isDefined()) {
-      <span class="hljs-keyword">return</span> optAddr.get();
-    } <span class="hljs-keyword">else</span> {
-      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> UnsupportedOperationException(
-        <span class="hljs-string">"cannot send to remote address "</span> + remoteAddress);
+    if (optAddr.isDefined()) {
+      return optAddr.get();
+    } else {
+      throw new UnsupportedOperationException(
+        "cannot send to remote address " + remoteAddress);
     }
   }
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExternalAddress</span> <span class="hljs-keyword">extends</span>
-  <span class="hljs-title">AbstractExtensionId</span>&lt;<span class="hljs-title">ExternalAddressExt</span>&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title">ExtensionIdProvider</span> </span>{
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> ExternalAddress ID = <span class="hljs-keyword">new</span> ExternalAddress();
+public class ExternalAddress extends
+  AbstractExtensionId<ExternalAddressExt> implements ExtensionIdProvider {
+  public static final ExternalAddress ID = new ExternalAddress();
 
-  <span class="hljs-keyword">public</span> ExternalAddress <span class="hljs-title">lookup</span>() {
-    <span class="hljs-keyword">return</span> ID;
+  public ExternalAddress lookup() {
+    return ID;
   }
 
-  <span class="hljs-keyword">public</span> ExternalAddressExt <span class="hljs-title">createExtension</span>(ExtendedActorSystem system) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ExternalAddressExt(system);
+  public ExternalAddressExt createExtension(ExtendedActorSystem system) {
+    return new ExternalAddressExt(system);
   }
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ExternalAddressExample</span> </span>{
-  <span class="hljs-keyword">public</span> String <span class="hljs-title">serializeTo</span>(ActorRef ref, Address remote) {
-    <span class="hljs-keyword">return</span> ref.path().toSerializationFormatWithAddress(
+public class ExternalAddressExample {
+  public String serializeTo(ActorRef ref, Address remote) {
+    return ref.path().toSerializationFormatWithAddress(
         ExternalAddress.ID.get(system).getAddressFor(remote));
   }
 }
@@ -384,8 +384,8 @@ String identifier = Serialization.serializedActorPath(theActorRef);
 <p><code>ToSerializationFormatWithAddress</code> also adds the unique id of the actor, which will change when the actor is stopped and then created again with the same name. Sending messages to a reference pointing the old actor will not be delivered to the new actor. If you do not want this behavior, e.g. in case of long term storage of the reference, you can use <code>ToStringWithAddress</code>, which does not include the unique id.</p>
 <p>This requires that you know at least which type of address will be supported by the system which will deserialize the resulting actor reference; if you have no concrete address handy you can create a dummy one for the right protocol using new Address(protocol, &quot;&quot;, &quot;&quot;, 0) (assuming that the actual transport used is as lenient as Akka’s RemoteActorRefProvider).</p>
 <p>There is also a default remote address which is the one used by cluster support (and typical systems have just this one); you can get it like this:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DefaultAddressExt</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Extension</span> </span>{
-  <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ExtendedActorSystem system;
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> DefaultAddressExt implements Extension {
+  <span class="hljs-keyword">private</span> final ExtendedActorSystem system;
 
   <span class="hljs-keyword">public</span> <span class="hljs-title">DefaultAddressExt</span>(ExtendedActorSystem system) {
     <span class="hljs-keyword">this</span>.system = system;
@@ -396,9 +396,9 @@ String identifier = Serialization.serializedActorPath(theActorRef);
   }
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DefaultAddress</span> <span class="hljs-keyword">extends</span>
-    <span class="hljs-title">AbstractExtensionId</span>&lt;<span class="hljs-title">DefaultAddressExt</span>&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title">ExtensionIdProvider</span> </span>{
-  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> DefaultAddress ID = <span class="hljs-keyword">new</span> DefaultAddress();
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> DefaultAddress extends
+    AbstractExtensionId&lt;DefaultAddressExt&gt; implements ExtensionIdProvider {
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> final DefaultAddress ID = <span class="hljs-keyword">new</span> DefaultAddress();
 
   <span class="hljs-keyword">public</span> DefaultAddress <span class="hljs-title">lookup</span>() {
     <span class="hljs-keyword">return</span> ID;

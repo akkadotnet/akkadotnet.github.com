@@ -205,12 +205,12 @@
 								<ul>
 <li>Read more on <a href="http://doc.akka.io/docs/akka/snapshot/java/event-bus.html">http://doc.akka.io/docs/akka/snapshot/java/event-bus.html</a></li>
 </ul>
-<pre><code class="hljs lang-csharp">var <span class="hljs-built_in">system</span> = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-var subscriber = <span class="hljs-built_in">system</span>.ActorOf&lt;SomeActor&gt;();
-//Subscribe <span class="hljs-keyword">to</span> <span class="hljs-keyword">messages</span> of <span class="hljs-built_in">type</span> <span class="hljs-built_in">string</span>
-<span class="hljs-built_in">system</span>.EventStream.Subscribe(subscriber,typeof(<span class="hljs-built_in">string</span>));
-//send <span class="hljs-keyword">a</span> message
-<span class="hljs-built_in">system</span>.EventStream.Publish(<span class="hljs-string">"hello"</span>); //this will <span class="hljs-keyword">be</span> forwarded <span class="hljs-keyword">to</span> subscriber
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<span class="hljs-keyword">var</span> subscriber = system.ActorOf&lt;SomeActor&gt;();
+<span class="hljs-comment">//Subscribe to messages of type string</span>
+system.EventStream.Subscribe(subscriber,<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">string</span>));
+<span class="hljs-comment">//send a message</span>
+system.EventStream.Publish(<span class="hljs-string">"hello"</span>); <span class="hljs-comment">//this will be forwarded to subscriber</span>
 </code></pre>
 
 

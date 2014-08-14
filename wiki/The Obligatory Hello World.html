@@ -250,21 +250,21 @@ greeter.Tell(<span class="hljs-keyword">new</span> Greet(<span class="hljs-strin
 </ul>
 <h2 id="hello-world-using-the-f-api">Hello World using the F# API</h2>
 <pre><code class="hljs lang-fsharp"><span class="hljs-comment">// Create an (immutable) message type that your actor will respond to</span>
-<span class="hljs-keyword">type</span> Greet <span class="hljs-subst">=</span> Greet of <span class="hljs-built_in">string</span>
+<span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Greet</span> </span>= Greet <span class="hljs-keyword">of</span> string
 
-<span class="hljs-keyword">let</span> system <span class="hljs-subst">=</span> ActorSystem<span class="hljs-built_in">.</span>Create <span class="hljs-string">"MySystem"</span>
+<span class="hljs-keyword">let</span> system = ActorSystem.Create <span class="hljs-string">"MySystem"</span>
 
 <span class="hljs-comment">// Use F# computation expression with tail-recursive loop </span>
 <span class="hljs-comment">// to create an actor message handler and return a reference </span>
-<span class="hljs-keyword">let</span> greeter <span class="hljs-subst">=</span> spawn system <span class="hljs-string">"greeter"</span> <span class="hljs-subst">&lt;|</span> fun mailbox <span class="hljs-subst">-&gt;
-    </span><span class="hljs-keyword">let</span> rec <span class="hljs-keyword">loop</span>() <span class="hljs-subst">=</span> actor {
-        <span class="hljs-keyword">let</span><span class="hljs-subst">!</span> msg <span class="hljs-subst">=</span> mailbox<span class="hljs-built_in">.</span>Receive()
+<span class="hljs-keyword">let</span> greeter = spawn system <span class="hljs-string">"greeter"</span> &lt;| <span class="hljs-keyword">fun</span> mailbox -&gt;
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> loop() = actor {
+        <span class="hljs-keyword">let</span>! msg = mailbox.Receive()
         <span class="hljs-keyword">match</span> msg <span class="hljs-keyword">with</span>
-        <span class="hljs-subst">|</span> Greet who <span class="hljs-subst">-&gt; </span>printf <span class="hljs-string">"Hello, %s!\n"</span> who
-        <span class="hljs-keyword">return</span><span class="hljs-subst">!</span> <span class="hljs-keyword">loop</span>() }
-    <span class="hljs-keyword">loop</span>()
+        | Greet who -&gt; printf <span class="hljs-string">"Hello, %s!\n"</span> who
+        <span class="hljs-keyword">return</span>! loop() }
+    loop()
 
-greeter <span class="hljs-subst">&lt;!</span> Greet <span class="hljs-string">"World"</span>
+greeter &lt;! Greet <span class="hljs-string">"World"</span>
 </code></pre>
 
 

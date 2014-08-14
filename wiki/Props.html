@@ -205,8 +205,8 @@
 								<h2 id="props">Props</h2>
 <p>Props is a configuration class to specify options for the creation of actors, think of it as an immutable and thus freely shareable recipe for creating an actor including associated deployment information (e.g. which dispatcher to use, see more below). Here are some examples of how to create a Props instance.</p>
 <pre><code class="hljs lang-csharp">  Props props1 = Props.Create(<span class="hljs-keyword">typeof</span>(MyActor));
-  Props props2 = Props.Create<span class="hljs-function"><span class="hljs-params">(() =&gt; <span class="hljs-keyword">new</span> MyActor(..), <span class="hljs-string">"..."</span>)</span>;
-  <span class="hljs-title">Props</span> <span class="hljs-title">props3</span> = <span class="hljs-title">Props</span>.<span class="hljs-title">Create</span>&lt;<span class="hljs-title">MyActor</span>&gt;<span class="hljs-params">()</span>;</span>
+  Props props2 = Props.Create(() =&gt; <span class="hljs-keyword">new</span> MyActor(..), <span class="hljs-string">"..."</span>);
+  Props props3 = Props.Create&lt;MyActor&gt;();
 </code></pre>
 <div class="alert alert-warning">
 <p><strong>Warning</strong><br/>
@@ -243,17 +243,17 @@ system.ActorOf(DemoActor.Props(<span class="hljs-number">42</span>), <span class
 </code></pre>
 <h3 id="creating-actors-with-props">Creating Actors with Props</h3>
 <p>Actors are created by passing a Props instance into the <code>ActorOf</code> factory method which is available on <code>ActorSystem</code> and <code>ActorContext</code>.</p>
-<pre><code class="hljs lang-csharp">// ActorSystem <span class="hljs-keyword">is</span> <span class="hljs-keyword">a</span> heavy objec<span class="hljs-variable">t:</span> create <span class="hljs-keyword">only</span> one per application
-ActorSystem <span class="hljs-built_in">system</span> = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-ActorRef myActor = <span class="hljs-built_in">system</span>.ActorOf(Props.Create(typeof(MyActor)),
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// ActorSystem is a heavy object: create only one per application</span>
+ActorSystem system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)),
   <span class="hljs-string">"myactor"</span>);
 </code></pre>
 <p>Using the ActorSystem will create top-level actors, supervised by the actor system’s provided guardian actor, while using an actor’s context will create a child actor.</p>
 <pre><code class="hljs lang-csharp">class A : ReceiveActor 
 {
   ActorRef child =
-      Context.ActorOf(Props.Create(typeof(MyActor)), <span class="hljs-string">"myChild"</span>);
-  // plus some behavior <span class="hljs-keyword">...</span>
+      Context.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myChild"</span>);
+  <span class="hljs-comment">// plus some behavior ...</span>
 }
 </code></pre>
 <p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see [[Actor Systems]].</p>

@@ -204,57 +204,57 @@
 
 								<p>Akka.NET comes with an extended F# API.
 This extension lets you send and ask messages using the <code>&lt;!</code> tell and <code>&lt;?</code> ask operators.</p>
-<pre><code class="hljs lang-fsharp">open Akka.Actor
-open Akka.FSharp
-open Akka.Configuration
-open System
+<pre><code class="hljs lang-fsharp"><span class="hljs-keyword">open</span> Akka.Actor
+<span class="hljs-keyword">open</span> Akka.FSharp
+<span class="hljs-keyword">open</span> Akka.Configuration
+<span class="hljs-keyword">open</span> System
 
-type SomeActorMessages =
+<span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">SomeActorMessages</span> </span>=
     | Greet <span class="hljs-keyword">of</span> string
     | Hi
 
-type SomeActor() =    
-    inherit Actor()
+<span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">SomeActor</span></span>() =    
+    <span class="hljs-keyword">inherit</span> Actor()
 
-    override x.OnReceive message =
-        match message <span class="hljs-reserved">with</span>
-        | :? SomeActorMessages as m<span class="hljs-function"> -&gt;</span>  
-            match m <span class="hljs-reserved">with</span>
-            | Greet<span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span> Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>,name)
-            | Hi<span class="hljs-function"> -&gt;</span> Console.WriteLine(<span class="hljs-string">"Hello from F#!"</span>)
-        | _<span class="hljs-function"> -&gt;</span> failwith <span class="hljs-string">"unknown message"</span>
+    <span class="hljs-keyword">override</span> x.OnReceive message =
+        <span class="hljs-keyword">match</span> message <span class="hljs-keyword">with</span>
+        | :? SomeActorMessages <span class="hljs-keyword">as</span> m -&gt;  
+            <span class="hljs-keyword">match</span> m <span class="hljs-keyword">with</span>
+            | Greet(name) -&gt; Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>,name)
+            | Hi -&gt; Console.WriteLine(<span class="hljs-string">"Hello from F#!"</span>)
+        | _ -&gt; failwith <span class="hljs-string">"unknown message"</span>
 
-<span class="hljs-reserved">let</span> system =  
+<span class="hljs-keyword">let</span> system =  
     ConfigurationFactory.Default() 
     |&gt; System.create <span class="hljs-string">"FSharpActors"</span>
 
-<span class="hljs-reserved">let</span> actor = 
+<span class="hljs-keyword">let</span> actor = 
     spawn system <span class="hljs-string">"MyActor"</span>
-    &lt;| fun mailbox<span class="hljs-function"> -&gt;</span>
-        <span class="hljs-reserved">let</span> rec again name =
+    &lt;| <span class="hljs-keyword">fun</span> mailbox -&gt;
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> again name =
             actor {
-                <span class="hljs-reserved">let</span>! message = mailbox.Receive()
-                match message <span class="hljs-reserved">with</span>
-                | Greet(n) <span class="hljs-keyword">when</span> n = name<span class="hljs-function"> -&gt;</span>
+                <span class="hljs-keyword">let</span>! message = mailbox.Receive()
+                <span class="hljs-keyword">match</span> message <span class="hljs-keyword">with</span>
+                | Greet(n) <span class="hljs-keyword">when</span> n = name -&gt;
                     printfn <span class="hljs-string">"Hello again, %s"</span> name
                     <span class="hljs-keyword">return</span>! again name
-                | Greet<span class="hljs-function"><span class="hljs-params">(n)</span> -&gt;</span> 
+                | Greet(n) -&gt; 
                     printfn <span class="hljs-string">"Hello %s"</span> n
                     <span class="hljs-keyword">return</span>! again n
-                | Hi<span class="hljs-function"> -&gt;</span> 
+                | Hi -&gt; 
                     printfn <span class="hljs-string">"Hello from F#!"</span>
                     <span class="hljs-keyword">return</span>! again name }
-        <span class="hljs-keyword">and</span> <span class="hljs-keyword">loop</span>() =
+        <span class="hljs-keyword">and</span> loop() =
             actor {
-                <span class="hljs-reserved">let</span>! message = mailbox.Receive()
-                match message <span class="hljs-reserved">with</span>
-                | Greet<span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span> 
+                <span class="hljs-keyword">let</span>! message = mailbox.Receive()
+                <span class="hljs-keyword">match</span> message <span class="hljs-keyword">with</span>
+                | Greet(name) -&gt; 
                     printfn <span class="hljs-string">"Hello %s"</span> name
                     <span class="hljs-keyword">return</span>! again name
-                | Hi<span class="hljs-function"> -&gt;</span>
+                | Hi -&gt;
                     printfn <span class="hljs-string">"Hello from F#!"</span>
-                    <span class="hljs-keyword">return</span>! <span class="hljs-keyword">loop</span>() } 
-        <span class="hljs-keyword">loop</span>()
+                    <span class="hljs-keyword">return</span>! loop() } 
+        loop()
 
 actor &lt;! Greet <span class="hljs-string">"Aaron"</span>
 actor &lt;! Hi

@@ -339,24 +339,24 @@ wins), and then the object falls back to the non-object (no
 merging, object is the new value). So the two objects never see
 each other.</p>
 <p>These two are equivalent:</p>
-<pre><code>{
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}</span>,
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
-</span>}
+<pre><code>Error: Unknown language: "undefined"{
+    "foo" : { "a" : 42 },
+    "foo" : { "b" : 43 }
+}
 
 {
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span></span>, "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
-</span>}
+    "foo" : { "a" : 42, "b" : 43 }
+}
 </code></pre><p>And these two are equivalent:</p>
-<pre><code>{
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}</span>,
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value"><span class="hljs-literal">null</span></span>,
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
-</span>}
+<pre><code>Error: Unknown language: "undefined"{
+    "foo" : { "a" : 42 },
+    "foo" : null,
+    "foo" : { "b" : 43 }
+}
 
 {
-    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
-</span>}
+    "foo" : { "b" : 43 }
+}
 </code></pre><p>The intermediate setting of <code>&quot;foo&quot;</code> to <code>null</code> prevents the object merge.</p>
 <h3 id="unquoted-strings">Unquoted strings</h3>
 <p>A sequence of characters outside of a quoted string is a string
@@ -498,49 +498,49 @@ overrides the first.</p>
 <p>Arrays and objects cannot be field keys, whether concatenation is
 involved or not.</p>
 <p>Here are several ways to define <code>a</code> to the same object value:</p>
-<pre><code><span class="hljs-comment">// one object</span>
-a : { b : <span class="hljs-number">1</span>, <span class="hljs-built_in">c</span> : <span class="hljs-number">2</span> }
-<span class="hljs-comment">// two objects that are merged via concatenation rules</span>
-a : { b : <span class="hljs-number">1</span> } { <span class="hljs-built_in">c</span> : <span class="hljs-number">2</span> }
-<span class="hljs-comment">// two fields that are merged</span>
-a : { b : <span class="hljs-number">1</span> }
-a : { <span class="hljs-built_in">c</span> : <span class="hljs-number">2</span> }
+<pre><code>Error: Unknown language: "undefined"// one object
+a : { b : 1, c : 2 }
+// two objects that are merged via concatenation rules
+a : { b : 1 } { c : 2 }
+// two fields that are merged
+a : { b : 1 }
+a : { c : 2 }
 </code></pre><p>Here are several ways to define <code>a</code> to the same array value:</p>
-<pre><code>// <span class="hljs-constant">one</span> array
-<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
-// two arrays that are concatenated</span>
-<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
-// a later definition referring to an earlier</span><span class="hljs-comment">
-// (see "self-referential substitutions" below)</span>
-<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
-<span class="hljs-operator">a</span> : ${<span class="hljs-operator">a</span>} [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
+<pre><code>Error: Unknown language: "undefined"// one array
+a : [ 1, 2, 3, 4 ]
+// two arrays that are concatenated
+a : [ 1, 2 ] [ 3, 4 ]
+// a later definition referring to an earlier
+// (see "self-referential substitutions" below)
+a : [ 1, 2 ]
+a : ${a} [ 3, 4 ]
 </code></pre><p>A common use of object concatenation is &quot;inheritance&quot;:</p>
-<pre><code><span class="hljs-typedef"><span class="hljs-keyword">data</span>-center-generic = <span class="hljs-container">{ <span class="hljs-title">cluster</span>-<span class="hljs-title">size</span> = 6 }</span></span>
-<span class="hljs-typedef"><span class="hljs-keyword">data</span>-center-east = $<span class="hljs-container">{<span class="hljs-title">data</span>-<span class="hljs-title">center</span>-<span class="hljs-title">generic</span>}</span> <span class="hljs-container">{ <span class="hljs-title">name</span> = "<span class="hljs-title">east</span>" }</span></span>
+<pre><code>Error: Unknown language: "undefined"data-center-generic = { cluster-size = 6 }
+data-center-east = ${data-center-generic} { name = "east" }
 </code></pre><p>A common use of array concatenation is to add to paths:</p>
-<pre><code><span class="hljs-keyword">path</span> =<span class="hljs-sqbracket"> [ /bin ]</span>
-<span class="hljs-keyword">path</span> = <span class="hljs-cbracket">${path}</span><span class="hljs-sqbracket"> [ /usr/bin ]</span>
+<pre><code>Error: Unknown language: "undefined"path = [ /bin ]
+path = ${path} [ /usr/bin ]
 </code></pre><h4 id="note-arrays-without-commas-or-newlines">Note: Arrays without commas or newlines</h4>
 <p>Arrays allow you to use newlines instead of commas, but not
 whitespace instead of commas. Non-newline whitespace will produce
 concatenation rather than separate elements.</p>
-<pre><code>// this <span class="hljs-keyword">is</span> an <span class="hljs-type">array</span> <span class="hljs-keyword">with</span> one element, the <span class="hljs-type">string</span> <span class="hljs-string">"1 2 3 4"</span>
-[ <span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> ]
-// this <span class="hljs-keyword">is</span> an <span class="hljs-type">array</span> <span class="hljs-keyword">of</span> four integers
-[ <span class="hljs-number">1</span>
-  <span class="hljs-number">2</span>
-  <span class="hljs-number">3</span>
-  <span class="hljs-number">4</span> ]
+<pre><code>Error: Unknown language: "undefined"// this is an array with one element, the string "1 2 3 4"
+[ 1 2 3 4 ]
+// this is an array of four integers
+[ 1
+  2
+  3
+  4 ]
 
-// an <span class="hljs-type">array</span> <span class="hljs-keyword">of</span> one element, the <span class="hljs-type">array</span> [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
-[ [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ] ]
-// an <span class="hljs-type">array</span> <span class="hljs-keyword">of</span> two arrays
-[ [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
-  [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ] ]
+// an array of one element, the array [ 1, 2, 3, 4 ]
+[ [ 1, 2 ] [ 3, 4 ] ]
+// an array of two arrays
+[ [ 1, 2 ]
+  [ 3, 4 ] ]
 </code></pre><p>If this gets confusing, just use commas. The concatenation
 behavior is useful rather than surprising in cases like:</p>
-<pre><code>[ This is an unquoted string <span class="hljs-keyword">my</span> name is <span class="hljs-variable">${name}</span>, Hello <span class="hljs-variable">${world}</span> ]
-[ <span class="hljs-variable">${a}</span> <span class="hljs-variable">${b}</span>, <span class="hljs-variable">${x}</span> <span class="hljs-variable">${y}</span> ]
+<pre><code>Error: Unknown language: "undefined"[ This is an unquoted string my name is ${name}, Hello ${world} ]
+[ ${a} ${b}, ${x} ${y} ]
 </code></pre><p>Non-newline whitespace is never an element or field separator.</p>
 <h3 id="path-expressions">Path expressions</h3>
 <p>Path expressions are used to write out a path through the object
@@ -589,23 +589,23 @@ expanded to create an object for each path element other than the
 last. The last path element, combined with the value, becomes a
 field in the most-nested object.</p>
 <p>In other words:</p>
-<pre><code><span class="hljs-filename">foo.bar </span>: <span class="hljs-number">42</span>
+<pre><code>Error: Unknown language: "undefined"foo.bar : 42
 </code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-tag">foo</span> <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">bar </span>:<span class="hljs-value"> <span class="hljs-number">42</span> </span></span></span>}
+<pre><code>Error: Unknown language: "undefined"foo { bar : 42 }
 </code></pre><p>and:</p>
-<pre><code><span class="hljs-filename">foo.bar.baz </span>: <span class="hljs-number">42</span>
+<pre><code>Error: Unknown language: "undefined"foo.bar.baz : 42
 </code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-title">foo</span> { <span class="hljs-title">bar</span> { <span class="hljs-title">baz</span> : <span class="hljs-number">42</span> } }
+<pre><code>Error: Unknown language: "undefined"foo { bar { baz : 42 } }
 </code></pre><p>and so on. These values are merged in the usual way; which implies
 that:</p>
-<pre><code><span class="hljs-operator">a</span>.x : <span class="hljs-number">42</span>, <span class="hljs-operator">a</span>.y : <span class="hljs-number">43</span>
+<pre><code>Error: Unknown language: "undefined"a.x : 42, a.y : 43
 </code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-tag">a</span> <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">x </span>:<span class="hljs-value"> <span class="hljs-number">42</span>, y : <span class="hljs-number">43</span> </span></span></span>}
+<pre><code>Error: Unknown language: "undefined"a { x : 42, y : 43 }
 </code></pre><p>Because path expressions work like value concatenations, you can
 have whitespace in keys:</p>
-<pre><code>a b <span class="hljs-built_in">c</span> : <span class="hljs-number">42</span>
+<pre><code>Error: Unknown language: "undefined"a b c : 42
 </code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-string">"a b c"</span> : <span class="hljs-number">42</span>
+<pre><code>Error: Unknown language: "undefined""a b c" : 42
 </code></pre><p>Because path expressions are always converted to strings, even
 single values that would normally have another type become
 strings.</p>
@@ -634,9 +634,9 @@ environment variables or other external sources of configuration.
 <p>Substitutions are not parsed inside quoted strings. To get a
 string containing a substitution, you must use value concatenation
 with the substitution in the unquoted portion:</p>
-<pre><code><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span> is my favorite animal
+<pre><code>Error: Unknown language: "undefined"key : ${animal.favorite} is my favorite animal
 </code></pre><p>Or you could quote the non-substitution portion:</p>
-<pre><code><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span><span class="hljs-string">" is my favorite animal"</span>
+<pre><code>Error: Unknown language: "undefined"key : ${animal.favorite}" is my favorite animal"
 </code></pre><p>Substitutions are resolved by looking up the path in the
 configuration. The path begins with the root configuration object,
 i.e. it is &quot;absolute&quot; rather than &quot;relative.&quot;</p>
@@ -691,8 +691,8 @@ substitutions that&#39;s a link in the cycle)</li>
 </ul>
 <p>The idea is to allow a new value for a field to be based on the
 older value:</p>
-<pre><code><span class="hljs-title">path</span> : <span class="hljs-string">"a:b:c"</span>
-path : <span class="hljs-variable">${path}</span><span class="hljs-string">":d"</span>
+<pre><code>Error: Unknown language: "undefined"path : "a:b:c"
+path : ${path}":d"
 </code></pre><p>A <em>self-referential field</em> is one which:</p>
 <ul>
 <li>has a substitution, or value concatenation containing a
@@ -744,9 +744,9 @@ nonexistent value.</p>
 <p>Fields may have <code>+=</code> as a separator rather than <code>:</code> or <code>=</code>. A
 field with <code>+=</code> transforms into a self-referential array
 concatenation, like this:</p>
-<pre><code><span class="hljs-attribute">a +</span>=<span class="hljs-string"> b</span>
+<pre><code>Error: Unknown language: "undefined"a += b
 </code></pre><p>becomes:</p>
-<pre><code>a = <span class="hljs-variable">${</span><span class="hljs-string">?a</span>} [b]
+<pre><code>Error: Unknown language: "undefined"a = ${?a} [b]
 </code></pre><p><code>+=</code> appends an element to a previous array. If the previous value
 was not an array, an error will result just as it would in the
 long form <code>a = ${?a} [b]</code>. Note that the previous value is
@@ -758,20 +758,20 @@ implementation of the config lib which does not support <code>+=</code>.</p>
 <h4 id="examples-of-self-referential-substitutions">Examples of Self-Referential Substitutions</h4>
 <p>In isolation (with no merges involved), a self-referential field
 is an error because the substitution cannot be resolved:</p>
-<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span> // an <span class="hljs-built_in">error</span>
+<pre><code>Error: Unknown language: "undefined"foo : ${foo} // an error
 </code></pre><p>When <code>foo : ${foo}</code> is merged with an earlier value for <code>foo</code>,
 however, the substitution can be resolved to that earlier value.
 When merging two objects, the self-reference in the overriding
 field refers to the overridden field. Say you have:</p>
-<pre><code><span class="hljs-tag">foo</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> <span class="hljs-number">1</span> </span></span></span>}
+<pre><code>Error: Unknown language: "undefined"foo : { a : 1 }
 </code></pre><p>and then:</p>
-<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
+<pre><code>Error: Unknown language: "undefined"foo : ${foo}
 </code></pre><p>Then <code>${foo}</code> resolves to <code>{ a : 1 }</code>, the value of the overridden
 field.</p>
 <p>It would be an error if these two fields were reversed, so first:</p>
-<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
+<pre><code>Error: Unknown language: "undefined"foo : ${foo}
 </code></pre><p>and then second:</p>
-<pre><code><span class="hljs-tag">foo</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> <span class="hljs-number">1</span> </span></span></span>}
+<pre><code>Error: Unknown language: "undefined"foo : { a : 1 }
 </code></pre><p>Here the <code>${foo}</code> self-reference comes before <code>foo</code> has a value,
 so it is undefined, exactly as if the substitution referenced a
 path not found in the document.</p>
@@ -779,21 +779,21 @@ path not found in the document.</p>
 of <code>foo</code> for a value, the error should be treated as &quot;undefined&quot;
 rather than &quot;intractable cycle&quot;; as a result, the optional
 substitution syntax <code>${?foo}</code> does not create a cycle:</p>
-<pre><code>foo : ${?foo} <span class="hljs-comment">// this field just disappears silently</span>
+<pre><code>Error: Unknown language: "undefined"foo : ${?foo} // this field just disappears silently
 </code></pre><p>If a substitution is hidden by a value that could not be merged
 with it (by a non-object value) then it is never evaluated and no
 error will be reported. So for example:</p>
-<pre><code>foo <span class="hljs-symbol">:</span> <span class="hljs-variable">${</span>does-<span class="hljs-keyword">not</span>-exist}
-foo <span class="hljs-symbol">:</span> <span class="hljs-number">42</span>
+<pre><code>Error: Unknown language: "undefined"foo : ${does-not-exist}
+foo : 42
 </code></pre><p>In this case, no matter what <code>${does-not-exist}</code> resolves to, we
 know <code>foo</code> is <code>42</code>, so <code>${does-not-exist}</code> is never evaluated and
 there is no error. The same is true for cycles like <code>foo : ${foo},
 foo : 42</code>, where the initial self-reference must simply be ignored.</p>
 <p>A self-reference resolves to the value &quot;below&quot; even if it&#39;s part
 of a path expression. So for example:</p>
-<pre><code><span class="hljs-title">foo</span> : { <span class="hljs-title">a</span> : { <span class="hljs-title">c</span> : <span class="hljs-number">1</span> } }
-foo : <span class="hljs-variable">${foo.a}</span>
-foo : { <span class="hljs-title">a</span> : <span class="hljs-number">2</span> }
+<pre><code>Error: Unknown language: "undefined"foo : { a : { c : 1 } }
+foo : ${foo.a}
+foo : { a : 2 }
 </code></pre><p>Here, <code>${foo.a}</code> would refer to <code>{ c : 1 }</code> rather than <code>2</code> and so
 the final merge would be <code>{ a : 2, c : 1 }</code>.</p>
 <p>Recall that for a field to be self-referential, it must have a
@@ -803,8 +803,8 @@ self-referential even if there is a reference to the field itself
 inside that object or array.</p>
 <p>Implementations must be careful to allow objects to refer to paths
 within themselves, for example:</p>
-<pre><code><span class="hljs-tag">bar</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">foo </span>:<span class="hljs-value"> <span class="hljs-number">42</span>,
-        baz : ${bar.foo</span></span></span>}
+<pre><code>Error: Unknown language: "undefined"bar : { foo : 42,
+        baz : ${bar.foo}
       }
 </code></pre><p>Here, if an implementation resolved all substitutions in <code>bar</code> as
 part of resolving the substitution <code>${bar.foo}</code>, there would be a
@@ -813,22 +813,22 @@ cycle. The implementation must only resolve the <code>foo</code> field in
 <p>Because there is no inherent cycle here, the substitution must
 &quot;look forward&quot; (including looking at the field currently being
 defined). To make this clearer, <code>bar.baz</code> would be <code>43</code> in:</p>
-<pre><code><span class="hljs-tag">bar</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">foo </span>:<span class="hljs-value"> <span class="hljs-number">42</span>,
-        baz : ${bar.foo</span></span></span>}
+<pre><code>Error: Unknown language: "undefined"bar : { foo : 42,
+        baz : ${bar.foo}
       }
-<span class="hljs-tag">bar</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">foo </span>:<span class="hljs-value"> <span class="hljs-number">43</span> </span></span></span>}
+bar : { foo : 43 }
 </code></pre><p>Mutually-referring objects should also work, and are not
 self-referential (so they look forward):</p>
-<pre><code><span class="hljs-comment">// bar.a should end up as 4</span>
-bar : { a : ${foo.d}, b : <span class="hljs-number">1</span> }
-bar.b = <span class="hljs-number">3</span>
-<span class="hljs-comment">// foo.c should end up as 3</span>
-foo : { <span class="hljs-built_in">c</span> : ${bar.b}, d : <span class="hljs-number">2</span> }
-foo.d = <span class="hljs-number">4</span>
+<pre><code>Error: Unknown language: "undefined"// bar.a should end up as 4
+bar : { a : ${foo.d}, b : 1 }
+bar.b = 3
+// foo.c should end up as 3
+foo : { c : ${bar.b}, d : 2 }
+foo.d = 4
 </code></pre><p>Another tricky case is an optional self-reference in a value
 concatenation, in this example <code>a</code> should be <code>foo</code> not <code>foofoo</code>
 because the self reference has to &quot;look back&quot; to an undefined <code>a</code>:</p>
-<pre><code>a = <span class="hljs-variable">${</span><span class="hljs-string">?a</span>}foo
+<pre><code>Error: Unknown language: "undefined"a = ${?a}foo
 </code></pre><p>In general, in resolving a substitution the implementation must:</p>
 <ul>
 <li>lazy-evaluate the substitution target so there&#39;s no
@@ -842,19 +842,19 @@ a cycle, the substitution is missing which is an error unless
 the <code>${?foo}</code> optional-substitution syntax was used.</li>
 </ul>
 <p>For example, this is not possible to resolve:</p>
-<pre><code><span class="hljs-title">bar</span> : <span class="hljs-variable">${foo}</span>
-foo : <span class="hljs-variable">${bar}</span>
+<pre><code>Error: Unknown language: "undefined"bar : ${foo}
+foo : ${bar}
 </code></pre><p>A multi-step loop like this should also be detected as invalid:</p>
-<pre><code><span class="hljs-title">a</span> : <span class="hljs-variable">${b}</span>
-b : <span class="hljs-variable">${c}</span>
-c : <span class="hljs-variable">${a}</span>
+<pre><code>Error: Unknown language: "undefined"a : ${b}
+b : ${c}
+c : ${a}
 </code></pre><p>Some cases have undefined behavior because the behavior depends on
 the order in which two fields are resolved, and that order is not
 defined. For example:</p>
-<pre><code><span class="hljs-operator">a</span> : <span class="hljs-number">1</span>
-b : <span class="hljs-number">2</span>
-<span class="hljs-operator">a</span> : ${b}
-b : ${<span class="hljs-operator">a</span>}
+<pre><code>Error: Unknown language: "undefined"a : 1
+b : 2
+a : ${b}
+b : ${a}
 </code></pre><p>Implementations are allowed to handle this by setting both <code>a</code> and
 <code>b</code> to 1, setting both to <code>2</code>, or generating an error. Ideally
 this situation would generate an error, but that may be difficult
@@ -899,16 +899,16 @@ an unquoted string or any other kind of value.</p>
 <p>Unquoted <code>include</code> has no special meaning if it is not the start
 of a key&#39;s path expression.</p>
 <p>It may appear later in the key:</p>
-<pre><code><span class="hljs-preprocessor"># this is valid</span>
-{ foo include : <span class="hljs-number">42</span> }
-<span class="hljs-preprocessor"># equivalent to</span>
-{ <span class="hljs-string">"foo include"</span> : <span class="hljs-number">42</span> }
+<pre><code>Error: Unknown language: "undefined"# this is valid
+{ foo include : 42 }
+# equivalent to
+{ "foo include" : 42 }
 </code></pre><p>It may appear as an object or array value:</p>
-<pre><code>{ foo : <span class="hljs-keyword">include</span> } # <span class="hljs-keyword">value</span> is the <span class="hljs-built_in">string</span> <span class="hljs-string">"include"</span>
-[ <span class="hljs-keyword">include</span> ]       # <span class="hljs-built_in">array</span> <span class="hljs-keyword">of</span> one <span class="hljs-built_in">string</span> <span class="hljs-string">"include"</span>
+<pre><code>Error: Unknown language: "undefined"{ foo : include } # value is the string "include"
+[ include ]       # array of one string "include"
 </code></pre><p>You can quote <code>&quot;include&quot;</code> if you want a key that starts with the
 word <code>&quot;include&quot;</code>, only unquoted <code>include</code> is special:</p>
-<pre><code>{ "<span class="hljs-attribute">include</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}
+<pre><code>Error: Unknown language: "undefined"{ "include" : 42 }
 </code></pre><p>Note: Akka 2.0 (and thus Play 2.0) contains an embedded
 implementation of the config lib which does not support the
 <code>url()</code>/<code>file()</code>/<code>classpath()</code> syntax. Only the heuristic <code>include
@@ -945,17 +945,17 @@ for single files in isolation.</p>
 <p>Therefore, if an included file contains substitutions, they must
 be &quot;fixed up&quot; to be relative to the app&#39;s configuration root.</p>
 <p>Say for example that the root configuration is this:</p>
-<pre><code><span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> { include <span class="hljs-string">"foo.conf"</span> </span></span></span>} }
+<pre><code>Error: Unknown language: "undefined"{ a : { include "foo.conf" } }
 </code></pre><p>And &quot;foo.conf&quot; might look like this:</p>
-<pre><code><span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">x </span>:<span class="hljs-value"> <span class="hljs-number">10</span>, y : ${x</span></span></span>} }
+<pre><code>Error: Unknown language: "undefined"{ x : 10, y : ${x} }
 </code></pre><p>If you parsed &quot;foo.conf&quot; in isolation, then <code>${x}</code> would evaluate
 to 10, the value at the path <code>x</code>. If you include &quot;foo.conf&quot; in an
 object at key <code>a</code>, however, then it must be fixed up to be
 <code>${a.x}</code> rather than <code>${x}</code>.</p>
 <p>Say that the root configuration redefines <code>a.x</code>, like this:</p>
-<pre><code><span class="hljs-rules">{
-    <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> { include <span class="hljs-string">"foo.conf"</span> </span></span></span>}
-    <span class="hljs-tag">a</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">x </span>:<span class="hljs-value"> <span class="hljs-number">42</span> </span></span></span>}
+<pre><code>Error: Unknown language: "undefined"{
+    a : { include "foo.conf" }
+    a : { x : 42 }
 }
 </code></pre><p>Then the <code>${x}</code> in &quot;foo.conf&quot;, which has been fixed up to
 <code>${a.x}</code>, would evaluate to <code>42</code> rather than to <code>10</code>.
@@ -979,7 +979,7 @@ Those formats must be compatible with the JSON type system, or
 have some documented mapping to JSON&#39;s type system.</p>
 <p>If an implementation supports multiple formats, then the extension
 may be omitted from the name of included files:</p>
-<pre><code><span class="hljs-keyword">include</span> <span class="hljs-string">"foo"</span>
+<pre><code>Error: Unknown language: "undefined"include "foo"
 </code></pre><p>If a filename has no extension, the implementation should treat it
 as a basename and try loading the file with all known extensions.</p>
 <p>If the file exists with multiple extensions, they should <em>all</em> be
@@ -987,9 +987,9 @@ loaded and merged together.</p>
 <p>Files in HOCON format should be parsed last. Files in JSON format
 should be parsed next-to-last.</p>
 <p>In short, <code>include &quot;foo&quot;</code> might be equivalent to:</p>
-<pre><code><span class="hljs-keyword">include</span> <span class="hljs-string">"foo.properties"</span>
-<span class="hljs-keyword">include</span> <span class="hljs-string">"foo.json"</span>
-<span class="hljs-keyword">include</span> <span class="hljs-string">"foo.conf"</span>
+<pre><code>Error: Unknown language: "undefined"include "foo.properties"
+include "foo.json"
+include "foo.conf"
 </code></pre><p>This same extension-based behavior is applied to classpath
 resources and files.</p>
 <p>For URLs, a basename without extension is not allowed; only the
@@ -1069,12 +1069,12 @@ they do support them they should do so as described above.</p>
 there isn&#39;t a good way to define arrays. To provide some mechanism
 for this, implementations should support converting objects with
 numeric keys into arrays. For example, this object:</p>
-<pre><code>{ "<span class="hljs-attribute">0</span>" : <span class="hljs-value"><span class="hljs-string">"a"</span></span>, "<span class="hljs-attribute">1</span>" : <span class="hljs-value"><span class="hljs-string">"b"</span> </span>}
+<pre><code>Error: Unknown language: "undefined"{ "0" : "a", "1" : "b" }
 </code></pre><p>could be treated as:</p>
-<pre><code>[ <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span> ]
+<pre><code>Error: Unknown language: "undefined"[ "a", "b" ]
 </code></pre><p>This allows creating an array in a properties file like this:</p>
-<pre><code>foo.<span class="hljs-number">0</span> = <span class="hljs-string">"a"</span>
-foo.<span class="hljs-number">1</span> = <span class="hljs-string">"b"</span>
+<pre><code>Error: Unknown language: "undefined"foo.0 = "a"
+foo.1 = "b"
 </code></pre><p>The details:</p>
 <ul>
 <li>the conversion should be done lazily when required to avoid
@@ -1296,8 +1296,8 @@ preserve the order of the file. As a result, there is an
 intractable case where a single key needs to refer to both a
 parent object and a string value. For example, say the Java
 properties file has:</p>
-<pre><code><span class="hljs-variable">a=</span>hello
-a.<span class="hljs-variable">b=</span>world
+<pre><code>Error: Unknown language: "undefined"a=hello
+a.b=world
 </code></pre><p>In this case, <code>a</code> needs to be both an object and a string value.
 The <em>object</em> must always win in this case... the &quot;object wins&quot;
 rule throws out at most one value (the string) while &quot;string wins&quot;

@@ -203,16 +203,16 @@
 							<div id="main_content">
 
 								<h2 id="tl-dr-roundrobin-group-router-example">TL;DR RoundRobin Group router example</h2>
-<pre><code class="hljs lang-csharp">var <span class="hljs-keyword">system</span> = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
 
 <span class="hljs-comment">//create workers</span>
-<span class="hljs-keyword">system</span>.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker1"</span>);
-<span class="hljs-keyword">system</span>.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker2"</span>);
-<span class="hljs-keyword">system</span>.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker3"</span>);
-<span class="hljs-keyword">system</span>.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker4"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker1"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker2"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker3"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker4"</span>);
 
 <span class="hljs-comment">//create the router using round robin strategy</span>
-var router = <span class="hljs-keyword">system</span>.ActorOf(new Props().WithRouter(new RoundRobinGroup(
+<span class="hljs-keyword">var</span> router = system.ActorOf(<span class="hljs-keyword">new</span> Props().WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(
 <span class="hljs-string">"user/Worker1"</span>, <span class="hljs-string">"user/Worker2"</span>, <span class="hljs-string">"user/Worker3"</span>, <span class="hljs-string">"user/Worker4"</span>)));
 
 <span class="hljs-comment">//pass messages via the router to the routees</span>
