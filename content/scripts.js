@@ -57,22 +57,8 @@ $(function() {
 	});
 	
 	var main = $("#main_content");
-	main.find("img").addClass("img-responsive appear-animation fadeInUp");
-	main.find("table").addClass("table table-bordered");
-	var warnings = main.find('blockquote > p > strong')
-	.filter(function(){ return $(this).text().toLowerCase().indexOf('warning') === 0;}).parent().parent();
-	var notes = main.find('blockquote > p > strong')
-	.filter(function(){ return $(this).text().toLowerCase().indexOf('note') === 0;}).parent().parent();
-	
-	warnings.replaceWith(function () {
-    		return $("<div class='alert alert-warning' />").append($(this).contents());
-	});
-	
-	notes.replaceWith(function () {
-    		return $("<div class='alert alert-success' />").append($(this).contents());
-	});
 
-	$.get( "/wiki/pages.html", function( data ) {
+	$.get( "/pages.html", function( data ) {
 		var files = JSON.parse( data ).pages;
 		console.info(files);
 		var codes = main.find("code").filter(function() { 

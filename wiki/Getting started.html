@@ -46,10 +46,11 @@
 		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
-		<link href="/content/style.css" rel="stylesheet" type="text/css" />
+		
 		
 		<!-- Highlighting -->
-		<link href="https://highlightjs.org/static/styles/monokai_sublime.css" rel="stylesheet" type="text/css" />
+		<link href="/content/highlight.css" rel="stylesheet" type="text/css" />
+		<link href="/content/style.css" rel="stylesheet" type="text/css" />
 	
 		<!-- Morenizr -->
 		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
@@ -206,9 +207,10 @@
 <h2 id="set-up-your-project">Set up your project</h2>
 <p>Start visual studio and create a new C# Console Application.
 Once we have our console application, we need to open up the Package Manager Console and type:</p>
-<pre><code><span class="hljs-input"><span class="hljs-prompt">PM&gt;</span> <span class="hljs-constant">Install</span>-<span class="hljs-constant">Package</span> <span class="hljs-constant">Akka</span></span>
-</code></pre><p>Then we need to add the relevant using statements:</p>
-<pre><code class="hljs lang-c#"><span class="hljs-keyword">using</span> System;
+<pre><code class="hljs lang-PM"><span class="hljs-input"><span class="hljs-prompt">PM&gt;</span> <span class="hljs-constant">Install</span>-<span class="hljs-constant">Package</span> <span class="hljs-constant">Akka</span></span>
+</code></pre>
+<p>Then we need to add the relevant using statements:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
 <span class="hljs-keyword">using</span> System.Collections.Generic;
 <span class="hljs-keyword">using</span> System.Linq;
 <span class="hljs-keyword">using</span> System.Text;
@@ -298,9 +300,10 @@ Once we have our console application, we need to open up the Package Manager Con
         </span>{
         }
     }
+}
 </code></pre>
 <p>Now it&#39;s time to consume our actor, we do so by creating an <code>ActorSystem</code> and calling <code>ActorOf</code></p>
-<pre><code class="hljs lang-c#"><span class="hljs-keyword">using</span> System;
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
 <span class="hljs-keyword">using</span> System.Collections.Generic;
 <span class="hljs-keyword">using</span> System.Linq;
 <span class="hljs-keyword">using</span> System.Text;

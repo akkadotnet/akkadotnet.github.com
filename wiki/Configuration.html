@@ -46,10 +46,11 @@
 		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
-		<link href="/content/style.css" rel="stylesheet" type="text/css" />
+		
 		
 		<!-- Highlighting -->
-		<link href="https://highlightjs.org/static/styles/monokai_sublime.css" rel="stylesheet" type="text/css" />
+		<link href="/content/highlight.css" rel="stylesheet" type="text/css" />
+		<link href="/content/style.css" rel="stylesheet" type="text/css" />
 	
 		<!-- Morenizr -->
 		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
@@ -236,11 +237,11 @@ akka.remote.helios.tcp {
 <p><strong>Warning:</strong><br/>
 Be extra careful when copying the configuration from hardcoded strings. Be on alert for double quotation marks, which may cause failures during ActorSystem creation.<br/>
 Example:<br/>
-The below string in the .config file is incorrect.<br/></p>
-<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">""</span>Akka.Remote.RemoteActorRefProvider, Akka.Remote<span class="hljs-string">""</span>
-</code></pre><p>This is the correct form.</p>
-<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
-</code></pre></div>
+The below string in the .config file is incorrect.<br/>
+<code>provider = &quot;&quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;&quot;</code><br/>
+This is the correct form.<br/>
+<code>provider = &quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;</code></p>
+</div>
 <h5 id="app-config">App.config</h5>
 <pre><code class="hljs lang-xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-title">configuration</span>&gt;</span>

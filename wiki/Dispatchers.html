@@ -46,10 +46,11 @@
 		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
 		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
-		<link href="/content/style.css" rel="stylesheet" type="text/css" />
+		
 		
 		<!-- Highlighting -->
-		<link href="https://highlightjs.org/static/styles/monokai_sublime.css" rel="stylesheet" type="text/css" />
+		<link href="/content/highlight.css" rel="stylesheet" type="text/css" />
+		<link href="/content/style.css" rel="stylesheet" type="text/css" />
 	
 		<!-- Morenizr -->
 		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
@@ -215,57 +216,60 @@ ExecutionContext ex = system.Dispatchers.Lookup(<span class="hljs-string">"my-di
 </code></pre>
 <h2 id="setting-the-dispatcher-for-an-actor">Setting the dispatcher for an Actor</h2>
 <p>So in case you want to give your Actor a different dispatcher than the default, you need to do two things, of which the first is is to configure the dispatcher:</p>
-<pre><code>my-dispatcher {
+<pre><code class="hljs lang-json">my-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
   type = Dispatcher
-  # What kind of ExecutionService to <span class="hljs-operator"><span class="hljs-keyword">use</span>
-  executor = <span class="hljs-string">"fork-join-executor"</span>
-  # Configuration <span class="hljs-keyword">for</span> the fork <span class="hljs-keyword">join</span> pool
-  fork-<span class="hljs-keyword">join</span>-executor {
-    # <span class="hljs-keyword">Min</span> <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based parallelism <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
-    parallelism-<span class="hljs-keyword">min</span> = <span class="hljs-number">2</span>
-    # Parallelism (threads) ... <span class="hljs-keyword">ceil</span>(available processors * factor)
-    parallelism-factor = <span class="hljs-number">2.0</span>
-    # <span class="hljs-keyword">Max</span> <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based parallelism <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
-    parallelism-<span class="hljs-keyword">max</span> = <span class="hljs-number">10</span>
+  # What kind of ExecutionService to use
+  executor = "<span class="hljs-attribute">fork-join-executor"
+  # Configuration for the fork join pool
+  fork-join-executor {
+    # Min number of threads to cap factor-based parallelism number to
+    parallelism-min = 2
+    # Parallelism (threads) ... ceil(available processors * factor)
+    parallelism-factor = 2.0
+    # Max number of threads to cap factor-based parallelism number to
+    parallelism-max = 10
   }
-  # Throughput defines the maximum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> messages <span class="hljs-keyword">to</span> be
-  # processed per actor <span class="hljs-keyword">before</span> the thread jumps <span class="hljs-keyword">to</span> the <span class="hljs-keyword">next</span> actor.
-  # <span class="hljs-keyword">Set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">as</span> fair <span class="hljs-keyword">as</span> possible.
-  throughput = <span class="hljs-number">100</span>
+  # Throughput defines the maximum number of messages to be
+  # processed per actor before the thread jumps to the next actor.
+  # Set to 1 for as fair as possible.
+  throughput = 100
 }</span>
-</code></pre><p>And here&#39;s another example that uses the <code>&quot;thread-pool-executor&quot;</code>:</p>
-<pre><code>my-thread-pool-dispatcher {
+</code></pre>
+<p>And here&#39;s another example that uses the <code>&quot;thread-pool-executor&quot;</code>:</p>
+<pre><code class="hljs lang-json">my-thread-pool-dispatcher {
   # Dispatcher is the name of the event-based dispatcher
   type = Dispatcher
-  # What kind of ExecutionService to <span class="hljs-operator"><span class="hljs-keyword">use</span>
-  executor = <span class="hljs-string">"thread-pool-executor"</span>
-  # Configuration <span class="hljs-keyword">for</span> the thread pool
+  # What kind of ExecutionService to use
+  executor = "<span class="hljs-attribute">thread-pool-executor"
+  # Configuration for the thread pool
   thread-pool-executor {
-    # minimum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based core <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
-    core-pool-<span class="hljs-keyword">size</span>-<span class="hljs-keyword">min</span> = <span class="hljs-number">2</span>
-    # <span class="hljs-keyword">No</span> <span class="hljs-keyword">of</span> core threads ... <span class="hljs-keyword">ceil</span>(available processors * factor)
-    core-pool-<span class="hljs-keyword">size</span>-factor = <span class="hljs-number">2.0</span>
-    # maximum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
-    core-pool-<span class="hljs-keyword">size</span>-<span class="hljs-keyword">max</span> = <span class="hljs-number">10</span>
+    # minimum number of threads to cap factor-based core number to
+    core-pool-size-min = 2
+    # No of core threads ... ceil(available processors * factor)
+    core-pool-size-factor = 2.0
+    # maximum number of threads to cap factor-based number to
+    core-pool-size-max = 10
   }
-  # Throughput defines the maximum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> messages <span class="hljs-keyword">to</span> be
-  # processed per actor <span class="hljs-keyword">before</span> the thread jumps <span class="hljs-keyword">to</span> the <span class="hljs-keyword">next</span> actor.
-  # <span class="hljs-keyword">Set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">as</span> fair <span class="hljs-keyword">as</span> possible.
-  throughput = <span class="hljs-number">100</span>
+  # Throughput defines the maximum number of messages to be
+  # processed per actor before the thread jumps to the next actor.
+  # Set to 1 for as fair as possible.
+  throughput = 100
 }</span>
-</code></pre><p>For more options, see the <code>default-dispatcher</code> section of the Configuration.</p>
+</code></pre>
+<p>For more options, see the <code>default-dispatcher</code> section of the Configuration.</p>
 <p>Then you create the actor as usual and define the dispatcher in the deployment configuration.</p>
 <pre><code class="hljs lang-csharp">ActorRef myActor =
   system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)),
     <span class="hljs-string">"myactor"</span>);
 </code></pre>
-<pre><code><span class="hljs-attribute">akka.actor.deployment {
+<pre><code class="hljs lang-json">akka.actor.deployment {
   /myactor {
-    dispatcher </span>=<span class="hljs-string"> my-dispatcher
+    dispatcher = my-dispatcher
   }
-}</span>
-</code></pre><p>An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.</p>
+}
+</code></pre>
+<p>An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.</p>
 <pre><code class="hljs lang-csharp">ActorRef myActor =
   system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)).WithDispatcher(<span class="hljs-string">"my-dispatcher"</span>),
     <span class="hljs-string">"myactor3"</span>);
@@ -305,10 +309,11 @@ The dispatcher you specify in <code>WithDispatcher</code> and the dispatcher pro
 </ul>
 <h3 id="more-dispatcher-configuration-examples">More dispatcher configuration examples</h3>
 <p>Configuring a <code>PinnedDispatcher</code>:</p>
-<pre><code>my-pinned-dispatcher {
-  <span class="hljs-keyword">type</span> = PinnedDispatcher
+<pre><code class="hljs lang-json">my-pinned-dispatcher {
+  type = PinnedDispatcher
 }
-</code></pre><p>And then using it:</p>
+</code></pre>
+<p>And then using it:</p>
 <pre><code class="hljs lang-csharp">ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor));
     .WithDispatcher(<span class="hljs-string">"my-pinned-dispatcher"</span>));
 </code></pre>
