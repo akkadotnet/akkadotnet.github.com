@@ -99,6 +99,7 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-string {
   color: #d4b43c;
   background-color: #313d40;
+  padding-2px;
 }
 
 .hljs-comment {
