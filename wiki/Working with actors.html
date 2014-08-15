@@ -258,7 +258,7 @@ target.tell(PoisonPill.getInstance(), ActorRef.noSender());
 </li>
 <li><p><code>Sender</code> reference sender Actor of the last received message, typically used as described in Reply to messages</p>
 </li>
-<li><p>SupervisorStrategy user overridable definition the strategy to use for supervising child actors</p>
+<li><p><code>SupervisorStrategy</code> user overridable definition the strategy to use for supervising child actors</p>
 </li>
 </ul>
 <p>This strategy is typically declared inside the actor in order to have access to the actor’s internal state within the decider function: since failure is communicated as a message sent to the supervisor and processed like other messages (albeit outside of the normal behavior), all values and variables within the actor are available, as is the getSender() reference (which will be the immediate child reporting the failure; if the original failure occurred within a distant descendant it is still reported one level up at a time).</p>
@@ -278,19 +278,19 @@ target.tell(PoisonPill.getInstance(), ActorRef.noSender());
 <pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span> </span>{
 }
 
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span><span class="hljs-params">(Throwable reason, <span class="hljs-keyword">object</span> message)</span> </span>{
-  <span class="hljs-keyword">for</span> (ActorRef each : getContext().getChildren()) {
-    getContext().unwatch(each);
-    getContext().stop(each);
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span><span class="hljs-params">(Exceptionreason, <span class="hljs-keyword">object</span> message)</span> </span>{
+  <span class="hljs-keyword">foreach</span> (ActorRef each <span class="hljs-keyword">in</span> Context.GetChildren()) {
+    Context.Unwatch(each);
+    Context.Stop(each);
   }
-  postStop();
+  PostStop();
 }
 
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postRestart</span><span class="hljs-params">(Throwable reason)</span> </span>{
-  preStart();
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostRestart</span><span class="hljs-params">(Exception reason)</span> </span>{
+  PreStart();
 }
 
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">postStop</span><span class="hljs-params">()</span> </span>{
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostStop</span><span class="hljs-params">()</span> </span>{
 }
 </code></pre>
 <p>The implementations shown above are the defaults provided by the UntypedActor class.</p>
@@ -310,10 +310,10 @@ Context.ActorSelection(<span class="hljs-string">"../*"</span>);
 </code></pre>
 <p>Messages can be sent via the <code>ActorSelection</code> and the path of the <code>ActorSelection</code>is looked up when delivering each message. If the selection does not match any actors the message will be dropped.</p>
 <p>To acquire an <code>AtorRef</code> for an <code>ActorSelection</code> you need to send a message to the selection and use the <code>Sender</code> reference of the reply from the actor. There is a built-in Identify message that all Actors will understand and automatically reply to with a <code>ActorIdentity</code> message containing the ActorRef. This message is handled specially by the actors which are traversed in the sense that if a concrete name lookup fails (i.e. a non-wildcard path element does not correspond to a live actor) then a negative result is generated. Please note that this does not mean that delivery of that reply is guaranteed, it still is a normal message.</p>
-<pre><code class="hljs lang-csharp">import akka.actor.ActorIdentity;
-import akka.actor.ActorSelection;
-import akka.actor.Identify;
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Follower</span> <span class="hljs-title">extends</span> <span class="hljs-title">UntypedActor</span> {
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka;
+<span class="hljs-keyword">using</span> Akka.Actor;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Follower</span> : <span class="hljs-title">UntypedActor</span> {
   final String identifyId = <span class="hljs-string">"1"</span>;
   {
     ActorSelection selection =
