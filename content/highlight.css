@@ -44,16 +44,16 @@ Akka.NET style. by akkadotnet.github.com
   color: #fff0a0;
 }
 
-.hljs-tag .hljs-title {
-  color: #7ec8ff;
-}
-
 .hljs-cdata {
   color: #fff0a0;
 }
 
 .hljs-pi {
   color: #808080;
+}
+
+.hljs-value {
+  color: #ffffff;
 }
 
 
@@ -85,7 +85,6 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-attribute,
 .hljs-symbol,
 .hljs-symbol .hljs-string,
-.hljs-value,
 .alias .hljs-keyword:first-child,
 .css .hljs-tag,
 .css .unit,
