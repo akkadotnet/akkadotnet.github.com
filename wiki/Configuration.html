@@ -202,9 +202,9 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<h2 id="hocon-configuration">HOCON Configuration</h2>
+								<h1 id="hocon-configuration">HOCON Configuration</h1>
 <p>Read more about the [[HOCON]] spec.</p>
-<h4 id="example-config">Example config</h4>
+<h2 id="example-config">Example config</h2>
 <pre><code class="hljs lang-hocon">akka {
     actor {
         default-dispatcher.<span class="hljs-variable">throughput =</span> <span class="hljs-number">20</span>
@@ -220,7 +220,7 @@
     }
 }
 </code></pre>
-<h4 id="using-hardcoded-hocon-config-in-c-api">Using hardcoded HOCON config in C# API</h4>
+<h2 id="using-hardcoded-hocon-config-in-c-api">Using hardcoded HOCON config in C# API</h2>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> config = ConfigurationFactory.ParseString(<span class="hljs-string">@"
 akka.remote.helios.tcp {
               transport-class = 
@@ -232,7 +232,7 @@ akka.remote.helios.tcp {
 
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"Mysystem"</span>,config);
 </code></pre>
-<h4 id="using-a-net-config-file-">Using a .NET config file:</h4>
+<h2 id="using-a-net-config-file-">Using a .NET config file:</h2>
 <div class="alert alert-warning">
 <p><strong>Warning:</strong><br/>
 Be extra careful when copying the configuration from hardcoded strings. Be on alert for double quotation marks, which may cause failures during ActorSystem creation.<br/>
@@ -242,7 +242,7 @@ The below string in the .config file is incorrect.<br/>
 This is the correct form.<br/>
 <code>provider = &quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;</code></p>
 </div>
-<h5 id="app-config">App.config</h5>
+<h3 id="app-config">App.config</h3>
 <pre><code class="hljs lang-xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-title">configuration</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-title">configSections</span>&gt;</span>
