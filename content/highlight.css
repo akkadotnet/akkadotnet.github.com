@@ -8,7 +8,7 @@ Akka.NET style. by akkadotnet.github.com
   display: block;
   overflow-x: auto;
   padding: 0.5em;
-  background: #475b5f;
+  background: #212d30;
 }
 
 .hljs,
@@ -18,7 +18,7 @@ Akka.NET style. by akkadotnet.github.com
 .css .hljs-function
 .hljs-preprocessor,
 .hljs-pragma {
-  color: #6eb8fc;
+  color: #00ff00;
 }
 
 .hljs-strongemphasis,
@@ -35,7 +35,7 @@ Akka.NET style. by akkadotnet.github.com
 .alias .hljs-keyword,
 .hljs-literal,
 .hljs-hexcolor {
-  color: #6eb8fc;
+  color: #ff0000;
 }
 
 .hljs-tag .hljs-value,
@@ -43,7 +43,7 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-title,
 .css .hljs-class,
 .hljs-class .hljs-title:last-child {
-  color: #a6e22e;
+  color: #0000ff;
 }
 
 .hljs-link_url {
@@ -80,20 +80,20 @@ Akka.NET style. by akkadotnet.github.com
 .css .hljs-tag,
 .css .unit,
 .css .hljs-important {
-  color: #f92672;
+  color: #ff00ff;
 }
 
 .hljs-function .hljs-keyword,
 .hljs-class .hljs-keyword:first-child,
 .hljs-constant,
 .css .hljs-attribute {
-  color: #66d9ef;
+  color: #ffff00;
 }
 
 .hljs-variable,
 .hljs-params,
 .hljs-class .hljs-title {
-  color: #d1d1d1;
+  color: #00ffff;
 }
 
 .hljs-string,
