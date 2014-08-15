@@ -9,7 +9,8 @@ Akka.NET style. by akkadotnet.github.com
   border-radius: 5px;
   display: block;
   overflow-x: auto;
-  background: #212d30;
+  background: #212d3a;
+  text-shadow: #111d2a;;
   color: #ffffff;
 }
 
