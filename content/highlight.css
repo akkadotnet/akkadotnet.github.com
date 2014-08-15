@@ -18,7 +18,7 @@ Akka.NET style. by akkadotnet.github.com
 .css .hljs-function
 .hljs-preprocessor,
 .hljs-pragma {
-  color: #ffffff;
+  color: #96C71D;
 }
 
 .hljs-strongemphasis,
@@ -35,7 +35,7 @@ Akka.NET style. by akkadotnet.github.com
 .alias .hljs-keyword,
 .hljs-literal,
 .hljs-hexcolor {
-  color: #ff0000;
+  color: #96C71D;
 }
 
 .hljs-tag .hljs-value,
