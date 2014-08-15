@@ -206,7 +206,7 @@
 <h2 id="usage">Usage</h2>
 <p>Configuration
 For Akka to know which Serializer to use for what, you need edit your Configuration, in the &quot;akka.actor.serializers&quot;-section you bind names to implementations of the akka.serialization.Serializer you wish to use, like this:</p>
-<pre><code><span class="hljs-title">akka</span> {
+<pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
   <span class="hljs-title">actor</span> {
     <span class="hljs-title">serializers</span> {
       <span class="hljs-title">java</span> = <span class="hljs-string">"akka.serialization.JavaSerializer"</span>
@@ -215,8 +215,9 @@ For Akka to know which Serializer to use for what, you need edit your Configurat
     }
   }
 }
-</code></pre><p>After you&#39;ve bound names to different implementations of Serializer you need to wire which classes should be serialized using which Serializer, this is done in the &quot;akka.actor.serialization-bindings&quot;-section:</p>
-<pre><code>akka {
+</code></pre>
+<p>After you&#39;ve bound names to different implementations of Serializer you need to wire which classes should be serialized using which Serializer, this is done in the &quot;akka.actor.serialization-bindings&quot;-section:</p>
+<pre><code class="hljs lang-hocon">akka {
   actor {
     serializers {
       <span class="hljs-variable">java =</span> <span class="hljs-string">"akka.serialization.JavaSerializer"</span>
@@ -233,29 +234,33 @@ For Akka to know which Serializer to use for what, you need edit your Configurat
     }
   }
 }
-</code></pre><p>You only need to specify the name of an interface or abstract base class of the messages. In case of ambiguity, i.e. the message implements several of the configured classes, the most specific configured class will be used, i.e. the one of which all other candidates are superclasses. If this condition cannot be met, because e.g. java.io.Serializable and MyOwnSerializable both apply and neither is a subtype of the other, a warning will be issued.</p>
+</code></pre>
+<p>You only need to specify the name of an interface or abstract base class of the messages. In case of ambiguity, i.e. the message implements several of the configured classes, the most specific configured class will be used, i.e. the one of which all other candidates are superclasses. If this condition cannot be met, because e.g. java.io.Serializable and MyOwnSerializable both apply and neither is a subtype of the other, a warning will be issued.</p>
 <p>Akka provides serializers for java.io.Serializable and protobuf com.google.protobuf.GeneratedMessage by default (the latter only if depending on the akka-remote module), so normally you don&#39;t need to add configuration for that; since com.google.protobuf.GeneratedMessage implements java.io.Serializable, protobuf messages will always by serialized using the protobuf protocol unless specifically overridden. In order to disable a default serializer, map its marker type to “none”:</p>
-<pre><code>akka.actor.serialization-bindings {
+<pre><code class="hljs lang-hocon">akka.actor.serialization-bindings {
   <span class="hljs-string">"java.io.Serializable"</span> = <span class="hljs-literal">none</span>
 }
-</code></pre><p>Verification
+</code></pre>
+<p>Verification
 If you want to verify that your messages are serializable you can enable the following config option:</p>
-<pre><code>akka {
+<pre><code class="hljs lang-hocon">akka {
   actor {
     serialize-messages = <span class="hljs-command"><span class="hljs-keyword">on</span></span>
   }
 }
-</code></pre><div class="alert alert-warning">
+</code></pre>
+<div class="alert alert-warning">
 <p><strong>Warning</strong><br/>
 We only recommend using the config option turned on when you&#39;re running tests. It is completely pointless to have it turned on in other scenarios.</p>
 </div>
 <p>If you want to verify that your Props are serializable you can enable the following config option:</p>
-<pre><code>akka {
+<pre><code class="hljs lang-hocon">akka {
   actor {
     serialize-creators = <span class="hljs-command"><span class="hljs-keyword">on</span></span>
   }
 }`
-</code></pre><div class="alert alert-warning">
+</code></pre>
+<div class="alert alert-warning">
 <p><strong>Warning</strong><br/>
 We only recommend using the config option turned on when you&#39;re running tests. It is completely pointless to have it turned on in other scenarios.</p>
 </div>
