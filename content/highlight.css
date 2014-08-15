@@ -45,7 +45,7 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-title,
 .css .hljs-class,
 .hljs-class .hljs-title:last-child {
-  color: #d1d1d1;
+  color: #d1ffd1;
 }
 
 .hljs-tag .hljs-title {
@@ -108,7 +108,7 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-variable,
 .hljs-params,
 .hljs-class .hljs-title {
-  color: #00ffff;
+  color: #ffffff;
 }
 
 .hljs-string {
