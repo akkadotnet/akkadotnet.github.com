@@ -8,6 +8,11 @@ pre {
     padding: 0px;
 }
 
+.hljs{
+  padding: 15px;
+  border-radius: 5px;
+}
+
 
 /*--------------------------------------------------------------------------
   Additional formatting for the homepage
