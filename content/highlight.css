@@ -18,7 +18,7 @@ Akka.NET style. by akkadotnet.github.com
 .css .hljs-function
 .hljs-preprocessor,
 .hljs-pragma {
-  color: #00ff00;
+  color: #ffffff;
 }
 
 .hljs-strongemphasis,
@@ -43,7 +43,7 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-title,
 .css .hljs-class,
 .hljs-class .hljs-title:last-child {
-  color: #0000ff;
+  color: #d1d1d1;
 }
 
 .hljs-link_url {
@@ -80,7 +80,7 @@ Akka.NET style. by akkadotnet.github.com
 .css .hljs-tag,
 .css .unit,
 .css .hljs-important {
-  color: #ff00ff;
+  color: #6eb8fc;
 }
 
 .hljs-function .hljs-keyword,
