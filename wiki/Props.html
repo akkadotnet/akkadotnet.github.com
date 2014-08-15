@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Props |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Props -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Props  <a href="https://github.com/akkadotnet/akka.net/wiki/Props/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,112 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h2 id="props">Props</h2>
+<p>Props is a configuration class to specify options for the creation of actors, think of it as an immutable and thus freely shareable recipe for creating an actor including associated deployment information (e.g. which dispatcher to use, see more below). Here are some examples of how to create a Props instance.</p>
+<pre><code class="hljs lang-csharp">  Props props1 = Props.Create(<span class="hljs-keyword">typeof</span>(MyActor));
+  Props props2 = Props.Create(() =&gt; <span class="hljs-keyword">new</span> MyActor(..), <span class="hljs-string">"..."</span>);
+  Props props3 = Props.Create&lt;MyActor&gt;();
+</code></pre>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br/>
+In the second line, using <code>new</code>; Do note that the arguments passed in will be evaluated <em>once</em>, when the <code>Props</code> are created. 
+This is because the arguments can be passed to remote systems for <a href="Remote deploy">remote deployment</a>.
+The behavior is somewhat odd since a lambda containing a <code>new</code> statement generally evaluate the entire expression every time it is invoked.</p>
+</div>
+<h3 id="recommended-practices">Recommended Practices</h3>
+<p>It is a good idea to provide static factory methods on the UntypedActor which help keeping the creation of suitable Props as close to the actor definition as possible. This also allows usage of the Creator-based methods which statically verify that the used constructor actually exists instead relying only on a runtime check.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DemoActor</span> : <span class="hljs-title">ReceiveActor</span> {
 
-								
+  <span class="hljs-comment">/**
+   * Create Props for an actor of this type.
+   * @param magicNumber The magic number to be passed to this actor’s constructor.
+   * @return a Props for creating this actor, which can then be further configured
+   *         (e.g. calling `.withDispatcher()` on it)
+   */</span>
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Props <span class="hljs-title">Props</span><span class="hljs-params">(<span class="hljs-keyword">int</span> magicNumber)</span> 
+  </span>{
+    <span class="hljs-keyword">return</span> Props.Create(() =&gt; <span class="hljs-keyword">new</span> DemoActor(magicNumber));
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> magicNumber;
+
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DemoActor</span><span class="hljs-params">(<span class="hljs-keyword">int</span> magicNumber)</span> 
+  </span>{
+    <span class="hljs-keyword">this</span>.magicNumber = magicNumber;
+    ...some receive declarations here
+    <span class="hljs-comment">//Receive&lt;string&gt;(str =&gt; ..);</span>
+  }
+}
+
+system.ActorOf(DemoActor.Props(<span class="hljs-number">42</span>), <span class="hljs-string">"demo"</span>);
+</code></pre>
+<h3 id="creating-actors-with-props">Creating Actors with Props</h3>
+<p>Actors are created by passing a Props instance into the <code>ActorOf</code> factory method which is available on <code>ActorSystem</code> and <code>ActorContext</code>.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// ActorSystem is a heavy object: create only one per application</span>
+ActorSystem system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)),
+  <span class="hljs-string">"myactor"</span>);
+</code></pre>
+<p>Using the ActorSystem will create top-level actors, supervised by the actor system’s provided guardian actor, while using an actor’s context will create a child actor.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span> : <span class="hljs-title">ReceiveActor</span> 
+{
+  ActorRef child =
+      Context.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myChild"</span>);
+  <span class="hljs-comment">// plus some behavior ...</span>
+}
+</code></pre>
+<p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see [[Actor Systems]].</p>
+<p>The call to <code>ActorOf</code> returns an instance of <code>ActorRef</code>. This is a handle to the actor instance and the only way to interact with it. The <code>ActorRef</code> is immutable and has a one to one relationship with the Actor it represents. The <code>ActorRef</code> is also serializable and network-aware. This means that you can serialize it, send it over the wire and use it on a remote host and it will still be representing the same Actor on the original node, across the network.</p>
+<p>The name parameter is optional, but you should preferably name your actors, since that is used in log messages and for identifying actors. The name must not be empty or start with $, but it may contain URL encoded characters (eg. <code>%20</code> for a blank space). If the given name is already in use by another child to the same parent an <code>InvalidActorNameException</code> is thrown.</p>
+<p>Actors are automatically started asynchronously when created.</p>
+
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

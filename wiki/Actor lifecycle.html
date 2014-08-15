@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Actor lifecycle |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Actor lifecycle -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Actor lifecycle  <a href="https://github.com/akkadotnet/akka.net/wiki/Actor lifecycle/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,111 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h2 id="actor-lifecycle">Actor Lifecycle</h2>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/actor_lifecycle.png" alt="Actor lifecycle"></p>
+<p>A path in an actor system represents a &quot;place&quot; which might be occupied by a living actor. Initially (apart from system initialized actors) a path is empty. When <code>ActorOf()</code> is called it assigns an incarnation of the actor described by the passed <code>Props</code> to the given path. An actor incarnation is identified by the path and a UID. A restart only swaps the Actor instance defined by the Props but the incarnation and hence the UID remains the same.</p>
+<p>The lifecycle of an incarnation ends when the actor is stopped. At that point the appropriate lifecycle events are called and watching actors are notified of the termination. After the incarnation is stopped, the path can be reused again by creating an actor with <code>ActorOf()</code>. In this case the name of the new incarnation will be the same as the previous one but the UIDs will differ.</p>
+<p>An <code>ActorRef</code> always represents an incarnation (path and UID) not just a given path. Therefore if an actor is stopped and a new one with the same name is created an ActorRef of the old incarnation will not point to the new one.</p>
+<p><code>ActorSelection</code> on the other hand points to the path (or multiple paths if wildcards are used) and is completely oblivious to which incarnation is currently occupying it. <code>ActorSelection</code> cannot be watched for this reason. It is possible to resolve the current incarnation&#39;s ActorRef living under the path by sending an <code>Identify</code> message to the <code>ActorSelection</code> which will be replied to with an <code>ActorIdentity</code> containing the correct reference (see Identifying Actors via Actor Selection). This can also be done with the resolveOne method of the <code>ActorSelection</code>, which returns a <code>Task</code> of the matching <code>ActorRef</code>.</p>
+<h3 id="lifecycle-monitoring-aka-deathwatch">Lifecycle Monitoring aka DeathWatch</h3>
+<p>In order to be notified when another actor terminates (i.e. stops permanently, not temporary failure and restart), an actor may register itself for reception of the Terminated message dispatched by the other actor upon termination (see Stopping Actors). This service is provided by the DeathWatch component of the actor system.</p>
+<p>Registering a monitor is easy (see fourth line, the rest is for demonstrating the whole functionality):</p>
+<pre><code class="hljs lang-csharp">import akka.actor.Terminated;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WatchActor</span> <span class="hljs-title">extends</span> <span class="hljs-title">UntypedActor</span> {
+  final ActorRef child = <span class="hljs-keyword">this</span>.getContext().actorOf(Props.empty(), <span class="hljs-string">"child"</span>);
+  {
+    <span class="hljs-keyword">this</span>.getContext().watch(child); <span class="hljs-comment">// &lt;-- the only call needed for registration</span>
+  }
+  ActorRef lastSender = getContext().system().deadLetters();
 
-								
+  @<span class="hljs-function">Override
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span><span class="hljs-params">(Object message)</span> </span>{
+    <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"kill"</span>)) {
+      getContext().stop(child);
+      lastSender = getSender();
+    } <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(message instanceof Terminated)</span> </span>{
+      final Terminated t = (Terminated) message;
+      <span class="hljs-keyword">if</span> (t.getActor() == child) {
+        lastSender.tell(<span class="hljs-string">"finished"</span>, getSelf());
+      }
+    } <span class="hljs-keyword">else</span> {
+      unhandled(message);
+    }
+  }
+}
+</code></pre>
+<p>It should be noted that the Terminated message is generated independent of the order in which registration and termination occur. In particular, the watching actor will receive a Terminated message even if the watched actor has already been terminated at the time of registration.</p>
+<p>Registering multiple times does not necessarily lead to multiple messages being generated, but there is no guarantee that only exactly one such message is received: if termination of the watched actor has generated and queued the message, and another registration is done before this message has been processed, then a second message will be queued, because registering for monitoring of an already terminated actor leads to the immediate generation of the Terminated message.</p>
+<p>It is also possible to deregister from watching another actor’s liveliness using getContext().unwatch(target). This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no Terminated message for that actor will be processed anymore.</p>
+<h3 id="start-hook">Start Hook</h3>
+<p>Right after starting the actor, its preStart method is invoked.</p>
+<pre><code class="hljs lang-csharp">@<span class="hljs-function">Override
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">preStart</span><span class="hljs-params">()</span> </span>{
+  child = getContext().actorOf(Props.empty());
+}
+</code></pre>
+<p>This method is called when the actor is first created. During restarts it is called by the default implementation of postRestart, which means that by overriding that method you can choose whether the initialization code in this method is called only exactly once for this actor or for every restart. Initialization code which is part of the actor’s constructor will always be called when an instance of the actor class is created, which happens at every restart.</p>
+<h3 id="restart-hooks">Restart Hooks</h3>
+<p>All actors are supervised, i.e. linked to another actor with a fault handling strategy. Actors may be restarted in case an exception is thrown while processing a message (see Supervision and Monitoring). This restart involves the hooks mentioned above:</p>
+<p>The old actor is informed by calling preRestart with the exception which caused the restart and the message which triggered that exception; the latter may be None if the restart was not caused by processing a message, e.g. when a supervisor does not trap the exception and is restarted in turn by its supervisor, or if an actor is restarted due to a sibling’s failure. If the message is available, then that message’s sender is also accessible in the usual way (i.e. by calling getSender()).</p>
+<p>This method is the best place for cleaning up, preparing hand-over to the fresh actor instance, etc. By default it stops all children and calls postStop.</p>
+<p>The initial factory from the actorOf call is used to produce the fresh instance.</p>
+<p>The new actor’s postRestart method is invoked with the exception which caused the restart. By default the preStart is called, just as in the normal start-up case.</p>
+<p>An actor restart replaces only the actual actor object; the contents of the mailbox is unaffected by the restart, so processing of messages will resume after the postRestart hook returns. The message that triggered the exception will not be received again. Any message sent to an actor while it is being restarted will be queued to its mailbox as usual.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br/>
+Be aware that the ordering of failure notifications relative to user messages is not deterministic. In particular, a parent might restart its child before it has processed the last messages sent by the child before the failure. See Discussion: Message Ordering for details.</p>
+</div>
+<h3 id="stop-hook">Stop Hook</h3>
+<p>After stopping an actor, its postStop hook is called, which may be used e.g. for deregistering this actor from other services. This hook is guaranteed to run after message queuing has been disabled for this actor, i.e. messages sent to a stopped actor will be redirected to the deadLetters of the ActorSystem.</p>
+
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

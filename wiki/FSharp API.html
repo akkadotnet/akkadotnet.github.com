@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> FSharp API |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/FSharp API -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> FSharp API  <a href="https://github.com/akkadotnet/akka.net/wiki/FSharp API/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,118 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<p>Akka.NET comes with an extended F# API.
+This extension lets you send and ask messages using the <code>&lt;!</code> tell and <code>&lt;?</code> ask operators.</p>
+<pre><code class="hljs lang-fsharp"><span class="hljs-keyword">open</span> Akka.Actor
+<span class="hljs-keyword">open</span> Akka.FSharp
+<span class="hljs-keyword">open</span> Akka.Configuration
+<span class="hljs-keyword">open</span> System
 
-								
+<span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">SomeActorMessages</span> </span>=
+    | Greet <span class="hljs-keyword">of</span> string
+    | Hi
+
+<span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">SomeActor</span></span>() =    
+    <span class="hljs-keyword">inherit</span> Actor()
+
+    <span class="hljs-keyword">override</span> x.OnReceive message =
+        <span class="hljs-keyword">match</span> message <span class="hljs-keyword">with</span>
+        | :? SomeActorMessages <span class="hljs-keyword">as</span> m -&gt;  
+            <span class="hljs-keyword">match</span> m <span class="hljs-keyword">with</span>
+            | Greet(name) -&gt; Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>,name)
+            | Hi -&gt; Console.WriteLine(<span class="hljs-string">"Hello from F#!"</span>)
+        | _ -&gt; failwith <span class="hljs-string">"unknown message"</span>
+
+<span class="hljs-keyword">let</span> system =  
+    ConfigurationFactory.Default() 
+    |&gt; System.create <span class="hljs-string">"FSharpActors"</span>
+
+<span class="hljs-keyword">let</span> actor = 
+    spawn system <span class="hljs-string">"MyActor"</span>
+    &lt;| <span class="hljs-keyword">fun</span> mailbox -&gt;
+        <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> again name =
+            actor {
+                <span class="hljs-keyword">let</span>! message = mailbox.Receive()
+                <span class="hljs-keyword">match</span> message <span class="hljs-keyword">with</span>
+                | Greet(n) <span class="hljs-keyword">when</span> n = name -&gt;
+                    printfn <span class="hljs-string">"Hello again, %s"</span> name
+                    <span class="hljs-keyword">return</span>! again name
+                | Greet(n) -&gt; 
+                    printfn <span class="hljs-string">"Hello %s"</span> n
+                    <span class="hljs-keyword">return</span>! again n
+                | Hi -&gt; 
+                    printfn <span class="hljs-string">"Hello from F#!"</span>
+                    <span class="hljs-keyword">return</span>! again name }
+        <span class="hljs-keyword">and</span> loop() =
+            actor {
+                <span class="hljs-keyword">let</span>! message = mailbox.Receive()
+                <span class="hljs-keyword">match</span> message <span class="hljs-keyword">with</span>
+                | Greet(name) -&gt; 
+                    printfn <span class="hljs-string">"Hello %s"</span> name
+                    <span class="hljs-keyword">return</span>! again name
+                | Hi -&gt;
+                    printfn <span class="hljs-string">"Hello from F#!"</span>
+                    <span class="hljs-keyword">return</span>! loop() } 
+        loop()
+
+actor &lt;! Greet <span class="hljs-string">"Aaron"</span>
+actor &lt;! Hi
+actor &lt;! Greet <span class="hljs-string">"Roger"</span>
+actor &lt;! Hi
+actor &lt;! Greet <span class="hljs-string">"Håkan"</span>
+actor &lt;! Hi
+actor &lt;! Greet <span class="hljs-string">"Jeremie"</span>
+
+System.Console.ReadKey() |&gt; ignore
+</code></pre>
+
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

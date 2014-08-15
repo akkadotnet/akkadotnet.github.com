@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Scheduler |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Scheduler -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Scheduler  <a href="https://github.com/akkadotnet/akka.net/wiki/Scheduler/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,87 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h1 id="scheduler">Scheduler</h1>
+<p>Sometimes the need for making things happen in the future arises, and where do
+you go look then?  Look no further than <code>ActorSystem</code>! There you find the
+<code>Scheduler</code> property that returns an instance of
+<code>Akka.Actor.Scheduler</code>, this instance is unique per ActorSystem and is
+used internally for scheduling things to happen at specific points in time.</p>
+<p>You can schedule sending of messages to actors and execution of tasks
+(Action delegate).  You will get a <code>Task</code> back.
+By providing a <code>CancellationTokenSource</code> you can cancel the scheduled task.</p>
+<div class="alert alert-warning">
+<p><strong>warning</strong><br/>
+Scheduling timing is inexact.</p>
+</div>
+<h2 id="some-examples">Some examples</h2>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<span class="hljs-keyword">var</span> someActor = system.ActorOf&lt;SomeActor&gt;(<span class="hljs-string">"someActor"</span>);
+<span class="hljs-keyword">var</span> someMessage = <span class="hljs-keyword">new</span> SomeMessage() {...};
+system
+   .Scheduler
+   .Schedule(TimeSpan.FromSeconds(<span class="hljs-number">0</span>),
+             TimeSpan.FromSeconds(<span class="hljs-number">5</span>),
+             someActor, someMessage);
+</code></pre>
+<p>The above example will schedule &quot;someMessage&quot; to be sent to &quot;someActor&quot; every 5 seconds.</p>
+<div class="alert alert-warning">
+<p><strong>warning</strong><br/>
+If you schedule a closure you should be extra careful
+to not pass or close over unstable references. In practice this means that you should
+not call methods on the enclosing Actor from within the closure.
+If you need to schedule an invocation it is better to use the <code>Schedule()</code>
+variant accepting a message and an <code>ActorRef</code> to schedule a message to self
+(containing the necessary parameters) and then call the method when the message is received.</p>
+</div>
 
-								
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

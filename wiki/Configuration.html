@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Configuration |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Configuration -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Configuration  <a href="https://github.com/akkadotnet/akka.net/wiki/Configuration/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,169 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h2 id="hocon-configuration">HOCON Configuration</h2>
+<p>Read more about the [[HOCON]] spec.</p>
+<h4 id="example-config">Example config</h4>
+<pre><code class="hljs lang-javascript">akka {
+    actor {
+        <span class="hljs-keyword">default</span>-dispatcher.throughput = <span class="hljs-number">20</span>
+    }
+    remote {
+          helios.tcp {
+              transport-<span class="hljs-keyword">class</span> = 
+                <span class="hljs-string">"Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"</span>
+              transport-protocol = tcp
+              port = <span class="hljs-number">8091</span>
+              hostname = <span class="hljs-string">"127.0.0.1"</span>
+          }
+    }
+}
+</code></pre>
+<h4 id="using-hardcoded-hocon-config-in-c-api">Using hardcoded HOCON config in C# API</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> config = ConfigurationFactory.ParseString(<span class="hljs-string">@"
+akka.remote.helios.tcp {
+              transport-class = 
+           ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
+              transport-protocol = tcp
+              port = 8091
+              hostname = ""127.0.0.1""
+          }"</span>);
 
-								
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"Mysystem"</span>,config);
+</code></pre>
+<h4 id="using-a-net-config-file-">Using a .NET config file:</h4>
+<div class="alert alert-warning">
+<p><strong>Warning:</strong><br/>
+Be extra careful when copying the configuration from hardcoded strings. Be on alert for double quotation marks, which may cause failures during ActorSystem creation.<br/>
+Example:<br/>
+The below string in the .config file is incorrect.<br/></p>
+<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">""</span>Akka.Remote.RemoteActorRefProvider, Akka.Remote<span class="hljs-string">""</span>
+</code></pre><p>This is the correct form.</p>
+<pre><code><span class="hljs-variable">provider =</span> <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
+</code></pre></div>
+<h5 id="app-config">App.config</h5>
+<pre><code class="hljs lang-xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">configuration</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">configSections</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">section</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"akka"</span> 
+             <span class="hljs-attribute">type</span>=<span class="hljs-value">"Akka.Configuration.Hocon.AkkaConfigurationSection, Akka"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">configSections</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-title">akka</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">hocon</span>&gt;</span>
+      <span class="hljs-cdata">&lt;![CDATA[
+          akka {
+            log-config-on-start = off
+            stdout-loglevel = INFO
+            loglevel = ERROR
+            actor {
+              provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
+              debug {
+                  receive = on
+                  autoreceive = on
+                  lifecycle = on
+                  event-stream = on
+                  unhandled = on
+              }
+            }
+            remote {
+              helios.tcp {
+                  transport-class = 
+            "Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"
+                  #applied-adapters = []
+                  transport-protocol = tcp
+                  port = 8091
+                  hostname = "127.0.0.1"
+              }
+            log-remote-lifecycle-events = INFO
+          }
+      ]]&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">hocon</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">akka</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">configuration</span>&gt;</span>
+</code></pre>
+<p>We can now use the <code>ConfigurationManager</code> to retrieve the &quot;akka&quot; section and use it&#39;s <code>AkkaConfig</code> property,
+which contains the configuration in a form that is used by the ActorSystem.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> section = (AkkaConfigurationSection)ConfigurationManager.GetSection(<span class="hljs-string">"akka"</span>);
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"Mysystem"</span>, section.AkkaConfig);
+</code></pre>
+<h2 id="fluent-configuration">Fluent Configuration</h2>
+<div class="alert alert-warning">
+<p><strong>Warning!</strong><br/>
+The fluent configuration support is experimental and might change or be removed.</p>
+</div>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> fluentConfig = FluentConfig.Begin()
+    .StdOutLogLevel(LogLevel.DebugLevel)
+    .LogConfigOnStart(<span class="hljs-keyword">true</span>)
+    .LogLevel(LogLevel.ErrorLevel)   
+    .LogLocal(
+        receive: <span class="hljs-keyword">true</span>,
+        autoReceive: <span class="hljs-keyword">true</span>,
+        lifecycle: <span class="hljs-keyword">true</span>,
+        eventStream: <span class="hljs-keyword">true</span>,
+        unhandled: <span class="hljs-keyword">true</span>
+    )
+    .LogRemote(
+        lifecycleEvents: LogLevel.DebugLevel,
+        receivedMessages: <span class="hljs-keyword">true</span>,
+        sentMessages: <span class="hljs-keyword">true</span>
+    )
+    .StartRemotingOn(<span class="hljs-string">"localhost"</span>, <span class="hljs-number">8081</span>)
+    .Build();
+
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MyServer"</span>, fluentConfig);
+</code></pre>
+<p>The fluent configuration support is a simple builder ontop of the HOCON configuration.
+This is because Akka.NET uses HOCON internally inside most of it&#39;s modules, such as routers and remoting.</p>
+<p>Fluent configuration is based on extension methods on the <code>FluentConfig</code> class, this makes it possible to supply new config methods for different modules w/o altering the configuration API.</p>
+
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

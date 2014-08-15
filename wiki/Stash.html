@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Stash |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Stash -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Stash  <a href="https://github.com/akkadotnet/akka.net/wiki/Stash/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,92 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h2 id="stash">Stash</h2>
+<p>The UntypedActorWithStash class enables an actor to temporarily stash away messages that can not or should not be handled using the actor&#39;s current behavior. Upon changing the actor&#39;s message handler, i.e., right before invoking getContext().become() or getContext().unbecome(), all stashed messages can be &quot;unstashed&quot;, thereby prepending them to the actor&#39;s mailbox. This way, the stashed messages can be processed in the same order as they have been received originally. An actor that extends UntypedActorWithStash will automatically get a deque-based mailbox.</p>
+<div class="alert alert-success">
+<p><strong>Note</strong><br/>
+The abstract class UntypedActorWithStash implements the marker interface RequiresMessageQueue<DequeBasedMessageQueueSemantics> which requests the system to automatically choose a deque based mailbox implementation for the actor. If you want more control over the mailbox, see the documentation on mailboxes: Mailboxes.</p>
+</div>
+<p>Here is an example of the UntypedActorWithStash class in action:</p>
+<pre><code class="hljs lang-csharp">import akka.actor.UntypedActorWithStash;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ActorWithProtocol</span> <span class="hljs-title">extends</span> <span class="hljs-title">UntypedActorWithStash</span> {
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span><span class="hljs-params">(Object msg)</span> </span>{
+    <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"open"</span>)) {
+      unstashAll();
+      getContext().become(<span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span><span class="hljs-params">(Object msg)</span> throws Exception </span>{
+          <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"write"</span>)) {
+            <span class="hljs-comment">// do writing...</span>
+          } <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(msg.equals(<span class="hljs-string">"close"</span>)</span>) </span>{
+            unstashAll();
+            getContext().unbecome();
+          } <span class="hljs-keyword">else</span> {
+            stash();
+          }
+        }
+      }, <span class="hljs-keyword">false</span>); <span class="hljs-comment">// add behavior on top instead of replacing</span>
+    } <span class="hljs-keyword">else</span> {
+      stash();
+    }
+  }
+}
+</code></pre>
+<p>Invoking <code>stash()</code> adds the current message (the message that the actor received last) to the actor&#39;s stash. It is typically invoked when handling the default case in the actor&#39;s message handler to stash messages that aren&#39;t handled by the other cases. It is illegal to stash the same message twice; to do so results in an <code>IllegalStateException</code> being thrown. The stash may also be bounded in which case invoking <code>stash()</code> may lead to a capacity violation, which results in a <code>StashOverflowException</code>. The capacity of the stash can be configured using the stash-capacity setting (an Int) of the mailbox&#39;s configuration.</p>
+<p>Invoking <code>unstashAll()</code> enqueues messages from the stash to the actor&#39;s mailbox until the capacity of the mailbox (if any) has been reached (note that messages from the stash are prepended to the mailbox). In case a bounded mailbox overflows, a MessageQueueAppendFailedException is thrown. The stash is guaranteed to be empty after calling unstashAll().</p>
+<p>The stash is backed by a <code>scala.collection.immutable.Vector</code>. As a result, even a very large number of messages may be stashed without a major impact on performance.</p>
+<p>Note that the stash is part of the ephemeral actor state, unlike the mailbox. Therefore, it should be managed like other parts of the actor&#39;s state which have the same property. The <code>UntypedActorWithStash</code> implementation of <code>PreRestart</code> will call <code>UnstashAll()</code>, which is usually the desired behavior.</p>
+<div class="alert alert-success">
+<p><strong>Note</strong><br/>
+If you want to enforce that your actor can only work with an unbounded stash, then you should use the UntypedActorWithUnboundedStash class instead.</p>
+</div>
 
-								
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

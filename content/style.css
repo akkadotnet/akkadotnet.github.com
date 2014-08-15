@@ -1,13 +1,121 @@
+/* identifier */
+span.i { color:#d1d1d1; }
+/* string */
+span.s { color:#d4b43c; }
+/* keywords */
+span.k { color:#6eb8fc; }
+span.kt { color:#6eb8fc; }
+/* comment */
+span.c { color:#96C71D; }
+span.c1 { color:#96C71D; }
+/* operators */
+span.o { color:#af75c1; }
+/* numbers */
+span.n { color:#FFFFFF; }
+span.nc { color:#FFFae0; }
+span.nf { color:#FFFae0; }
+span.nv { color:#FFFae0; }
+span.nn { color:#FFFae0; }
+/* line number */
+span.l { color:#80b0b0; }
+
+/* inactive code */
+span.inactive { color:#808080; }
+/* preprocessor */
+span.prep { color:#af75c1; }
+/* fsi output */
+span.fsi { color:#808080; }
+
+/* omitted */
+span.omitted {
+	background:#4c5e62;
+  	border-radius:5px;
+	color:#808080;
+	padding:0px 0px 1px 0px;
+}
+/* tool tip */
+div.tip {
+	background:#475b5f;
+	border-radius:4px;
+	font:11pt 'Droid Sans', arial, sans-serif;
+	padding:6px 8px 6px 8px;
+	display:none;
+	color:#d1d1d1;
+}
+div.highlight {
+	border: 0px;
+}
+div.highlight pre {
+	padding:0px;
+	margin:0px;
+	border: 0px;
+}
+div.highlight, pre.fssnip, pre {
+	line-height:13pt;
+	border:0px;
+	border-collapse:separate;
+	white-space:pre;
+	font: 9pt 'Droid Sans Mono',consolas,monospace;
+	margin:10px 20px 20px 20px;
+	background-color:#212d30;
+	padding:10px;
+	border-radius:5px;
+	color:#d1d1d1;
+	margin-left:0px;
+	margin-right:0px;
+}
+div.highlight pre {
+	padding:0px;
+	margin:0px;
+	border-radius:0px;
+	width: 100%;
+}
+div.highlight td {
+	padding:0px;
+	white-space:normal;
+	margin:0px;
+}
+
 /*--------------------------------------------------------------------------
   Formatting for page & standard document content
 /*--------------------------------------------------------------------------*/
 
 pre {
     word-wrap: inherit;
-    border: 0px solid white;
-    padding: 0px;
 }
 
+
+/*--------------------------------------------------------------------------
+  Formatting for API reference
+/*--------------------------------------------------------------------------*/
+
+.type-list .type-name, .module-list .module-name {
+  width:25%;
+  font-weight:bold;
+}
+.member-list .member-name {
+  width:35%;
+}
+#main .xmldoc h2 {
+  font-size:14pt;
+  margin:10px 0px 0px 0px;
+}
+#main .xmldoc h3 {
+  font-size:12pt;
+  margin:10px 0px 0px 0px;
+}
+.github-link {
+  float:right;
+  text-decoration:none;
+}
+.github-link img {
+  border-style:none;
+  margin-left:10px;
+}
+.github-link .hover { display:none; }
+.github-link:hover .hover { display:block; }
+.github-link .normal { display: block; }
+.github-link:hover .normal { display: none; }
 
 /*--------------------------------------------------------------------------
   Additional formatting for the homepage
@@ -29,6 +137,23 @@ pre {
   color: #e0e0e0;
   margin-top:15px;
 }
+
+/*
+blockquote {
+  padding: 3px 3px 3px 15px;
+  border-left: 5px solid #E02000;
+  background-color: #FFf9f0;
+  border-radius: 5px;
+}*/
+
+/*code {
+  padding: 1px 2px;
+  color: #d14;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  font-size: inherit;
+}*/
+
 
 .nuget-commandWrapper {
     background: #d6d6d6;

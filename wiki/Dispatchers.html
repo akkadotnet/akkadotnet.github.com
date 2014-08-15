@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Dispatchers |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Dispatchers -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Dispatchers  <a href="https://github.com/akkadotnet/akka.net/wiki/Dispatchers/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,167 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h1 id="dispatchers">Dispatchers</h1>
+<p>An Akka <code>MessageDispatcher</code> is what makes Akka Actors &quot;tick&quot;, it is the engine of the machine so to speak. All <code>MessageDispatcher</code> implementations are also an <code>ExecutionContext</code>, which means that they can be used to execute arbitrary code, for instance <code>Futures</code>.</p>
+<h2 id="default-dispatcher">Default dispatcher</h2>
+<p>Every <code>ActorSystem</code> will have a default dispatcher that will be used in case nothing else is configured for an Actor. The default dispatcher can be configured using <code>akka.actor.default-dispatcher</code>, and is by default a <code>Dispatcher</code>.</p>
+<h4 id="actors-multiplexing-on-net-thread-pool">Actors multiplexing on .NET thread pool</h4>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ThreadMultiplex.png" alt="Thread Multiplex"></p>
+<h2 id="looking-up-a-dispatcher">Looking up a Dispatcher</h2>
+<p>Dispatchers implement the ExecutionContext interface and can thus be used to run Future invocations etc.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// this is scala.concurrent.ExecutionContext</span>
+<span class="hljs-comment">// for use with Futures, Scheduler, etc.</span>
+ExecutionContext ex = system.Dispatchers.Lookup(<span class="hljs-string">"my-dispatcher"</span>);
+</code></pre>
+<h2 id="setting-the-dispatcher-for-an-actor">Setting the dispatcher for an Actor</h2>
+<p>So in case you want to give your Actor a different dispatcher than the default, you need to do two things, of which the first is is to configure the dispatcher:</p>
+<pre><code>my-dispatcher {
+  # Dispatcher is the name of the event-based dispatcher
+  type = Dispatcher
+  # What kind of ExecutionService to <span class="hljs-operator"><span class="hljs-keyword">use</span>
+  executor = <span class="hljs-string">"fork-join-executor"</span>
+  # Configuration <span class="hljs-keyword">for</span> the fork <span class="hljs-keyword">join</span> pool
+  fork-<span class="hljs-keyword">join</span>-executor {
+    # <span class="hljs-keyword">Min</span> <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based parallelism <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
+    parallelism-<span class="hljs-keyword">min</span> = <span class="hljs-number">2</span>
+    # Parallelism (threads) ... <span class="hljs-keyword">ceil</span>(available processors * factor)
+    parallelism-factor = <span class="hljs-number">2.0</span>
+    # <span class="hljs-keyword">Max</span> <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based parallelism <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
+    parallelism-<span class="hljs-keyword">max</span> = <span class="hljs-number">10</span>
+  }
+  # Throughput defines the maximum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> messages <span class="hljs-keyword">to</span> be
+  # processed per actor <span class="hljs-keyword">before</span> the thread jumps <span class="hljs-keyword">to</span> the <span class="hljs-keyword">next</span> actor.
+  # <span class="hljs-keyword">Set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">as</span> fair <span class="hljs-keyword">as</span> possible.
+  throughput = <span class="hljs-number">100</span>
+}</span>
+</code></pre><p>And here&#39;s another example that uses the <code>&quot;thread-pool-executor&quot;</code>:</p>
+<pre><code>my-thread-pool-dispatcher {
+  # Dispatcher is the name of the event-based dispatcher
+  type = Dispatcher
+  # What kind of ExecutionService to <span class="hljs-operator"><span class="hljs-keyword">use</span>
+  executor = <span class="hljs-string">"thread-pool-executor"</span>
+  # Configuration <span class="hljs-keyword">for</span> the thread pool
+  thread-pool-executor {
+    # minimum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based core <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
+    core-pool-<span class="hljs-keyword">size</span>-<span class="hljs-keyword">min</span> = <span class="hljs-number">2</span>
+    # <span class="hljs-keyword">No</span> <span class="hljs-keyword">of</span> core threads ... <span class="hljs-keyword">ceil</span>(available processors * factor)
+    core-pool-<span class="hljs-keyword">size</span>-factor = <span class="hljs-number">2.0</span>
+    # maximum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> threads <span class="hljs-keyword">to</span> cap factor-based <span class="hljs-built_in">number</span> <span class="hljs-keyword">to</span>
+    core-pool-<span class="hljs-keyword">size</span>-<span class="hljs-keyword">max</span> = <span class="hljs-number">10</span>
+  }
+  # Throughput defines the maximum <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> messages <span class="hljs-keyword">to</span> be
+  # processed per actor <span class="hljs-keyword">before</span> the thread jumps <span class="hljs-keyword">to</span> the <span class="hljs-keyword">next</span> actor.
+  # <span class="hljs-keyword">Set</span> <span class="hljs-keyword">to</span> <span class="hljs-number">1</span> <span class="hljs-keyword">for</span> <span class="hljs-keyword">as</span> fair <span class="hljs-keyword">as</span> possible.
+  throughput = <span class="hljs-number">100</span>
+}</span>
+</code></pre><p>For more options, see the <code>default-dispatcher</code> section of the Configuration.</p>
+<p>Then you create the actor as usual and define the dispatcher in the deployment configuration.</p>
+<pre><code class="hljs lang-csharp">ActorRef myActor =
+  system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)),
+    <span class="hljs-string">"myactor"</span>);
+</code></pre>
+<pre><code><span class="hljs-attribute">akka.actor.deployment {
+  /myactor {
+    dispatcher </span>=<span class="hljs-string"> my-dispatcher
+  }
+}</span>
+</code></pre><p>An alternative to the deployment configuration is to define the dispatcher in code. If you define the dispatcher in the deployment configuration then this value will be used instead of programmatically provided parameter.</p>
+<pre><code class="hljs lang-csharp">ActorRef myActor =
+  system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)).WithDispatcher(<span class="hljs-string">"my-dispatcher"</span>),
+    <span class="hljs-string">"myactor3"</span>);
+</code></pre>
+<div class="alert alert-success">
+<p><strong>Note</strong><br/>
+The dispatcher you specify in <code>WithDispatcher</code> and the dispatcher property in the deployment configuration is in fact a path into your configuration. So in this example it&#39;s a top-level section, but you could for instance put it as a sub-section, where you&#39;d use periods to denote sub-sections, like this: &quot;foo.bar.my-dispatcher&quot;</p>
+</div>
+<h2 id="types-of-dispatchers">Types of dispatchers</h2>
+<p>There are 4 different types of message dispatchers:</p>
+<ul>
+<li><p>Dispatcher</p>
+<ul>
+<li>This is an event-based dispatcher that binds a set of Actors to a thread pool. It is the default dispatcher used if one is not specified.</li>
+<li>Sharability: Unlimited</li>
+<li>Mailboxes: Any, creates one per Actor</li>
+<li>Use cases: Default dispatcher, Bulkheading</li>
+</ul>
+</li>
+<li><p>PinnedDispatcher</p>
+<ul>
+<li>This dispatcher dedicates a unique thread for each actor using it; i.e. each actor will have its own thread pool with only one thread in the pool.</li>
+<li>Sharability: None</li>
+<li>Mailboxes: Any, creates one per Actor</li>
+<li>Use cases: Bulkheading</li>
+</ul>
+</li>
+<li><p>CallingThreadDispatcher</p>
+<ul>
+<li>This dispatcher runs invocations on the current thread only. This dispatcher does not create any new threads, but it can be used from different threads concurrently for the same actor. See CallingThreadDispatcher for details and restrictions.</li>
+<li>Sharability: Unlimited</li>
+<li>Mailboxes: Any, creates one per Actor per Thread (on demand)</li>
+<li>Use cases: Testing</li>
+<li>Driven by: The calling thread (duh)</li>
+</ul>
+</li>
+</ul>
+<h3 id="more-dispatcher-configuration-examples">More dispatcher configuration examples</h3>
+<p>Configuring a <code>PinnedDispatcher</code>:</p>
+<pre><code>my-pinned-dispatcher {
+  <span class="hljs-keyword">type</span> = PinnedDispatcher
+}
+</code></pre><p>And then using it:</p>
+<pre><code class="hljs lang-csharp">ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor));
+    .WithDispatcher(<span class="hljs-string">"my-pinned-dispatcher"</span>));
+</code></pre>
+<p>Note that <code>thread-pool-executor</code> configuration as per the above <code>my-thread-pool-dispatcher</code> example is NOT applicable. This is because every actor will have its own thread pool when using <code>PinnedDispatcher</code>, and that pool will have only one thread.</p>
+<p>Note that it&#39;s not guaranteed that the same thread is used over time, since the core pool timeout is used for <code>PinnedDispatcher</code> to keep resource usage down in case of idle actors. To use the same thread all the time you need to add <code>thread-pool-executor.allow-core-timeout=off</code> to the configuration of the <code>PinnedDispatcher</code>.</p>
 
-								
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> Routing |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/Routing -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> Routing  <a href="https://github.com/akkadotnet/akka.net/wiki/Routing/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,136 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h2 id="tl-dr-roundrobin-group-router-example">TL;DR RoundRobin Group router example</h2>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
 
-								
+<span class="hljs-comment">//create workers</span>
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker1"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker2"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker3"</span>);
+system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker4"</span>);
+
+<span class="hljs-comment">//create the router using round robin strategy</span>
+<span class="hljs-keyword">var</span> router = system.ActorOf(<span class="hljs-keyword">new</span> Props().WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(
+<span class="hljs-string">"user/Worker1"</span>, <span class="hljs-string">"user/Worker2"</span>, <span class="hljs-string">"user/Worker3"</span>, <span class="hljs-string">"user/Worker4"</span>)));
+
+<span class="hljs-comment">//pass messages via the router to the routees</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">20</span>; i++)
+{
+   router.Tell(i);
+}
+</code></pre>
+<h1 id="routers">Routers</h1>
+<p>Messages can be sent via a router to efficiently route them to destination actors, known as its routees. A Router can be used inside or outside of an actor, and you can manage the routees yourselves or use a self contained router actor with configuration capabilities.</p>
+<p>Different routing strategies can be used, according to your application&#39;s needs. Akka comes with several useful routing strategies right out of the box. But, as you will see in this chapter, it is also possible to create your own.</p>
+<div class="alert alert-success">
+<p><strong>Note:</strong><br/>
+In general, any message sent to a router will be sent onwards to its routees, but there is one exception.<br/>
+The special <code>Broadcast</code> Messages will send to all of a router&#39;s routees</p>
+</div>
+<h2 id="routing-strategies">Routing strategies</h2>
+<h3 id="broadcast">Broadcast</h3>
+<p>The broadcast router will as the name implies, broadcast any message to all of its routees.</p>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/BroadcastRouter.png" alt="Broadcast Router"></p>
+<h3 id="roundrobin">RoundRobin</h3>
+<p>A Router that uses round-robin to select a connection. For concurrent calls, round robin is just a best effort. </p>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/RoundRobinRouter.png" alt="Round Robin Router"></p>
+<h3 id="consistenthash">ConsistentHash</h3>
+<p>A Router that uses consistent hashing to select a connection based on the sent message.</p>
+<p>There is 3 ways to define what data to use for the consistent hash key.</p>
+<ol>
+<li>You can define hashMapping / <code>WithHashMapper</code> of the router to map incoming messages to their consistent hash key. This makes the decision transparent for the sender.</li>
+<li>The messages may implement <code>Akka.Routing.ConsistentHashingRouter.ConsistentHashable</code>. The key is part of the message and it&#39;s convenient to define it together with the message definition.</li>
+<li>The messages can be be wrapped in a <code>Akka.Routing.ConsistentHashingRouter.ConsistentHashableEnvelope</code> to define what data to use for the consistent hash key. The sender knows the key to use.</li>
+</ol>
+<p>These ways to define the consistent hash key can be use together and at the same time for one router. The hashMapping is tried first.</p>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ConsistentHashRouter.png" alt="ConsistentHash Router"></p>
+<h4 id="usecase">Usecase</h4>
+<p><code>ConsistentHash</code> can be very useful when dealing with <strong>&quot;Commands&quot;</strong> in the sense of <strong>CQRS</strong> or <strong>Domain Driven Design</strong>.
+For example, let&#39;s assume we have the following incoming sequence of <strong>&quot;Customer Commands&quot;</strong>:</p>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ConsistentHash1.png" alt="ConsistentHash Router example"></p>
+<p>In this case we might want to group all messages based on <strong>&quot;Customer ID&quot;</strong> (ID in the diagram).
+By using a <code>ConsistentHash</code> router we can now process multiple commands in parallel for different Customers, while still processing messages for each specific Customer in ordered sequence, and thus preventing us from getting race conditions with ourselves when applying each command on each customer entity.</p>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ConsistentHash2.png" alt="ConsistentHash Router example"></p>
+<h3 id="scattergatherfirstcompleted">ScatterGatherFirstCompleted</h3>
+<p>Simple router that broadcasts the message to all routees, and replies with the first response. 
+You have to defin the &#39;within: Duration&#39; parameter (f.e: within = 10 seconds). </p>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/ScatterGatherFirstCompletedRouter.png" alt="ScatterGatherFirstCompleted Router"></p>
+<h3 id="random">Random</h3>
+<p>A Router that randomly selects one of the target connections to send a message to.</p>
+<p>[No image yet]</p>
+<h3 id="smallestmailbox">SmallestMailbox</h3>
+<p>A Router that tries to send to the non-suspended routee with fewest messages in mailbox. The selection is done in this order:</p>
+<ul>
+<li>Pick any idle routee (not processing message) with empty mailbox</li>
+<li>Pick any routee with empty mailbox</li>
+<li>Pick routee with fewest pending messages in mailbox</li>
+<li>Pick any remote routee, remote actors are consider lowest priority, since their mailbox size is unknown</li>
+</ul>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/SmallestMailbox.png" alt="SmallestMailbox Router"></p>
+<h2 id="pools-vs-groups">Pools vs. Groups</h2>
+<h3 id="pools">Pools</h3>
+<p>Router &quot;Pools&quot; are routers that create their own worker actors, that is; you provide a <code>nrOfInstances</code> to the router and the router will handle routee creation by itself.</p>
+<h3 id="groups">Groups</h3>
+<p>Sometimes, rather than having the router actor create its routees, it is desirable to create routees separately and provide them to the router for its use. You can do this by passing an paths of the routees to the router&#39;s configuration. Messages will be sent with <code>ActorSelection</code> to these paths.</p>
+<h2 id="how-routing-is-designed-within-akka-net">How Routing is Designed within Akka.NET</h2>
+<p>On the surface routers look like normal actors, but they are actually implemented differently. Routers are designed to be extremely efficient at receiving messages and passing them quickly on to routees.</p>
+<p>A normal actor can be used for routing messages, but an actor&#39;s single-threaded processing can become a bottleneck. Routers can achieve much higher throughput with an optimization to the usual message-processing pipeline that allows concurrent routing. This is achieved by embedding routers&#39; routing logic directly in their ActorRef rather than in the router actor. Messages sent to a router&#39;s ActorRef can be immediately routed to the routee, bypassing the single-threaded router actor entirely.</p>
+<p>The cost to this is, of course, that the internals of routing code are more complicated than if routers were implemented with normal actors. Fortunately all of this complexity is invisible to consumers of the routing API. However, it is something to be aware of when implementing your own routers.</p>
+<h2 id="supervision">Supervision</h2>
+<p>Routees that are created by a pool router will be created as the router&#39;s children. The router is therefore also the children&#39;s supervisor.</p>
+<p>The supervision strategy of the router actor can be configured with the supervisorStrategy property of the Pool. If no configuration is provided, routers default to a strategy of “always escalate”. This means that errors are passed up to the router&#39;s supervisor for handling. The router&#39;s supervisor will decide what to do about any errors.</p>
+<p>Note the router&#39;s supervisor will treat the error as an error with the router itself. Therefore a directive to stop or restart will cause the router itself to stop or restart. The router, in turn, will cause its children to stop and restart.</p>
+<p>It should be mentioned that the router&#39;s restart behavior has been overridden so that a restart, while still re-creating the children, will still preserve the same number of actors in the pool.</p>
+<p>This means that if you have not specified supervisorStrategy of the router or its parent a failure in a routee will escalate to the parent of the router, which will by default restart the router, which will restart all routees (it uses Escalate and does not stop routees during restart). The reason is to make the default behave such that adding withRouter to a child’s definition does not change the supervision strategy applied to the child. This might be an inefficiency that you can avoid by specifying the strategy when defining the router.</p>
+
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->

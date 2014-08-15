@@ -4,7 +4,7 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title> CircuitBreaker |  Akka.NET</title>
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -133,7 +133,7 @@
 									</li>
 								-->
 								
-								<!-- pageurl search -->
+								<!-- pageurl wiki/CircuitBreaker -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu">
 										<a href="/">
@@ -164,8 +164,7 @@
 
 			</div>
 
-			
-<!-- PAGE TOP -->
+						<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
 
@@ -173,11 +172,12 @@
 
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
-							<li class="active">Search</li>							
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> CircuitBreaker  <a href="https://github.com/akkadotnet/akka.net/wiki/CircuitBreaker/_edit"> (edit)</a></li>							
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
-							<strong>Search</strong> Results
+							<strong>Akka.NET</strong> Wiki
 						</h2><!-- /Page Title -->
 
 					</header>
@@ -186,114 +186,132 @@
 			</section>
 			<!-- /PAGE TOP -->
 
-
-
 			<!-- CONTENT -->
 			<section>
 				<div class="container">
 
 					<div class="row">
 
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
 						<!-- LEFT COLUMNS -->
-						<div class="col-md-12">
-							<div>
+						<div class="col-md-9">
+							<div id="main_content">
 
-<script>
-  (function() {
-    var cx = '008890940075640760838:ywajim4iapm';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
-        '//www.google.com/cse/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:searchresults-only></gcse:searchresults-only>
+								<h1 id="circuit-breaker">Circuit Breaker</h1>
+<h2 id="why-are-they-used-">Why are they used?</h2>
+<p>A circuit breaker is used to provide stability and prevent cascading failures in distributed
+systems.  These should be used in conjunction with judicious timeouts at the interfaces between
+remote systems to prevent the failure of a single component from bringing down all components.</p>
+<p>As an example, we have a web application interacting with a remote third party web service.<br>Let&#39;s say the third party has oversold their capacity and their database melts down under load.<br>Assume that the database fails in such a way that it takes a very long time to hand back an
+error to the third party web service.  This in turn makes calls fail after a long period of 
+time.  Back to our web application, the users have noticed that their form submissions take
+much longer seeming to hang.  Well the users do what they know to do which is use the refresh
+button, adding more requests to their already running requests.  This eventually causes the 
+failure of the web application due to resource exhaustion.  This will affect all users, even
+those who are not using functionality dependent on this third party web service.</p>
+<p>Introducing circuit breakers on the web service call would cause the requests to begin to 
+fail-fast, letting the user know that something is wrong and that they need not refresh 
+their request.  This also confines the failure behavior to only those users that are using
+functionality dependent on the third party, other users are no longer affected as there is no
+resource exhaustion.  Circuit breakers can also allow savvy developers to mark portions of
+the site that use the functionality unavailable, or perhaps show some cached content as 
+appropriate while the breaker is open.</p>
+<p>The Akka library provides an implementation of a circuit breaker called 
+<code>Akka.Pattern.CircuitBreaker</code> which has the behavior described below.</p>
+<h2 id="what-do-they-do-">What do they do?</h2>
+<ul>
+<li>During normal operation, a circuit breaker is in the <code>Closed</code> state:<ul>
+<li>Exceptions or calls exceeding the configured <code>callTimeout</code> increment a failure counter</li>
+<li>Successes reset the failure count to zero </li>
+<li>When the failure counter reaches a <code>maxFailures</code> count, the breaker is tripped into <code>Open</code> state</li>
+</ul>
+</li>
+<li>While in <code>Open</code> state:<ul>
+<li>All calls fail-fast with a :class:<code>CircuitBreakerOpenException</code></li>
+<li>After the configured <code>resetTimeout</code>, the circuit breaker enters a <code>Half-Open</code> state</li>
+</ul>
+</li>
+<li>In <code>Half-Open</code> state:<ul>
+<li>The first call attempted is allowed through without failing fast</li>
+<li>All other calls fail-fast with an exception just as in <code>Open</code> state</li>
+<li>If the first call succeeds, the breaker is reset back to <code>Closed</code> state</li>
+<li>If the first call fails, the breaker is tripped again into the <code>Open</code> state for another full <code>resetTimeout</code></li>
+</ul>
+</li>
+<li>State transition listeners: <ul>
+<li>Callbacks can be provided for every state entry via <code>onOpen</code>, <code>onClose</code>, and <code>onHalfOpen</code></li>
+<li>These are executed in the :class:<code>ExecutionContext</code> provided. </li>
+</ul>
+</li>
+</ul>
+<p>.. image:: ../images/circuit-breaker-states.png</p>
+<h2 id="examples">Examples</h2>
+<h3 id="initialization">Initialization</h3>
+<p>Here&#39;s how a :class:<code>CircuitBreaker</code> would be configured for:</p>
+<ul>
+<li>5 maximum failures</li>
+<li>a call timeout of 10 seconds </li>
+<li>a reset timeout of 1 minute</li>
+</ul>
+<h4 id="f-api">F# Api</h4>
+<p>.. includecode:: code/docs/circuitbreaker/CircuitBreakerDocSpec.cs
+   :include: imports1,circuit-breaker-initialization</p>
+<h4 id="c-api">C# Api</h4>
+<p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.fs
+   :include: imports1,circuit-breaker-initialization</p>
+<h3 id="call-protection">Call Protection</h3>
+<p>Here&#39;s how the :class:<code>CircuitBreaker</code> would be used to protect an asynchronous
+call as well as a synchronous one:</p>
+<h4 id="f-api">F# Api</h4>
+<p>.. includecode:: code/docs/circuitbreaker/CircuitBreakerDocSpec.scala
+   :include: circuit-breaker-usage</p>
+<h4 id="c-api">C# Api</h4>
+<p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.java
+   :include: circuit-breaker-usage</p>
+<div class="alert alert-success">
+<p><strong>Note</strong><br/>
+Using the :class:<code>CircuitBreaker</code> companion object&#39;s <code>apply</code> or <code>create</code> methods
+will return a :class:<code>CircuitBreaker</code> where callbacks are executed in the caller&#39;s thread.
+This can be useful if the asynchronous :class:<code>Future</code> behavior is unnecessary, for
+example invoking a synchronous-only API.</p>
+</div>
 
-								
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
 							</div>
+
 						</div>
 						<!-- /LEFT COLUMNS -->
+
+
 
 					</div>
 
 				</div>
 			</section>
 			<!-- /CONTENT -->
-			
-<style type='text/css'>
-    
-    /* Use a different font family for search results */
-    .gs-title, .gs-snippet {
-        font-family: sans-serif;
-    }
-    
-    /* Add a border between individual search results
-    .gs-webResult {
-        border: 1px solid #eee;
-        padding: 1em;
-    } */
-    
-    /* Do no display the count of search results     
-    .gsc-result-info {
-        display: none;
-    }*/
-    
-    /* Hide the Google branding in search results */
-    .gcsc-branding {
-        display: none; 
-    }
-    
-    /* Hide the thumbnail images in search results 
-    .gsc-thumbnail {
-        display: none;
-    }*/
-    
-    /* Hide the snippets in Google search results
-    .gs-snippet { 
-        display: none;
-    } */
-    
-    /* Change the font size of the title of search results */
-    .gs-title a { 
-        color: #a94545;
-        text-decoration: none;
-    }
-    
-    /* Change the font size of snippets inside search results */
-    .gs-snippet {
-       
-    }
-    
-    /* Google Custom Search highlights matching words in bold, toggle that */
-    .gs-title b, .gs-snippet b {
-       font-weight: bold;
-       background-color: #fffff0;
-    }
-    
-    /* Do no display the URL of web pages in search results */
-    .gsc-url-top, .gsc-url-bottom {
-       color: #a94545;
-    }
-    
-    .gsc-url-top, .gsc-url-bottom a {
-       color: #a94545;
-    }
-    
-    /* Highlight the pagination buttons at the bottom of search results */
-    .gsc-cursor-page {
-
-    }
-    
-    gsc-table-cell-snippet-close gsc-url-bottom gs-visibleUrl-long {
-    	font-weight: normal;
-    	color: green;
-    }
-    
-</style>
-
 
 
 			<!-- FOOTER -->
