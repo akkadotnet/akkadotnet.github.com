@@ -205,17 +205,17 @@
 								<h2 id="hocon-configuration">HOCON Configuration</h2>
 <p>Read more about the [[HOCON]] spec.</p>
 <h4 id="example-config">Example config</h4>
-<pre><code class="hljs lang-javascript">akka {
+<pre><code class="hljs lang-hocon">akka {
     actor {
-        <span class="hljs-keyword">default</span>-dispatcher.throughput = <span class="hljs-number">20</span>
+        default-dispatcher.<span class="hljs-variable">throughput =</span> <span class="hljs-number">20</span>
     }
     remote {
           helios.tcp {
-              transport-<span class="hljs-keyword">class</span> = 
+              <span class="hljs-variable">transport-class =</span> 
                 <span class="hljs-string">"Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"</span>
-              transport-protocol = tcp
-              port = <span class="hljs-number">8091</span>
-              hostname = <span class="hljs-string">"127.0.0.1"</span>
+              <span class="hljs-variable">transport-protocol =</span> tcp
+              <span class="hljs-variable">port =</span> <span class="hljs-number">8091</span>
+              <span class="hljs-variable">hostname =</span> <span class="hljs-string">"127.0.0.1"</span>
           }
     }
 }
