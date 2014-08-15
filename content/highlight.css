@@ -9,16 +9,16 @@ Akka.NET style. by akkadotnet.github.com
   overflow-x: auto;
   padding: 0.5em;
   background: #212d30;
+  color: #ffffff;
 }
 
-.hljs,
 .hljs-tag,
 .css .hljs-rules,
 .css .hljs-value,
 .css .hljs-function
 .hljs-preprocessor,
 .hljs-pragma {
-  color: #96C71D;
+  color: #5ea8ec;
 }
 
 .hljs-strongemphasis,
