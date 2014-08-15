@@ -40,11 +40,8 @@ Akka.NET style. by akkadotnet.github.com
   color: #fff0a0;
 }
 
-.hljs-tag .hljs-value,
-.hljs-code,
-.hljs-title,
-.css .hljs-class {
-  color: #fff050;
+.hljs-title {
+  color: #fff0a0;
 }
 
 .hljs-tag .hljs-title {
