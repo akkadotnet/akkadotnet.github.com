@@ -202,8 +202,8 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<h2 id="using-receive">Using Receive</h2>
-<h3 id="inherit-from-receiveactor">Inherit from ReceiveActor</h3>
+								<h1 id="using-receive">Using Receive</h1>
+<h2 id="inherit-from-receiveactor">Inherit from ReceiveActor</h2>
 <p>In order to use the <code>Receive()</code> method inside an actor the actor must inherit from <code>ReceiveActor</code>.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span> : <span class="hljs-title">ReceiveActor</span>
 {
@@ -220,14 +220,14 @@
 }
 </code></pre>
 <p>Whenever a message of typ <code>string</code> is sent to <strong>MyActor</strong> the first handler is invoked and for messages of type <code>int</code> the second handler is used.</p>
-<h3 id="handler-priority">Handler priority</h3>
+<h2 id="handler-priority">Handler priority</h2>
 <p>If more than one handler matches, the one that appears first is used, and the others are not called.</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + )s);      <span class="hljs-comment">//1</span>
 Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Also received string: "</span> + s)); <span class="hljs-comment">//2</span>
 Receive&lt;<span class="hljs-keyword">object</span>&gt;(o =&gt; Console.WriteLine(<span class="hljs-string">"Received object: "</span> + o));      <span class="hljs-comment">//3</span>
 </code></pre>
 <p><strong>Example</strong>: The actor receives a message of type <code>string</code>. Only the first handler is invoked, even though all three handlers can handle that message.</p>
-<h3 id="using-predicates">Using predicates</h3>
+<h2 id="using-predicates">Using predicates</h2>
 <p>By specifying a predicate, you can choose which messages to handle.</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; s.Length&gt;<span class="hljs-number">5</span>, s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s);
 </code></pre>
@@ -243,12 +243,12 @@ Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLin
 </div>
 <p><strong>Example</strong>: If the actor receives the message &quot;1234&quot;, then &quot;2: 1234&quot; will be written to the console.</p>
 <p><strong>Example</strong>: If the actor receives the message &quot;12&quot;, then &quot;3: 12&quot; will be written on the console.</p>
-<h4 id="predicates-position">Predicates position</h4>
+<h3 id="predicates-position">Predicates position</h3>
 <p>Predicates can be specified <em>before</em> the action handler or <em>after</em>. These two declarations are equivalent:</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; s.Length&gt;<span class="hljs-number">5</span>, s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s));
 Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s, s =&gt; s.Length&gt;<span class="hljs-number">5</span>));
 </code></pre>
-<h3 id="receive-using-funcs">Receive using Funcs</h3>
+<h2 id="receive-using-funcs">Receive using Funcs</h2>
 <p>More complex handlers can be specified using the <code>Receive&lt;T&gt;(Func&lt;T,bool&gt; handler)</code> overload. These are invoked if the message is of the specified type. If the func returns <code>true</code>, the message is considered handled, and no more handlers will be invoked.</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; 
   { 
@@ -263,7 +263,7 @@ Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLin
 </code></pre>
 <p><strong>Example</strong>: The actor receives the message &quot;123&quot;. Since it&#39;s a <code>string</code>, the first handler is invoked. The length is only 3 so the if clause will be false and <code>false</code> is returned. Since <code>false</code> was returned the next matching handler will be invoked, and &quot;2: 123&quot; will be written to the console.
 <strong>Example</strong>: The actor receives the message &quot;123456&quot;. Since it&#39;s a <code>string</code>, the first handler is invoked. The length is greater than 5 so the if body will be called, and &quot;1: 123456&quot; will be written to the console. The handler returns <code>true</code> and therefore no more handlers will be invoked.</p>
-<h3 id="unmatched-messages">Unmatched messages</h3>
+<h2 id="unmatched-messages">Unmatched messages</h2>
 <p>If the actor receives a message for which no handler matches, the unhandled message is published to the <code>EventStream</code> wrapped in an <code>UnhandledMessage</code>. To change this behavior override <code>Unhandled(object message)</code></p>
 <pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Unhandled</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
 </span>{
@@ -271,7 +271,7 @@ Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLin
 }
 </code></pre>
 <p>Another option is to add a handler last that matches all messages, using <code>ReceiveAny()</code>.</p>
-<h3 id="receiveany">ReceiveAny</h3>
+<h2 id="receiveany">ReceiveAny</h2>
 <p>To catch messages of any type the <code>ReceiveAny(Action&lt;object&gt; handler)</code> overload can be specified.</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s);
 ReceiveAny(o =&gt; Console.WriteLine(<span class="hljs-string">"Received object: "</span> + o);
@@ -286,7 +286,7 @@ Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLin
 Receive&lt;<span class="hljs-keyword">object</span>&gt;(<span class="hljs-number">0</span> =&gt; Console.WriteLine(<span class="hljs-string">"Received object: "</span> + o);
 </code></pre>
 </div>
-<h3 id="non-generic-overloads">Non generic overloads</h3>
+<h2 id="non-generic-overloads">Non generic overloads</h2>
 <p><code>Receive</code> has non generic overloads:</p>
 <pre><code class="hljs lang-csharp">Receive(<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">string</span>), obj =&gt; Console.WriteLine(obj.ToString()) );
 </code></pre>
@@ -306,7 +306,7 @@ Receive(<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">stri
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
   });
 </code></pre>
-<h3 id="become">Become</h3>
+<h2 id="become">Become</h2>
 <p>You can switch the handler at runtime using <code>Become()</code> which replaces the current handler with a new one.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MoodActor</span> : <span class="hljs-title">ReceiveActor</span>
 {
@@ -347,7 +347,7 @@ moodActor.Tell(<span class="hljs-string">"Mood?"</span>, Self);  <span class="hl
   Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Sender.Tell(<span class="hljs-string">"Leave me alone. I'm Grumpy!"</span>));
 }));
 </code></pre>
-<h3 id="become-unbecome">Become/Unbecome</h3>
+<h2 id="become-unbecome">Become/Unbecome</h2>
 <p>In the examples above the receive handlers are replaced when <code>Become()</code> is called. The other way of using <code>Become</code> pushes the current handler on a stack making it possible to switch back to it using <code>Unbecome</code>:</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; s == <span class="hljs-string">"Grumpy"</span>, _ =&gt; Become(Grumpy, discardOld: <span class="hljs-keyword">false</span>));
 ...
@@ -435,7 +435,7 @@ Do not add other statements than Receive in Become-declarations. The result of d
   Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Sender.Tell(<span class="hljs-string">"Leave me alone. I'm Grumpy!"</span>));
 }
 </code></pre>
-<h3 id="actorbase-vs-receiveactor">ActorBase vs ReceiveActor</h3>
+<h2 id="actorbase-vs-receiveactor">ActorBase vs ReceiveActor</h2>
 <p>TODO</p>
 
 
