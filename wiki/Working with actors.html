@@ -205,7 +205,7 @@
 								<h1 id="working-with-actors">Working with actors</h1>
 <p>The Actor Model provides a higher level of abstraction for writing concurrent and distributed systems. It alleviates the developer from having to deal with explicit locking and thread management, making it easier to write correct concurrent and parallel systems. Actors were defined in the 1973 paper by Carl Hewitt but have been popularized by the Erlang language, and used for example at Ericsson with great success to build highly concurrent and reliable telecom systems.</p>
 <h2 id="creating-actors">Creating Actors</h2>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 Since Akka.NET enforces parental supervision every actor is supervised and (potentially) the supervisor of its children, it is advisable that you familiarize yourself with <a href="Actor Systems">Actor Systems</a> and <a href="Supervision">Supervision and Monitoring</a> and it may also help to read <a href="Addressing">Actor References, Paths and Addresses</a>.</p>
 </div>
@@ -358,7 +358,7 @@ import akka.actor.Identify;
 <pre><code class="hljs lang-csharp">Context().ActorSelection(<span class="hljs-string">"akka.tcp://app@otherhost:1234/user/serviceB"</span>);
 </code></pre>
 <p>An example demonstrating remote actor look-up is given in Remoting Sample.</p>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 actorFor is deprecated in favor of actorSelection because actor references acquired with actorFor behave differently for local and remote actors. In the case of a local actor reference, the named actor needs to exist before the lookup, or else the acquired reference will be an EmptyLocalActorRef. This will be true even if an actor with that exact path is created after acquiring the actor reference. For remote actor references acquired with actorFor the behaviour is different and sending messages to such a reference will under the hood look up the actor by path on the remote system for every message send.</p>
 </div>
@@ -388,7 +388,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 <p>tell means “fire-and-forget”, e.g. send a message asynchronously and return immediately.
 ask sends a message asynchronously and returns a Future representing a possible reply.
 Message ordering is guaranteed on a per-sender basis.</p>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 There are performance implications of using ask since something needs to keep track of when it times out, there needs to be something that bridges a Promise into an ActorRef and it also needs to be reachable through remoting. So always prefer tell for performance, and only ask if you must.</p>
 </div>
@@ -497,7 +497,7 @@ import akka.<span class="hljs-keyword">event</span>.LoggingAdapter;
   <span class="hljs-comment">// clean up resources here ...</span>
 }
 </code></pre>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 Since stopping an actor is asynchronous, you cannot immediately reuse the name of the child you just stopped; this will result in an InvalidActorNameException. Instead, watch the terminating actor and create its replacement in response to the Terminated message which will eventually arrive.</p>
 </div>

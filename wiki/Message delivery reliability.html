@@ -308,7 +308,7 @@ illustrated in the following:</p>
       4) If <code>M5</code> is delivered it must be delivered before <code>M6</code>
       5) <code>A2</code> can see messages from <code>A1</code> interleaved with messages from <code>A3</code>
       6) Since there is no guaranteed delivery, any of the messages may be dropped, i.e. not arrive at <code>A2</code></p>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 It is important to note that Akka’s guarantee applies to the order in which
 messages are enqueued into the recipient’s mailbox. If the mailbox
@@ -325,7 +325,7 @@ order.</p>
 <code>M1</code> at actor <code>C</code> (though any of them might be lost). This ordering can be
 violated due to different message delivery latencies when <code>A</code>, <code>B</code> and
 <code>C</code> reside on different network hosts, see more below.</p>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 Actor creation is treated as a message sent from the parent to the child,
 with the same semantics as discussed above. Sending a message to an actor in

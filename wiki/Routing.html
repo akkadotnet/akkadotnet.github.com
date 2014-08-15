@@ -224,7 +224,7 @@ system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker4"</span>);
 <h1 id="routers">Routers</h1>
 <p>Messages can be sent via a router to efficiently route them to destination actors, known as its routees. A Router can be used inside or outside of an actor, and you can manage the routees yourselves or use a self contained router actor with configuration capabilities.</p>
 <p>Different routing strategies can be used, according to your application&#39;s needs. Akka comes with several useful routing strategies right out of the box. But, as you will see in this chapter, it is also possible to create your own.</p>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note:</strong><br/>
 In general, any message sent to a router will be sent onwards to its routees, but there is one exception.<br/>
 The special <code>Broadcast</code> Messages will send to all of a router&#39;s routees</p>

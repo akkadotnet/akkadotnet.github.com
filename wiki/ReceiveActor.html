@@ -238,7 +238,7 @@ Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; s.Length&gt;<spa
 Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"3: "</span> + s));                     <span class="hljs-comment">//3</span>
 </code></pre>
 <p><strong>Example</strong>: The actor receives the message &quot;123456&quot;. Since the length of is 6, the predicate specified for the first handler will return true, and the first handler will be invoked resulting in &quot;1: 123456&quot; being written to the console.</p>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/> that even though the predicate for the second handler matches, and that the third handler matches all messages of type <code>string</code> only the first handler is invoked.</p>
 </div>
 <p><strong>Example</strong>: If the actor receives the message &quot;1234&quot;, then &quot;2: 1234&quot; will be written to the console.</p>
@@ -280,7 +280,7 @@ ReceiveAny(o =&gt; Console.WriteLine(<span class="hljs-string">"Received object:
 <pre><code class="hljs lang-csharp">ReceiveAny(o =&gt; Console.WriteLine(<span class="hljs-string">"Received object: "</span> + o);
 Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s);  <span class="hljs-comment">//This will cause an exception</span>
 </code></pre>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/> that <code>Receive&lt;object&gt;(Action&lt;object&gt; handler)</code> behaves the same as <code>ReceiveAny()</code> as it catches all messages. These two are equivalent:</p>
 <pre><code class="hljs lang-csharp">ReceiveAny(o =&gt; Console.WriteLine(<span class="hljs-string">"Received object: "</span> + o);
 Receive&lt;<span class="hljs-keyword">object</span>&gt;(<span class="hljs-number">0</span> =&gt; Console.WriteLine(<span class="hljs-string">"Received object: "</span> + o);
@@ -367,7 +367,7 @@ moodActor.Tell(<span class="hljs-string">"Happy"</span>, Self);            <span
 moodActor.Tell(<span class="hljs-string">"Snap out of it!"</span>, Self);  <span class="hljs-comment">// Result: reverts back to neutral using Unbecome</span>
 moodActor.Tell(<span class="hljs-string">"Mood?"</span>, Self);            <span class="hljs-comment">// Result: "I'm neutral"</span>
 </code></pre>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/> In this case care must be taken to ensure that the number of <code>Unbecome()</code> matches the number of <code>Become(..., discardOld: false)</code> ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).</p>
 </div>
 <p>You can reuse Receive-specifications:</p>

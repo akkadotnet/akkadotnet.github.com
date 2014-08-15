@@ -274,7 +274,7 @@ ExecutionContext ex = system.Dispatchers.Lookup(<span class="hljs-string">"my-di
   system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyUntypedActor)).WithDispatcher(<span class="hljs-string">"my-dispatcher"</span>),
     <span class="hljs-string">"myactor3"</span>);
 </code></pre>
-<div class="alert alert-success">
+<div class="alert alert-default">
 <p><strong>Note</strong><br/>
 The dispatcher you specify in <code>WithDispatcher</code> and the dispatcher property in the deployment configuration is in fact a path into your configuration. So in this example it&#39;s a top-level section, but you could for instance put it as a sub-section, where you&#39;d use periods to denote sub-sections, like this: &quot;foo.bar.my-dispatcher&quot;</p>
 </div>
