@@ -13,8 +13,8 @@ pre {
   padding: 15px;
   border-radius: 0;
   border: 0 none;
-  border-top: 2px solid #ccd;
-  border-bottom: 2px solid #ccd;
+  border-top: 2px solid #eee;
+  border-bottom: 2px solid #eee;
 }
 
 
@@ -130,7 +130,7 @@ toc ul {
 div .toc-container {
   background-color: #f5f5f5;
   padding:15px;
-  border-radius: 10px;
+  border-radius: 0px;
 }
 
 
