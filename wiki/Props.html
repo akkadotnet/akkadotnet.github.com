@@ -249,7 +249,7 @@ ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof
   <span class="hljs-string">"myactor"</span>);
 </code></pre>
 <p>Using the ActorSystem will create top-level actors, supervised by the actor system’s provided guardian actor, while using an actor’s context will create a child actor.</p>
-<pre><code class="hljs lang-csharp">class A : ReceiveActor 
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> A : ReceiveActor 
 {
   ActorRef child =
       Context.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myChild"</span>);
