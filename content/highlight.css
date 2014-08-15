@@ -46,6 +46,10 @@ Akka.NET style. by akkadotnet.github.com
   color: #d1d1d1;
 }
 
+.hljs-tag .hljs-title {
+  color: #7ec8ff;
+}
+
 .hljs-link_url {
   font-size: 80%;
 }
@@ -74,7 +78,6 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-attribute,
 .hljs-symbol,
 .hljs-symbol .hljs-string,
-.hljs-tag .hljs-title,
 .hljs-value,
 .alias .hljs-keyword:first-child,
 .css .hljs-tag,
@@ -99,7 +102,7 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-string {
   color: #d4b43c;
   background-color: #313d40;
-  padding-2px;
+  padding: 2px;
 }
 
 .hljs-comment {
