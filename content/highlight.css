@@ -36,7 +36,7 @@ Akka.NET style. by akkadotnet.github.com
 .alias .hljs-keyword,
 .hljs-literal,
 .hljs-hexcolor {
-  color: #FFFae0;
+  color: #fff0a0;
 }
 
 .hljs-tag .hljs-value,
@@ -50,6 +50,16 @@ Akka.NET style. by akkadotnet.github.com
 .hljs-tag .hljs-title {
   color: #7ec8ff;
 }
+
+.hljs-cdata {
+  color: #fff0a0;
+}
+
+.hljs-pi {
+  color: #808080;
+}
+
+
 
 .hljs-link_url {
   font-size: 80%;
