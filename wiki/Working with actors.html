@@ -526,7 +526,7 @@ import akka.pattern.AskTimeoutException;
   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> final String SHUTDOWN = <span class="hljs-string">"shutdown"</span>;
 
   ActorRef worker = getContext().watch(getContext().actorOf(
-      Props.create(Cruncher.<span class="hljs-keyword">class</span>), <span class="hljs-string">"worker"</span>));
+      Props.create(Cruncher.class), <span class="hljs-string">"worker"</span>));
 
   <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span>(Object message) {
     <span class="hljs-keyword">if</span> (message.equals(<span class="hljs-string">"job"</span>)) {
@@ -631,7 +631,7 @@ Please note that the actor will revert to its original behavior when restarted b
 
   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">main</span>(String... args) {
     ActorSystem system = ActorSystem.create(<span class="hljs-string">"MySystem"</span>);
-    ActorRef swap = system.actorOf(Props.create(Swapper.<span class="hljs-keyword">class</span>));
+    ActorRef swap = system.actorOf(Props.create(Swapper.class));
     swap.tell(SWAP, ActorRef.noSender()); <span class="hljs-comment">// logs Hi</span>
     swap.tell(SWAP, ActorRef.noSender()); <span class="hljs-comment">// logs Ho</span>
     swap.tell(SWAP, ActorRef.noSender()); <span class="hljs-comment">// logs Hi</span>
