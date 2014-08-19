@@ -212,23 +212,29 @@
 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobSynchronizer</span>
 {
-     <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ActorRef _notifyAllDone;
+     <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ActorRef _notifyStatus ;
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _jobCount;
 
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(ActorRef notifyAllDone)</span>
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(ActorRef notifyStatus)</span>
      </span>{
           SetReceiveTimeout(TimeSpan.FromSeconds(<span class="hljs-number">5</span>));
-          _notifyAllDone = notifyAllDone;
+          _notifyStatus = notifyStatus ;
           Receive&lt;SubTaskStarted&gt;(_ =&gt; 
           {
              _jobCount ++;
+             CheckAllDone();
           });
           Receive&lt;SubTaskEnded&gt;(_ =&gt;
           {
              _jobCount --;
+             CheckAllDone();
           });
           Receive&lt;ReceiveTimeout&gt;(_ =&gt;
           {
+              <span class="hljs-comment">//kill timeout</span>
+              SetReceiveTimeout(<span class="hljs-keyword">null</span>);
+              <span class="hljs-comment">//</span>
+              _notifyStatus.Tell(<span class="hljs-keyword">new</span> TasksFailed());
           });
      }
 
@@ -236,7 +242,7 @@
      </span>{
          <span class="hljs-keyword">if</span>(_jobCount == <span class="hljs-number">0</span>)
          {
-             notifyAllDone.Tell(<span class="hljs-keyword">new</span> AllDone());
+             _notifyStatus.Tell(<span class="hljs-keyword">new</span> TasksDone());
          }
      }
 }
