@@ -202,20 +202,43 @@
 							<div id="main_content">
 
 								<h1 id="synchronizing-workflows">Synchronizing workflows</h1>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobStarted</span> 
-{
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobStarted</span> <span class="hljs-params">()</span> </span>{}
-}
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobEnded</span>
-{
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobEnded</span><span class="hljs-params">()</span> </span>{}
-}
+<pre><code class="hljs lang-csharp">
+<span class="hljs-comment">//add whatever contextual information necessary for</span>
+<span class="hljs-comment">//jobs in these classes</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SubTaskStarted</span> {}
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SubTaskEnded</span> {}
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TasksDone</span> {} 
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TasksFailed</span> {} 
 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobSynchronizer</span>
 {
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ActorRef _notifyAllDone;
+     <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _jobCount;
 
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(ActorRef notifyAllDone)</span>
+     </span>{
+          SetReceiveTimeout(TimeSpan.FromSeconds(<span class="hljs-number">5</span>));
+          _notifyAllDone = notifyAllDone;
+          Receive&lt;SubTaskStarted&gt;(_ =&gt; 
+          {
+             _jobCount ++;
+          });
+          Receive&lt;SubTaskEnded&gt;(_ =&gt;
+          {
+             _jobCount --;
+          });
+          Receive&lt;ReceiveTimeout&gt;(_ =&gt;
+          {
+          });
+     }
+
+     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CheckAllDone</span><span class="hljs-params">()</span>
+     </span>{
+         <span class="hljs-keyword">if</span>(_jobCount == <span class="hljs-number">0</span>)
+         {
+             notifyAllDone.Tell(<span class="hljs-keyword">new</span> AllDone());
+         }
+     }
 }
 </code></pre>
 
