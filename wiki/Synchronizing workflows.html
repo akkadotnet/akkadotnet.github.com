@@ -210,7 +210,7 @@
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TasksDone</span> {} 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">TasksFailed</span> {} 
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobSynchronizer</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobSynchronizer</span> : <span class="hljs-title">ReceiveActor</span>
 {
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ActorRef _notifyStatus ;
 
@@ -247,6 +247,29 @@
          {
              _notifyStatus.Tell(<span class="hljs-keyword">new</span> TasksDone());
          }
+     }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span> : <span class="hljs-title">ReceiveActor</span>
+{
+     <span class="hljs-keyword">private</span> ActorRef _synchronizer;
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Worker</span><span class="hljs-params">(ActorRef synchronizer)</span>
+     </span>{
+           _synchronizer = synchronizer;
+           Receive&lt;DoSomeWork&gt;(work =&gt; 
+           {
+                _synchronizer.Tell(<span class="hljs-keyword">new</span> SubTaskStarted());
+                <span class="hljs-comment">//do work</span>
+                <span class="hljs-keyword">var</span> directories = GetDirectories(work.Directory);
+                <span class="hljs-keyword">foreach</span>(<span class="hljs-keyword">var</span> dir <span class="hljs-keyword">in</span> directories)
+                {
+                    <span class="hljs-comment">//recurse</span>
+                    self.Tell(<span class="hljs-keyword">new</span> Work(dir));                     
+                }
+
+                <span class="hljs-comment">//do more work, e.g. process files</span>
+                _synchronizer.Tell(<span class="hljs-keyword">new</span> SubTaskEnded());
+           })
      }
 }
 </code></pre>
