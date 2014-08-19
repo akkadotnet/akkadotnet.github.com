@@ -258,16 +258,20 @@
            _synchronizer = synchronizer;
            Receive&lt;DoSomeWork&gt;(work =&gt; 
            {
+                <span class="hljs-comment">//notify the synchronizer that we are starting to do some work</span>
                 _synchronizer.Tell(<span class="hljs-keyword">new</span> SubTaskStarted());
                 <span class="hljs-comment">//do work</span>
                 <span class="hljs-keyword">var</span> directories = GetDirectories(work.Directory);
                 <span class="hljs-keyword">foreach</span>(<span class="hljs-keyword">var</span> dir <span class="hljs-keyword">in</span> directories)
                 {
-                    <span class="hljs-comment">//recurse</span>
+                    <span class="hljs-comment">//tell self do do more work</span>
+                    <span class="hljs-comment">//(or fork out to Children to do more work)</span>
                     self.Tell(<span class="hljs-keyword">new</span> Work(dir));                     
                 }
 
                 <span class="hljs-comment">//do more work, e.g. process files</span>
+
+                <span class="hljs-comment">//once we are done with this task, notify the synchronizer</span>
                 _synchronizer.Tell(<span class="hljs-keyword">new</span> SubTaskEnded());
            })
      }
