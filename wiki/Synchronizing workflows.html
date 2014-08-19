@@ -213,7 +213,10 @@
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobSynchronizer</span>
 {
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ActorRef _notifyStatus ;
-     <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _jobCount;
+
+     <span class="hljs-comment">//TODO: don't use a counter incase of lost messages.</span>
+     <span class="hljs-comment">//use a dict of actorref , bool for completion status per actor instead</span>
+     <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _jobCount; 
 
      <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(ActorRef notifyStatus)</span>
      </span>{
