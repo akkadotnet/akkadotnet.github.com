@@ -204,6 +204,10 @@
 								<p>In this chapter we attempt to establish a common terminology to define a solid ground for communicating about concurrent, distributed systems which Akka targets. Please note that, for many of these terms, there is no single agreed definition. We simply seek to give working definitions that will be used in the scope of the Akka documentation.</p>
 <h2 id="concurrency-vs-parallelism">Concurrency vs. Parallelism</h2>
 <p>Concurrency and parallelism are related concepts, but there are small differences. Concurrency means that two or more tasks are making progress even though they might not be executing simultaneously. This can for example be realized with time slicing where parts of tasks are executed sequentially and mixed with parts of other tasks. Parallelism on the other hand arise when the execution can be truly simultaneous.</p>
+<h6 id="concurrency">Concurrency</h6>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/concurrency.png" alt="Concurrency"></p>
+<h6 id="parallelism">Parallelism</h6>
+<p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/parallelism.png" alt="Concurrency"></p>
 <h2 id="asynchronous-vs-synchronous">Asynchronous vs. Synchronous</h2>
 <p>A method call is considered synchronous if the caller cannot make progress until the method returns a value or throws an exception. On the other hand, an asynchronous call allows the caller to progress after a finite number of steps, and the completion of the method may be signalled via some additional mechanism (it might be a registered callback, a Future, or a message).</p>
 <p>A synchronous API may use blocking to implement synchrony, but this is not a necessity. A very CPU intensive task might give a similar behavior as blocking. In general, it is preferred to use asynchronous APIs, as they guarantee that the system is able to progress. Actors are asynchronous by nature: an actor can progress after a message send without waiting for the actual delivery to happen.</p>
