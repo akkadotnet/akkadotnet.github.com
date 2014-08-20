@@ -15,6 +15,23 @@ pre {
     border: 1px solid #ececec;
     border-left-width: 10px;
 }
+/* Alerts */
+.alert.alert-success {
+  border-left-width: 10px;
+}
+.alert.alert-info {
+  border-left-width: 10px;
+}
+.alert.alert-warning {
+  border-left-width: 10px;
+}
+.alert.alert-danger {
+  border-left-width: 10px;
+}
+.alert.alert-default {
+  border-left-width: 10px;
+}
+
 
 
 /*--------------------------------------------------------------------------
