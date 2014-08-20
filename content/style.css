@@ -9,12 +9,11 @@ pre {
     border-radius: 0;
 }
 
-.hljs{
-  padding: 15px;
-  border-radius: 0;
-  border: 0 none;
-  border-top: 2px solid #ececec;
-  border-bottom: 2px solid #ececec;
+.hljs {
+    padding: 15px;
+    border-radius: 0;
+    border: 1px solid #ececec;
+    border-left-width: 10px;
 }
 
 
