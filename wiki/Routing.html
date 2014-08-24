@@ -247,9 +247,10 @@ The special <code>Broadcast</code> Messages will send to all of a router&#39;s r
      .ActorOf(<span class="hljs-keyword">new</span> FromConfig().Props(Props.Create&lt;Worker&gt;()), <span class="hljs-string">"router1"</span>);
 </code></pre>
 <p>RoundRobinPool defined in code:</p>
-<pre><code><span class="hljs-keyword">var</span> router2 = context
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> router2 = context
      .ActorOf(<span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>).Props(Props.Create&lt;Worker&gt;()), <span class="hljs-string">"router2"</span>);
-</code></pre><p>RoundRobinGroup defined in configuration:</p>
+</code></pre>
+<p>RoundRobinGroup defined in configuration:</p>
 <pre><code class="hljs lang-hocon">akka.actor.deployment {
   <span class="hljs-regexp">/parent/</span>router3 {
     router = <span class="hljs-keyword">round</span>-robin-<span class="hljs-keyword">group</span>
