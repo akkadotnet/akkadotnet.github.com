@@ -235,6 +235,30 @@ The special <code>Broadcast</code> Messages will send to all of a router&#39;s r
 <h3 id="roundrobin">RoundRobin</h3>
 <p>A Router that uses round-robin to select a connection. For concurrent calls, round robin is just a best effort. </p>
 <p><img class="img-responsive" src="https://raw.githubusercontent.com/wiki/akkadotnet/akka.net/images/RoundRobinRouter.png" alt="Round Robin Router"></p>
+<p>RoundRobinPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /parent/router1 {
+    <span class="hljs-variable">router =</span> round-robin-pool
+    <span class="hljs-variable">nr-of-instances =</span> <span class="hljs-number">5</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> router1 = context.ActorOf(<span class="hljs-keyword">new</span> FromConfig().Props(Props.Create&lt;Worker&gt;()), <span class="hljs-string">"router1"</span>);
+</code></pre>
+<p>RoundRobinPool defined in code:</p>
+<pre><code><span class="hljs-reserved">var</span> router2 = context.ActorOf(<span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>).Props(Props.Create&lt;Worker&gt;()), <span class="hljs-string">"router2"</span>);
+
+RoundRobinGroup defined <span class="hljs-keyword">in</span> <span class="hljs-attribute">configuration</span>:
+
+`<span class="javascript"></span>``<span class="javascript">hocon
+akka.actor.deployment {
+  <span class="hljs-regexp">/parent/</span>router3 {
+    router = round-robin-group
+    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+  }
+}</span>
+</code></pre><pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> router3 = context.ActorOf(<span class="hljs-keyword">new</span> FromConfig().Props(), <span class="hljs-string">"router3"</span>);
+</code></pre>
 <h3 id="consistenthash">ConsistentHash</h3>
 <p>A Router that uses consistent hashing to select a connection based on the sent message.</p>
 <p>There is 3 ways to define what data to use for the consistent hash key.</p>
