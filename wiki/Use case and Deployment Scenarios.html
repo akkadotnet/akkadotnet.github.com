@@ -204,7 +204,14 @@
 
 								<h1 id="deployment-scenarios">Deployment Scenarios</h1>
 <h3 id="console-application">Console Application</h3>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Foo</span>.<span class="hljs-title">Bar</span>
+<pre><code class="hljs lang-csharp">PM&gt; install-package Akka
+PM&gt; install-package Akka.Remote
+</code></pre>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka;
+<span class="hljs-keyword">using</span> Akka.Actor;
+<span class="hljs-keyword">using</span> Akka.Configuration;
+
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">Foo</span>.<span class="hljs-title">Bar</span>
 {
     <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
     {
