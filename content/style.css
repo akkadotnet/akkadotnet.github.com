@@ -37,6 +37,13 @@ section.page-title h2 {
   border-bottom-style: none;
 }
 
+.beta-banner {
+  background: #195D9C;
+  color: white;
+  padding: 4px 8px;
+  margin-bottom: 15px;
+}
+
 /*--------------------------------------------------------------------------
   Additional formatting for the homepage
 /*--------------------------------------------------------------------------*/
