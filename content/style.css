@@ -33,6 +33,9 @@ pre {
   border-left-width: 10px;
 }
 
+.page-title h2 {
+  border-bottom-style: none;
+}
 
 /*--------------------------------------------------------------------------
   Additional formatting for the homepage
