@@ -203,12 +203,26 @@
 							<div id="main_content">
 
 								<p>For more info see real Akka&#39;s documentation: <a href="http://doc.akka.io/docs/akka/2.0/scala/logging.html">http://doc.akka.io/docs/akka/2.0/scala/logging.html</a></p>
-<p>Akka .NET comes with three built in loggers.</p>
+<h2 id="how-to-log">How to Log</h2>
+<p>To log in an actor, create a logger and assign it to a private field:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> LoggingAdapter _log = Logging.GetLogger(Context);
+</code></pre>
+<p>Use the <code>Debug</code>, <code>Info</code>, <code>Warn</code> and <code>Error</code> methods to log.</p>
+<pre><code class="hljs lang-csharp">_log.Debug(<span class="hljs-string">"Some message"</span>);
+</code></pre>
+<h2 id="standard-loggers">Standard Loggers</h2>
+<p>Akka .NET comes with two built in loggers.</p>
 <ul>
-<li>StandardOutLogger</li>
-<li>BusLogging</li>
-<li>Slf4NetLogger</li>
+<li><strong>StandardOutLogger</strong></li>
+<li><strong>BusLogging</strong></li>
 </ul>
+<h2 id="contrib-loggers">Contrib Loggers</h2>
+<p>These loggers are also available as separate nuget packages</p>
+<ul>
+<li><strong>Akka.slf4net</strong> which logs using <a href="https://github.com/englishtown/slf4net">slf4net</a></li>
+<li><strong>Akka.Serilog</strong> which logs using <a href="http://serilog.net/">serilog</a></li>
+</ul>
+<p>Note that you need to modify the config as explained below.</p>
 <h2 id="configuring-custom-loggers">Configuring Custom Loggers</h2>
 <p>To configure a custom logger inside your Akka.Config, you need to use a fully qualified .NET class name like this:</p>
 <pre><code><span class="hljs-title">akka</span> {
