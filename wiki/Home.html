@@ -213,9 +213,18 @@
 </span>{
 }
 ```
-</code></pre><p>Notifications are done using backquote notation followed by <code>**warning**</code> or <code>**notification**</code></p>
+</code></pre><p>HOCON configurations are declared as:</p>
+<pre><code><span class="hljs-string">``</span><span class="hljs-string">`hocon
+akka.actor {
+   #some config
+}
+`</span><span class="hljs-string">``</span>
+</code></pre><p>Github does not have HOCON support, but on the Akka.NET site, we do have a syntax highlighter for it. </p>
+<p>Notifications are done using backquote notation followed by <code>**warning**</code> or <code>**notification**</code></p>
 <pre><code>&gt;<span class="hljs-keyword">*</span><span class="hljs-keyword">*</span>note<span class="hljs-keyword">*</span><span class="hljs-keyword">*</span> some notification
-</code></pre><ul>
+</code></pre><p>To auto link to classes, methods, or Akka constructs use back tick <code>ActorSystem</code>.
+This makes the Akka.NET site link to that page if there is one.</p>
+<ul>
 <li><a href="Documentation">Documentation</a></li>
 </ul>
 <p>Use the menu on the right to navigate to different pages.</p>
