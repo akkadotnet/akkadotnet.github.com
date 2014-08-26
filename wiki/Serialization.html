@@ -209,39 +209,34 @@
 For Akka to know which Serializer to use for what, you need edit your Configuration, in the &quot;akka.actor.serializers&quot;-section you bind names to implementations of the akka.serialization.Serializer you wish to use, like this:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
   <span class="hljs-title">actor</span> {
-    <span class="hljs-title">serializers</span> {
-      <span class="hljs-title">java</span> = <span class="hljs-string">"akka.serialization.JavaSerializer"</span>
-      proto = <span class="hljs-string">"akka.remote.serialization.ProtobufSerializer"</span>
-      myown = <span class="hljs-string">"docs.serialization.MyOwnSerializer"</span>
-    }
+     <span class="hljs-title">serializers</span> { 
+        <span class="hljs-title">json</span> = <span class="hljs-string">"Akka.Serialization.NewtonSoftJsonSerializer"</span> 
+        java = <span class="hljs-string">"Akka.Serialization.JavaSerializer"</span> <span class="hljs-comment"># not used, reserves serializer identifier </span>
+        bytes = <span class="hljs-string">"Akka.Serialization.ByteArraySerializer"</span> 
+     } 
   }
 }
 </code></pre>
 <p>After you&#39;ve bound names to different implementations of Serializer you need to wire which classes should be serialized using which Serializer, this is done in the &quot;akka.actor.serialization-bindings&quot;-section:</p>
 <pre><code class="hljs lang-hocon">akka {
   actor {
-    serializers {
-      <span class="hljs-variable">java =</span> <span class="hljs-string">"akka.serialization.JavaSerializer"</span>
-      <span class="hljs-variable">proto =</span> <span class="hljs-string">"akka.remote.serialization.ProtobufSerializer"</span>
-      <span class="hljs-variable">myown =</span> <span class="hljs-string">"docs.serialization.MyOwnSerializer"</span>
-    }
+     serializers { 
+        <span class="hljs-variable">json =</span> <span class="hljs-string">"Akka.Serialization.NewtonSoftJsonSerializer"</span> 
+        <span class="hljs-variable">java =</span> <span class="hljs-string">"Akka.Serialization.JavaSerializer"</span> <span class="hljs-comment"># not used, reserves serializer identifier </span>
+        <span class="hljs-variable">bytes =</span> <span class="hljs-string">"Akka.Serialization.ByteArraySerializer"</span> 
+        <span class="hljs-variable">myown =</span> <span class="hljs-string">"Acme.Inc.MySerializer, MyAssembly"</span>
+     } 
 
-    serialization-bindings {
-      <span class="hljs-string">"java.lang.String"</span> = java
-      <span class="hljs-string">"docs.serialization.Customer"</span> = java
-      <span class="hljs-string">"com.google.protobuf.Message"</span> = proto
-      <span class="hljs-string">"docs.serialization.MyOwnSerializable"</span> = myown
-      <span class="hljs-string">"java.lang.Boolean"</span> = myown
-    }
+    serialization-bindings { 
+      <span class="hljs-string">"System.Byte[]"</span> = bytes 
+      <span class="hljs-string">"System.Object"</span> = json 
+      <span class="hljs-string">"Acme.Inc.MyMessage, MyAssembly"</span> = myown
+    } 
   }
 }
 </code></pre>
 <p>You only need to specify the name of an interface or abstract base class of the messages. In case of ambiguity, i.e. the message implements several of the configured classes, the most specific configured class will be used, i.e. the one of which all other candidates are superclasses. If this condition cannot be met, because e.g. java.io.Serializable and MyOwnSerializable both apply and neither is a subtype of the other, a warning will be issued.</p>
-<p>Akka provides serializers for java.io.Serializable and protobuf com.google.protobuf.GeneratedMessage by default (the latter only if depending on the akka-remote module), so normally you don&#39;t need to add configuration for that; since com.google.protobuf.GeneratedMessage implements java.io.Serializable, protobuf messages will always by serialized using the protobuf protocol unless specifically overridden. In order to disable a default serializer, map its marker type to “none”:</p>
-<pre><code class="hljs lang-hocon">akka.actor.serialization-bindings {
-  <span class="hljs-string">"java.io.Serializable"</span> = <span class="hljs-literal">none</span>
-}
-</code></pre>
+<p>Akka.NET provides serializers for POCO&#39;s by default, so normally you don&#39;t need to add configuration for that.</p>
 <p>Verification
 If you want to verify that your messages are serializable you can enable the following config option:</p>
 <pre><code class="hljs lang-hocon">akka {
@@ -267,60 +262,58 @@ We only recommend using the config option turned on when you&#39;re running test
 </div>
 <h3 id="programmatic">Programmatic</h3>
 <p>If you want to programmatically serialize/deserialize using Akka Serialization, here&#39;s some examples:</p>
-<pre><code class="hljs lang-csharp">import akka.actor.*;
-import akka.serialization.*;
-ActorSystem system = ActorSystem.create(<span class="hljs-string">"example"</span>);
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Actor;
+<span class="hljs-keyword">using</span> Akka.Serialization;
+ActorSystem system = ActorSystem.Create(<span class="hljs-string">"example"</span>);
 
 <span class="hljs-comment">// Get the Serialization Extension</span>
-Serialization serialization = SerializationExtension.<span class="hljs-keyword">get</span>(system);
+Serialization serialization = system.Serialization;
 
 <span class="hljs-comment">// Have something to serialize</span>
-String original = <span class="hljs-string">"woohoo"</span>;
+<span class="hljs-keyword">string</span> original = <span class="hljs-string">"woohoo"</span>;
 
 <span class="hljs-comment">// Find the Serializer for it</span>
-Serializer serializer = serialization.findSerializerFor(original);
+Serializer serializer = serialization.FindSerializerFor(original);
 
 <span class="hljs-comment">// Turn it into bytes</span>
-<span class="hljs-keyword">byte</span>[] bytes = serializer.toBinary(original);
+<span class="hljs-keyword">byte</span>[] bytes = serializer.ToBinary(original);
 
 <span class="hljs-comment">// Turn it back into an object,</span>
 <span class="hljs-comment">// the nulls are for the class manifest and for the classloader</span>
-String back = (String) serializer.fromBinary(bytes);
+<span class="hljs-keyword">string</span> back = (<span class="hljs-keyword">string</span>) serializer.FromBinary(bytes);
 
 <span class="hljs-comment">// Voilá!</span>
-assertEquals(original, back);
+Assert.AreEqual(original, back);
 </code></pre>
-<p>For more information, have a look at the ScalaDoc for akka.serialization._</p>
 <h3 id="customization">Customization</h3>
 <p>So, lets say that you want to create your own Serializer, you saw the docs.serialization.MyOwnSerializer in the config example above?</p>
 <h3 id="creating-new-serializers">Creating new Serializers</h3>
-<p>First you need to create a class definition of your Serializer, which is done by extending akka.serialization.JSerializer, like this:</p>
-<pre><code class="hljs lang-csharp">import akka.actor.*;
-import akka.serialization.*;
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyOwnSerializer</span> <span class="hljs-title">extends</span> <span class="hljs-title">JSerializer</span> {
-
-  <span class="hljs-comment">// This is whether "fromBinary" requires a "clazz" or not</span>
-  @<span class="hljs-function">Override <span class="hljs-keyword">public</span> boolean <span class="hljs-title">includeManifest</span><span class="hljs-params">()</span> </span>{
+<p>First you need to create a class definition of your Serializer, which is done by extending Akka.Serialization.Serializer, like this:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Actor.*;
+<span class="hljs-keyword">using</span> Akka.Serialization;
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyOwnSerializer</span> : <span class="hljs-title">Serializer</span> 
+{
+  <span class="hljs-comment">// This is whether "FromBinary" requires a "clazz" or not</span>
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">IncludeManifest</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
   }
 
   <span class="hljs-comment">// Pick a unique identifier for your Serializer,</span>
   <span class="hljs-comment">// you've got a couple of billions to choose from,</span>
   <span class="hljs-comment">// 0 - 16 is reserved by Akka itself</span>
-  @<span class="hljs-function">Override <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">identifier</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Identifier</span><span class="hljs-params">()</span> </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-number">1234567</span>;
   }
 
-  <span class="hljs-comment">// "toBinary" serializes the given object to an Array of Bytes</span>
-  @Override <span class="hljs-keyword">public</span> <span class="hljs-keyword">byte</span>[] toBinary(Object obj) {
+  <span class="hljs-comment">// "ToBinary" serializes the given object to an Array of Bytes</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">byte</span>[] ToBinary(<span class="hljs-keyword">object</span> obj) {
     <span class="hljs-comment">// Put the code that serializes the object here</span>
     <span class="hljs-comment">// ... ...</span>
   }
 
   <span class="hljs-comment">// "fromBinary" deserializes the given array,</span>
-  <span class="hljs-comment">// using the type hint (if any, see "includeManifest" above)</span>
-  @<span class="hljs-function">Override <span class="hljs-keyword">public</span> Object <span class="hljs-title">fromBinaryJava</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes,
-                                         Class&lt;?&gt; clazz)</span> </span>{
+  <span class="hljs-comment">// using the type hint (if any, see "IncludeManifest" above)</span>
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinaryJava</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes, Type type)</span> </span>{
     <span class="hljs-comment">// Put your code that deserializes here</span>
     <span class="hljs-comment">// ... ...</span>
   }
@@ -328,7 +321,7 @@ import akka.serialization.*;
 </code></pre>
 <p>Then you only need to fill in the blanks, bind it to a name in your Configuration and then list which classes that should be serialized using it.</p>
 <h3 id="serializing-actorrefs">Serializing ActorRefs</h3>
-<p>All ActorRefs are serializable using JavaSerializer, but in case you are writing your own serializer, you might want to know how to serialize and deserialize them properly. In the general case, the local address to be used depends on the type of remote address which shall be the recipient of the serialized information. Use Serialization.serializedActorPath(actorRef) like this:</p>
+<p>All ActorRefs are serializable using default serializer, but in case you are writing your own serializer, you might want to know how to serialize and deserialize them properly. In the general case, the local address to be used depends on the type of remote address which shall be the recipient of the serialized information. Use Serialization.serializedActorPath(actorRef) like this:</p>
 <pre><code><span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.actor.*;</span>
 <span class="hljs-preprocessor"><span class="hljs-keyword">import</span> akka.serialization.*;</span>
 <span class="hljs-comment">// Serialize</span>
