@@ -226,7 +226,7 @@
 <p>Note that you need to modify the config as explained below.</p>
 <h2 id="configuring-custom-loggers">Configuring Custom Loggers</h2>
 <p>To configure a custom logger inside your Akka.Config, you need to use a fully qualified .NET class name like this:</p>
-<pre><code class="hljs lang-hocon">/<span class="hljs-regexp">/use single " for web/app</span>.config, <span class="hljs-string">""</span> <span class="hljs-keyword">for</span> escaped <span class="hljs-constant">C</span><span class="hljs-comment"># string config</span>
+<pre><code class="hljs lang-hocon">/<span class="hljs-regexp">/use single " in web/app</span>.config, <span class="hljs-string">""</span> <span class="hljs-keyword">in</span> <span class="hljs-constant">C</span><span class="hljs-comment"># string config</span>
 akka {
     loggers = [<span class="hljs-string">"NameSpace.ClassName,AssemblyName"</span>]
 }
