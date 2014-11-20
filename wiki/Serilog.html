@@ -224,7 +224,7 @@ log.Info(<span class="hljs-string">"The value is {0}"</span>, counter);
 <p>To log using Serilog syntax you need to use the <code>SerilogLogMessageFormatter</code>:</p>
 <pre><code class="hljs lang-C#">var log = Context.GetLogger(new SerilogLogMessageFormatter());
 <span class="hljs-keyword">...</span>
-log.Info(<span class="hljs-string">"The value is {0}"</span>, counter);
+log.Info(<span class="hljs-string">"The value is {Counter}"</span>, counter);
 </code></pre>
 
 
