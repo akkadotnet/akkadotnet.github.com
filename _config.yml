@@ -2,7 +2,7 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://akkadotnet.github.com
+url: http://getakka.net
 title: Akka.NET
 author: Akka.NET
 
@@ -38,8 +38,8 @@ redcarpet:
 
 #markdown: kramdown
 
-kramdown: 
-  input: GFM 
+kramdown:
+  input: GFM
   use_coderay: true
   coderay:
     coderay_line_numbers: true
