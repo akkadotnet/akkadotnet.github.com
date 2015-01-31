@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+		<title> HOCON |  Akka.NET</title>
+		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+		<meta name="description" content="" />
+		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<!-- mobile settings -->
+		<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+		<!-- Favicon -->
+		<link rel="shortcut icon" href="/assets/images/demo/favicon.ico" />
+
+		<!-- WEB FONTS -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+		<!-- CORE CSS -->
+		<link href="/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/animate.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+		<!-- FAV ICON -->
+		<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+		<!-- REVOLUTION SLIDER -->
+		<link href="/assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+		<!-- BLOG -->
+		<link href="/assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+		<!-- THEME CSS -->
+		<link href="/assets/css/essentials.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/layout.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+		
+		
+		<!-- Highlighting -->
+		<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+		<link href="/content/style.css" rel="stylesheet" type="text/css" />
+	
+		<!-- Morenizr -->
+		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
+
+		<!--[if lte IE 8]>
+			<script src="/assets/plugins/respond.js"></script>
+		<![endif]-->
+	</head>
+	
+	<!-- 
+		Available body classes: 
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body: 
+			data-background="/assets/images/boxed_background/1.jpg"
+	-->
+	<body class="smoothscroll">
+
+		<div id="wrapper">
+
+			<div id="header"><!-- class="sticky" for sticky menu -->
+
+				<!-- Top Bar -->
+				<header id="topBar">
+					<div class="container">
+
+						<div class="pull-right fsize13 margin-top10 hide_mobile">
+
+							<!-- mail , phone -->
+							<a href="mailto:akkadotnet@gmail.com">AkkaDotNet@Gmail.com</a> &bull; 
+
+							<div class="block text-right"><!-- social -->
+								<a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+								<a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+								<a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+							</div><!-- /social -->
+
+						</div>
+
+						<!-- Logo -->
+						<a class="logo" href="/">
+							<img src="/content/images/akkalogo.png"  alt="" style="padding-top:10px;padding-left: 13px;" />
+						</a>
+
+					</div><!-- /.container -->
+				</header>
+				<!-- /Top Bar -->
+
+
+				<!-- Top Nav -->
+				<header id="topNav">
+					<div class="container">
+
+						<!-- Mobile Menu Button -->
+						<button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+							<i class="fa fa-bars"></i>
+						</button>
+
+						<!-- Search -->
+						<form class="search" method="get" action="/search">
+							<input type="text" class="form-control" name="q" value="" placeholder="Search">
+							<button class="fa fa-search"></button>
+						</form>
+						<!-- /Search -->
+
+						<!-- Top Nav -->
+						<div class="navbar-collapse nav-main-collapse collapse">
+							<nav class="nav-main">
+
+								<!--
+									NOTE
+									
+									For a regular link, remove "dropdown" class from LI tag and "dropdown-toggle" class from the href.
+									Direct Link Example: 
+
+									<li>
+										<a href="#">HOME</a>
+									</li>
+								-->
+								<!-- pageurl /wiki/documentation/wiki/HOCON -->
+								<ul id="topMain" class="nav nav-pills nav-main">
+									<li class="mega-menu">
+										<a href="/">
+											HOME <span>welcome</span>
+										</a>
+									</li>
+									<li class="mega-menu active">										
+										<a href="/wiki/">DOCUMENTATION <span>Wiki</span></a>
+									</li>
+									<li class="mega-menu">
+										<a href="https://github.com/akkadotnet/akka.net">CODE <span>Github repository</span></a>
+									</li>
+									<li class="mega-menu">
+										<a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILINGLIST <span>Discuss</span></a>
+									</li>	
+									<li class="mega-menu">
+										<a href="https://github.com/akkadotnet/akka.net/issues">TRACKER <span>Issues and Features</span></a>
+									</li>	
+								</ul>
+
+							</nav>
+						</div>
+						<!-- /Top Nav -->
+
+					</div><!-- /.container -->
+				</header>
+				<!-- /Top Nav -->
+
+			</div>
+
+						<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+
+					<header>
+
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/wiki/">Wiki</a></li>
+							<li class="active"> HOCON  <a href="https://github.com/akkadotnet/akka.net/wiki/HOCON/_edit"> (edit)</a></li>							
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Wiki
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>			
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">	
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-9">
+							<div class="beta-banner"><strong>Please note!</strong> Akka.NET is currently in BETA</div>
+							<div id="main_content">
+
+								<h1 id="hocon-human-optimized-config-object-notation-">HOCON (Human-Optimized Config Object Notation)</h1>
+<p>This is an informal spec, but hopefully it&#39;s clear.</p>
+<h2 id="goals-background">Goals / Background</h2>
+<p>The primary goal is: keep the semantics (tree structure; set of
+types; encoding/escaping) from JSON, but make it more convenient
+as a human-editable config file format.</p>
+<p>The following features are desirable, to support human usage:</p>
+<ul>
+<li>less noisy / less pedantic syntax</li>
+<li>ability to refer to another part of the configuration (set a value to
+another value)</li>
+<li>import/include another configuration file into the current file</li>
+<li>a mapping to a flat properties list such as Java&#39;s system properties</li>
+<li>ability to get values from environment variables</li>
+<li>ability to write comments</li>
+</ul>
+<p>Implementation-wise, the format should have these properties:</p>
+<ul>
+<li>a JSON superset, that is, all valid JSON should be valid and
+should result in the same in-memory data that a JSON parser
+would have produced.</li>
+<li>be deterministic; the format is flexible, but it is not
+heuristic. It should be clear what&#39;s invalid and invalid files
+should generate errors.</li>
+<li>require minimal look-ahead; should be able to tokenize the file
+by looking at only the next three characters. (right now, the
+only reason to look at three is to find &quot;//&quot; comments;
+otherwise you can parse looking at two.)</li>
+</ul>
+<p>HOCON is significantly harder to specify and to parse than
+JSON. Think of it as moving the work from the person maintaining
+the config file to the computer program.</p>
+<h2 id="definitions">Definitions</h2>
+<ul>
+<li><p>a <em>key</em> is a string JSON would have to the left of <code>:</code> and a <em>value</em> is
+anything JSON would have to the right of <code>:</code>. i.e. the two
+halves of an object <em>field</em>.</p>
+</li>
+<li><p>a <em>value</em> is any &quot;value&quot; as defined in the JSON spec, plus
+unquoted strings and substitutions as defined in this spec.</p>
+</li>
+<li><p>a <em>simple value</em> is any value excluding an object or array
+value.</p>
+</li>
+<li><p>a <em>field</em> is a key, any separator such as &#39;:&#39;, and a value.</p>
+</li>
+<li><p>references to a <em>file</em> (&quot;the file being parsed&quot;) can be
+understood to mean any byte stream being parsed, not just
+literal files in a filesystem.</p>
+</li>
+</ul>
+<h2 id="syntax">Syntax</h2>
+<p>Much of this is defined with reference to JSON; you can find the
+JSON spec at <a href="http://json.org/">http://json.org/</a> of course.</p>
+<h3 id="unchanged-from-json">Unchanged from JSON</h3>
+<ul>
+<li>files must be valid UTF-8</li>
+<li>quoted strings are in the same format as JSON strings</li>
+<li>values have possible types: string, number, object, array, boolean, null</li>
+<li>allowed number formats matches JSON; as in JSON, some possible
+floating-point values are not represented, such as <code>NaN</code></li>
+</ul>
+<h3 id="comments">Comments</h3>
+<p>Anything between <code>//</code> or <code>#</code> and the next newline is considered a comment
+and ignored, unless the <code>//</code> or <code>#</code> is inside a quoted string.</p>
+<h3 id="omit-root-braces">Omit root braces</h3>
+<p>JSON documents must have an array or object at the root. Empty
+files are invalid documents, as are files containing only a
+non-array non-object value such as a string.</p>
+<p>In HOCON, if the file does not begin with a square bracket or
+curly brace, it is parsed as if it were enclosed with <code>{}</code> curly
+braces.</p>
+<p>A HOCON file is invalid if it omits the opening <code>{</code> but still has
+a closing <code>}</code>; the curly braces must be balanced.</p>
+<h3 id="key-value-separator">Key-value separator</h3>
+<p>The <code>=</code> character can be used anywhere JSON allows <code>:</code>, i.e. to
+separate keys from values.</p>
+<p>If a key is followed by <code>{</code>, the <code>:</code> or <code>=</code> may be omitted. So
+<code>&quot;foo&quot; {}</code> means <code>&quot;foo&quot; : {}</code></p>
+<h3 id="commas">Commas</h3>
+<p>Values in arrays, and fields in objects, need not have a comma
+between them as long as they have at least one ASCII newline
+(<code>\n</code>, decimal value 10) between them.</p>
+<p>The last element in an array or last field in an object may be
+followed by a single comma. This extra comma is ignored.</p>
+<ul>
+<li><code>[1,2,3,]</code> and <code>[1,2,3]</code> are the same array.</li>
+<li><code>[1\n2\n3]</code> and <code>[1,2,3]</code> are the same array.</li>
+<li><code>[1,2,3,,]</code> is invalid because it has two trailing commas.</li>
+<li><code>[,1,2,3]</code> is invalid because it has an initial comma.</li>
+<li><code>[1,,2,3]</code> is invalid because it has two commas in a row.</li>
+<li>these same comma rules apply to fields in objects.</li>
+</ul>
+<h3 id="whitespace">Whitespace</h3>
+<p>The JSON spec simply says &quot;whitespace&quot;; in HOCON whitespace is
+defined as follows:</p>
+<ul>
+<li>any Unicode space separator (Zs category), line separator (Zl
+category), or paragraph separator (Zp category), including
+nonbreaking spaces (such as 0x00A0, 0x2007, and 0x202F).
+The BOM (0xFEFF) must also be treated as whitespace.</li>
+<li>tab (<code>\t</code> 0x0009), newline (&#39;\n&#39; 0x000A), vertical tab (&#39;\v&#39;
+0x000B)<code>, form feed (</code>\f&#39; 0x000C), carriage return (&#39;\r&#39;
+0x000D), file separator (0x001C), group separator (0x001D),
+record separator (0x001E), unit separator (0x001F).</li>
+</ul>
+<p>In Java, the <code>isWhitespace()</code> method covers these characters with
+the exception of nonbreaking spaces and the BOM.</p>
+<p>While all Unicode separators should be treated as whitespace, in
+this spec &quot;newline&quot; refers only and specifically to ASCII newline
+0x000A.</p>
+<h3 id="duplicate-keys-and-object-merging">Duplicate keys and object merging</h3>
+<p>The JSON spec does not clarify how duplicate keys in the same
+object should be handled. In HOCON, duplicate keys that appear
+later override those that appear earlier, unless both values are
+objects. If both values are objects, then the objects are merged.</p>
+<p>Note: this would make HOCON a non-superset of JSON if you assume
+that JSON requires duplicate keys to have a behavior. The
+assumption here is that duplicate keys are invalid JSON.</p>
+<p>To merge objects:</p>
+<ul>
+<li>add fields present in only one of the two objects to the merged
+object.</li>
+<li>for non-object-valued fields present in both objects,
+the field found in the second object must be used.</li>
+<li>for object-valued fields present in both objects, the
+object values should be recursively merged according to
+these same rules.</li>
+</ul>
+<p>Object merge can be prevented by setting the key to another value
+first. This is because merging is always done two values at a
+time; if you set a key to an object, a non-object, then an object,
+first the non-object falls back to the object (non-object always
+wins), and then the object falls back to the non-object (no
+merging, object is the new value). So the two objects never see
+each other.</p>
+<p>These two are equivalent:</p>
+<pre><code>{
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}</span>,
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
+</span>}
+
+{
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span></span>, "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
+</span>}
+</code></pre><p>And these two are equivalent:</p>
+<pre><code>{
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}</span>,
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
+</span>}
+
+{
+    "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
+</span>}
+</code></pre><p>The intermediate setting of <code>&quot;foo&quot;</code> to <code>null</code> prevents the object merge.</p>
+<h3 id="unquoted-strings">Unquoted strings</h3>
+<p>A sequence of characters outside of a quoted string is a string
+value if:</p>
+<ul>
+<li>it does not contain &quot;forbidden characters&quot;: &#39;$&#39;, &#39;&quot;&#39;, &#39;{&#39;, &#39;}&#39;,
+&#39;[&#39;, &#39;]&#39;, &#39;:&#39;, &#39;=&#39;, &#39;,&#39;, &#39;+&#39;, &#39;#&#39;, &#39;`&#39;, &#39;^&#39;, &#39;?&#39;, &#39;!&#39;, &#39;@&#39;,
+&#39;*&#39;, &#39;&amp;&#39;, &#39;\&#39; (backslash), or whitespace.</li>
+<li>it does not contain the two-character string &quot;//&quot; (which
+starts a comment)</li>
+<li>its initial characters do not parse as <code>true</code>, <code>false</code>, <code>null</code>,
+or a number.</li>
+</ul>
+<p>Unquoted strings are used literally, they do not support any kind
+of escaping. Quoted strings may always be used as an alternative
+when you need to write a character that is not permitted in an
+unquoted string.</p>
+<p><code>truefoo</code> parses as the boolean token <code>true</code> followed by the
+unquoted string <code>foo</code>. However, <code>footrue</code> parses as the unquoted
+string <code>footrue</code>. Similarly, <code>10.0bar</code> is the number <code>10.0</code> then
+the unquoted string <code>bar</code> but <code>bar10.0</code> is the unquoted string
+<code>bar10.0</code>. (In practice, this distinction doesn&#39;t matter much
+because of value concatenation; see later section.)</p>
+<p>In general, once an unquoted string begins, it continues until a
+forbidden character or the two-character string &quot;//&quot; is
+encountered. Embedded (non-initial) booleans, nulls, and numbers
+are not recognized as such, they are part of the string.</p>
+<p>An unquoted string may not <em>begin</em> with the digits 0-9 or with a
+hyphen (<code>-</code>, 0x002D) because those are valid characters to begin a
+JSON number. The initial number character, plus any valid-in-JSON
+number characters that follow it, must be parsed as a number
+value. Again, these characters are not special <em>inside</em> an
+unquoted string; they only trigger number parsing if they appear
+initially.</p>
+<p>Note that quoted JSON strings may not contain control characters
+(control characters include some whitespace characters, such as
+newline). This rule is from the JSON spec. However, unquoted
+strings have no restriction on control characters, other than the
+ones listed as &quot;forbidden characters&quot; above.</p>
+<p>Some of the &quot;forbidden characters&quot; are forbidden because they
+already have meaning in JSON or HOCON, others are essentially
+reserved keywords to allow future extensions to this spec.</p>
+<h3 id="multi-line-strings">Multi-line strings</h3>
+<p>Multi-line strings are similar to Python or Scala, using triple
+quotes. If the three-character sequence <code>&quot;&quot;&quot;</code> appears, then all
+Unicode characters until a closing <code>&quot;&quot;&quot;</code> sequence are used
+unmodified to create a string value. Newlines and whitespace
+receive no special treatment. Unlike Scala, and unlike JSON quoted
+strings, Unicode escapes are not interpreted in triple-quoted
+strings.</p>
+<p>In Python, <code>&quot;&quot;&quot;foo&quot;&quot;&quot;&quot;</code> is a syntax error (a triple-quoted string
+followed by a dangling unbalanced quote). In Scala, it is a
+four-character string <code>foo&quot;</code>. HOCON works like Scala; any sequence
+of at least three quotes ends the multi-line string, and any
+&quot;extra&quot; quotes are part of the string.</p>
+<h3 id="value-concatenation">Value concatenation</h3>
+<p>The value of an object field or array element may consist of
+multiple values which are combined. There are three kinds of value
+concatenation:</p>
+<ul>
+<li>if all the values are simple values (neither objects nor
+arrays), they are concatenated into a string.</li>
+<li>if all the values are arrays, they are concatenated into
+one array.</li>
+<li>if all the values are objects, they are merged (as with
+duplicate keys) into one object.</li>
+</ul>
+<p>String value concatenation is allowed in field keys, in addition
+to field values and array elements. Objects and arrays do not make
+sense as field keys.</p>
+<p>Note: Akka 2.0 (and thus Play 2.0) contains an embedded
+implementation of the config lib which does not support array and
+object value concatenation; it only supports string value
+concatenation.</p>
+<h4 id="string-value-concatenation">String value concatenation</h4>
+<p>String value concatenation is the trick that makes unquoted
+strings work; it also supports substitutions (<code>${foo}</code> syntax) in
+strings.</p>
+<p>Only simple values participate in string value
+concatenation. Recall that a simple value is any value other than
+arrays and objects.</p>
+<p>As long as simple values are separated only by non-newline
+whitespace, the <em>whitespace between them is preserved</em> and the
+values, along with the whitespace, are concatenated into a string.</p>
+<p>String value concatenations never span a newline, or a character
+that is not part of a simple value.</p>
+<p>A string value concatenation may appear in any place that a string
+may appear, including object keys, object values, and array
+elements.</p>
+<p>Whenever a value would appear in JSON, a HOCON parser instead
+collects multiple values (including the whitespace between them)
+and concatenates those values into a string.</p>
+<p>Whitespace before the first and after the last simple value must
+be discarded. Only whitespace <em>between</em> simple values must be
+preserved.</p>
+<p>So for example <code>foo bar baz</code> parses as three unquoted strings,
+and the three are value-concatenated into one string. The inner
+whitespace is kept and the leading and trailing whitespace is
+trimmed. The equivalent string, written in quoted form, would be
+<code>&quot;foo bar baz&quot;</code>.</p>
+<p>Value concatenating <code>foo bar</code> (two unquoted strings with
+whitespace) and quoted string <code>&quot;foo bar&quot;</code> would result in the same
+in-memory representation, seven characters.</p>
+<p>For purposes of string value concatenation, non-string values are
+converted to strings as follows (strings shown as quoted strings):</p>
+<ul>
+<li><code>true</code> and <code>false</code> become the strings <code>&quot;true&quot;</code> and <code>&quot;false&quot;</code>.</li>
+<li><code>null</code> becomes the string <code>&quot;null&quot;</code>.</li>
+<li>quoted and unquoted strings are themselves.</li>
+<li>numbers should be kept as they were originally written in the
+file. For example, if you parse <code>1e5</code> then you might render
+it alternatively as <code>1E5</code> with capital <code>E</code>, or just <code>100000</code>.
+For purposes of value concatenation, it should be rendered
+as it was written in the file.</li>
+<li>a substitution is replaced with its value which is then
+converted to a string as above.</li>
+<li>it is invalid for arrays or objects to appear in a string value
+concatenation.</li>
+</ul>
+<p>A single value is never converted to a string. That is, it would
+be wrong to value concatenate <code>true</code> by itself; that should be
+parsed as a boolean-typed value. Only <code>true foo</code> (<code>true</code> with
+another simple value on the same line) should be parsed as a value
+concatenation and converted to a string.</p>
+<h4 id="array-and-object-concatenation">Array and object concatenation</h4>
+<p>Arrays can be concatenated with arrays, and objects with objects,
+but it is an error if they are mixed.</p>
+<p>For purposes of concatenation, &quot;array&quot; also means &quot;substitution
+that resolves to an array&quot; and &quot;object&quot; also means &quot;substitution
+that resolves to an object.&quot;</p>
+<p>Within an field value or array element, if only non-newline
+whitespace separates the end of a first array or object or
+substitution from the start of a second array or object or
+substitution, the two values are concatenated. Newlines may occur
+<em>within</em> the array or object, but not <em>between</em> them. Newlines
+<em>between</em> prevent concatenation.</p>
+<p>For objects, &quot;concatenation&quot; means &quot;merging&quot;, so the second object
+overrides the first.</p>
+<p>Arrays and objects cannot be field keys, whether concatenation is
+involved or not.</p>
+<p>Here are several ways to define <code>a</code> to the same object value:</p>
+<pre><code><span class="hljs-comment">// one object</span>
+a : { b : <span class="hljs-number">1</span>, <span class="hljs-built_in">c</span> : <span class="hljs-number">2</span> }
+<span class="hljs-comment">// two objects that are merged via concatenation rules</span>
+a : { b : <span class="hljs-number">1</span> } { <span class="hljs-built_in">c</span> : <span class="hljs-number">2</span> }
+<span class="hljs-comment">// two fields that are merged</span>
+a : { b : <span class="hljs-number">1</span> }
+a : { <span class="hljs-built_in">c</span> : <span class="hljs-number">2</span> }
+</code></pre><p>Here are several ways to define <code>a</code> to the same array value:</p>
+<pre><code>// <span class="hljs-constant">one</span> array
+<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
+// two arrays that are concatenated</span>
+<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
+// a later definition referring to an earlier</span><span class="hljs-comment">
+// (see "self-referential substitutions" below)</span>
+<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
+<span class="hljs-operator">a</span> : ${<span class="hljs-operator">a</span>} [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
+</code></pre><p>A common use of object concatenation is &quot;inheritance&quot;:</p>
+<pre><code><span class="hljs-typedef"><span class="hljs-keyword">data</span>-center-generic = <span class="hljs-container">{ <span class="hljs-title">cluster</span>-<span class="hljs-title">size</span> = 6 }</span></span>
+<span class="hljs-typedef"><span class="hljs-keyword">data</span>-center-east = $<span class="hljs-container">{<span class="hljs-title">data</span>-<span class="hljs-title">center</span>-<span class="hljs-title">generic</span>}</span> <span class="hljs-container">{ <span class="hljs-title">name</span> = "<span class="hljs-title">east</span>" }</span></span>
+</code></pre><p>A common use of array concatenation is to add to paths:</p>
+<pre><code><span class="hljs-keyword">path</span> =<span class="hljs-sqbracket"> [ /bin ]</span>
+<span class="hljs-keyword">path</span> = <span class="hljs-cbracket">${path}</span><span class="hljs-sqbracket"> [ /usr/bin ]</span>
+</code></pre><h4 id="note-arrays-without-commas-or-newlines">Note: Arrays without commas or newlines</h4>
+<p>Arrays allow you to use newlines instead of commas, but not
+whitespace instead of commas. Non-newline whitespace will produce
+concatenation rather than separate elements.</p>
+<pre><code>// this <span class="hljs-keyword">is</span> an <span class="hljs-type">array</span> <span class="hljs-keyword">with</span> one element, the <span class="hljs-type">string</span> <span class="hljs-string">"1 2 3 4"</span>
+[ <span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span> ]
+// this <span class="hljs-keyword">is</span> an <span class="hljs-type">array</span> <span class="hljs-keyword">of</span> four integers
+[ <span class="hljs-number">1</span>
+  <span class="hljs-number">2</span>
+  <span class="hljs-number">3</span>
+  <span class="hljs-number">4</span> ]
+
+// an <span class="hljs-type">array</span> <span class="hljs-keyword">of</span> one element, the <span class="hljs-type">array</span> [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
+[ [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ] ]
+// an <span class="hljs-type">array</span> <span class="hljs-keyword">of</span> two arrays
+[ [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
+  [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ] ]
+</code></pre><p>If this gets confusing, just use commas. The concatenation
+behavior is useful rather than surprising in cases like:</p>
+<pre><code>[ This is an unquoted string <span class="hljs-keyword">my</span> name is <span class="hljs-variable">${name}</span>, Hello <span class="hljs-variable">${world}</span> ]
+[ <span class="hljs-variable">${a}</span> <span class="hljs-variable">${b}</span>, <span class="hljs-variable">${x}</span> <span class="hljs-variable">${y}</span> ]
+</code></pre><p>Non-newline whitespace is never an element or field separator.</p>
+<h3 id="path-expressions">Path expressions</h3>
+<p>Path expressions are used to write out a path through the object
+graph. They appear in two places; in substitutions, like
+<code>${foo.bar}</code>, and as the keys in objects like <code>{ foo.bar : 42 }</code>.</p>
+<p>Path expressions are syntactically identical to a value
+concatenation, except that they may not contain
+substitutions. This means that you can&#39;t nest substitutions inside
+other substitutions, and you can&#39;t have substitutions in keys.</p>
+<p>When concatenating the path expression, any <code>.</code> characters outside
+quoted strings are understood as path separators, while inside
+quoted strings <code>.</code> has no special meaning. So
+<code>foo.bar.&quot;hello.world&quot;</code> would be a path with three elements,
+looking up key <code>foo</code>, key <code>bar</code>, then key <code>hello.world</code>.</p>
+<p>The main tricky point is that <code>.</code> characters in numbers do count
+as a path separator. When dealing with a number as part of a path
+expression, it&#39;s essential to retain the <em>original</em> string
+representation of the number as it appeared in the file (rather
+than converting it back to a string with a generic
+number-to-string library function).</p>
+<ul>
+<li><code>10.0foo</code> is a number then unquoted string <code>foo</code> and should
+be the two-element path with <code>10</code> and <code>0foo</code> as the elements.</li>
+<li><code>foo10.0</code> is an unquoted string with a <code>.</code> in it, so this would
+be a two-element path with <code>foo10</code> and <code>0</code> as the elements.</li>
+<li><code>foo&quot;10.0&quot;</code> is an unquoted then a quoted string which are
+concatenated, so this is a single-element path.</li>
+<li><code>1.2.3</code> is the three-element path with <code>1</code>,<code>2</code>,<code>3</code></li>
+</ul>
+<p>Unlike value concatenations, path expressions are <em>always</em>
+converted to a string, even if they are just a single value.</p>
+<p>If you have an array or element value consisting of the single
+value <code>true</code>, it&#39;s a value concatenation and retains its character
+as a boolean value.</p>
+<p>If you have a path expression (in a key or substitution) then it
+must always be converted to a string, so <code>true</code> becomes the string
+that would be quoted as <code>&quot;true&quot;</code>.</p>
+<p>If a path element is an empty string, it must always be quoted.
+That is, <code>a.&quot;&quot;.b</code> is a valid path with three elements, and the
+middle element is an empty string. But <code>a..b</code> is invalid and
+should generate an error. Following the same rule, a path that
+starts or ends with a <code>.</code> is invalid and should generate an error.</p>
+<h3 id="paths-as-keys">Paths as keys</h3>
+<p>If a key is a path expression with multiple elements, it is
+expanded to create an object for each path element other than the
+last. The last path element, combined with the value, becomes a
+field in the most-nested object.</p>
+<p>In other words:</p>
+<pre><code><span class="hljs-filename">foo.bar </span>: <span class="hljs-number">42</span>
+</code></pre><p>is equivalent to:</p>
+<pre><code><span class="hljs-tag">foo</span> <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">bar </span>:<span class="hljs-value"> <span class="hljs-number">42</span> </span></span></span>}
+</code></pre><p>and:</p>
+<pre><code><span class="hljs-filename">foo.bar.baz </span>: <span class="hljs-number">42</span>
+</code></pre><p>is equivalent to:</p>
+<pre><code><span class="hljs-title">foo</span> { <span class="hljs-title">bar</span> { <span class="hljs-title">baz</span> : <span class="hljs-number">42</span> } }
+</code></pre><p>and so on. These values are merged in the usual way; which implies
+that:</p>
+<pre><code><span class="hljs-operator">a</span>.x : <span class="hljs-number">42</span>, <span class="hljs-operator">a</span>.y : <span class="hljs-number">43</span>
+</code></pre><p>is equivalent to:</p>
+<pre><code><span class="hljs-tag">a</span> <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">x </span>:<span class="hljs-value"> <span class="hljs-number">42</span>, y : <span class="hljs-number">43</span> </span></span></span>}
+</code></pre><p>Because path expressions work like value concatenations, you can
+have whitespace in keys:</p>
+<pre><code>a b <span class="hljs-built_in">c</span> : <span class="hljs-number">42</span>
+</code></pre><p>is equivalent to:</p>
+<pre><code><span class="hljs-string">"a b c"</span> : <span class="hljs-number">42</span>
+</code></pre><p>Because path expressions are always converted to strings, even
+single values that would normally have another type become
+strings.</p>
+<ul>
+<li><code>true : 42</code> is <code>&quot;true&quot; : 42</code></li>
+<li><code>3 : 42</code> is <code>&quot;3&quot; : 42</code></li>
+<li><code>3.14 : 42</code> is <code>&quot;3&quot; : { &quot;14&quot; : 42 }</code></li>
+</ul>
+<p>As a special rule, the unquoted string <code>include</code> may not begin a
+path expression in a key, because it has a special interpretation
+(see below).</p>
+<h3 id="substitutions">Substitutions</h3>
+<p>Substitutions are a way of referring to other parts of the
+configuration tree.</p>
+<p>The syntax is <code>${pathexpression}</code> or <code>${?pathexpression}</code> where
+the <code>pathexpression</code> is a path expression as described above. This
+path expression has the same syntax that you could use for an
+object key.</p>
+<p>The <code>?</code> in <code>${?pathexpression}</code> must not have whitespace before
+it; the three characters <code>${?</code> must be exactly like that, grouped
+together.</p>
+<p>For substitutions which are not found in the configuration tree,
+implementations may try to resolve them by looking at system
+environment variables or other external sources of configuration.
+(More detail on environment variables in a later section.)</p>
+<p>Substitutions are not parsed inside quoted strings. To get a
+string containing a substitution, you must use value concatenation
+with the substitution in the unquoted portion:</p>
+<pre><code><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span> is my favorite animal
+</code></pre><p>Or you could quote the non-substitution portion:</p>
+<pre><code><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span><span class="hljs-string">" is my favorite animal"</span>
+</code></pre><p>Substitutions are resolved by looking up the path in the
+configuration. The path begins with the root configuration object,
+i.e. it is &quot;absolute&quot; rather than &quot;relative.&quot;</p>
+<p>Substitution processing is performed as the last parsing step, so
+a substitution can look forward in the configuration. If a
+configuration consists of multiple files, it may even end up
+retrieving a value from another file.</p>
+<p>If a key has been specified more than once, the substitution will
+always evaluate to its latest-assigned value (that is, it will
+evaluate to the merged object, or the last non-object value that
+was set, in the entire document being parsed including all
+included files).</p>
+<p>If a configuration sets a value to <code>null</code> then it should not be
+looked up in the external source. Unfortunately there is no way to
+&quot;undo&quot; this in a later configuration file; if you have <code>{ &quot;HOME&quot; :
+null }</code> in a root object, then <code>${HOME}</code> will never look at the
+environment variable. There is no equivalent to JavaScript&#39;s
+<code>delete</code> operation in other words.</p>
+<p>If a substitution does not match any value present in the
+configuration and is not resolved by an external source, then it
+is undefined. An undefined substitution with the <code>${foo}</code> syntax
+is invalid and should generate an error.</p>
+<p>If a substitution with the <code>${?foo}</code> syntax is undefined:</p>
+<ul>
+<li>if it is the value of an object field then the field should not
+be created. If the field would have overridden a previously-set
+value for the same field, then the previous value remains.</li>
+<li>if it is an array element then the element should not be added.</li>
+<li>if it is part of a value concatenation with another string then
+it should become an empty string; if part of a value
+concatenation with an object or array it should become an empty
+object or array.</li>
+<li><code>foo : ${?bar}</code> would avoid creating field <code>foo</code> if <code>bar</code> is
+undefined. <code>foo : ${?bar}${?baz}</code> would also avoid creating the
+field if <em>both</em> <code>bar</code> and <code>baz</code> are undefined.</li>
+</ul>
+<p>Substitutions are only allowed in field values and array
+elements (value concatenations), they are not allowed in keys or
+nested inside other substitutions (path expressions).</p>
+<p>A substitution is replaced with any value type (number, object,
+string, array, true, false, null). If the substitution is the only
+part of a value, then the type is preserved. Otherwise, it is
+value-concatenated to form a string.</p>
+<h4 id="self-referential-substitutions">Self-Referential Substitutions</h4>
+<p>The big picture:</p>
+<ul>
+<li>substitutions normally &quot;look forward&quot; and use the final value
+for their path expression</li>
+<li>when this would create a cycle, when possible the cycle must be
+broken by looking backward only (thus removing one of the
+substitutions that&#39;s a link in the cycle)</li>
+</ul>
+<p>The idea is to allow a new value for a field to be based on the
+older value:</p>
+<pre><code><span class="hljs-title">path</span> : <span class="hljs-string">"a:b:c"</span>
+path : <span class="hljs-variable">${path}</span><span class="hljs-string">":d"</span>
+</code></pre><p>A <em>self-referential field</em> is one which:</p>
+<ul>
+<li>has a substitution, or value concatenation containing a
+substitution, as its value</li>
+<li>where this field value refers to the field being defined,
+either directly or by referring to one or more other
+substitutions which eventually point back to the field being
+defined</li>
+</ul>
+<p>Examples of self-referential fields:</p>
+<ul>
+<li><code>a : ${a}</code></li>
+<li><code>a : ${a}bc</code></li>
+<li><code>path : ${path} [ /usr/bin ]</code></li>
+</ul>
+<p>Note that an object or array with a substitution inside it is
+<em>not</em> considered self-referential for this purpose. The
+self-referential rules do <em>not</em> apply to:</p>
+<ul>
+<li><code>a : { b : ${a} }</code></li>
+<li><code>a : [${a}]</code></li>
+</ul>
+<p>These cases are unbreakable cycles that generate an error. (If
+&quot;looking backward&quot; were allowed for these, something like
+<code>a={ x : 42, y : ${a.x} }</code> would look backward for a
+nonexistent <code>a</code> while resolving <code>${a.x}</code>.)</p>
+<p>A possible implementation is:</p>
+<ul>
+<li>substitutions are resolved by looking up paths in a document.
+Cycles only arise when the lookup document is an ancestor
+node of the substitution node.</li>
+<li>while resolving a potentially self-referential field (any
+substitution or value concatenation that contains a
+substitution), remove that field and all fields which override
+it from the lookup document.</li>
+</ul>
+<p>The simplest form of this implementation will report a circular
+reference as missing; in <code>a : ${a}</code> you would remove <code>a : ${a}</code>
+while resolving <code>${a}</code>, leaving an empty document to look up
+<code>${a}</code> in. You can give a more helpful error message if, rather
+than simply removing the field, you leave a marker value
+describing the cycle. Then generate an error if you return to that
+marker value during resolution.</p>
+<p>Cycles should be treated the same as a missing value when
+resolving an optional substitution (i.e. the <code>${?foo}</code> syntax).
+If <code>${?foo}</code> refers to itself then it&#39;s as if it referred to a
+nonexistent value.</p>
+<h4 id="the-field-separator">The <code>+=</code> field separator</h4>
+<p>Fields may have <code>+=</code> as a separator rather than <code>:</code> or <code>=</code>. A
+field with <code>+=</code> transforms into a self-referential array
+concatenation, like this:</p>
+<pre><code><span class="hljs-attribute">a +</span>=<span class="hljs-string"> b</span>
+</code></pre><p>becomes:</p>
+<pre><code>a = <span class="hljs-variable">${</span><span class="hljs-string">?a</span>} [b]
+</code></pre><p><code>+=</code> appends an element to a previous array. If the previous value
+was not an array, an error will result just as it would in the
+long form <code>a = ${?a} [b]</code>. Note that the previous value is
+optional (<code>${?a}</code> not <code>${a}</code>), which allows <code>a += b</code> to be the
+first mention of <code>a</code> in the file (it is not necessary to have <code>a =
+[]</code> first).</p>
+<p>Note: Akka 2.0 (and thus Play 2.0) contains an embedded
+implementation of the config lib which does not support <code>+=</code>.</p>
+<h4 id="examples-of-self-referential-substitutions">Examples of Self-Referential Substitutions</h4>
+<p>In isolation (with no merges involved), a self-referential field
+is an error because the substitution cannot be resolved:</p>
+<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span> // an <span class="hljs-built_in">error</span>
+</code></pre><p>When <code>foo : ${foo}</code> is merged with an earlier value for <code>foo</code>,
+however, the substitution can be resolved to that earlier value.
+When merging two objects, the self-reference in the overriding
+field refers to the overridden field. Say you have:</p>
+<pre><code><span class="hljs-tag">foo</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> <span class="hljs-number">1</span> </span></span></span>}
+</code></pre><p>and then:</p>
+<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
+</code></pre><p>Then <code>${foo}</code> resolves to <code>{ a : 1 }</code>, the value of the overridden
+field.</p>
+<p>It would be an error if these two fields were reversed, so first:</p>
+<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
+</code></pre><p>and then second:</p>
+<pre><code><span class="hljs-tag">foo</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> <span class="hljs-number">1</span> </span></span></span>}
+</code></pre><p>Here the <code>${foo}</code> self-reference comes before <code>foo</code> has a value,
+so it is undefined, exactly as if the substitution referenced a
+path not found in the document.</p>
+<p>Because <code>foo : ${foo}</code> conceptually looks to previous definitions
+of <code>foo</code> for a value, the error should be treated as &quot;undefined&quot;
+rather than &quot;intractable cycle&quot;; as a result, the optional
+substitution syntax <code>${?foo}</code> does not create a cycle:</p>
+<pre><code>foo : ${?foo} <span class="hljs-comment">// this field just disappears silently</span>
+</code></pre><p>If a substitution is hidden by a value that could not be merged
+with it (by a non-object value) then it is never evaluated and no
+error will be reported. So for example:</p>
+<pre><code>foo <span class="hljs-symbol">:</span> <span class="hljs-variable">${</span>does-<span class="hljs-keyword">not</span>-exist}
+foo <span class="hljs-symbol">:</span> <span class="hljs-number">42</span>
+</code></pre><p>In this case, no matter what <code>${does-not-exist}</code> resolves to, we
+know <code>foo</code> is <code>42</code>, so <code>${does-not-exist}</code> is never evaluated and
+there is no error. The same is true for cycles like <code>foo : ${foo},
+foo : 42</code>, where the initial self-reference must simply be ignored.</p>
+<p>A self-reference resolves to the value &quot;below&quot; even if it&#39;s part
+of a path expression. So for example:</p>
+<pre><code><span class="hljs-title">foo</span> : { <span class="hljs-title">a</span> : { <span class="hljs-title">c</span> : <span class="hljs-number">1</span> } }
+foo : <span class="hljs-variable">${foo.a}</span>
+foo : { <span class="hljs-title">a</span> : <span class="hljs-number">2</span> }
+</code></pre><p>Here, <code>${foo.a}</code> would refer to <code>{ c : 1 }</code> rather than <code>2</code> and so
+the final merge would be <code>{ a : 2, c : 1 }</code>.</p>
+<p>Recall that for a field to be self-referential, it must have a
+substitution or value concatenation as its value. If a field has
+an object or array value, for example, then it is not
+self-referential even if there is a reference to the field itself
+inside that object or array.</p>
+<p>Implementations must be careful to allow objects to refer to paths
+within themselves, for example:</p>
+<pre><code><span class="hljs-tag">bar</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">foo </span>:<span class="hljs-value"> <span class="hljs-number">42</span>,
+        baz : ${bar.foo</span></span></span>}
+      }
+</code></pre><p>Here, if an implementation resolved all substitutions in <code>bar</code> as
+part of resolving the substitution <code>${bar.foo}</code>, there would be a
+cycle. The implementation must only resolve the <code>foo</code> field in
+<code>bar</code>, rather than recursing the entire <code>bar</code> object.</p>
+<p>Because there is no inherent cycle here, the substitution must
+&quot;look forward&quot; (including looking at the field currently being
+defined). To make this clearer, <code>bar.baz</code> would be <code>43</code> in:</p>
+<pre><code><span class="hljs-tag">bar</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">foo </span>:<span class="hljs-value"> <span class="hljs-number">42</span>,
+        baz : ${bar.foo</span></span></span>}
+      }
+<span class="hljs-tag">bar</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">foo </span>:<span class="hljs-value"> <span class="hljs-number">43</span> </span></span></span>}
+</code></pre><p>Mutually-referring objects should also work, and are not
+self-referential (so they look forward):</p>
+<pre><code><span class="hljs-comment">// bar.a should end up as 4</span>
+bar : { a : ${foo.d}, b : <span class="hljs-number">1</span> }
+bar.b = <span class="hljs-number">3</span>
+<span class="hljs-comment">// foo.c should end up as 3</span>
+foo : { <span class="hljs-built_in">c</span> : ${bar.b}, d : <span class="hljs-number">2</span> }
+foo.d = <span class="hljs-number">4</span>
+</code></pre><p>Another tricky case is an optional self-reference in a value
+concatenation, in this example <code>a</code> should be <code>foo</code> not <code>foofoo</code>
+because the self reference has to &quot;look back&quot; to an undefined <code>a</code>:</p>
+<pre><code>a = <span class="hljs-variable">${</span><span class="hljs-string">?a</span>}foo
+</code></pre><p>In general, in resolving a substitution the implementation must:</p>
+<ul>
+<li>lazy-evaluate the substitution target so there&#39;s no
+&quot;circularity by side effect&quot;</li>
+<li>&quot;look forward&quot; and use the final value for the path
+specified in the substitution</li>
+<li>if a cycle results, the implementation must &quot;look back&quot;
+in the merge stack to try to resolve the cycle</li>
+<li>if neither lazy evaluation nor &quot;looking only backward&quot; resolves
+a cycle, the substitution is missing which is an error unless
+the <code>${?foo}</code> optional-substitution syntax was used.</li>
+</ul>
+<p>For example, this is not possible to resolve:</p>
+<pre><code><span class="hljs-title">bar</span> : <span class="hljs-variable">${foo}</span>
+foo : <span class="hljs-variable">${bar}</span>
+</code></pre><p>A multi-step loop like this should also be detected as invalid:</p>
+<pre><code><span class="hljs-title">a</span> : <span class="hljs-variable">${b}</span>
+b : <span class="hljs-variable">${c}</span>
+c : <span class="hljs-variable">${a}</span>
+</code></pre><p>Some cases have undefined behavior because the behavior depends on
+the order in which two fields are resolved, and that order is not
+defined. For example:</p>
+<pre><code><span class="hljs-operator">a</span> : <span class="hljs-number">1</span>
+b : <span class="hljs-number">2</span>
+<span class="hljs-operator">a</span> : ${b}
+b : ${<span class="hljs-operator">a</span>}
+</code></pre><p>Implementations are allowed to handle this by setting both <code>a</code> and
+<code>b</code> to 1, setting both to <code>2</code>, or generating an error. Ideally
+this situation would generate an error, but that may be difficult
+to implement. Making the behavior defined would require always
+working with ordered maps rather than unordered maps, which is too
+constraining. Implementations only have to track order for
+duplicate instances of the same field (i.e. merges).</p>
+<h3 id="includes">Includes</h3>
+<h4 id="include-syntax">Include syntax</h4>
+<p>An <em>include statement</em> consists of the unquoted string <code>include</code>
+followed by whitespace and then either:</p>
+<ul>
+<li>a single <em>quoted</em> string which is interpreted heuristically as
+URL, filename, or classpath resource.</li>
+<li><code>url()</code>, <code>file()</code>, or <code>classpath()</code> surrounding a quoted string
+which is then interpreted as a URL, file, or classpath. The
+string must be quoted, unlike in CSS.</li>
+</ul>
+<p>An include statement can appear in place of an object field.</p>
+<p>If the unquoted string <code>include</code> appears at the start of a path
+expression where an object key would be expected, then it is not
+interpreted as a path expression or a key.</p>
+<p>Instead, the next value must be a <em>quoted</em> string or a quoted
+string surrounded by <code>url()</code>, <code>file()</code>, or <code>classpath()</code>.
+This value is the <em>resource name</em>.</p>
+<p>Together, the unquoted <code>include</code> and the resource name substitute
+for an object field syntactically, and are separated from the
+following object fields or includes by the usual comma (and as
+usual the comma may be omitted if there&#39;s a newline).</p>
+<p>If an unquoted <code>include</code> at the start of a key is followed by
+anything other than a single quoted string or the
+<code>url(&quot;&quot;)</code>/<code>file(&quot;&quot;)/</code>classpath(&quot;&quot;)` syntax, it is invalid and an
+error should be generated.</p>
+<p>There can be any amount of whitespace, including newlines, between
+the unquoted <code>include</code> and the resource name. For <code>url()</code> etc.,
+whitespace is allowed inside the parentheses <code>()</code> (outside of the
+quotes).</p>
+<p>Value concatenation is NOT performed on the &quot;argument&quot; to
+<code>include</code> or <code>url()</code> etc. The argument must be a single quoted
+string. No substitutions are allowed, and the argument may not be
+an unquoted string or any other kind of value.</p>
+<p>Unquoted <code>include</code> has no special meaning if it is not the start
+of a key&#39;s path expression.</p>
+<p>It may appear later in the key:</p>
+<pre><code><span class="hljs-preprocessor"># this is valid</span>
+{ foo include : <span class="hljs-number">42</span> }
+<span class="hljs-preprocessor"># equivalent to</span>
+{ <span class="hljs-string">"foo include"</span> : <span class="hljs-number">42</span> }
+</code></pre><p>It may appear as an object or array value:</p>
+<pre><code>{ foo : <span class="hljs-keyword">include</span> } # <span class="hljs-keyword">value</span> is the <span class="hljs-built_in">string</span> <span class="hljs-string">"include"</span>
+[ <span class="hljs-keyword">include</span> ]       # <span class="hljs-built_in">array</span> <span class="hljs-keyword">of</span> one <span class="hljs-built_in">string</span> <span class="hljs-string">"include"</span>
+</code></pre><p>You can quote <code>&quot;include&quot;</code> if you want a key that starts with the
+word <code>&quot;include&quot;</code>, only unquoted <code>include</code> is special:</p>
+<pre><code>{ "<span class="hljs-attribute">include</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}
+</code></pre><p>Note: Akka 2.0 (and thus Play 2.0) contains an embedded
+implementation of the config lib which does not support the
+<code>url()</code>/<code>file()</code>/<code>classpath()</code> syntax. Only the heuristic <code>include
+&quot;foo&quot;</code> syntax is supported in that version.</p>
+<h4 id="include-semantics-merging">Include semantics: merging</h4>
+<p>An <em>including file</em> contains the include statement and an
+<em>included file</em> is the one specified in the include statement.
+(They need not be regular files on a filesystem, but assume they
+are for the moment.)</p>
+<p>An included file must contain an object, not an array. This is
+significant because both JSON and HOCON allow arrays as root
+values in a document.</p>
+<p>If an included file contains an array as the root value, it is
+invalid and an error should be generated.</p>
+<p>The included file should be parsed, producing a root object. The
+keys from the root object are conceptually substituted for the
+include statement in the including file.</p>
+<ul>
+<li>If a key in the included object occurred prior to the include
+statement in the including object, the included key&#39;s value
+overrides or merges with the earlier value, exactly as with
+duplicate keys found in a single file.</li>
+<li>If the including file repeats a key from an earlier-included
+object, the including file&#39;s value would override or merge
+with the one from the included file.</li>
+</ul>
+<h4 id="include-semantics-substitution">Include semantics: substitution</h4>
+<p>Substitutions in included files are looked up at two different
+paths; first, relative to the root of the included file; second,
+relative to the root of the including configuration.</p>
+<p>Recall that substitution happens as a final step, <em>after</em>
+parsing. It should be done for the entire app&#39;s configuration, not
+for single files in isolation.</p>
+<p>Therefore, if an included file contains substitutions, they must
+be &quot;fixed up&quot; to be relative to the app&#39;s configuration root.</p>
+<p>Say for example that the root configuration is this:</p>
+<pre><code><span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> { include <span class="hljs-string">"foo.conf"</span> </span></span></span>} }
+</code></pre><p>And &quot;foo.conf&quot; might look like this:</p>
+<pre><code><span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">x </span>:<span class="hljs-value"> <span class="hljs-number">10</span>, y : ${x</span></span></span>} }
+</code></pre><p>If you parsed &quot;foo.conf&quot; in isolation, then <code>${x}</code> would evaluate
+to 10, the value at the path <code>x</code>. If you include &quot;foo.conf&quot; in an
+object at key <code>a</code>, however, then it must be fixed up to be
+<code>${a.x}</code> rather than <code>${x}</code>.</p>
+<p>Say that the root configuration redefines <code>a.x</code>, like this:</p>
+<pre><code><span class="hljs-rules">{
+    <span class="hljs-rule"><span class="hljs-attribute">a </span>:<span class="hljs-value"> { include <span class="hljs-string">"foo.conf"</span> </span></span></span>}
+    <span class="hljs-tag">a</span> : <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">x </span>:<span class="hljs-value"> <span class="hljs-number">42</span> </span></span></span>}
+}
+</code></pre><p>Then the <code>${x}</code> in &quot;foo.conf&quot;, which has been fixed up to
+<code>${a.x}</code>, would evaluate to <code>42</code> rather than to <code>10</code>.
+Substitution happens <em>after</em> parsing the whole configuration.</p>
+<p>However, there are plenty of cases where the included file might
+intend to refer to the application&#39;s root config. For example, to
+get a value from a system property or from the reference
+configuration. So it&#39;s not enough to only look up the &quot;fixed up&quot;
+path, it&#39;s necessary to look up the original path as well.</p>
+<h4 id="include-semantics-missing-files">Include semantics: missing files</h4>
+<p>If an included file does not exist, the include statement should
+be silently ignored (as if the included file contained only an
+empty object).</p>
+<p>Other IO errors probably should not be ignored but implementations
+will have to make a judgment which IO errors reflect an ignorable
+missing file, and which reflect a problem to bring to the user&#39;s
+attention.</p>
+<h4 id="include-semantics-file-formats-and-extensions">Include semantics: file formats and extensions</h4>
+<p>Implementations may support including files in other formats.
+Those formats must be compatible with the JSON type system, or
+have some documented mapping to JSON&#39;s type system.</p>
+<p>If an implementation supports multiple formats, then the extension
+may be omitted from the name of included files:</p>
+<pre><code><span class="hljs-keyword">include</span> <span class="hljs-string">"foo"</span>
+</code></pre><p>If a filename has no extension, the implementation should treat it
+as a basename and try loading the file with all known extensions.</p>
+<p>If the file exists with multiple extensions, they should <em>all</em> be
+loaded and merged together.</p>
+<p>Files in HOCON format should be parsed last. Files in JSON format
+should be parsed next-to-last.</p>
+<p>In short, <code>include &quot;foo&quot;</code> might be equivalent to:</p>
+<pre><code><span class="hljs-keyword">include</span> <span class="hljs-string">"foo.properties"</span>
+<span class="hljs-keyword">include</span> <span class="hljs-string">"foo.json"</span>
+<span class="hljs-keyword">include</span> <span class="hljs-string">"foo.conf"</span>
+</code></pre><p>This same extension-based behavior is applied to classpath
+resources and files.</p>
+<p>For URLs, a basename without extension is not allowed; only the
+exact URL specified is used. The format will be chosen based on
+the Content-Type if available, or by the extension of the path
+component of the URL if no Content-Type is set. This is true even
+for file: URLs.</p>
+<h4 id="include-semantics-locating-resources">Include semantics: locating resources</h4>
+<p>A quoted string not surrounded by <code>url()</code>, <code>file()</code>, <code>classpath()</code>
+must be interpreted heuristically. The heuristic is to treat the
+quoted string as:</p>
+<ul>
+<li>a URL, if the quoted string is a valid URL with a known
+protocol.</li>
+<li>otherwise, a file or other resource &quot;adjacent to&quot; the one being
+parsed and of the same type as the one being parsed. The meaning
+of &quot;adjacent to&quot;, and the string itself, has to be specified
+separately for each kind of resource.</li>
+<li>On the Java Virtual Machine, if an include statement does not
+identify a valid URL or an existing resource &quot;adjacent to&quot; the
+including resource, implementations may wish to fall back to a
+classpath resource.  This allows configurations found in files
+or URLs to access classpath resources in a natural way.</li>
+</ul>
+<p>Implementations may vary in the kinds of resources they can
+include.</p>
+<p>For resources located on the Java classpath:</p>
+<ul>
+<li>included resources are looked up by calling <code>getResource()</code> on
+the same class loader used to look up the including resource.</li>
+<li>if the included resource name is absolute (starts with &#39;/&#39;)
+then it should be passed to <code>getResource()</code> with the &#39;/&#39;
+removed.</li>
+<li>if the included resource name does not start with &#39;/&#39; then it
+should have the &quot;directory&quot; of the including resource
+prepended to it, before passing it to <code>getResource()</code>.  If the
+including resource is not absolute (no &#39;/&#39;) and has no &quot;parent
+directory&quot; (is just a single path element), then the included
+relative resource name should be left as-is.</li>
+<li>it would be wrong to use <code>getResource()</code> to get a URL and then
+locate the included name relative to that URL, because a class
+loader is not required to have a one-to-one mapping between
+paths in its URLs and the paths it handles in <code>getResource()</code>.
+In other words, the &quot;adjacent to&quot; computation should be done
+on the resource name not on the resource&#39;s URL.</li>
+</ul>
+<p>For plain files on the filesystem:</p>
+<ul>
+<li>if the included file is an absolute path then it should be kept
+absolute and loaded as such.</li>
+<li>if the included file is a relative path, then it should be
+located relative to the directory containing the including
+file.  The current working directory of the process parsing a
+file must NOT be used when interpreting included paths.</li>
+<li>if the file is not found, fall back to the classpath resource.
+The classpath resource should not have any package name added
+in front, it should be relative to the &quot;root&quot;; which means any
+leading &quot;/&quot; should just be removed (absolute is the same as
+relative since it&#39;s root-relative). The &quot;/&quot; is handled for
+consistency with including resources from inside other
+classpath resources, where the resource name may not be
+root-relative and &quot;/&quot; allows specifying relative to root.</li>
+</ul>
+<p>URLs:</p>
+<ul>
+<li>for files loaded from a URL, &quot;adjacent to&quot; should be based
+on parsing the URL&#39;s path component, replacing the last
+path element with the included name.</li>
+<li>file: URLs should behave in exactly the same way as a plain
+filename</li>
+</ul>
+<p>Implementations need not support files, Java resources, or URLs;
+and they need not support particular URL protocols. However, if
+they do support them they should do so as described above.</p>
+<h3 id="conversion-of-numerically-indexed-objects-to-arrays">Conversion of numerically-indexed objects to arrays</h3>
+<p>In some file formats and contexts, such as Java properties files,
+there isn&#39;t a good way to define arrays. To provide some mechanism
+for this, implementations should support converting objects with
+numeric keys into arrays. For example, this object:</p>
+<pre><code>{ "<span class="hljs-attribute">0</span>" : <span class="hljs-value"><span class="hljs-string">"a"</span></span>, "<span class="hljs-attribute">1</span>" : <span class="hljs-value"><span class="hljs-string">"b"</span> </span>}
+</code></pre><p>could be treated as:</p>
+<pre><code>[ <span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span> ]
+</code></pre><p>This allows creating an array in a properties file like this:</p>
+<pre><code>foo.<span class="hljs-number">0</span> = <span class="hljs-string">"a"</span>
+foo.<span class="hljs-number">1</span> = <span class="hljs-string">"b"</span>
+</code></pre><p>The details:</p>
+<ul>
+<li>the conversion should be done lazily when required to avoid
+a type error, NOT eagerly anytime an object has numeric
+keys.</li>
+<li>the conversion should be done when you would do an automatic
+type conversion (see the section &quot;Automatic type conversions&quot;
+below).</li>
+<li>the conversion should be done in a concatenation when a list
+is expected and an object with numeric keys is found.</li>
+<li>the conversion should not occur if the object is empty or
+has no keys which parse as positive integers.</li>
+<li>the conversion should ignore any keys which do not parse
+as positive integers.</li>
+<li>the conversion should sort by the integer value of each
+key and then build the array; if the integer keys are &quot;0&quot; and
+&quot;2&quot; then the resulting array would have indices &quot;0&quot; and &quot;1&quot;,
+i.e. missing indices in the object are eliminated.</li>
+</ul>
+<h2 id="mime-type">MIME Type</h2>
+<p>Use &quot;application/hocon&quot; for Content-Type.</p>
+<h2 id="api-recommendations">API Recommendations</h2>
+<p>Implementations of HOCON ideally follow certain conventions and
+work in a predictable way.</p>
+<h3 id="automatic-type-conversions">Automatic type conversions</h3>
+<p>If an application asks for a value with a particular type, the
+implementation should attempt to convert types as follows:</p>
+<ul>
+<li>number to string: convert the number into a string
+representation that would be a valid number in JSON.</li>
+<li>boolean to string: should become the string &quot;true&quot; or &quot;false&quot;</li>
+<li>string to number: parse the number with the JSON rules</li>
+<li>string to boolean: the strings &quot;true&quot;, &quot;yes&quot;, &quot;on&quot;, &quot;false&quot;,
+&quot;no&quot;, &quot;off&quot; should be converted to boolean values. It&#39;s
+tempting to support a long list of other ways to write a
+boolean, but for interoperability and keeping it simple, it&#39;s
+recommended to stick to these six.</li>
+<li>string to null: the string <code>&quot;null&quot;</code> should be converted to a
+null value if the application specifically asks for a null
+value, though there&#39;s probably no reason an app would do this.</li>
+<li>numerically-indexed object to array: see the section
+&quot;Conversion of numerically-indexed objects to arrays&quot; above</li>
+</ul>
+<p>The following type conversions should NOT be performed:</p>
+<ul>
+<li>null to anything: If the application asks for a specific type
+and finds null instead, that should usually result in an error.</li>
+<li>object to anything</li>
+<li>array to anything</li>
+<li>anything to object</li>
+<li>anything to array, with the exception of numerically-indexed
+object to array</li>
+</ul>
+<p>Converting objects and arrays to and from strings is tempting, but
+in practical situations raises thorny issues of quoting and
+double-escaping.</p>
+<h3 id="units-format">Units format</h3>
+<p>Implementations may wish to support interpreting a value with some
+family of units, such as time units or memory size units: <code>10ms</code>
+or <code>512K</code>. HOCON does not have an extensible type system and there
+is no way to add a &quot;duration&quot; type. However, for example, if an
+application asks for milliseconds, the implementation can try to
+interpret a value as a milliseconds value.</p>
+<p>If an API supports this, for each family of units it should define
+a default unit in the family. For example, the family of duration
+units might default to milliseconds (see below for details on
+durations). The implementation should then interpret values as
+follows:</p>
+<ul>
+<li>if the value is a number, it is taken to be a number in
+the default unit.</li>
+<li><p>if the value is a string, it is taken to be this sequence:</p>
+<ul>
+<li>optional whitespace</li>
+<li>a number</li>
+<li>optional whitespace</li>
+<li>an optional unit name consisting only of letters (letters
+are the Unicode <code>L*</code> categories, Java <code>isLetter()</code>)</li>
+<li>optional whitespace</li>
+</ul>
+<p>If a string value has no unit name, then it should be
+interpreted with the default unit, as if it were a number. If a
+string value has a unit name, that name of course specifies the
+value&#39;s interpretation.</p>
+</li>
+</ul>
+<h3 id="duration-format">Duration format</h3>
+<p>Implementations may wish to support a <code>getMilliseconds()</code> (and
+similar for other time units).</p>
+<p>This can use the general &quot;units format&quot; described above; bare
+numbers are taken to be in milliseconds already, while strings are
+parsed as a number plus an optional unit string.</p>
+<p>The supported unit strings for duration are case sensitive and
+must be lowercase. Exactly these strings are supported:</p>
+<ul>
+<li><code>ns</code>, <code>nanosecond</code>, <code>nanoseconds</code></li>
+<li><code>us</code>, <code>microsecond</code>, <code>microseconds</code></li>
+<li><code>ms</code>, <code>millisecond</code>, <code>milliseconds</code></li>
+<li><code>s</code>, <code>second</code>, <code>seconds</code></li>
+<li><code>m</code>, <code>minute</code>, <code>minutes</code></li>
+<li><code>h</code>, <code>hour</code>, <code>hours</code></li>
+<li><code>d</code>, <code>day</code>, <code>days</code></li>
+</ul>
+<h3 id="size-in-bytes-format">Size in bytes format</h3>
+<p>Implementations may wish to support a <code>getBytes()</code> returning a
+size in bytes.</p>
+<p>This can use the general &quot;units format&quot; described above; bare
+numbers are taken to be in bytes already, while strings are
+parsed as a number plus an optional unit string.</p>
+<p>The one-letter unit strings may be uppercase (note: duration units
+are always lowercase, so this convention is specific to size
+units).</p>
+<p>There is an unfortunate nightmare with size-in-bytes units, that
+they may be in powers or two or powers of ten. The approach
+defined by standards bodies appears to differ from common usage,
+such that following the standard leads to people being confused.
+Worse, common usage varies based on whether people are talking
+about RAM or disk sizes, and various existing operating systems
+and apps do all kinds of different things.  See
+<a href="http://en.wikipedia.org/wiki/Binary_prefix#Deviation_between_powers_of_1024_and_powers_of_1000">http://en.wikipedia.org/wiki/Binary_prefix#Deviation_between_powers_of_1024_and_powers_of_1000</a>
+for examples. It appears impossible to sort this out without
+causing confusion for someone sometime.</p>
+<p>For single bytes, exactly these strings are supported:</p>
+<ul>
+<li><code>B</code>, <code>b</code>, <code>byte</code>, <code>bytes</code></li>
+</ul>
+<p>For powers of ten, exactly these strings are supported:</p>
+<ul>
+<li><code>kB</code>, <code>kilobyte</code>, <code>kilobytes</code></li>
+<li><code>MB</code>, <code>megabyte</code>, <code>megabytes</code></li>
+<li><code>GB</code>, <code>gigabyte</code>, <code>gigabytes</code></li>
+<li><code>TB</code>, <code>terabyte</code>, <code>terabytes</code></li>
+<li><code>PB</code>, <code>petabyte</code>, <code>petabytes</code></li>
+<li><code>EB</code>, <code>exabyte</code>, <code>exabytes</code></li>
+<li><code>ZB</code>, <code>zettabyte</code>, <code>zettabytes</code></li>
+<li><code>YB</code>, <code>yottabyte</code>, <code>yottabytes</code></li>
+</ul>
+<p>For powers of two, exactly these strings are supported:</p>
+<ul>
+<li><code>K</code>, <code>k</code>, <code>Ki</code>, <code>KiB</code>, <code>kibibyte</code>, <code>kibibytes</code></li>
+<li><code>M</code>, <code>m</code>, <code>Mi</code>, <code>MiB</code>, <code>mebibyte</code>, <code>mebibytes</code></li>
+<li><code>G</code>, <code>g</code>, <code>Gi</code>, <code>GiB</code>, <code>gibibyte</code>, <code>gibibytes</code></li>
+<li><code>T</code>, <code>t</code>, <code>Ti</code>, <code>TiB</code>, <code>tebibyte</code>, <code>tebibytes</code></li>
+<li><code>P</code>, <code>p</code>, <code>Pi</code>, <code>PiB</code>, <code>pebibyte</code>, <code>pebibytes</code></li>
+<li><code>E</code>, <code>e</code>, <code>Ei</code>, <code>EiB</code>, <code>exbibyte</code>, <code>exbibytes</code></li>
+<li><code>Z</code>, <code>z</code>, <code>Zi</code>, <code>ZiB</code>, <code>zebibyte</code>, <code>zebibytes</code></li>
+<li><code>Y</code>, <code>y</code>, <code>Yi</code>, <code>YiB</code>, <code>yobibyte</code>, <code>yobibytes</code></li>
+</ul>
+<p>It&#39;s very unclear which units the single-character abbreviations
+(&quot;128K&quot;) should go with; some precedents such as <code>java -Xmx 2G</code>
+and the GNU tools such as <code>ls</code> map these to powers of two, so this
+spec copies that. You can certainly find examples of mapping these
+to powers of ten, though. If you don&#39;t like ambiguity, don&#39;t use
+the single-letter abbreviations.</p>
+<h3 id="config-object-merging-and-file-merging">Config object merging and file merging</h3>
+<p>It may be useful to offer a method to merge two objects. If such a
+method is provided, it should work as if the two objects were
+duplicate values for the same key in the same file. (See the
+section earlier on duplicate key handling.)</p>
+<p>As with duplicate keys, an intermediate non-object value &quot;hides&quot;
+earlier object values. So say you merge three objects in this
+order:</p>
+<ul>
+<li><code>{ a : { x : 1 } }</code>  (first priority)</li>
+<li><code>{ a : 42 }</code> (fallback)</li>
+<li><code>{ a : { y : 2 } }</code> (another fallback)</li>
+</ul>
+<p>The result would be <code>{ a : { x : 1 } }</code>. The two objects are not
+merged because they are not &quot;adjacent&quot;; the merging is done in
+pairs, and when <code>42</code> is paired with <code>{ y : 2 }</code>, <code>42</code> simply wins
+and loses all information about what it overrode.</p>
+<p>But if you re-ordered like this:</p>
+<ul>
+<li><code>{ a : { x : 1 } }</code>  (first priority)</li>
+<li><code>{ a : { y : 2 } }</code> (fallback)</li>
+<li><code>{ a : 42 }</code> (another fallback)</li>
+</ul>
+<p>Now the result would be <code>{ a : { x : 1, y : 2 } }</code> because the two
+objects are adjacent.</p>
+<p>This rule for merging objects loaded from different files is
+<em>exactly</em> the same behavior as for merging duplicate fields in the
+same file. All merging works the same way.</p>
+<p>Needless to say, normally it&#39;s well-defined whether a config
+setting is supposed to be a number or an object. This kind of
+weird pathology where the two are mixed should not be happening.</p>
+<p>The one place where it matters, though, is that it allows you to
+&quot;clear&quot; an object and start over by setting it to null and then
+setting it back to a new object. So this behavior gives people a
+way to get rid of default fallback values they don&#39;t want.</p>
+<h3 id="java-properties-mapping">Java properties mapping</h3>
+<p>It may be useful to merge Java properties data with data loaded
+from JSON or HOCON. See the Java properties spec here:
+<a href="http://download.oracle.com/javase/7/docs/api/java/util/Properties.html#load%28java.io.Reader%29">http://download.oracle.com/javase/7/docs/api/java/util/Properties.html#load%28java.io.Reader%29</a></p>
+<p>Java properties parse as a one-level map from string keys to
+string values.</p>
+<p>To convert to HOCON, first split each key on the <code>.</code> character,
+keeping any empty strings (including leading and trailing empty
+strings). Note that this is <em>very different</em> from parsing a path
+expression.</p>
+<p>The key split on <code>.</code> is a series of path elements. So the
+properties key with just <code>.</code> is a path with two elements, both of
+them an empty string. <code>a.</code> is a path with two elements, <code>a</code> and
+empty string.  (Java&#39;s <code>String.split()</code> does NOT do what you want
+for this.)</p>
+<p>It is impossible to represent a key with a <code>.</code> in it in a
+properties file.  If a JSON/HOCON key has a <code>.</code> in it, which is
+possible if the key is quoted, then there is no way to refer to it
+as a Java property. It is not recommended to name HOCON keys with
+a <code>.</code> in them, since it would be confusing at best in any case.</p>
+<p>Once you have a path for each value, construct a tree of
+JSON-style objects with the string value of each property located
+at that value&#39;s path.</p>
+<p>Values from properties files are <em>always</em> strings, even if they
+could be parsed as some other type. Implementations should do type
+conversion if an app asks for an integer, as described in an
+earlier section.</p>
+<p>When Java loads a properties file, unfortunately it does not
+preserve the order of the file. As a result, there is an
+intractable case where a single key needs to refer to both a
+parent object and a string value. For example, say the Java
+properties file has:</p>
+<pre><code><span class="hljs-variable">a=</span>hello
+a.<span class="hljs-variable">b=</span>world
+</code></pre><p>In this case, <code>a</code> needs to be both an object and a string value.
+The <em>object</em> must always win in this case... the &quot;object wins&quot;
+rule throws out at most one value (the string) while &quot;string wins&quot;
+would throw out all values in the object. Unfortunately, when
+properties files are mapped to the JSON structure, there is no way
+to access these strings that conflict with objects.</p>
+<p>The usual rule in HOCON would be that the later assignment in the
+file wins, rather than &quot;object wins&quot;; but implementing that for
+Java properties would require implementing a custom Java
+properties parser, which is surely not worth it and wouldn&#39;t help
+with system properties anyway.</p>
+<h3 id="conventional-configuration-files-for-jvm-apps">Conventional configuration files for JVM apps</h3>
+<p>By convention, JVM apps have two parts to their configuration:</p>
+<ul>
+<li>the <em>reference</em> config is made up of all resources named
+<code>reference.conf</code> on the classpath, merged in the order they
+are returned by <code>ClassLoader.getResources()</code>; also, system
+property overrides are applied.</li>
+<li>the <em>application</em> config can be loaded from anywhere an
+application likes, but by default if the application doesn&#39;t
+provide a config it would be loaded from files
+<code>application.{conf,json,properties}</code> on the classpath and
+then system property overrides are applied.</li>
+<li>the reference config may be different for different class
+loaders, since each jar may provide a <code>reference.conf</code>
+to go with the code in that jar.</li>
+<li>a single JVM may have multiple application configs if
+it has multiple modules or contexts of some kind.</li>
+</ul>
+<p>The reference config for a given class loader should be merged and
+resolved first, and may be shared among all application configs in
+that class loader. Substitutions in the reference config are not
+affected by any application configs, because the reference config
+should be resolved by itself.</p>
+<p>The application config should then be loaded, have the reference
+config added as a fallback, and have substitutions resolved. This
+means the application config can refer to the reference config in
+its substitutions.</p>
+<h3 id="conventional-override-by-system-properties">Conventional override by system properties</h3>
+<p>For an application&#39;s config, Java system properties <em>override</em>
+settings found in the configuration file. This supports specifying
+config options on the command line.</p>
+<h3 id="substitution-fallback-to-environment-variables">Substitution fallback to environment variables</h3>
+<p>Recall that if a substitution is not present (not even set to
+<code>null</code>) within a configuration tree, implementations may search
+for it from external sources. One such source could be environment
+variables.</p>
+<p>It&#39;s recommended that HOCON keys always use lowercase, because
+environment variables generally are capitalized. This avoids
+naming collisions between environment variables and configuration
+properties. (While on Windows getenv() is generally not
+case-sensitive, the lookup will be case sensitive all the way
+until the env variable fallback lookup is reached.)</p>
+<p>An application can explicitly block looking up a substitution in
+the environment by setting a value in the configuration, with the
+same name as the environment variable. You could set <code>HOME : null</code>
+in your root object to avoid expanding <code>${HOME}</code> from the
+environment, for example.</p>
+<p>Environment variables are interpreted as follows:</p>
+<ul>
+<li>env variables set to the empty string are kept as such (set to
+empty string, rather than undefined)</li>
+<li>System.getenv throws SecurityException: treated as not present</li>
+<li>encoding is handled by Java (System.getenv already returns
+a Unicode string)</li>
+<li>environment variables always become a string value, though
+if an app asks for another type automatic type conversion
+would kick in</li>
+</ul>
+<h3 id="hyphen-separated-vs-camelcase">hyphen-separated vs. camelCase</h3>
+<p>Config keys are encouraged to be <code>hyphen-separated</code> rather than
+<code>camelCase</code>.</p>
+
+
+								<div class="sky-form boxed">
+									<header>Leave a comment</header>
+									<div style="padding:12px;">
+									<div id="disqus_thread"></div>
+					                <script type="text/javascript">
+					                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+					                    var disqus_shortname = 'akkanet'; // required: replace example with your forum shortname
+
+					                    /* * * DON'T EDIT BELOW THIS LINE * * */
+					                    (function () {
+					                        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+					                        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+					                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+					                    })();
+					                </script>
+					                <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+					                <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+						            </div>
+						        </div>
+							</div>
+
+						</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+
+
+			<!-- FOOTER -->
+			<footer id="footer">
+				<div class="container">
+
+					<div class="row">
+
+						<!-- col #1 -->
+						<div class="spaced dark col-md-3">
+							<h4>About <strong>Akka.NET</strong></h4>
+							<p class="block">
+							Akka.NET is a port of the popular <br/>
+							Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.<br/>
+							<br/>
+							This is a community driven port and <br/>
+							is not affiliated with <a href="http://typesafe.com">Typesafe</a> who <br/>
+							makes the original Java/Scala version.<br/>
+							</p>
+
+							<p class="block"><!-- social -->
+								<a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+								<a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+								<a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+							</p><!-- /social -->
+						</div>
+						<!-- /col #1 -->
+
+
+
+						<!-- col #3 -->
+						<div class="spaced col-md-6 col-sm-4">
+							<h4>Recent <strong>Tweets</strong></h4>
+							<ul class="list-unstyled fsize13" id="recent_tweets">
+							<!--	<li>
+									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Pilsum dolor lorem sit consectetur adipiscing orem sequat <small class="ago">8 mins ago</small>
+								</li>
+								<li>
+									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Remonde sequat ipsum dolor lorem sit consectetur adipiscing  <small class="ago">8 mins ago</small>
+								</li>
+								<li>
+									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Imperdiet condimentum diam dolor lorem sit consectetur adipiscing <small class="ago">8 mins ago</small>
+								</li>-->
+							</ul>
+						</div>
+						<!-- /col #3 -->
+						
+						<div class="spaced col-md-3 col-sm-4">
+							<h4>Keep <strong>Updated</strong></h4>
+
+							<h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+
+							
+							<!-- Begin MailChimp Signup Form -->
+							<div id="mc_embed_signup">
+							<form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+						
+								<input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address" >
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+								</span>
+					
+								<div id="mce-responses" class="clear">
+									<div class="response" id="mce-error-response" style="display:none"></div>
+									<div class="response" id="mce-success-response" style="display:none"></div>
+								</div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+							    <div style="position: absolute; left: -5000px;"><input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value=""></div>
+							    <div class="clear"></div>
+							</form>
+							</div>
+							
+							<!--End mc_embed_signup-->
+
+						</div>
+					</div>
+
+				</div>
+
+				<hr />
+
+				<div class="copyright">
+					<div class="container text-center fsize12">
+						<!--Epona theme by <a href="http://www.stepofweb.com" target="_blank" title="bootstrap themes &amp; templates" class="copyright">stepofweb</a> &bull; All Right Reserved &copy; Your Company LLC. &nbsp;
+						<a href="page-privacy.html" class="fsize11">Privacy Policy</a> &bull; 
+						<a href="page-terms.html" class="fsize11">Terms of Service</a>-->
+					</div>
+				</div>
+			</footer>
+			<!-- /FOOTER -->
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<!-- JAVASCRIPT FILES -->
+		<script type="text/javascript" src="/assets/plugins/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="/assets/plugins/jquery.isotope.js"></script>
+		<script type="text/javascript" src="/assets/plugins/masonry.js"></script>
+
+		<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+		<script type="text/javascript" src="/assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+		<script type="text/javascript" src="/assets/plugins/knob/js/jquery.knob.js"></script>
+		<script type="text/javascript" src="/assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+		<!-- REVOLUTION SLIDER -->
+		<script type="text/javascript" src="/assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+		<script type="text/javascript" src="/assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+		<script type="text/javascript" src="/assets/js/revolution_slider.js"></script>
+		<script type="text/javascript" src="/content/jquery-toc.js"></script>
+
+
+		<script type="text/javascript" src="/assets/js/scripts.js"></script>
+		<script type="text/javascript" src="/content/scripts.js"></script>
+		<a href="http://www.reactivemanifesto.org/"> <img style="border: 0px currentColor; left: 0px; top: 0px; position: fixed; z-index: 9000;" src="http://www.reactivemanifesto.org/images/ribbons/we-are-reactive-red-left.png"> </a>
+	</body>
+</html>
