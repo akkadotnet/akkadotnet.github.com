@@ -206,9 +206,10 @@
 <h3 id="actor-system-and-configuration">Actor system and configuration</h3>
 <p>Unlike default (C#) actor system, F#-aware systems should be created using <code>Akka.FSharp.System.create</code> function. This function differs from it&#39;s C# equivalent by providing additional F#-specific features - i.e. serializers allowing to serialize F# quotations for remote deployment process.</p>
 <p>Example:</p>
-<pre><code><span class="hljs-built_in">open</span> Akka.FSharp
-use <span class="hljs-keyword">system</span> = System.<span class="hljs-built_in">create</span> <span class="hljs-string">"my-system"</span> (Configuration.<span class="hljs-built_in">load</span>())
-</code></pre><p>F# also gives you it&#39;s own actor system Configuration module with support of following functions:</p>
+<pre><code class="hljs lang-fsharp"><span class="hljs-keyword">open</span> Akka.FSharp
+<span class="hljs-keyword">use</span> system = System.create <span class="hljs-string">"my-system"</span> (Configuration.load())
+</code></pre>
+<p>F# also gives you it&#39;s own actor system Configuration module with support of following functions:</p>
 <ul>
 <li><code>defaultConfig() : Config</code> - returns default F# Akka configuration.</li>
 <li><code>parse(hoconString : string) : Config</code> - parses a provided Akka configuration string.</li>
