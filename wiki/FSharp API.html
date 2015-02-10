@@ -310,15 +310,15 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
 <h3 id="actor-supervisor-strategies">Actor supervisor strategies</h3>
 <p>Actors have a place in their system&#39;s hierarchy trees. To manage failures done by the child actors, their parents/supervisors may decide to use specific supervisor strategies (see: <a href="http://akkadotnet.github.io/wiki/Supervision">Supervision</a>) in order to react to the specific types of errors. In F# this may be configured using functions of the <code>Strategy</code> module:</p>
 <ul>
-<li><code>Strategy.oneForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution.</li>
-<li><code>Strategy.oneForOne2 (retries : int) (timeout : TimeSpan) (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
-<li><code>Strategy.allForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution.</li>
-<li><code>Strategy.allForOne2 (retries : int) (timeout : TimeSpan) (decider : exn -&gt; Directive) : SupervisorStrategy</code> -  returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
+<li><code>Strategy.OneForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution.</li>
+<li><code>Strategy.OneForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
+<li><code>Strategy.AllForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution.</li>
+<li><code>Strategy.AllForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> -  returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
 </ul>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> aref = 
     spawnOpt system <span class="hljs-string">"my-actor"</span> (actorOf myFunc) 
-        [ SpawnOption.SupervisorStrategy (Strategy.oneForOne (<span class="hljs-keyword">fun</span> error -&gt; 
+        [ SpawnOption.SupervisorStrategy (Strategy.OneForOne (<span class="hljs-keyword">fun</span> error -&gt; 
             <span class="hljs-keyword">match</span> error <span class="hljs-keyword">with</span>
             | :? ArithmeticException -&gt; Directive.Escalate
             | _ -&gt; SupervisorStrategy.DefaultDecider error )) ]
@@ -326,9 +326,9 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
 <h3 id="publish-subscribe-support">Publish/Subscribe support</h3>
 <p>While you may use built-in set of the event stream methods (see: Event Streams), there is an option of using dedicated F# API functions:</p>
 <ul>
-<li><code>sub (channel: System.Type) (ref: ActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - subscribes an actor reference to target channel of the provided event stream. Channels are associated with specific types of a message emitted by the publishers.</li>
-<li><code>unsub (channel: System.Type) (ref: ActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - unsubscribes an actor reference from target channel of the provided event stream.</li>
-<li><code>pub (event: &#39;Event) (eventStream: Akka.Event.EventStream) : unit</code> - publishes an event on the provided event stream. Event channel is resolved from event&#39;s type.</li>
+<li><code>subscribe (channel: System.Type) (ref: ActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - subscribes an actor reference to target channel of the provided event stream. Channels are associated with specific types of a message emitted by the publishers.</li>
+<li><code>unsubscribe (channel: System.Type) (ref: ActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - unsubscribes an actor reference from target channel of the provided event stream.</li>
+<li><code>publish (event: &#39;Event) (eventStream: Akka.Event.EventStream) : unit</code> - publishes an event on the provided event stream. Event channel is resolved from event&#39;s type.</li>
 </ul>
 <p>Example: </p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Message</span> </span>= 
@@ -342,13 +342,13 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
             <span class="hljs-keyword">let</span> eventStream = mailbox.Context.System.EventStream
             <span class="hljs-keyword">match</span> msg <span class="hljs-keyword">with</span>
             | Msg (sender, content) -&gt; printfn <span class="hljs-string">"%A says %s"</span> (sender.Path) content
-            | Subscribe -&gt; sub typeof&lt;Message&gt; mailbox.Self eventStream |&gt; ignore
-            | Unsubscribe -&gt; unsub typeof&lt;Message&gt; mailbox.Self eventStream |&gt; ignore ))
+            | Subscribe -&gt; subscribe typeof&lt;Message&gt; mailbox.Self eventStream |&gt; ignore
+            | Unsubscribe -&gt; unsubscribe typeof&lt;Message&gt; mailbox.Self eventStream |&gt; ignore ))
 
 <span class="hljs-keyword">let</span> publisher = 
     spawn system <span class="hljs-string">"publisher"</span> 
         (actorOf2 (<span class="hljs-keyword">fun</span> mailbox msg -&gt; 
-            pub msg mailbox.Context.System.EventStream))
+            publish msg mailbox.Context.System.EventStream))
 
 subscriber &lt;! Subscribe
 publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello"</span>)
