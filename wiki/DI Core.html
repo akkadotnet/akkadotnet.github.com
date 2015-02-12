@@ -213,7 +213,7 @@
 <li>Create a class and implement the IDependencyResolver</li>
 </ul>
 <p>Let&#39;s walk through the process of creating one for CastleWindsor container. You need to create  a new project named Akka.DI.CastleWindsor with all the necessary references including Akka.DI.Core, Akka and CastleWindosor. Name the initial class WindsorDependencyResolver.</p>
-<pre><code><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WindsorDependencyResolver</span> : <span class="hljs-title">IDependencyResolver</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WindsorDependencyResolver</span> : <span class="hljs-title">IDependencyResolver</span>
 {
     <span class="hljs-function">Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> ActorName)</span>
     </span>{
@@ -230,19 +230,20 @@
         <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">NotImplementedException</span><span class="hljs-params">()</span></span>;
     }
 }
-</code></pre><p>Add a constructor and private fields.</p>
+</code></pre>
+<p>Add a constructor and private fields.</p>
 <pre><code>    <span class="hljs-keyword">private</span> IWindsorContainer container;
     <span class="hljs-keyword">private</span> ActorSystem system;
-
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
-    </span>{
-        <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ArgumentNullException</span><span class="hljs-params">(<span class="hljs-string">"system"</span>)</span></span>;
-        <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ArgumentNullException</span><span class="hljs-params">(<span class="hljs-string">"container"</span>)</span></span>;
-        <span class="hljs-keyword">this</span>.container = container;
-        <span class="hljs-keyword">this</span>.system = system;
-        <span class="hljs-keyword">this</span>.system.AddDependencyResolver(<span class="hljs-keyword">this</span>);
-    }
-</code></pre><p>You have defined three private fields</p>
+</code></pre><pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
+</span>{
+    <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ArgumentNullException</span><span class="hljs-params">(<span class="hljs-string">"system"</span>)</span></span>;
+    <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ArgumentNullException</span><span class="hljs-params">(<span class="hljs-string">"container"</span>)</span></span>;
+    <span class="hljs-keyword">this</span>.container = container;
+    <span class="hljs-keyword">this</span>.system = system;
+    <span class="hljs-keyword">this</span>.system.AddDependencyResolver(<span class="hljs-keyword">this</span>);
+}
+</code></pre>
+<p>You have defined three private fields</p>
 <ul>
 <li>IWindsorContainer container<ul>
 <li>Reference to the container</li>
@@ -254,56 +255,59 @@
 </li>
 </ul>
 <p>First you need to implement GetType. This is a basic implementation and is just from demonstration purposes. Essentially this is used by the Extension to get the Type of the Actor from it&#39;s type name.</p>
-<pre><code>    <span class="hljs-keyword">Type</span> GetType(<span class="hljs-built_in">string</span> actorName)
+<pre><code class="hljs lang-csharp"><span class="hljs-function">Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+</span>{
+    <span class="hljs-keyword">var</span> firstTry = Type.GetType(actorName);
+    Func&lt;Type&gt; searchForType = () =&gt;
     {
-        <span class="hljs-built_in">var</span> firstTry <span class="hljs-subst">=</span> <span class="hljs-keyword">Type</span><span class="hljs-built_in">.</span>GetType(actorName);
-        Func<span class="hljs-subst">&lt;</span><span class="hljs-keyword">Type</span><span class="hljs-subst">&gt;</span> searchForType <span class="hljs-subst">=</span> () <span class="hljs-subst">=&gt;</span>
-        {
-            <span class="hljs-keyword">return</span>
-            AppDomain<span class="hljs-built_in">.</span>
-                CurrentDomain<span class="hljs-built_in">.</span>
-                GetAssemblies()<span class="hljs-built_in">.</span>
-                SelectMany(x <span class="hljs-subst">=&gt;</span> x<span class="hljs-built_in">.</span>GetTypes())<span class="hljs-built_in">.</span>
-                <span class="hljs-keyword">Where</span>(t <span class="hljs-subst">=&gt;</span> t<span class="hljs-built_in">.</span>Name<span class="hljs-built_in">.</span><span class="hljs-keyword">Equals</span>(actorName))<span class="hljs-built_in">.</span>
-                FirstOrDefault();
-        };
-        <span class="hljs-keyword">return</span> firstTry <span class="hljs-subst">??</span> searchForType();
-    }
-</code></pre><p>Secondly you need to implement the CreateActorFactory method which will be used by the extension to create the Actor. This implementation will depend upon the API of the container.</p>
-<pre><code>    <span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
-    </span>{
-        <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(GetType(actorName));
-    }
-</code></pre><p>Lastly, you implement the Create<TActor> which is used register the Props configuration for the referenced Actor Type with the ActorSystem. This method will always be the same implementation. </p>
-<pre><code>    <span class="hljs-keyword">public</span> Props Create&lt;TActor&gt;() <span class="hljs-keyword">where</span> TActor : ActorBase
-    {
-        <span class="hljs-keyword">return</span> system.GetExtension&lt;DIExt&gt;().Props(<span class="hljs-keyword">typeof</span>(TActor).Name);
-    }
-</code></pre><p>So with that you can do something like the following code example:</p>
-<pre><code>IWindsorContainer container = <span class="hljs-keyword">new</span> WindsorContainer();
-container.Register(Component.<span class="hljs-keyword">For</span>&lt;IWorkerService&gt;().ImplementedBy&lt;WorkerService&gt;());
-container.Register(Component.<span class="hljs-keyword">For</span>&lt;TypedWorker&gt;().Named(<span class="hljs-string">"TypedWorker"</span>).LifestyleTransient());
+        <span class="hljs-keyword">return</span>
+        AppDomain.
+            CurrentDomain.
+            GetAssemblies().
+            SelectMany(x =&gt; x.GetTypes()).
+            Where(t =&gt; t.Name.Equals(actorName)).
+            FirstOrDefault();
+    };
+    <span class="hljs-keyword">return</span> firstTry ?? searchForType();
+}
+</code></pre>
+<p>Secondly you need to implement the CreateActorFactory method which will be used by the extension to create the Actor. This implementation will depend upon the API of the container.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+</span>{
+    <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(GetType(actorName));
+}
+</code></pre>
+<p>Lastly, you implement the Create<TActor> which is used register the Props configuration for the referenced Actor Type with the ActorSystem. This method will always be the same implementation. </p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> Props Create&lt;TActor&gt;() <span class="hljs-keyword">where</span> TActor : ActorBase
+{
+    <span class="hljs-keyword">return</span> system.GetExtension&lt;DIExt&gt;().Props(<span class="hljs-keyword">typeof</span>(TActor).Name);
+}
+</code></pre>
+<p>So with that you can do something like the following code example:</p>
+<pre><code class="hljs lang-csharp">IWindsorContainer container = <span class="hljs-keyword">new</span> WindsorContainer();
+container.Register(Component.For&lt;IWorkerService&gt;().ImplementedBy&lt;WorkerService&gt;());
+container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-string">"TypedWorker"</span>).LifestyleTransient());
 
 <span class="hljs-comment">//Create ActorSystem</span>
-using (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>))
-    {
-       <span class="hljs-comment">//Create the dependency resolver</span>
-       IDependencyResolver propsResolver = 
-            <span class="hljs-keyword">new</span> WindsorDependencyResolver(container,system);
+<span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>))
+{
+   <span class="hljs-comment">//Create the dependency resolver</span>
+   IDependencyResolver propsResolver = 
+        <span class="hljs-keyword">new</span> WindsorDependencyResolver(container,system);
 
         system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
         system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
 
-        <span class="hljs-keyword">var</span> hashGroup = 
-            system.ActorOf(Props.<span class="hljs-keyword">Empty</span>.WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingGroup(config)));
+    <span class="hljs-keyword">var</span> hashGroup = 
+        system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingGroup(config)));
 
-        TypedActorMessage msg = 
-           <span class="hljs-keyword">new</span> TypedActorMessage { Id = <span class="hljs-number">1</span>, 
-                                   Name = Guid.NewGuid().ToString() };
-         hashGroup.Tell(msg);
-
-    }
+    TypedActorMessage msg = 
+       <span class="hljs-keyword">new</span> TypedActorMessage { Id = <span class="hljs-number">1</span>, 
+                               Name = Guid.NewGuid().ToString() };
+     hashGroup.Tell(msg);
+}
 </code></pre>
+
 
 								<div class="sky-form boxed">
 									<header>Leave a comment</header>
