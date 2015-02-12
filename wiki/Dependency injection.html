@@ -218,10 +218,11 @@ IDependencyResolver propsResolver = <span class="hljs-keyword">new</span> XyzDep
 system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
 system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
 </code></pre>
-<p>As of Akka.NET 0.8, the following Dependency Injection plugins exist:</p>
+<p>Currenty, the following Akka.NET Dependency Injection plugins are available:</p>
 <ul>
-<li>AutoFac</li>
+<li><strong>AutoFac</strong></li>
 </ul>
+<p>In order to use this plugin, install the Nuget package with <code>Install-Package Akka.DI.AutoFac</code>, then follow the instructions:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
 <span class="hljs-keyword">var</span> builder = <span class="hljs-keyword">new</span> Autofac.ContainerBuilder();
 builder.RegisterType&lt;WorkerService&gt;().As&lt;IWorkerService&gt;();
@@ -233,8 +234,9 @@ builder.RegisterType&lt;TypedWorker&gt;();
 <span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> AutoFacDependencyResolver(container, system);
 </code></pre>
 <ul>
-<li>CastleWindsor</li>
+<li><strong>CastleWindsor</strong></li>
 </ul>
+<p>In order to use this plugin, install the Nuget package with <code>Install-Package Akka.DI.CastleWindsor</code>, then follow the instructions:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
 <span class="hljs-keyword">var</span> container = <span class="hljs-keyword">new</span> WindsorContainer();
 container.Register(Component.For&lt;IWorkerService&gt;().ImplementedBy&lt;WorkerService&gt;());
@@ -245,17 +247,18 @@ container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-st
 <span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> WindsorDependencyResolver(container, system);
 </code></pre>
 <ul>
-<li>Ninject
-```csharp
-// Create and build your container
-var container = new Ninject.StandardKernel();
-container.Bind<TypedWorker>().To(typeof(TypedWorker));
-container.Bind<IWorkerService>()To(typeof)WorkerService));</li>
+<li><strong>Ninject</strong></li>
 </ul>
-<p>// Create the ActorSystem and Dependency Resolver
-var system = ActorSystem.Create(&quot;MySystem&quot;);
-var propsResolver = new NinjectDependencyResolver(container,system);
-``` </p>
+<p>In order to use this plugin, install the Nuget package with <code>Install-Package Akka.DI.Ninject</code>, then follow the instructions:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
+<span class="hljs-keyword">var</span> container = <span class="hljs-keyword">new</span> Ninject.StandardKernel();
+container.Bind&lt;TypedWorker&gt;().To(<span class="hljs-keyword">typeof</span>(TypedWorker));
+container.Bind&lt;IWorkerService&gt;()To(<span class="hljs-keyword">typeof</span>)WorkerService));
+
+<span class="hljs-comment">// Create the ActorSystem and Dependency Resolver</span>
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> NinjectDependencyResolver(container,system);
+</code></pre>
 <p>Support for additional dependency injection frameworks may be added in the future, but you can easily implement your own by implementing an <a href="https://github.com/akkadotnet/akka.net/tree/dev/src/contrib/dependencyInjection/Akka.DI.Core">Actor Producer Extension</a>.</p>
 <p><strong>Warning</strong></p>
 <p>You might be tempted at times to use an IndirectActorProducer which always returns the same instance, e.g. by using a static field. This is not supported, as it goes against the meaning of an actor restart, which is described here: [[What Restarting Means]].</p>
