@@ -232,9 +232,10 @@
 }
 </code></pre>
 <p>Add a constructor and private fields.</p>
-<pre><code>    <span class="hljs-keyword">private</span> IWindsorContainer container;
-    <span class="hljs-keyword">private</span> ActorSystem system;
-</code></pre><pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> IWindsorContainer container;
+<span class="hljs-keyword">private</span> ActorSystem system;
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
 </span>{
     <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ArgumentNullException</span><span class="hljs-params">(<span class="hljs-string">"system"</span>)</span></span>;
     <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-function"><span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ArgumentNullException</span><span class="hljs-params">(<span class="hljs-string">"container"</span>)</span></span>;
