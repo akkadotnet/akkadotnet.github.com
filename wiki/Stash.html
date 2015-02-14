@@ -203,43 +203,57 @@
 							<div id="main_content">
 
 								<h2 id="stash">Stash</h2>
-<p>The UntypedActorWithStash class enables an actor to temporarily stash away messages that can not or should not be handled using the actor&#39;s current behavior. Upon changing the actor&#39;s message handler, i.e., right before invoking getContext().become() or getContext().unbecome(), all stashed messages can be &quot;unstashed&quot;, thereby prepending them to the actor&#39;s mailbox. This way, the stashed messages can be processed in the same order as they have been received originally. An actor that extends UntypedActorWithStash will automatically get a deque-based mailbox.</p>
-<div class="alert alert-default">
-<p><strong>Note</strong><br/>
-The abstract class UntypedActorWithStash implements the marker interface RequiresMessageQueue<DequeBasedMessageQueueSemantics> which requests the system to automatically choose a deque based mailbox implementation for the actor. If you want more control over the mailbox, see the documentation on mailboxes: Mailboxes.</p>
-</div>
-<p>Here is an example of the UntypedActorWithStash class in action:</p>
-<pre><code class="hljs lang-csharp">import akka.actor.UntypedActorWithStash;
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ActorWithProtocol</span> <span class="hljs-title">extends</span> <span class="hljs-title">UntypedActorWithStash</span> {
-  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onReceive</span><span class="hljs-params">(Object msg)</span> </span>{
-    <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"open"</span>)) {
-      unstashAll();
-      getContext().become(<span class="hljs-keyword">new</span> Procedure&lt;Object&gt;() {
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">apply</span><span class="hljs-params">(Object msg)</span> throws Exception </span>{
-          <span class="hljs-keyword">if</span> (msg.equals(<span class="hljs-string">"write"</span>)) {
-            <span class="hljs-comment">// do writing...</span>
-          } <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(msg.equals(<span class="hljs-string">"close"</span>)</span>) </span>{
-            unstashAll();
-            getContext().unbecome();
-          } <span class="hljs-keyword">else</span> {
-            stash();
-          }
-        }
-      }, <span class="hljs-keyword">false</span>); <span class="hljs-comment">// add behavior on top instead of replacing</span>
-    } <span class="hljs-keyword">else</span> {
-      stash();
-    }
-  }
+<p>An actor can temporarily stash away messages that cannot or should not be handled using the actor&#39;s current behavior. Upon changing the actor&#39;s message handler, i.e., right before invoking <code>Become</code> or <code>Unbecome</code>, all stashed messages can be &quot;unstashed&quot;, thereby prepending them to the actor&#39;s mailbox. This way, the stashed messages can be processed in the same order as they have been received originally.</p>
+<p>In Akka.NET, this functionality is provided by two interfaces:</p>
+<ul>
+<li><em>WithUnboundedStash</em> - uses a stash with unlimited storage</li>
+<li><em>WithBoundedStash</em> - uses a stash with limited storage</li>
+</ul>
+<p>When an actor implements one of these interfaces, it will automatically get a deque-based mailbox.</p>
+<p>These interfaces require you to provide a Stash property on your actor. The proerty will be automatically populated with an appropriated implementation during the actor&#39;s creation:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActorWithStash</span> : <span class="hljs-title">UntypedActor</span>, <span class="hljs-title">WithUnboundedStash</span>
+{
+    <span class="hljs-keyword">public</span> IStash Stash { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    ...
 }
 </code></pre>
-<p>Invoking <code>stash()</code> adds the current message (the message that the actor received last) to the actor&#39;s stash. It is typically invoked when handling the default case in the actor&#39;s message handler to stash messages that aren&#39;t handled by the other cases. It is illegal to stash the same message twice; to do so results in an <code>IllegalStateException</code> being thrown. The stash may also be bounded in which case invoking <code>stash()</code> may lead to a capacity violation, which results in a <code>StashOverflowException</code>. The capacity of the stash can be configured using the stash-capacity setting (an Int) of the mailbox&#39;s configuration.</p>
-<p>Invoking <code>unstashAll()</code> enqueues messages from the stash to the actor&#39;s mailbox until the capacity of the mailbox (if any) has been reached (note that messages from the stash are prepended to the mailbox). In case a bounded mailbox overflows, a MessageQueueAppendFailedException is thrown. The stash is guaranteed to be empty after calling unstashAll().</p>
-<p>The stash is backed by a <code>scala.collection.immutable.Vector</code>. As a result, even a very large number of messages may be stashed without a major impact on performance.</p>
-<p>Note that the stash is part of the ephemeral actor state, unlike the mailbox. Therefore, it should be managed like other parts of the actor&#39;s state which have the same property. The <code>UntypedActorWithStash</code> implementation of <code>PreRestart</code> will call <code>UnstashAll()</code>, which is usually the desired behavior.</p>
+<p>Here is an example of a stash in action:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ActorWithProtocol</span> : <span class="hljs-title">UntypedActor</span>, <span class="hljs-title">WithUnboundedStash</span>
+{
+    <span class="hljs-keyword">public</span> IStash Stash { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+    </span>{
+        <span class="hljs-keyword">if</span> (message.Equals(<span class="hljs-string">"open"</span>))
+        {
+            Stash.UnstashAll();
+
+            Become(m =&gt;
+            {
+                <span class="hljs-keyword">if</span> (m.Equals(<span class="hljs-string">"write"</span>))
+                {
+                    <span class="hljs-comment">// do writing</span>
+                }
+                <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(m.Equals(<span class="hljs-string">"close"</span>)</span>)
+                </span>{
+                    Unbecome();
+                }
+            }, <span class="hljs-keyword">false</span>); <span class="hljs-comment">// add behavior on top instead of replacing</span>
+        }
+        <span class="hljs-keyword">else</span>
+        {
+            Stash.Stash();
+        }
+    }
+}
+</code></pre>
+<p>Invoking <code>Stash()</code> adds the current message (the message that the actor received last) to the actor&#39;s stash. It is typically invoked when handling the default case in the actor&#39;s message handler to stash messages that aren&#39;t handled by the other cases. It is illegal to stash the same message twice; to do so results in an <code>IllegalActorStateException</code> being thrown. The stash may also be bounded in which case invoking <code>Stash()</code> may lead to a capacity violation, which results in a <code>StashOverflowException</code>. The capacity of the stash can be configured using the stash-capacity setting (an int) of the mailbox&#39;s configuration.</p>
+<p>Invoking <code>UnstashAll()</code> enqueues messages from the stash to the actor&#39;s mailbox until the capacity of the mailbox (if any) has been reached (note that messages from the stash are prepended to the mailbox). In case a bounded mailbox overflows, a MessageQueueAppendFailedException is thrown. The stash is guaranteed to be empty after calling UnstashAll().</p>
 <div class="alert alert-default">
-<p><strong>Note</strong><br/>
-If you want to enforce that your actor can only work with an unbounded stash, then you should use the UntypedActorWithUnboundedStash class instead.</p>
+<p><strong>Note</strong><br/> The stash is part of the ephemeral actor state, unlike the mailbox. Therefore, it should be managed like other parts of the actor&#39;s state which have the same property.</p>
 </div>
+<p>It is common to call <code>UnstashAll()</code> in the <code>PreRestart</code> event, so when the actor restarts, it will process any pending message.</p>
 
 
 								<div class="sky-form boxed">
