@@ -207,12 +207,12 @@
 <pre><code><span class="hljs-input"><span class="hljs-prompt">PM&gt;</span> <span class="hljs-constant">Install</span>-<span class="hljs-constant">Package</span> <span class="hljs-constant">Akka</span>.<span class="hljs-constant">Logger</span>.<span class="hljs-constant">Serilog</span></span>
 </code></pre><p>This will also install the required Serilog packages.</p>
 <p>Next, you&#39;ll need to configure the global <code>Log.Logger</code> and also specify to use the logger in the config when creating the system, for example like this:</p>
-<pre><code class="hljs lang-C#">var <span class="hljs-variable">logger =</span> new LoggerConfiguration()
-    .WriteTo.ColoredConsole()
-    .MinimumLevel.Information()
-    .CreateLogger();
-Serilog.Log.<span class="hljs-variable">Logger =</span> logger;
-var <span class="hljs-variable">system =</span> ActorSystem.Create(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=[\"</span>Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog\<span class="hljs-string">"]}"</span>);
+<pre><code class="hljs lang-C#"><span class="hljs-built_in">var</span> logger <span class="hljs-subst">=</span> <span class="hljs-literal">new</span> LoggerConfiguration()
+    <span class="hljs-built_in">.</span>WriteTo<span class="hljs-built_in">.</span>ColoredConsole()
+    <span class="hljs-built_in">.</span>MinimumLevel<span class="hljs-built_in">.</span>Information()
+    <span class="hljs-built_in">.</span>CreateLogger();
+Serilog<span class="hljs-built_in">.</span><span class="hljs-keyword">Log</span><span class="hljs-built_in">.</span>Logger <span class="hljs-subst">=</span> logger;
+<span class="hljs-built_in">var</span> system <span class="hljs-subst">=</span> ActorSystem<span class="hljs-built_in">.</span>Create(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=['Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog']}"</span>);
 </code></pre>
 <h2 id="logging">Logging</h2>
 <p>To log inside an actor, using the normal <code>string.Format()</code> syntax, get the logger and log:</p>
