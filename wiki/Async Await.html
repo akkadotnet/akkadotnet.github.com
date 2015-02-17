@@ -1,0 +1,8 @@
+<h1 id="akka-net-and-async-await">Akka.NET and Async Await</h1>
+<p>To enable Async Await support in an Akka.NET actor, you will need to configure your arctor to use the <code>task-dispatcher</code>.
+This can be accomplished like this:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> actor = Sys.ActorOf(Props.Create&lt;AsyncAwaitActor&gt;()
+           .WithDispatcher(<span class="hljs-string">"akka.actor.task-dispatcher"</span>));
+</code></pre>
+<p>When the <code>task-dispatcher</code> is active, every incoming message to the actor will first be processed through the dispatcher itself.
+The dispatcher will apply the &quot;async state&quot; that is needed for async await operations to work.</p>
