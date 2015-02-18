@@ -209,7 +209,7 @@
 <li><em>WithBoundedStash</em> - uses a stash with limited storage</li>
 </ul>
 <p>When an actor implements one of these interfaces, it will automatically get a deque-based mailbox.</p>
-<p>These interfaces require you to provide a Stash property on your actor. The proerty will be automatically populated with an appropriated implementation during the actor&#39;s creation:</p>
+<p>These interfaces require you to provide a Stash property on your actor. The property will be automatically populated with an appropriated implementation during the actor&#39;s creation:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActorWithStash</span> : <span class="hljs-title">UntypedActor</span>, <span class="hljs-title">WithUnboundedStash</span>
 {
     <span class="hljs-keyword">public</span> IStash Stash { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }

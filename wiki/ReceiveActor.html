@@ -214,7 +214,7 @@ Inside the constructor, add a call to <code>Receive&lt;T&gt;(Action&lt;T&gt; han
   }
 }
 </code></pre>
-<p>Whenever a message of typ <code>string</code> is sent to <strong>MyActor</strong> the first handler is invoked and for messages of type <code>int</code> the second handler is used.</p>
+<p>Whenever a message of type <code>string</code> is sent to <strong>MyActor</strong> the first handler is invoked and for messages of type <code>int</code> the second handler is used.</p>
 <h2 id="handler-priority">Handler priority</h2>
 <p>If more than one handler matches, the one that appears first is used, and the others are not called.</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s));      <span class="hljs-comment">//1</span>

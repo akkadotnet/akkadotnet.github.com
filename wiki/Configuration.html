@@ -313,7 +313,7 @@ The fluent configuration support is experimental and might change or be removed.
 
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MyServer"</span>, fluentConfig);
 </code></pre>
-<p>The fluent configuration support is a simple builder ontop of the HOCON configuration.
+<p>The fluent configuration support is a simple builder on top of the HOCON configuration.
 This is because Akka.NET uses HOCON internally inside most of it&#39;s modules, such as routers and remoting.</p>
 <p>Fluent configuration is based on extension methods on the <code>FluentConfig</code> class, this makes it possible to supply new config methods for different modules w/o altering the configuration API.</p>
 
