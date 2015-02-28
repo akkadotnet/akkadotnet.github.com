@@ -232,29 +232,7 @@
 <pre><code><span class="hljs-attribute">    build nuget nugetkey</span>=<span class="hljs-string">&lt;key&gt;</span>
 </code></pre><p>or to run also unit tests before publishing:</p>
 <pre><code><span class="hljs-attribute">   build all nugetkey</span>=<span class="hljs-string">&lt;key&gt;</span>
-</code></pre><h2 id="building-using-rake-albacore">Building using Rake/Albacore</h2>
-<p>Akka.Net can also use <a href="http://albacorebuild.net/">Albacore (Rake)</a> for builds. The commands are simple, but you will need to install Ruby on your system in order to execute any Rake commands.</p>
-<p>We recommend using the <a href="http://railsinstaller.org/">Rails Installer for Windows</a>.</p>
-<h3 id="running-build-tasks">Running Build Tasks</h3>
-<p>To run a basic build a Pigeon, open a command prompt to the root directory of your Pigeon repository and type the following command:</p>
-<pre><code><span class="hljs-input"><span class="hljs-prompt">C:\akka.net&gt;</span> rake</span>
-</code></pre><p>This will automatically invoke a simple MSBuild of your local copy of Pigeon.</p>
-<h3 id="version-management">Version Management</h3>
-<p>Akka.NET&#39;s Rake file includes the ability to increment the version number for new releases.</p>
-<p>Akka.NET follows the standard .NET version number convention: <code>{Major Version}.{Minor Version}.{Revision}.{Build}</code>.</p>
-<p>You can modify the build number using the following commands:</p>
-<ul>
-<li><code>rake bump_build_number</code> - bumps the <strong>build</strong> number.</li>
-<li><code>rake bump_revision_number</code> - bumps the <strong>revision</strong> number.</li>
-<li><code>rake bump_minor_version_number</code> - bumps the <strong>minor version</strong> number.</li>
-<li><code>rake bump_major_version_number</code> - bumps the <strong>major version</strong> number.</li>
-</ul>
-<h3 id="creating-nuget-distributions">Creating NuGet Distributions</h3>
-<p>To create a NuGet distribution, you can run the following command:</p>
-<pre><code><span class="hljs-input"><span class="hljs-prompt">C:\&gt;</span> rake nuget</span>
-</code></pre><p>This will create a new instance of all Akka.NET NuGet packages in the <code>/build/</code> folder, using Release configuration settings.</p>
-<p>If you need to create a Debug configuration NuGet package, then you can use the <code>nuget_debug</code> command instead.</p>
-
+</code></pre>
 
 								<div class="sky-form boxed">
 									<header>Leave a comment</header>
