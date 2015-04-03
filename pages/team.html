@@ -362,23 +362,23 @@
 			<div class="col-sm-4 col-md-3 fadeInUpBig" ng-controller="ContributorController as contributor"><!-- member -->
 				<div class="box-content thumbnail text-center" ng-controller="ContributorController as contributor">
 					<span class="item-image">
-						<img class="img-responsive" ng-src="\" alt="">
+						<img class="img-responsive" ng-src="[[person.author.avatar_url]]" alt="">
 					</span>
 					<div class="caption text-left">
 
 						<div class="clearfix margin-bottom10">
 							<div class="pull-left">
-								<h4 class="nomargin">\
-									<small class="block">\</small>
+								<h4 class="nomargin">[[contributor.data.name || "-"]]
+									<small class="block">[[person.author.login]]</small>
 								</h4>
 							</div>
 							<div class="pull-right">
-								<a href="\" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+								<a href="[[person.author.html_url]]" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
 							</div>
 
 						</div>
 
-						<p class="noborder nomargin nopadding">Commits: \</p>
+						<p class="noborder nomargin nopadding">Commits: [[person.total]]</p>
 					</div>
 				</div>
 			</div>
@@ -388,7 +388,11 @@
 	</div>
 </section>
 <script>
-	var app = angular.module('app', []);
+var app = angular.module('app', []);
+
+app.config(function($interpolateProvider){
+    $interpolateProvider.startSymbol('[[').endSymbol(']]');
+});
 
 app.controller('TeamController', function($http) {
 	var team = this;
@@ -408,7 +412,6 @@ app.controller('TeamController', function($http) {
 });
 app.controller('ContributorController', function($scope,$http) {
 	var contributor = this;
-
 
 	$http.get($scope.person.author.url).
 	success(function(data, status, headers, config) {
