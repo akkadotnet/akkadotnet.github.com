@@ -355,35 +355,35 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div class="row" ng-app="app">
-		    <div ng-controller="TeamController as team">
+			<div ng-controller="TeamController as team">
 			<div ng-repeat="person in team.contributors">
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
+			<div class="col-sm-4 col-md-3 fadeInUpBig" ng-controller="ContributorController as contributor"><!-- member -->
+				<div class="box-content thumbnail text-center" ng-controller="ContributorController as contributor">
 					<span class="item-image">
-						<img class="img-responsive" ng-src="" alt="">
+						<img class="img-responsive" ng-src="\" alt="">
 					</span>
 					<div class="caption text-left">
 
 						<div class="clearfix margin-bottom10">
 							<div class="pull-left">
-								<h4 class="nomargin">
-									<small class="block">--</small>
+								<h4 class="nomargin">\
+									<small class="block">\</small>
 								</h4>
 							</div>
 							<div class="pull-right">
-								<a href="" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+								<a href="\" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
 							</div>
 
 						</div>
 
-						<p class="noborder nomargin nopadding">...</p>
+						<p class="noborder nomargin nopadding">Commits: \</p>
 					</div>
 				</div>
 			</div>
 			</div>
-		     </div>
+			</div>
 		</div>
 	</div>
 </section>
@@ -391,21 +391,36 @@
 	var app = angular.module('app', []);
 
 app.controller('TeamController', function($http) {
-    var team = this;  
-	
+	var team = this;
+
 	$http.get('https://api.github.com/repos/akkadotnet/akka.net/stats/contributors').
-	  success(function(data, status, headers, config) {
+	success(function(data, status, headers, config) {
 		team.contributors = data;
-		team.contributors.sort(function(a,b) 
-					   { 
+		team.contributors.sort(function(a,b)
+					{
 						return b.total-a.total;
-					   });
-	  }).
-	  error(function(data, status, headers, config) {
+					});
+	}).
+	error(function(data, status, headers, config) {
 		// called asynchronously if an error occurs
 		// or server returns response with an error status.
-	  });
-  });
+	});
+});
+app.controller('ContributorController', function($scope,$http) {
+	var contributor = this;
+
+
+	$http.get($scope.person.author.url).
+	success(function(data, status, headers, config) {
+		console.log(data);
+		contributor.data = data;
+	}).
+	error(function(data, status, headers, config) {
+		// called asynchronously if an error occurs
+		// or server returns response with an error status.
+	});
+
+});
 </script>
 
 
