@@ -211,7 +211,7 @@ system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker3"</span>);
 system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"Worker4"</span>);
 
 <span class="hljs-comment">//create the router using round robin strategy</span>
-<span class="hljs-keyword">var</span> router = system.ActorOf(<span class="hljs-keyword">new</span> Props().WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(
 <span class="hljs-string">"user/Worker1"</span>, <span class="hljs-string">"user/Worker2"</span>, <span class="hljs-string">"user/Worker3"</span>, <span class="hljs-string">"user/Worker4"</span>)));
 
 <span class="hljs-comment">//pass messages via the router to the routees</span>
