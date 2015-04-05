@@ -1,546 +1,236 @@
-<!DOCTYPE html>
-<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
-<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
-<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
-	<head>
-		<meta charset="utf-8" />
-		<title> Akka.NET</title>
-		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
-		<meta name="description" content="" />
-		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
-		<!-- mobile settings -->
-		<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
-
-		<!-- Favicon -->
-		<link rel="shortcut icon" href="/assets/images/demo/favicon.ico" />
-
-		<!-- WEB FONTS -->
-		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
-
-		<!-- CORE CSS -->
-		<link href="/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/line-icons.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/animate.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/flexslider.css" rel="stylesheet" type="text/css" />
-
-		<!-- FAV ICON -->
-		<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
-
-		<!-- REVOLUTION SLIDER -->
-		<link href="/assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/layerslider.css" rel="stylesheet" type="text/css" />
-
-		<!-- BLOG -->
-		<link href="/assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
-
-		<!-- THEME CSS -->
-		<link href="/assets/css/essentials.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/layout.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/header-default.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/footer-default.css" rel="stylesheet" type="text/css" />
-		<link href="/assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
-		
-		
-		<!-- Highlighting -->
-		<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
-		<link href="/content/style.css" rel="stylesheet" type="text/css" />
-	
-		<!-- Morenizr -->
-		<script type="text/javascript" src="/assets/plugins/modernizr.min.js"></script>
-
-		<!--[if lte IE 8]>
-			<script src="/assets/plugins/respond.js"></script>
-		<![endif]-->
-	</head>
-	
-	<!-- 
-		Available body classes: 
-			smoothscroll			= enable chrome browser smooth scroll
-			grey 					= grey content background
-			boxed 					= boxed style
-			pattern1 ... pattern10 	= background pattern
-
-		Background Image - add to body: 
-			data-background="/assets/images/boxed_background/1.jpg"
-	-->
-	<body>
-
-		<div id="wrapper">
-
-			<div id="header"><!-- class="sticky" for sticky menu -->
-
-				<!-- Top Bar -->
-				<header id="topBar">
-					<div class="container">
-
-						<div class="pull-right fsize13 margin-top10 hide_mobile">
-
-							<!-- mail , phone -->
-							<a href="mailto:akkadotnet@gmail.com">AkkaDotNet@Gmail.com</a> &bull; 
-
-							<div class="block text-right"><!-- social -->
-								<a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
-								<a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
-								<a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
-							</div><!-- /social -->
-
-						</div>
-
-						<!-- Logo -->
-						<a class="logo" href="/">
-							<img src="/content/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
-						</a>
-
-					</div><!-- /.container -->
-				</header>
-				<!-- /Top Bar -->
-
-
-				<!-- Top Nav -->
-				<header id="topNav">
-					<div class="container">
-
-						<!-- Mobile Menu Button -->
-						<button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
-							<i class="fa fa-bars"></i>
-						</button>
-
-						<!-- Search -->
-						<form class="search" method="get" action="/search">
-							<input type="text" class="form-control" name="q" value="" placeholder="Search">
-							<button class="fa fa-search"></button>
-						</form>
-						<!-- /Search -->
-
-						<!-- Top Nav -->
-						<div class="navbar-collapse nav-main-collapse collapse">
-							<nav class="nav-main">
-
-								<!--
-									NOTE
-									
-									For a regular link, remove "dropdown" class from LI tag and "dropdown-toggle" class from the href.
-									Direct Link Example: 
-
-									<li>
-										<a href="#">HOME</a>
-									</li>
-								-->
-								<!-- pageurl /pages/team -->
-								<ul id="topMain" class="nav nav-pills nav-main">
-									<li class="mega-menu active">
-										<a href="/">
-											HOME <span>welcome</span>
-										</a>
-									</li>
-									<li class="mega-menu">										
-										<a href="/wiki/">DOCUMENTATION <span>Wiki</span></a>
-									</li>
-									<li class="mega-menu">
-										<a href="https://github.com/akkadotnet/akka.net">CODE <span>Github repository</span></a>
-									</li>
-									<li class="mega-menu">
-										<a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILINGLIST <span>Discuss</span></a>
-									</li>	
-									<li class="mega-menu">
-										<a href="https://github.com/akkadotnet/akka.net/issues">TRACKER <span>Issues and Features</span></a>
-									</li>	
-								</ul>
-
-							</nav>
-						</div>
-						<!-- /Top Nav -->
-
-					</div><!-- /.container -->
-				</header>
-				<!-- /Top Nav -->
-
-			</div>
-
-			<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+--- layout: master ---
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
 <!-- PAGE TOP -->
 <section class="page-title">
-	<div class="container">
-
-		<header>
-
-			<ul class="breadcrumb"><!-- breadcrumb -->
-				<li><a href="#">Pages</a></li>
-				<li class="active">About Our Team</li>
-			</ul><!-- /breadcrumb -->
-
-			<h2><!-- Page Title -->
-				<strong>About</strong> Our Team
-			</h2><!-- /Page Title -->
-
-		</header>
-
-	</div>
+    <div class="container">
+        <header>
+            <ul class="breadcrumb">
+                <!-- breadcrumb -->
+                <li><a href="#">Pages</a></li>
+                <li class="active">Team</li>
+            </ul>
+            <!-- /breadcrumb -->
+            <h2><!-- Page Title -->
+                <strong>About</strong> Our Team
+            </h2>
+            <!-- /Page Title -->
+        </header>
+    </div>
 </section>
 <!-- /PAGE TOP -->
-
-<section class="callout dark">
-<div class="container">
-
-	<div class="row">
-		<div class="col-md-12">
-		<i class="fa fa-warning"></i>
-		This is a community driven port and is not affiliated with <a href="http://typesafe.com">Typesafe</a> who makes the original Java/Scala version of <a href="http://akka.io">Akka</a>.<br/>
-		</div>
-	</div>
-</section>
-
 <section>
-	<div class="container">
-
-		<p class="lead">Meet the core Akka.NET team below.</p>
-
-
-		<div class="row">
-
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
-					<span class="item-image">
-						<img class="img-responsive" src="https://avatars3.githubusercontent.com/u/647031?v=2&amp;s=460" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">Roger Alsing
-									<small class="block">Founder / Core team</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="http://twitter.com/rogeralsing" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
-								<a href="https://github.com/rogeralsing" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">Roger is the original creator of the Akka.NET project. C# developer and mentor living in Sweden. Open source enthusiast. Started programming at the age of 10 on the mighty Commodore64. <a href="http://twitter.com/rogeralsing">Follow Roger on Twitter</a> or at his <a href="http://rogeralsing.com/">personal blog</a>. Works at <a href="http://Nethouse.se">Nethouse.se</a></p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
-					<span class="item-image">
-						<img class="img-responsive" src="https://avatars0.githubusercontent.com/u/326939?v=2&amp;s=460" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">Aaron Stannard
-									<small class="block">Founder / Core team</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="http://twitter.com/aaronontheweb" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
-								<a href="https://github.com/aaronontheweb" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">Aaron is Founder and CTO at <a href="http://petabridge.com">Petabridge, a .NET data platform company</a>. Aaron's one of the original contributors to Akka.NET, authoring the Akka.Remote module and Helios, the underlying socket server. Prior to working at Petabridge Aaron founded MarkedUp Analytics, a Cassandra and Akka.NET-powered real-time app analytics and marketing automation company for app developers.</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
-					<span class="item-image">
-						<img class="img-responsive" src="https://avatars0.githubusercontent.com/u/800302?v=2&amp;s=460" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">Håkan Canberger
-									<small class="block">Core team</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="http://twitter.com/hcanber" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
-								<a href="https://github.com/hcanber" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">Håkan developed the Akka.NET TestKit and internals, and by day is a developer & architect at <a href="http://www.ving.se/">Thomas Cook</a>. Follow Håkan <a href="https://twitter.com/hcanber">on Twitter</a> or at <a href="http://blog.canberger.se/">his personal blog</a>.</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
-					<span class="item-image">
-						<img class="img-responsive" src="https://avatars0.githubusercontent.com/u/679705?v=2&amp;s=460" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">Bartosz Sypytkowski
-									<small class="block">Core team</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="http://twitter.com/Horusiath" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
-								<a href="https://github.com/Horusiath" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">Bartosz wrote the Akka.NET F# API, and works at <a href="http://rd.samsung.pl/?lang=en">Samsung R&D, Poland</a>. Follow <a href="https://twitter.com/horusiath">Bartosz on Twitter</a> or at <a href="http://bartoszsypytkowski.com/">his personal blog</a>.</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
-					<span class="item-image">
-						<img class="img-responsive" src="https://avatars2.githubusercontent.com/u/1242903?v=2&amp;s=460" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">David Smith
-									<small class="block">Core team</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="http://twitter.com/smalldave" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
-								<a href="https://github.com/smalldave" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">David contributed Akka.Cluster and MultiNodeTestkit, and is a developer at <a href="https://www.travelrepublic.co.uk/">Travel Republic</a> in the UK. Follow David on <a href="https://github.com/smalldave">GitHub</a>.</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-sm-4 col-md-3 fadeInUpBig"><!-- member -->
-				<div class="box-content thumbnail text-center">
-					<span class="item-image">
-						<img class="img-responsive" src="https://avatars0.githubusercontent.com/u/146717?v=2&amp;s=460" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">Jérémie Chassaing
-									<small class="block">Core team</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="http://twitter.com/thinkb4coding" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
-								<a href="https://github.com/thinkbeforecoding" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">Jérémie is an F# developer hailing from Paris, France. Follow him on <a href="https://twitter.com/thinkb4coding">Twitter</a> or at his personal blog, <a href="http://thinkbeforecoding.com/">Think Before Coding</a>.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<p class="lead">Full list of contributors.</p>
-
-		<div class="row" ng-app="app">
-			<div ng-controller="TeamController as team">
-			<div ng-repeat="person in team.contributors">
-			<div class="col-sm-4 col-md-3 fadeInUpBig" ng-controller="ContributorController as contributor"><!-- member -->
-				<div class="box-content thumbnail text-center" ng-controller="ContributorController as contributor">
-					<span class="item-image">
-						<img class="img-responsive" ng-src="[[person.author.avatar_url]]" alt="">
-					</span>
-					<div class="caption text-left">
-
-						<div class="clearfix margin-bottom10">
-							<div class="pull-left">
-								<h4 class="nomargin">[[contributor.data.name || "-"]]
-									<small class="block">[[person.author.login]]</small>
-								</h4>
-							</div>
-							<div class="pull-right">
-								<a href="[[person.author.html_url]]" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
-							</div>
-
-						</div>
-
-						<p class="noborder nomargin nopadding">Commits: [[person.total]]</p>
-					</div>
-				</div>
-			</div>
-			</div>
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <p class="lead">Meet the core Akka.NET team below.</p>
+        <div class="row">
+            <div class="col-sm-4 col-md-3 fadeInUpBig">
+                <!-- member -->
+                <div class="box-content thumbnail text-center">
+                    <span class="item-image">
+                        <img class="img-responsive" src="https://avatars3.githubusercontent.com/u/647031?v=2&amp;s=460" alt="">
+                    </span>
+                    <div class="caption text-left">
+                        <div class="clearfix margin-bottom10">
+                            <div class="pull-left">
+                                <h4 class="nomargin">Roger Alsing
+                                    <small class="block">Founder / Core team</small>
+                                </h4>
+                            </div>
+                            <div class="pull-right">
+                                <a href="http://twitter.com/rogeralsing" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+                                <a href="https://github.com/rogeralsing" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                            </div>
+                        </div>
+                        <p class="noborder nomargin nopadding">Roger is the original creator of the Akka.NET project. C# developer and mentor living in Sweden. Open source enthusiast. Started programming at the age of 10 on the mighty Commodore64. <a href="http://twitter.com/rogeralsing">Follow Roger on Twitter</a> or at his <a href="http://rogeralsing.com/">personal blog</a>. Works at <a href="http://Nethouse.se">Nethouse.se</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-3 fadeInUpBig">
+                <!-- member -->
+                <div class="box-content thumbnail text-center">
+                    <span class="item-image">
+                        <img class="img-responsive" src="https://avatars0.githubusercontent.com/u/326939?v=2&amp;s=460" alt="">
+                    </span>
+                    <div class="caption text-left">
+                        <div class="clearfix margin-bottom10">
+                            <div class="pull-left">
+                                <h4 class="nomargin">Aaron Stannard
+                                    <small class="block">Founder / Core team</small>
+                                </h4>
+                            </div>
+                            <div class="pull-right">
+                                <a href="http://twitter.com/aaronontheweb" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+                                <a href="https://github.com/aaronontheweb" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                            </div>
+                        </div>
+                        <p class="noborder nomargin nopadding">Aaron is Founder and CTO at <a href="http://petabridge.com">Petabridge, a .NET data platform company</a>. Aaron's one of the original contributors to Akka.NET, authoring the Akka.Remote module and Helios, the underlying socket server. Prior to working at Petabridge Aaron founded MarkedUp Analytics, a Cassandra and Akka.NET-powered real-time app analytics and marketing automation company for app developers.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-3 fadeInUpBig">
+                <!-- member -->
+                <div class="box-content thumbnail text-center">
+                    <span class="item-image">
+                        <img class="img-responsive" src="https://avatars0.githubusercontent.com/u/800302?v=2&amp;s=460" alt="">
+                    </span>
+                    <div class="caption text-left">
+                        <div class="clearfix margin-bottom10">
+                            <div class="pull-left">
+                                <h4 class="nomargin">Håkan Canberger
+                                    <small class="block">Core team</small>
+                                </h4>
+                            </div>
+                            <div class="pull-right">
+                                <a href="http://twitter.com/hcanber" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+                                <a href="https://github.com/hcanber" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                            </div>
+                        </div>
+                        <p class="noborder nomargin nopadding">Håkan developed the Akka.NET TestKit and internals, and by day is a developer & architect at <a href="http://www.ving.se/">Thomas Cook</a>. Follow Håkan <a href="https://twitter.com/hcanber">on Twitter</a> or at <a href="http://blog.canberger.se/">his personal blog</a>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-3 fadeInUpBig">
+                <!-- member -->
+                <div class="box-content thumbnail text-center">
+                    <span class="item-image">
+                        <img class="img-responsive" src="https://avatars0.githubusercontent.com/u/679705?v=2&amp;s=460" alt="">
+                    </span>
+                    <div class="caption text-left">
+                        <div class="clearfix margin-bottom10">
+                            <div class="pull-left">
+                                <h4 class="nomargin">Bartosz Sypytkowski
+                                    <small class="block">Core team</small>
+                                </h4>
+                            </div>
+                            <div class="pull-right">
+                                <a href="http://twitter.com/Horusiath" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+                                <a href="https://github.com/Horusiath" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                            </div>
+                        </div>
+                        <p class="noborder nomargin nopadding">Bartosz wrote the Akka.NET F# API, and works at <a href="http://rd.samsung.pl/?lang=en">Samsung R&D, Poland</a>. Follow <a href="https://twitter.com/horusiath">Bartosz on Twitter</a> or at <a href="http://bartoszsypytkowski.com/">his personal blog</a>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-3 fadeInUpBig">
+                <!-- member -->
+                <div class="box-content thumbnail text-center">
+                    <span class="item-image">
+                        <img class="img-responsive" src="https://avatars2.githubusercontent.com/u/1242903?v=2&amp;s=460" alt="">
+                    </span>
+                    <div class="caption text-left">
+                        <div class="clearfix margin-bottom10">
+                            <div class="pull-left">
+                                <h4 class="nomargin">David Smith
+                                    <small class="block">Core team</small>
+                                </h4>
+                            </div>
+                            <div class="pull-right">
+                                <a href="http://twitter.com/smalldave" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+                                <a href="https://github.com/smalldave" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                            </div>
+                        </div>
+                        <p class="noborder nomargin nopadding">David contributed Akka.Cluster and MultiNodeTestkit, and is a developer at <a href="https://www.travelrepublic.co.uk/">Travel Republic</a> in the UK. Follow David on <a href="https://github.com/smalldave">GitHub</a>.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 col-md-3 fadeInUpBig">
+                <!-- member -->
+                <div class="box-content thumbnail text-center">
+                    <span class="item-image">
+                        <img class="img-responsive" src="https://avatars0.githubusercontent.com/u/146717?v=2&amp;s=460" alt="">
+                    </span>
+                    <div class="caption text-left">
+                        <div class="clearfix margin-bottom10">
+                            <div class="pull-left">
+                                <h4 class="nomargin">Jérémie Chassaing
+                                    <small class="block">Core team</small>
+                                </h4>
+                            </div>
+                            <div class="pull-right">
+                                <a href="http://twitter.com/thinkb4coding" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+                                <a href="https://github.com/thinkbeforecoding" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                            </div>
+                        </div>
+                        <p class="noborder nomargin nopadding">Jérémie is an F# developer hailing from Paris, France. Follow him on <a href="https://twitter.com/thinkb4coding">Twitter</a> or at his personal blog, <a href="http://thinkbeforecoding.com/">Think Before Coding</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="lead">Full list of contributors.</p>
+        <div class="row" ng-app="app">
+            <div ng-controller="TeamController as team">
+                <div ng-repeat="person in team.contributors">
+                    <div class="col-sm-4 col-md-3 fadeInUpBig" ng-controller="ContributorController as contributor">
+                        <!-- member -->
+                        <div class="box-content thumbnail text-center" ng-controller="ContributorController as contributor">
+                            <span class="item-image">
+                        <img class="img-responsive" ng-src="[[person.author.avatar_url]]" alt="">
+                    </span>
+                            <div class="caption text-left">
+                                <div class="clearfix margin-bottom10">
+                                    <div class="pull-left">
+                                        <h4 class="nomargin">[[contributor.data.name || "-"]]
+                                    <small class="block">[[person.author.login]]</small>
+                                </h4>
+                                    </div>
+                                    <div class="pull-right">
+                                        <a href="[[person.author.html_url]]" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+                                    </div>
+                                </div>
+                                <p class="noborder nomargin nopadding">Commits: [[person.total]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="pull-right">
+        <a href="http://twitter.com/thinkb4coding" class="btn ico-only btn-twitter btn-xs"><i class="fa fa-twitter"></i></a>
+        <a href="https://github.com/thinkbeforecoding" class="btn ico-only btn-stackoverflow btn-xs"><i class="fa fa-github"></i></a>
+    </div>
+    </div>
+    <p class="noborder nomargin nopadding">Jérémie is an F# developer hailing from Paris, France. Follow him on <a href="https://twitter.com/thinkb4coding">Twitter</a> or at his personal blog, <a href="http://thinkbeforecoding.com/">Think Before Coding</a>.</p>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
 </section>
 <script>
 var app = angular.module('app', []);
 
-app.config(function($interpolateProvider){
+app.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('[[').endSymbol(']]');
 });
 
 app.controller('TeamController', function($http) {
-	var team = this;
+    var team = this;
 
-	$http.get('https://api.github.com/repos/akkadotnet/akka.net/stats/contributors').
-	success(function(data, status, headers, config) {
-		team.contributors = data;
-		team.contributors.sort(function(a,b)
-					{
-						return b.total-a.total;
-					});
-	}).
-	error(function(data, status, headers, config) {
-		// called asynchronously if an error occurs
-		// or server returns response with an error status.
-	});
+    $http.get('https://api.github.com/repos/akkadotnet/akka.net/stats/contributors').
+    success(function(data, status, headers, config) {
+        team.contributors = data;
+        team.contributors.sort(function(a, b) {
+            return b.total - a.total;
+        });
+    }).
+    error(function(data, status, headers, config) {
+        // called asynchronously if an error occurs
+        // or server returns response with an error status.
+    });
 });
-app.controller('ContributorController', function($scope,$http) {
-	var contributor = this;
+app.controller('ContributorController', function($scope, $http) {
+    var contributor = this;
 
-	$http.get($scope.person.author.url).
-	success(function(data, status, headers, config) {
-		console.log(data);
-		contributor.data = data;
-	}).
-	error(function(data, status, headers, config) {
-		// called asynchronously if an error occurs
-		// or server returns response with an error status.
-	});
+    $http.get($scope.person.author.url).
+    success(function(data, status, headers, config) {
+        console.log(data);
+        contributor.data = data;
+    }).
+    error(function(data, status, headers, config) {
+        // called asynchronously if an error occurs
+        // or server returns response with an error status.
+    });
 
 });
 </script>
-
-
-
-			<!-- FOOTER -->
-			<footer id="footer">
-				<div class="container">
-
-					<div class="row">
-
-						<!-- col #1 -->
-						<div class="spaced dark col-md-3">
-							<h4>About <strong>Akka.NET</strong></h4>
-							<p class="block">
-							Akka.NET is a port of the popular <br/>
-							Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.<br/>
-							<br/>
-							This is a community driven port and <br/>
-							is not affiliated with <a href="http://typesafe.com">Typesafe</a> who <br/>
-							makes the original Java/Scala version.<br/>
-							</p>
-
-							<p class="block"><!-- social -->
-								<a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
-								<a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
-								<a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
-							</p><!-- /social -->
-						</div>
-						<!-- /col #1 -->
-
-
-
-						<!-- col #3 -->
-						<div class="spaced col-md-6 col-sm-4">
-							<h4>Recent <strong>Tweets</strong></h4>
-							<ul class="list-unstyled fsize13" id="recent_tweets">
-							<!--	<li>
-									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Pilsum dolor lorem sit consectetur adipiscing orem sequat <small class="ago">8 mins ago</small>
-								</li>
-								<li>
-									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Remonde sequat ipsum dolor lorem sit consectetur adipiscing  <small class="ago">8 mins ago</small>
-								</li>
-								<li>
-									<i class="fa fa-twitter"></i> <a href="#">@John Doe</a> Imperdiet condimentum diam dolor lorem sit consectetur adipiscing <small class="ago">8 mins ago</small>
-								</li>-->
-							</ul>
-						</div>
-						<!-- /col #3 -->
-						
-						<div class="spaced col-md-3 col-sm-4">
-							<h4>Keep <strong>Updated</strong></h4>
-
-							<h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
-
-							
-							<!-- Begin MailChimp Signup Form -->
-							<div id="mc_embed_signup">
-							<form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-						
-								<input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address" >
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
-								</span>
-					
-								<div id="mce-responses" class="clear">
-									<div class="response" id="mce-error-response" style="display:none"></div>
-									<div class="response" id="mce-success-response" style="display:none"></div>
-								</div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-							    <div style="position: absolute; left: -5000px;"><input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value=""></div>
-							    <div class="clear"></div>
-							</form>
-							</div>
-							
-							<!--End mc_embed_signup-->
-
-						</div>
-					</div>
-
-				</div>
-
-				<hr />
-
-				<div class="copyright">
-					<div class="container text-center fsize12">
-						<!--Epona theme by <a href="http://www.stepofweb.com" target="_blank" title="bootstrap themes &amp; templates" class="copyright">stepofweb</a> &bull; All Right Reserved &copy; Your Company LLC. &nbsp;
-						<a href="page-privacy.html" class="fsize11">Privacy Policy</a> &bull; 
-						<a href="page-terms.html" class="fsize11">Terms of Service</a>-->
-					</div>
-				</div>
-			</footer>
-			<!-- /FOOTER -->
-
-			<a href="#" id="toTop"></a>
-
-		</div><!-- /#wrapper -->
-
-		<!-- JAVASCRIPT FILES -->
-		<script type="text/javascript" src="/assets/plugins/jquery-2.1.1.min.js"></script>
-		<script type="text/javascript" src="/assets/plugins/jquery.isotope.js"></script>
-		<script type="text/javascript" src="/assets/plugins/masonry.js"></script>
-
-		<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="/assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
-		<script type="text/javascript" src="/assets/plugins/owl-carousel/owl.carousel.min.js"></script>
-		<script type="text/javascript" src="/assets/plugins/knob/js/jquery.knob.js"></script>
-		<script type="text/javascript" src="/assets/plugins/flexslider/jquery.flexslider-min.js"></script>
-
-		<!-- REVOLUTION SLIDER -->
-		<script type="text/javascript" src="/assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
-		<script type="text/javascript" src="/assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
-		<script type="text/javascript" src="/assets/js/revolution_slider.js"></script>
-		<script type="text/javascript" src="/content/jquery-toc.js"></script>
-
-
-		<script type="text/javascript" src="/assets/js/scripts.js"></script>
-		<script type="text/javascript" src="/content/scripts.js"></script>
-	</body>
-</html>
