@@ -256,15 +256,15 @@
 <p>When executing application logic inside receive function, be aware of a constant threat of stopping a current actor at any time for various reasons. This is an especially problematic situation when you&#39;re using a resource allocation - when actor will be stopped suddenly, you may be left with potentially heavy resources still waiting for being released.</p>
 <p>Use <code>mailbox.Defer (deferredFunc)</code> in situations when you must ensure operation to be executed at the end of the actor lifecycle.</p>
 <p>Example:</p>
-<pre><code class="hljs lang-fsharp">    <span class="hljs-keyword">let</span> disposableActor (mailbox:Actor&lt;_&gt;) =
-        <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">new</span> DisposableResource()
-        mailbox.Defer ((resource :&gt; IDisposable).Dispose)
-        <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> loop () = 
-            actor {
-                <span class="hljs-keyword">let</span>! msg = mailbox.Receive()
-                <span class="hljs-keyword">return</span>! loop ()   
-            }
-        loop()
+<pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> disposableActor (mailbox:Actor&lt;_&gt;) =
+    <span class="hljs-keyword">let</span> resource = <span class="hljs-keyword">new</span> DisposableResource()
+    mailbox.Defer ((resource :&gt; IDisposable).Dispose)
+    <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> loop () = 
+        actor {
+            <span class="hljs-keyword">let</span>! msg = mailbox.Receive()
+            <span class="hljs-keyword">return</span>! loop ()   
+        }
+    loop()
 </code></pre>
 <h3 id="actor-spawning-options">Actor spawning options</h3>
 <p>To be able to specifiy more precise actor creation behavior, you may use <code>spawnOpt</code> and <code>spawne</code> methods, both taking a list of <code>SpawnOption</code> values. Each specific option should be present only once in the collection. When a conflict occurs (more than one option of specified type has been found), the latest value found inside the list will be chosen.</p>
