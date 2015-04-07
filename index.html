@@ -4,7 +4,8 @@
 <!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
 	<head>
 		<meta charset="utf-8" />
-		<title> Akka.NET</title>
+		<title>Welcome to Akka.NET | Akka.NET</title>
+
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
 		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
@@ -83,7 +84,7 @@
 						<div class="pull-right fsize13 margin-top10 hide_mobile">
 
 							<!-- mail , phone -->
-							<a href="mailto:akkadotnet@gmail.com">AkkaDotNet@Gmail.com</a> &bull;
+							<a href="mailto:hi@getakka.net">hi@getakka.net</a> &bull;
 
 							<div class="block text-right"><!-- social -->
 								<a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
@@ -133,7 +134,7 @@
 										<a href="#">HOME</a>
 									</li>
 								-->
-								<!-- pageurl /index -->
+								<!-- pageurl  -->
 								<ul id="topMain" class="nav nav-pills nav-main">
 									<li class="mega-menu active">
 										<a href="/">
@@ -164,128 +165,156 @@
 
 			</div>
 
+			
+
 			<div class="parallax parallax-1" style='background-image: url("/content/images/akka.jpg")'>
-    <span class="parallax-overlay"></span>
-    <div class="container parallax-content">
-        <div class="row">
-            <div class="col-md-5 col-sm-5">
-                <h1 style="text-shadow: 1px 1px #000;">Try <strong>Akka.NET</strong> now!</h1>
-                <p>Follow our tutorial and build your first Akka.NET application today.</p>
-                <div class="btn-group btn-group-lg">
-                    <a href="/wiki/Getting started" class="btn btn-success btn-lg" style="text-shadow: 1px 1px #000;"><i class="fa fa-play"></i> Get Started Now</a>
-                </div>
-                <div class="btn-group btn-group-lg">
-                    <a href="/wiki" class="btn btn-warning btn-lg" style="text-shadow: 1px 1px #000;"><i class="fa fa-graduation-cap"></i> Documentation</a>
-                </div>
-            </div>
-            <div class="col-md-7 col-sm-7 text-right">
-            </div>
-        </div>
-    </div>
-</div>
-<div class="callout dark">
-    <div class="container text-center">
-        <h2>Build powerful concurrent &amp; distributed applications <strong>more easily</strong>.</h2>
-        <p>Akka.NET is a toolkit and runtime for building highly concurrent, distributed, and fault tolerant event-driven applications on <strong>.NET</strong> &amp; <strong>Mono</strong>.</p>
-        <p>This community-driven port brings <strong>C#</strong> &amp; <strong>F#</strong> developers the capabilities of the original Akka framework in Java/Scala.</p>
-        <p>Learn about Akka for the JVM <a href="http://akka.io" target="_blank">here</a>.</p>
-    </div>
-</div>
-<!-- WELCOME -->
-<section>
-    <div class="container">
-        <!-- FEATURED BOXES 3 -->
-        <div class="row featured-box-minimal">
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h4><i class="fa fa-arrows-alt"></i> Simple Concurrency &amp; Distribution</h4>
-                <p>Asynchronous and Distributed by design. High-level abstractions like Actors and FSM.</p>
-            </div>
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h4><i class="fa fa-flash"></i> High Performance</h4>
-                <p>50 million msg/sec on a single machine. Small memory footprint; ~2.5 million actors per GB of heap.</p>
-            </div>
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h4><i class="fa fa-shield"></i> Resilient by Design</h4>
-                <p>Write systems that self-heal. Remote and/or local supervisor hierarchies.</p>
-            </div>
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h4><i class="fa fa-th-large"></i> Elastic & Decentralized</h4>
-                <p>Adaptive load balancing, routing, partitioning and configuration-driven remoting.</p>
-            </div>
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h4><i class="fa fa-plus-circle"></i> Extensible</h4>
-                <p>Use Akka.NET Extensions to adapt Akka to fit your needs.</p>
-            </div>
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <h4><i class="fa fa-exclamation"></i> Open Source </h4>
-                <p>Akka.NET is released under the Apache 2 license</p>
-            </div>
-        </div>
-        <!-- /FEATURED BOXES 3 -->
-    </div>
-</section>
-<!-- /WELCOME -->
-<!-- PREMIUM -->
-<section class="alternate">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h2><strong>Actor</strong> Model</h2>
-                <p class="lead">
-                    The Actor Model provides a higher level of abstraction for writing concurrent and distributed systems. It alleviates the developer from having to deal with explicit locking and thread management, making it easier to write correct concurrent and parallel systems. </p>
-                <p>Actors were defined in the 1973 paper by <a href="http://en.wikipedia.org/wiki/Carl_Hewitt">Carl Hewitt</a> but have been popularized by the Erlang language, and used for example at Ericsson with great success to build highly concurrent and reliable telecom systems.</p>
-                <p><a href="/wiki/Actors">Read more</a></p>
-            </div>
-            <div class="col-md-6 text-center">
-                <img class="img-responsive img-rounded appear-animation" data-animation="fadeIn" style="border:2px solid white;width:100%;border-radius:10px" src="/content/images/actor.png" alt="" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <h2><strong>Distributed</strong> by Default</h2>
-                <p class="lead">
-                    Everything in Akka.NET is designed to work in a distributed setting: all interactions of actors use purely message passing and everything is asynchronous.
-                </p>
-                <p>This effort has been undertaken to ensure that all functions are available equally when running within a single process or on a cluster of hundreds of machines. The key for enabling this is to go from remote to local by way of optimization instead of trying to go from local to remote by way of generalization. See this classic paper for a detailed discussion on why the second approach is bound to fail.
-                </p>
-                <p><a href="/wiki/Remoting">Read more</a></p>
-            </div>
-            <div class="col-md-6 text-center">
-                <img class="img-responsive img-rounded appear-animation" data-animation="fadeIn" style="border:2px solid white;width:100%;border-radius:10px" src="/content/images/network.png" alt="" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <h2><strong>Supervision</strong> &amp; monitoring</h2>
-                <p class="lead">
-                    Actors form a tree with actors being parents to the actors they've created.</p>
-                <p>
-                    As a parent, the actor is responsible for handling its children’s failures (so-called supervision), forming a chain of responsibility, all the way to the top. When an actor crashes, its parent can either restart or stop it, or escalate the failure up the hierarchy of actors. This enables a clean set of semantics for managing failures in a concurrent, distributed system and allows for writing highly fault-tolerant systems that self-heal.</p>
-                <p><a href="/wiki/Supervision">Read more</a></p>
-            </div>
-            <div class="col-md-6 text-center">
-                <img class="img-responsive img-rounded appear-animation" data-animation="fadeIn" style="border:2px solid white;width:100%;border-radius:10px" src="/content/images/supervision.png" alt="" />
-            </div>
-        </div>
-    </div>
-</section>
-<!-- /PREMIUM -->
-<section class="callout styleBackgroundColor">
-    <!-- add "styleBackgroundColor" class for colored background and white text OR "dark" for a dark callout -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-9">
-                <!-- title + shortdesc -->
-                <h3>Who are we?</h3>
-                <p>Meet the people behind Akka.NET!</p>
-            </div>
-            <div class="col-md-3">
-                <!-- button -->
-                <a href="/pages/team" class="btn btn-primary btn-lg">Read more</a>
-            </div>
-        </div>
-    </div>
-</section>
+				<span class="parallax-overlay"></span>
+
+				<div class="container parallax-content">
+
+					<div class="row">
+						<div class="col-md-5 col-sm-5" >
+						
+			<h1 style="text-shadow: 1px 1px #000;">Try <strong>Akka.NET</strong> now!</h1>
+			<p>Follow our tutorial and build your first Akka.NET application today.</p>
+			<div class="btn-group btn-group-lg">
+			<a href="/wiki/Getting started" class="btn btn-success btn-lg" style="text-shadow: 1px 1px #000;"><i class="fa fa-play"></i> Get Started Now</a>
+			</div> <div class="btn-group btn-group-lg">
+			<a href="/wiki" class="btn btn-warning btn-lg" style="text-shadow: 1px 1px #000;"><i class="fa fa-graduation-cap"></i> Documentation</a>
+			</div>
+
+						</div>
+
+						<div class="col-md-7 col-sm-7 text-right">
+						
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="callout dark">
+			    <div class="container text-center">
+			        <h2>Build powerful concurrent &amp; distributed applications <strong>more easily</strong>.</h2>
+			        <p>Akka.NET is a toolkit and runtime for building highly concurrent, distributed, and fault tolerant event-driven applications on <strong>.NET</strong> &amp; <strong>Mono</strong>.</p>
+			        <p>This community-driven port brings <strong>C#</strong> &amp; <strong>F#</strong> developers the capabilities of the original Akka framework in Java/Scala.</p>
+			        <p>Learn about Akka for the JVM <a href="http://akka.io" target="_blank">here</a>.</p>
+			    </div>
+			</div>
+
+			<!-- WELCOME -->
+			<section>
+				<div class="container">
+					<!-- FEATURED BOXES 3 -->
+					<div class="row featured-box-minimal">
+
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<h4><i class="fa fa-arrows-alt"></i> Simple Concurrency &amp; Distribution</h4>
+							<p>Asynchronous and Distributed by design. High-level abstractions like Actors and FSM.</p>
+						</div>
+
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<h4><i class="fa fa-flash"></i> High Performance</h4>
+							<p>50 million msg/sec on a single machine. Small memory footprint; ~2.5 million actors per GB of heap.</p>
+						</div>
+
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<h4><i class="fa fa-shield"></i> Resilient by Design</h4>
+							<p>Write systems that self-heal. Remote and/or local supervisor hierarchies.</p>
+						</div>
+
+				
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<h4><i class="fa fa-th-large"></i> Elastic & Decentralized</h4>
+							<p>Adaptive load balancing, routing, partitioning and configuration-driven remoting.</p>
+						</div>
+
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<h4><i class="fa fa-plus-circle"></i> Extensible</h4>
+							<p>Use Akka.NET Extensions to adapt Akka to fit your needs.</p>
+						</div>
+				
+						<div class="col-md-4 col-sm-6 col-xs-12">
+							<h4><i class="fa fa-exclamation"></i> Open Source </h4>
+							<p>Akka.NET is released under the Apache 2 license</p>
+						</div>
+				
+					</div>
+					<!-- /FEATURED BOXES 3 -->
+
+				</div>
+			</section>
+			<!-- /WELCOME -->
+			
+			<!-- PREMIUM -->
+			<section class="alternate">
+				<div class="container">
+				
+					<div class="row">
+						<div class="col-md-6">
+<h2><strong>Actor</strong> Model</h2>
+							<p class="lead">
+The Actor Model provides a higher level of abstraction for writing concurrent and distributed systems. It alleviates the developer from having to deal with explicit locking and thread management, making it easier to write correct concurrent and parallel systems. </p>
+							<p>Actors were defined in the 1973 paper by <a href="http://en.wikipedia.org/wiki/Carl_Hewitt">Carl Hewitt</a> but have been popularized by the Erlang language, and used for example at Ericsson with great success to build highly concurrent and reliable telecom systems.</p>
+							<p><a href="/wiki/Actors">Read more</a></p>
+						</div>
+						
+						<div class="col-md-6 text-center">
+
+							<img class="img-responsive img-rounded appear-animation" data-animation="fadeIn" style="border:2px solid white;width:100%;border-radius:10px" src="/content/images/actor.png" alt="" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+<h2><strong>Distributed</strong> by Default</h2>
+							<p class="lead">
+Everything in Akka.NET is designed to work in a distributed setting: all interactions of actors use purely message passing and everything is asynchronous.
+</p>
+							<p>This effort has been undertaken to ensure that all functions are available equally when running within a single process or on a cluster of hundreds of machines. The key for enabling this is to go from remote to local by way of optimization instead of trying to go from local to remote by way of generalization. See this classic paper for a detailed discussion on why the second approach is bound to fail.
+							</p>
+							<p><a href="/wiki/Remoting">Read more</a></p>
+						</div>
+						
+						<div class="col-md-6 text-center">
+							<img class="img-responsive img-rounded appear-animation" data-animation="fadeIn" style="border:2px solid white;width:100%;border-radius:10px" src="/content/images/network.png" alt="" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+<h2><strong>Supervision</strong> &amp; monitoring</h2>
+							<p class="lead">
+Actors form a tree with actors being parents to the actors they've created.</p>
+							<p>
+As a parent, the actor is responsible for handling its children’s failures (so-called supervision), forming a chain of responsibility, all the way to the top. When an actor crashes, its parent can either restart or stop it, or escalate the failure up the hierarchy of actors.
+This enables a clean set of semantics for managing failures in a concurrent, distributed system and allows for writing highly fault-tolerant systems that self-heal.</p>
+<p><a href="/wiki/Supervision">Read more</a></p>
+						</div>
+						
+						<div class="col-md-6 text-center">
+							<img class="img-responsive img-rounded appear-animation" data-animation="fadeIn" style="border:2px solid white;width:100%;border-radius:10px" src="/content/images/supervision.png" alt="" />
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /PREMIUM -->
+
+			<section class="callout styleBackgroundColor"><!-- add "styleBackgroundColor" class for colored background and white text OR "dark" for a dark callout -->
+				<div class="container">
+
+					<div class="row">
+
+						<div class="col-md-9"><!-- title + shortdesc -->
+							<h3>Who are we?</h3>
+							<p>Meet the people behind Akka.NET!</p>
+						</div>
+
+						<div class="col-md-3"><!-- button -->
+							<a href="/pages/team" class="btn btn-primary btn-lg">Read more</a>
+						</div>
+
+					</div>
+
+				</div>
+			</section>
 
 
 
@@ -401,9 +430,5 @@
 
 		<script type="text/javascript" src="/assets/js/scripts.js"></script>
 		<script type="text/javascript" src="/content/scripts.js"></script>
-
-		<!-- REACTIVE MANIFESTO BANNER -->
-		<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; left: 0; top:0; z-index: 9000; max-width: 110px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-left.png"> </a>
-
 	</body>
 </html>
