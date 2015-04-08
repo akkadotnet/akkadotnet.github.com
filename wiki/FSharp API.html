@@ -276,7 +276,7 @@
     loop()
 </code></pre>
 <h3 id="actor-spawning-options">Actor spawning options</h3>
-<p>To be able to specifiy more precise actor creation behavior, you may use <code>spawnOpt</code> and <code>spawne</code> methods, both taking a list of <code>SpawnOption</code> values. Each specific option should be present only once in the collection. When a conflict occurs (more than one option of specified type has been found), the latest value found inside the list will be chosen.</p>
+<p>To be able to specify more precise actor creation behavior, you may use <code>spawnOpt</code> and <code>spawne</code> methods, both taking a list of <code>SpawnOption</code> values. Each specific option should be present only once in the collection. When a conflict occurs (more than one option of specified type has been found), the latest value found inside the list will be chosen.</p>
 <ul>
 <li><code>SpawnOption.Deploy(Akka.Actor.Deploy)</code> - defines deployment strategy for created actors (see: Deploy). This option may be used along with <code>spawne</code> function to enable remote actors deployment.</li>
 <li><code>SpawnOption.Router(Akka.Routing.RouterConfig)</code> - defines an actor to be a router as well as it&#39;s routing specifics (see: <a href="http://akkadotnet.github.io/wiki/Routing">Routing</a>).</li>
@@ -389,7 +389,7 @@ subscriber &lt;! Unsubscribe
 publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>)
 </code></pre>
 <h3 id="logging">Logging</h3>
-<p>F# API supports two groups of logging functions - one that operates directly on strings and second (which may be recognized by <em>f</em> suffix in function names) which operates using F# string formating features. Major difference is performance - first one is less powerful, but it&#39;s also faster than the second one.</p>
+<p>F# API supports two groups of logging functions - one that operates directly on strings and second (which may be recognized by <em>f</em> suffix in function names) which operates using F# string formatting features. Major difference is performance - first one is less powerful, but it&#39;s also faster than the second one.</p>
 <p>Both groups support logging on various levels (DEBUG, &lt;default&gt; INFO, WARNING and ERROR). Actor system&#39;s logging level may be managed through configuration, i.e.:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
     <span class="hljs-title">actor</span> {
