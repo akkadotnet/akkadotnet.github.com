@@ -263,7 +263,7 @@ container.Bind&lt;IWorkerService&gt;()To(<span class="hljs-keyword">typeof</span
 </code></pre>
 <p>Support for additional dependency injection frameworks may be added in the future, but you can easily implement your own by implementing an <a href="DI Core">Actor Producer Extension</a>.</p>
 <div class="alert alert-warning">
-<p><strong>Warning</strong> You might be tempted at times to use an IndirectActorProducer which always returns the same instance, e.g. by using a static field. This is not supported, as it goes against the meaning of an actor restart, which is described here: [[What Restarting Means]].</p>
+<p><strong>Warning</strong> You might be tempted at times to use an IndirectActorProducer which always returns the same instance, e.g. by using a static field. This is not supported, as it goes against the meaning of an actor restart, which is described here: <a href="Supervision#what-restarting-means">What Restarting Means</a>.</p>
 </div>
 <p>When using a dependency injection framework, actor MUST NOT have singleton scope.</p>
 <p>Techniques for dependency injection and integration with dependency injection frameworks are described in more depth in the <a href="http://letitcrash.com/post/55958814293/akka-dependency-injection">Using Akka with Dependency Injection</a> guideline.</p>

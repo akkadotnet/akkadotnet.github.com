@@ -679,7 +679,7 @@ Please note that the actor will revert to its original behavior when restarted b
 }
 </code></pre>
 <p>Please note, that the child actors are still restarted, but no new ActorRef is created. One can recursively apply the same principles for the children, ensuring that their PreStart() method is called only at the creation of their refs.</p>
-<p>For more information see [[What Restarting Means]].</p>
+<p>For more information see <a href="Supervision#what-restarting-means">What Restarting Means</a>.</p>
 <h3 id="initialization-via-message-passing">Initialization via message passing</h3>
 <p>There are cases when it is impossible to pass all the information needed for actor initialization in the constructor, for example in the presence of circular dependencies. In this case the actor should listen for an initialization message, and use Become() or a finite state-machine state transition to encode the initialized and uninitialized states of the actor.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Service</span> : <span class="hljs-title">UntypedActor</span>
