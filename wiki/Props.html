@@ -210,7 +210,7 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<div class="mybold"><h2 id="props">Props</h2>
+								<div><h2 id="props">Props</h2>
 <p>Props is a configuration class to specify options for the creation of actors, think of it as an immutable and thus freely shareable recipe for creating an actor including associated deployment information (e.g. which dispatcher to use, see more below). Here are some examples of how to create a Props instance.</p>
 <pre><code class="hljs lang-csharp">  Props props1 = Props.Create(<span class="hljs-keyword">typeof</span>(MyActor));
   Props props2 = Props.Create(() =&gt; <span class="hljs-keyword">new</span> MyActor(..), <span class="hljs-string">"..."</span>);

@@ -210,7 +210,7 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<div class="mybold"><h1 id="dispatchers">Dispatchers</h1>
+								<div><h1 id="dispatchers">Dispatchers</h1>
 <p>An Akka <code>MessageDispatcher</code> is what makes Akka Actors &quot;tick&quot;, it is the engine of the machine so to speak. All <code>MessageDispatcher</code> implementations are also an <code>ExecutionContext</code>, which means that they can be used to execute arbitrary code, for instance <code>Futures</code>.</p>
 <h2 id="default-dispatcher">Default dispatcher</h2>
 <p>Every <code>ActorSystem</code> will have a default dispatcher that will be used in case nothing else is configured for an Actor. The default dispatcher can be configured using <code>akka.actor.default-dispatcher</code>, and is by default a <code>Dispatcher</code>.</p>

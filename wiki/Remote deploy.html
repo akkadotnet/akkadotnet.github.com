@@ -210,7 +210,7 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<div class="mybold"><pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> scope = <span class="hljs-keyword">new</span> RemoteScope(<span class="hljs-keyword">new</span> Address(<span class="hljs-string">"akka.tcp"</span>, <span class="hljs-string">"remote-system"</span>, <span class="hljs-string">"localhost"</span>, <span class="hljs-number">8080</span>));
+								<div><pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> scope = <span class="hljs-keyword">new</span> RemoteScope(<span class="hljs-keyword">new</span> Address(<span class="hljs-string">"akka.tcp"</span>, <span class="hljs-string">"remote-system"</span>, <span class="hljs-string">"localhost"</span>, <span class="hljs-number">8080</span>));
 <span class="hljs-keyword">var</span> deploy = <span class="hljs-keyword">new</span> Deploy(scope);
 <span class="hljs-keyword">var</span> remote = system.ActorOf(Props.Create(() =&gt; <span class="hljs-keyword">new</span> SomeActor(<span class="hljs-string">"some arg"</span>, <span class="hljs-number">123</span>))
      .WithDeploy(deploy) , <span class="hljs-string">"remoteactor"</span>);

@@ -210,7 +210,7 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<div class="mybold"><p>This chapter outlines the concept behind supervision, the primitives offered and their semantics.</p>
+								<div><p>This chapter outlines the concept behind supervision, the primitives offered and their semantics.</p>
 <h2 id="what-supervision-means">What Supervision Means</h2>
 <p>As described in Actor Systems supervision describes a dependency relationship between actors: the supervisor delegates tasks to subordinates and therefore must respond to their failures. When a subordinate detects a failure (i.e. throws an exception), it suspends itself and all its subordinates and sends a message to its supervisor, signaling failure. Depending on the nature of the work to be supervised and the nature of the failure, the supervisor has a choice of the following four options:</p>
 <p>Resume the subordinate, keeping its accumulated internal state

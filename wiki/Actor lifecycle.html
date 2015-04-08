@@ -210,7 +210,7 @@
 						<div class="col-md-9">
 							<div id="main_content">
 
-								<div class="mybold"><h2 id="actor-lifecycle">Actor Lifecycle</h2>
+								<div><h2 id="actor-lifecycle">Actor Lifecycle</h2>
 <p><img class="img-responsive" src="images/actor_lifecycle.png" alt="Actor lifecycle"></p>
 <p>A path in an actor system represents a &quot;place&quot; which might be occupied by a living actor. Initially (apart from system initialized actors) a path is empty. When <code>ActorOf()</code> is called it assigns an incarnation of the actor described by the passed <code>Props</code> to the given path. An actor incarnation is identified by the path and a UID. A restart only swaps the Actor instance defined by the Props but the incarnation and hence the UID remains the same.</p>
 <p>The lifecycle of an incarnation ends when the actor is stopped. At that point the appropriate lifecycle events are called and watching actors are notified of the termination. After the incarnation is stopped, the path can be reused again by creating an actor with <code>ActorOf()</code>. In this case the name of the new incarnation will be the same as the previous one but the UIDs will differ.</p>
