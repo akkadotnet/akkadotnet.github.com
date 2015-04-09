@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Messages | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -148,7 +148,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Akka.NET Documentation.md" > (Edit on Github)</a></li>
+							<li class="active">Messages<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Messages.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -176,91 +176,111 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="messages">Messages</h1>
+<p>One of the most fundamental concepts to the Actor model is the notion of <a href="http://www.reactivemanifesto.org/glossary#Message-Driven" title="Reactive Manifesto">&quot;message-driven systems,&quot; as defined by the Reactive Manifesto</a>:</p>
+<blockquote>
+<p>A message is an item of data that is sent to a specific destination. An event is a signal emitted by a component upon reaching a given state. In a message-driven system addressable recipients await the arrival of messages and react to them, otherwise lying dormant.</p>
+</blockquote>
+<p><strong>Message-passing</strong> is how Akka.NET actors communicate with each other in Akka.NET.</p>
+<h2 id="how-are-messages-defined-">How are messages defined?</h2>
+<p>In Akka.NET messages are simple POCO classes:</p>
+<h4 id="-c-"><code>C#</code></h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span></span>{
+        Name = name;
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name {<span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>;}
+}
+</code></pre>
+<h4 id="-f-"><code>F#</code></h4>
+<pre><code class="hljs lang-fsharp"><span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">MyMessage</span> </span>=
+    | Name <span class="hljs-keyword">of</span> string
+</code></pre>
+<p>Akka.NET allows you to automatically pass around these messages to any actor, whether it&#39;s an actor running inside your application&#39;s local process or a remote actor running on a different machine. Akka.NET can automatically serialize and route your message to its intended recipient(s.)</p>
+<h2 id="actors-change-their-internal-state-based-on-the-content-of-messages">Actors change their internal state based on the content of messages</h2>
+<p>One of the defining characteristics of actors is that they have the ability to change their state in a thread-safe way, and they do this based on the content of messages they receive.</p>
+<p>Here&#39;s a simple example:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
+<span class="hljs-keyword">using</span> Akka.Actor;
+
+
+<span class="hljs-comment">/* message definition */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span></span>{
+        Name = name;
+    }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name {<span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>;}
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Hi</span>{}
+
+<span class="hljs-comment">/* actor definition */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span> : <span class="hljs-title">ReceiveActor</span>{
+
+    <span class="hljs-keyword">string</span> lastActorName;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span><span class="hljs-params">()</span></span>{
+        Receive&lt;MyMessage&gt;(msg =&gt; {
+            lastActorName = msg.Name;
+        });
+        Receive&lt;Hi&gt;(hi =&gt; Console.WriteLine(<span class="hljs-string">"Hi {0}!"</span>,lastActorName));
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">()</span>
+    </span>{
+        <span class="hljs-keyword">var</span> mySystem = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+        <span class="hljs-keyword">var</span> myActor = mySystem.ActorOf(Props.Create&lt;MyActor&gt;());
+        myActor.Tell(<span class="hljs-keyword">new</span> MyMessage(<span class="hljs-string">"AkkaDotNetUser"</span>));
+        myActor.Tell(<span class="hljs-keyword">new</span> Hi());
+    }
+}
+</code></pre>
+<p><code>MyActor.lastActorName</code> gets set to the latest value provided in the last <code>MyMessage</code> instance received, and then that value gets printed to the console whenever a <code>Hi</code> message type is received.</p>
+<p>This is how you should expect to modify your actor&#39;s mutable state inside Akka.NET - by passing stateful messages.</p>
+<h2 id="messages-are-immutable">Messages are immutable</h2>
+<p>One major design constraint that <strong>you, the Akka.NET user must enforce throughout your code</strong> is guaranteeing that your message classes are <a href="http://en.wikipedia.org/wiki/Immutable_object">immutable objects</a>.</p>
+<p><em>Quoted from <a href="http://petabridge.com/blog/akkadotnet-what-is-an-actor/" title="What is an Akka.NET Actor?">Beyond HTTP: &quot;What is an Actor?&quot;</a></em></p>
+<p>So what&#39;s an &quot;immutable&quot; object?</p>
+<blockquote>
+<p>An immutable object is an object who&#39;s state (i.e. the contents of its memory) cannot be modified once it&#39;s been created.</p>
+</blockquote>
+<p>If you&#39;re a .NET developer, you&#39;ve used the <code>string</code> class. Did you know that <a href="http://stackoverflow.com/questions/2365272/why-net-string-is-immutable">in .NET <code>string</code> is an immutable object</a>?</p>
+<p>Here&#39;s an example:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> myStr = <span class="hljs-string">"Hi!"</span>.ToLowerInvariant().Replace(<span class="hljs-string">"!"</span>, <span class="hljs-string">"?"</span>);
+</code></pre>
+<p>In this example, the following occurs in this order:</p>
+<ol>
+<li>.NET allocates a <code>const string</code> with the content Hi!&quot; and then</li>
+<li><code>ToLowerInvariant()</code> is called, which <strong>copies the original &quot;Hi!&quot; string</strong> and <em>modifies the copy</em> to become all lowercase and returns the modified copy (which now reads as &quot;hi!&quot;) Then</li>
+<li><code>.Replace(string,string)</code> is called, which <strong>copies the &quot;hi!&quot; string returned by <code>ToLowerInvariant</code></strong> and <em>modifies the copy</em> to substitute <code>!</code> with <code>?</code> and returns the modified copy, with the final result reading as &quot;hi?&quot;</li>
+</ol>
+<p>Since the original <code>string</code> is immutable, all of these operations had to make a copy of the string before they could make their changes.</p>
+<blockquote>
+<p>Immutable messages are inherently thread-safe.  No thread can modify the content of an immutable message, so a second thread receiving the original message doesn&#39;t have to worry about a previous thread altering the state in an unpredictable way.</p>
+</blockquote>
+<p>Hence, in Akka.NET - all messages are immutable and thus thread-safe. That&#39;s one of the reasons why we can have thousands of Akka.NET actors process messages concurrently without synchronization mechanisms and other weird stuff - because immutable messages eliminate that as a requirement.</p>
+<h2 id="message-passing-is-asynchronous">Message-passing is asynchronous</h2>
+<p><em>Quoted from <a href="http://petabridge.com/blog/akkadotnet-what-is-an-actor/" title="What is an Akka.NET Actor?">Beyond HTTP: &quot;What is an Actor?&quot;</a></em></p>
+<p>In OOP, your objects communicate with each-other via function calls. The same is true for procedural programming. Class A calls a function on Class B and waits for that function to return before Class A can move onto the rest of its work.</p>
+<p>In the Akka.NET and the Actor model, actors communicate with each-other by sending messages.</p>
+<p>So what&#39;s so radical about this idea?</p>
+<blockquote>
+<p>Well for starters, <strong>message passing is asynchronous</strong> - the actor who sent the message can continue to do other work while the receiving actor processes the sender&#39;s message.</p>
+<p>So in effect, every interaction one actor has with any other actor is going to be asynchronous by default.</p>
+</blockquote>
+<p>That&#39;s a dramatic change, but here&#39;s another big one...</p>
+<blockquote>
+<p>Since all &quot;function calls&quot; have been replaced by messages, i.e. distinct instances of objects, actors can store a history of their function calls and even defer processing some function calls until later in the future!</p>
+</blockquote>
+<p>Imagine how easy it would be to build something like the Undo button in Microsoft Word with an actor - by default you have a message that represents every change someone made to a document. To undo one of those changes, you just have to pop the message off of the UndoActor&#39;s stash of messages and push that change back to another actor who manages the current state of the Word document. This is a pretty powerful concept in practice.</p>
+<h3 id="references">References</h3>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
-</ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li><a href="Use case and Deployment Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Actors">Actors</a></li>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="TypedActor">Typed Actors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Dispatchers">Dispatchers</a></li>
-<li><a href="Mailbox">Mailboxes</a></li>
-<li><a href="Routing">Routing</a></li>
-<li><a href="Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="Stash">Stash</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Remoting">Remoting</a></li>
-<li><a href="Serialization">Serialization</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="EventStream">EventStream</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka.NET">Building and Distributing Akka.NET</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
+<li><strong><a href="http://www.reactivemanifesto.org/glossary#Message-Driven"><em>Reactive Manifesto</em>: Glossary - Message-driven</a></strong></li>
+<li><strong><a href="http://petabridge.com/blog/akkadotnet-what-is-an-actor/" title="What is an Akka.NET Actor?"><em>Beyond HTTP:</em> &quot;What is an Actor?&quot;</a></strong></li>
+<li><strong><a href="http://en.wikipedia.org/wiki/Immutable_object"><em>Wikipedia</em>: &quot;Immutable object&quot;</a></strong></li>
 </ul>
 </div>
 

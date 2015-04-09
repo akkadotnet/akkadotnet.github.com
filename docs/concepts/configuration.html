@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Configuration | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -148,7 +148,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Akka.NET Documentation.md" > (Edit on Github)</a></li>
+							<li class="active">Configuration<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Configuration.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -176,92 +176,113 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
-<ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
-</ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li><a href="Use case and Deployment Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Actors">Actors</a></li>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="TypedActor">Typed Actors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Dispatchers">Dispatchers</a></li>
-<li><a href="Mailbox">Mailboxes</a></li>
-<li><a href="Routing">Routing</a></li>
-<li><a href="Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="Stash">Stash</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Remoting">Remoting</a></li>
-<li><a href="Serialization">Serialization</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="EventStream">EventStream</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka.NET">Building and Distributing Akka.NET</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+								<div><h1 id="akka-net-configuration">Akka.NET Configuration</h1>
+<p><em>Quoted from <a href="https://github.com/petabridge/akka-bootcamp/tree/master/src/Unit-2/lesson1" title="Using HOCON Configuration to Configure Akka.NET">Akka.NET Bootcamp: Unit 2, Lesson 1 - &quot;Using HOCON Configuration to Configure Akka.NET&quot;</a></em></p>
+<p>Akka.NET leverages a configuration format, called <a href="hocon">HOCON</a>, to allow you to configure your Akka.NET applications with whatever level of granularity you want.</p>
+<h4 id="what-is-hocon-">What is HOCON?</h4>
+<p><a href="hocon">HOCON (Human-Optimized Config Object Notation)</a> is a flexible and extensible configuration format. It will allow you to configure everything from Akka.NET&#39;s <code>IActorRefProvider</code> implementation, logging, network transports, and more commonly - how individual actors are deployed.</p>
+<p>Values returned by HOCON are strongly typed (i.e. you can fetch out an <code>int</code>, a <code>Timespan</code>, etc).</p>
+<h4 id="what-can-i-do-with-hocon-">What can I do with HOCON?</h4>
+<p>HOCON allows you to embed easily-readable configuration inside of the otherwise hard-to-read XML in App.config and Web.config.  HOCON also lets you query configs by their section paths, and those sections are exposed strongly typed and parsed values you can use inside your applications.</p>
+<p>HOCON also lets you nest and/or chain sections of configuration, creating layers of granularity and providing you a semantically namespaced config.</p>
+<h4 id="what-is-hocon-usually-used-for-">What is HOCON usually used for?</h4>
+<p>HOCON is commonly used for tuning logging settings, enabling special modules (such as <code>Akka.Remote</code>), or configuring deployments such as the <code>Dispatcher</code> or <code>Router</code> used for a particular actor.</p>
+<p>For example, let&#39;s configure an <code>ActorSystem</code> with HOCON:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> config = ConfigurationFactory.ParseString(<span class="hljs-string">@"
+akka.remote.helios.tcp {
+              transport-class =
+           ""Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote""
+              transport-protocol = tcp
+              port = 8091
+              hostname = ""127.0.0.1""
+          }"</span>);
+
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MyActorSystem"</span>, config);
+</code></pre>
+<p>As you can see in that example, a HOCON <code>Config</code> object can be parsed from a <code>string</code> using the <code>ConfigurationFactory.ParseString</code> method. Once you have a <code>Config</code> object, you can then pass this to your <code>ActorSystem</code> inside the <code>ActorSystem.Create</code> method.</p>
+<h4 id="-deployment-what-s-that-">&quot;Deployment&quot;? What&#39;s that?</h4>
+<p>Deployment is a vague concept, but it&#39;s closely tied to HOCON. An actor is &quot;deployed&quot; when it is instantiated and put into service within the <code>ActorSystem</code> somewhere.</p>
+<p>When an actor is instantiated within the <code>ActorSystem</code> it can be deployed in one of two places: inside the local process or in another process (this is what <code>Akka.Remote</code> does.)</p>
+<p>When an actor is deployed by the <code>ActorSystem</code>, it has a range of configuration settings. These settings control a wide range of behavior options for the actor, such as: is this actor going to be a router? What <code>Dispatcher</code> will it use? What type of mailbox will it have? (More on these concepts in later lessons.)</p>
+<p>We haven&#39;t gone over what all these options mean, but <em>the key thing to know for now is that the settings used by the <code>ActorSystem</code> to deploy an actor into service can be set within HOCON. </em></p>
+<p><strong><em>This also means that you can change the behavior of actors dramatically (by changing these settings) without having to actually touch the actor code itself.</em></strong></p>
+<p>Flexible config FTW!</p>
+<h4 id="hocon-can-be-used-inside-app-config-and-web-config-">HOCON can be used inside <code>App.config</code> and <code>Web.config</code></h4>
+<p>Parsing HOCON from a <code>string</code> is handy for small configuration sections, but what if you want to be able to take advantage of <a href="https://msdn.microsoft.com/en-us/library/dd465326.aspx">Configuration Transforms for <code>App.config</code> and <code>Web.config</code></a> and all of the other nice tools we have in the <code>System.Configuration</code> namespace?</p>
+<p>As it turns out, you can use HOCON inside these configuration files too!</p>
+<p>Here&#39;s an example of using HOCON inside <code>App.config</code>:</p>
+<pre><code class="hljs lang-xml"><span class="hljs-pi">&lt;?xml version="1.0" encoding="utf-8" ?&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">configuration</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">configSections</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">section</span> <span class="hljs-attribute">name</span>=<span class="hljs-value">"akka"</span>
+             <span class="hljs-attribute">type</span>=<span class="hljs-value">"Akka.Configuration.Hocon.AkkaConfigurationSection, Akka"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">configSections</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-title">akka</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">hocon</span>&gt;</span>
+      <span class="hljs-cdata">&lt;![CDATA[
+          akka {
+            # here we are configuring log levels
+            log-config-on-start = off
+            stdout-loglevel = INFO
+            loglevel = ERROR
+            # this config section will be referenced as akka.actor
+            actor {
+              provider = "Akka.Remote.RemoteActorRefProvider, Akka.Remote"
+              debug {
+                  receive = on
+                  autoreceive = on
+                  lifecycle = on
+                  event-stream = on
+                  unhandled = on
+              }
+            }
+            # here we're configuring the Akka.Remote module
+            remote {
+              helios.tcp {
+                  transport-class =
+            "Akka.Remote.Transport.Helios.HeliosTcpTransport, Akka.Remote"
+                  #applied-adapters = []
+                  transport-protocol = tcp
+                  port = 8091
+                  hostname = "127.0.0.1"
+              }
+            log-remote-lifecycle-events = INFO
+          }
+      ]]&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-title">hocon</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">akka</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">configuration</span>&gt;</span>
+</code></pre>
+<p>And then we can load this configuration section into our <code>ActorSystem</code> via the following code:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"Mysystem"</span>); <span class="hljs-comment">//automatically loads App/Web.config</span>
+</code></pre>
+<h4 id="hocon-configuration-supports-fallbacks">HOCON Configuration Supports Fallbacks</h4>
+<p>Although this isn&#39;t a concept we leverage explicitly in Unit 2, it&#39;s a powerful trait of the <code>Config</code> class that comes in handy in lots of production use cases.</p>
+<p>HOCON supports the concept of &quot;fallback&quot; configurations - it&#39;s easiest to explain this concept visually.</p>
+<p><img class="img-responsive" src="../images/hocon-config-normally.gif" alt="Normal HOCON Config Behavior"></p>
+<p>To create something that looks like the diagram above, we have to create a <code>Config</code> object that has three fallbacks chained behind it using syntax like this:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> f0 = ConfigurationFactory.ParseString(<span class="hljs-string">"a = bar"</span>);
+<span class="hljs-keyword">var</span> f1 = ConfigurationFactory.ParseString(<span class="hljs-string">"b = biz"</span>);
+<span class="hljs-keyword">var</span> f2 = ConfigurationFactory.ParseString(<span class="hljs-string">"c = baz"</span>);
+<span class="hljs-keyword">var</span> f3 = ConfigurationFactory.ParseString(<span class="hljs-string">"a = foo"</span>);
+
+<span class="hljs-keyword">var</span> yourConfig = f0.WithFallback(f1)
+                   .WithFallback(f2)
+                   .WithFallback(f3);
+</code></pre>
+<p>If we request a value for a HOCON object with key &quot;a&quot;, using the following code:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> a = yourConfig.GetString(<span class="hljs-string">"a"</span>);
+</code></pre>
+<p>Then the internal HOCON engine will match the first HOCON file that contains a definition for key <code>a</code>. In this case, that is <code>f0</code>, which returns the value &quot;bar&quot;.</p>
+<h4 id="why-wasn-t-foo-returned-as-the-value-for-a-">Why wasn&#39;t &quot;foo&quot; returned as the value for &quot;a&quot;?</h4>
+<p>The reason is because HOCON only searches through fallback <code>Config</code> objects if a match is NOT found earlier in the <code>Config</code> chain. If the top-level <code>Config</code> object has a match for <code>a</code>, then the fallbacks won&#39;t be searched. In this case, a match for <code>a</code> was found in <code>f0</code> so the <code>a=foo</code> in <code>f3</code> was never reached.</p>
+<h4 id="what-happens-when-there-is-a-hocon-key-miss-">What happens when there is a HOCON key miss?</h4>
+<p>What happens if we run the following code, given that <code>c</code> isn&#39;t defined in <code>f0</code> or <code>f1</code>?</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> c = yourConfig.GetString(<span class="hljs-string">"c"</span>);
+</code></pre>
+<p><img class="img-responsive" src="../images/hocon-config-fallbacks.gif" alt="Fallback HOCON Config Behavior"></p>
+<p>In this case <code>yourConfig</code> will fallback twice to <code>f2</code> and return &quot;baz&quot; as the value for key <code>c</code>.</p>
 </div>
 
 								

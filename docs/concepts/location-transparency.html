@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Location Transparency | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -148,7 +148,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Akka.NET Documentation.md" > (Edit on Github)</a></li>
+							<li class="active">Location Transparency<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Location Transparency.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -176,91 +176,41 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="location-transparency">Location Transparency</h1>
+<p>You might have noticed looking at some of the Akka.NET documentation that when you create an instance of an actor you defined, you get an <code>IActorRef</code> instance back instead of an instance of your actor type. <code>FooActor</code> or whatever.</p>
+<blockquote>
+<p>The reason for this is simple - you never send a message to an actor instance directly. You do it through an &quot;actor reference,&quot; implemented via the <code>IActorRef</code> interface.</p>
+</blockquote>
+<p>This is because actor references have the ability to add <a href="http://en.wikipedia.org/wiki/Location_transparency" title="Wikipedia: Location transparency">location transparency</a> to your actors - an important concept that enables Akka.NET applications to be easily distributed over a network of computers.</p>
+<h2 id="real-world-examples-of-location-transparency">Real-world examples of location transparency</h2>
+<p>Location transparency is a concept that you already use constantly in your everyday life. Here&#39;s some examples:</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li>Phone numbers</li>
+<li>Email addresses</li>
+<li>URLs</li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
+<p><em>Quoted from <a href="http://petabridge.com/blog/akkadotnet-what-is-an-actor/" title="What is an Akka.NET Actor?">Beyond HTTP: &quot;What is an Actor?&quot;</a></em></p>
+<p>What location transparency means is that whenever you send a message to an actor, you don&#39;t need to know where they are within an actor system, which might span hundreds of computers. You just have to know that actors&#39; address.</p>
+<p>Think of it like calling someone&#39;s cell phone number - you don&#39;t need to know that your friend Bob is in Seattle, Washington, USA in order to place a call to them. You just need to dial Bob&#39;s cell phone number and your cellular network provider will take care of the rest.</p>
+<h2 id="actor-references-and-actor-addresses">Actor references and actor addresses</h2>
+<p><em>Quoted from <a href="http://petabridge.com/blog/akkadotnet-what-is-an-actor/" title="What is an Akka.NET Actor?">Beyond HTTP: &quot;What is an Actor?&quot;</a></em></p>
+<p>Actors work just the same way - in Akka.NET every actor has an address that contains the following parts:</p>
+<p><img class="img-responsive" src="../images/akka-actor-address-and-path.png" alt="Akka.NET actor path and address"></p>
 <ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li><a href="Use case and Deployment Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
+<li><strong>Protocol</strong> - just like how you can have HTTP and HTTPS on the web, Akka.NET supports multiple transport protocols for inter-process communication. The default protocol for single-process actor systems is just <code>akka://</code>. If you&#39;re using remoting or clustering, you&#39;ll typically use a socket transport like <code>akka.tcp://</code> or <code>akka.udp://</code> to communicate between nodes.</li>
+<li><strong>ActorSystem</strong> - every <code>ActorSystem</code> instance in Akka.NET has to be given a name upon startup, and that name can be shared by multiple processes or machines that are all participating in a distributed <code>ActorSystem</code>.</li>
+<li><strong>Address</strong> - if you&#39;re not using remoting, then the address portion of an <code>ActorPath</code> can be omitted. But this is used to convey specific IP address / domain name and port information used for remote communication between actor systems.</li>
+<li><strong>Path</strong> - this is the path to a specific actor at an address. It&#39;s structure just like a URL path for a website, with all user-defined actors stemming off of the <code>/user/</code> root actor.</li>
 </ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
+<blockquote>
+<p>However, this detail of the actor&#39;s address is made transparent to you by the actor reference. An <code>IActorRef</code> belonging to a remote system looks exactly the same to you as an <code>IActorRef</code> created inside the current process.</p>
+</blockquote>
+<p>Therefore your Akka.NET application code doesn&#39;t have to differentiate between local and remote actors - that&#39;s handled transparently for you by the Akka.NET framework. This is what we mean by &quot;location transparency.&quot;</p>
+<h3 id="references">References</h3>
 <ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Actors">Actors</a></li>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="TypedActor">Typed Actors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Dispatchers">Dispatchers</a></li>
-<li><a href="Mailbox">Mailboxes</a></li>
-<li><a href="Routing">Routing</a></li>
-<li><a href="Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="Stash">Stash</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Remoting">Remoting</a></li>
-<li><a href="Serialization">Serialization</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="EventStream">EventStream</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka.NET">Building and Distributing Akka.NET</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
+<li><strong><a href="http://www.reactivemanifesto.org/glossary#Location-Transparency"><em>Reactive Manifesto</em>: Glossary - Location Transparency</a></strong></li>
+<li><strong><a href="http://petabridge.com/blog/akkadotnet-what-is-an-actor/" title="What is an Akka.NET Actor?"><em>Beyond HTTP:</em> &quot;What is an Actor?&quot;</a></strong></li>
+<li><strong><a href="http://en.wikipedia.org/wiki/Location_transparency"><em>Wikipedia</em>: &quot;Location transparency&quot;</a></strong></li>
 </ul>
 </div>
 
