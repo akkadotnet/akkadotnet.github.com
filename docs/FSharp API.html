@@ -189,7 +189,7 @@
 </ul>
 <h3 id="creating-actors-with-actor-computation-expression">Creating actors with <code>actor</code> computation expression</h3>
 <p>Unlike C# actors, which represent object oriented nature of the language, F# is able to define an actor&#39;s logic in more functional way. It is done by using <code>actor</code> computation expression. In most of the cases, an expression inside <code>actor</code> is expected to be represented as self-invoking recursive function - also invoking an other functions while maintaining recursive cycle is allowed, i.e. to change actor&#39;s behavior or even to create more advanced constructs like Finite State Machines.</p>
-<p>It&#39;s important to remember, that each actor returning point should point to the next recursive function call - any other value returned will result in stopping current actor (see: <a href="http://akkadotnet.github.io/docs/Actor%20lifecycle">Actor Lifecycle</a>).</p>
+<p>It&#39;s important to remember, that each actor returning point should point to the next recursive function call - any other value returned will result in stopping current actor (see: <a href="Actor lifecycle">Actor Lifecycle</a>).</p>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> aref =
     spawn system <span class="hljs-string">"my-actor"</span>
@@ -242,11 +242,11 @@
 <h3 id="actor-spawning-options">Actor spawning options</h3>
 <p>To be able to specify more precise actor creation behavior, you may use <code>spawnOpt</code> and <code>spawne</code> methods, both taking a list of <code>SpawnOption</code> values. Each specific option should be present only once in the collection. When a conflict occurs (more than one option of specified type has been found), the latest value found inside the list will be chosen.</p>
 <ul>
-<li><code>SpawnOption.Deploy(Akka.Actor.Deploy)</code> - defines deployment strategy for created actors (see: Deploy). This option may be used along with <code>spawne</code> function to enable remote actors deployment.</li>
-<li><code>SpawnOption.Router(Akka.Routing.RouterConfig)</code> - defines an actor to be a router as well as it&#39;s routing specifics (see: <a href="http://akkadotnet.github.io/docs/Routing">Routing</a>).</li>
-<li><code>SpawnOption.SupervisiorStrategy(Akka.Actor.SupervisiorStrategy)</code> - defines a supervisor strategy of the current actor. It will affect it&#39;s children (see: <a href="http://akkadotnet.github.io/docs/Supervision">Supervision</a>).</li>
-<li><code>SpawnOption.Dispatcher(string)</code> - defines a type of the dispatcher used for resources management for the created actors. (See: <a href="http://akkadotnet.github.io/docs/Dispatchers">Dispatchers</a>)</li>
-<li><code>SpawnOption.Mailbox(string)</code> - defines a type of the mailbox used for the created actors. (See: <a href="http://akkadotnet.github.io/docs/Mailbox">Mailboxes</a>)</li>
+<li><code>SpawnOption.Deploy(Akka.Actor.Deploy)</code> - defines deployment strategy for created actors (see: [[Deploy]]). This option may be used along with <code>spawne</code> function to enable remote actors deployment.</li>
+<li><code>SpawnOption.Router(Akka.Routing.RouterConfig)</code> - defines an actor to be a router as well as it&#39;s routing specifics (see: <a href="Routing">Routing</a>).</li>
+<li><code>SpawnOption.SupervisiorStrategy(Akka.Actor.SupervisiorStrategy)</code> - defines a supervisor strategy of the current actor. It will affect it&#39;s children (see: <a href="Supervision">Supervision</a>).</li>
+<li><code>SpawnOption.Dispatcher(string)</code> - defines a type of the dispatcher used for resources management for the created actors. (See: <a href="Dispatchers">Dispatchers</a>)</li>
+<li><code>SpawnOption.Mailbox(string)</code> - defines a type of the mailbox used for the created actors. (See: <a href="Mailbox">Mailboxes</a>)</li>
 </ul>
 <p>Example (deploy actor remotely):</p>
 <pre><code>open Akka<span class="hljs-class">.Actor</span>
@@ -260,7 +260,7 @@ let remoteRef =
 async { <span class="hljs-keyword">let</span>! response = aref &lt;? request }
 </code></pre>
 <h3 id="actor-selection">Actor selection</h3>
-<p>Actors may be referenced not only by <code>ActorRef</code>s, but also through actor path selection (see: <a href="http://akkadotnet.github.io/docs/Addressing">Addressing</a>). With F# API you may select an actor with known path using <code>select</code> function:</p>
+<p>Actors may be referenced not only by <code>ActorRef</code>s, but also through actor path selection (see: <a href="Addressing">Addressing</a>). With F# API you may select an actor with known path using <code>select</code> function:</p>
 <ul>
 <li><code>select (path : string) (selector : ActorRefFactory) : ActorSelection</code> - where path is a valid URI string used to recognize actor path, and the selector is either actor system or actor itself.</li>
 </ul>
@@ -295,7 +295,7 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
 </ul>
 <p>Monitored actors will automatically send a <code>Terminated</code> message to their watchers when they die.</p>
 <h3 id="actor-supervisor-strategies">Actor supervisor strategies</h3>
-<p>Actors have a place in their system&#39;s hierarchy trees. To manage failures done by the child actors, their parents/supervisors may decide to use specific supervisor strategies (see: <a href="http://akkadotnet.github.io/docs/Supervision">Supervision</a>) in order to react to the specific types of errors. In F# this may be configured using functions of the <code>Strategy</code> module:</p>
+<p>Actors have a place in their system&#39;s hierarchy trees. To manage failures done by the child actors, their parents/supervisors may decide to use specific supervisor strategies (see: <a href="Supervision">Supervision</a>) in order to react to the specific types of errors. In F# this may be configured using functions of the <code>Strategy</code> module:</p>
 <ul>
 <li><code>Strategy.OneForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution.</li>
 <li><code>Strategy.OneForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
