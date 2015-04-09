@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+<title>Remoting | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!-- Live reload -->
+<script src="//localhost:35729/livereload.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu ">
+            <a href="/">
+              HOME<span>&nbsp;</span>
+            </a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Remoting<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Remoting.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><p>The previous section describes how actor paths are used to enable location transparency. This special feature deserves some extra explanation, because the related term “transparent remoting” was used quite differently in the context of programming languages, platforms and technologies.</p>
+<h2 id="distributed-by-default">Distributed by Default</h2>
+<p>Everything in Akka is designed to work in a distributed setting: all interactions of actors use purely message passing and everything is asynchronous. This effort has been undertaken to ensure that all functions are available equally when running within a single machine or on a cluster of hundreds of machines. The key for enabling this is to go from remote to local by way of optimization instead of trying to go from local to remote by way of generalization. See <a href="http://doc.akka.io/docs/misc/smli_tr-94-29.pdf">this classic paper</a> for a detailed discussion on why the second approach is bound to fail.</p>
+<h2 id="ways-in-which-transparency-is-broken">Ways in which Transparency is Broken</h2>
+<p>What is true of Akka need not be true of the application which uses it, since designing for distributed execution poses some restrictions on what is possible. The most obvious one is that all messages sent over the wire must be serializable. While being a little less obvious this includes closures which are used as actor factories (i.e. within Props) if the actor is to be created on a remote node.</p>
+<p>Another consequence is that everything needs to be aware of all interactions being fully asynchronous, which in a computer network might mean that it may take several minutes for a message to reach its recipient (depending on configuration). It also means that the probability for a message to be lost is much higher than within one CLR, where it is close to zero (still: no hard guarantee!).</p>
+<h2 id="how-is-remoting-used-">How is Remoting Used?</h2>
+<p>We took the idea of transparency to the limit in that there is nearly no API for the remoting layer of Akka: it is purely driven by configuration. Just write your application according to the principles outlined in the previous sections, then specify remote deployment of actor sub-trees in the configuration file. This way, your application can be scaled out without having to touch the code. The only piece of the API which allows programmatic influence on remote deployment is that Props contain a field which may be set to a specific Deploy instance; this has the same effect as putting an equivalent deployment into the configuration file (if both are given, configuration file wins).</p>
+<h2 id="peer-to-peer-vs-client-server">Peer-to-Peer vs. Client-Server</h2>
+<p>Akka Remoting is a communication module for connecting actor systems in a peer-to-peer fashion, and it is the foundation for Akka Clustering. The design of remoting is driven by two (related) design decisions:</p>
+<ol>
+<li>Communication between involved systems is symmetric: if a system A can connect to a system B then system B must also be able to connect to system A independently.</li>
+<li>The role of the communicating systems are symmetric in regards to connection patterns: there is no system that only accepts connections, and there is no system that only initiates connections.
+The consequence of these decisions is that it is not possible to safely create pure client-server setups with predefined roles (violates assumption 2) and using setups involving Network Address Translation or Load Balancers (violates assumption 1).</li>
+</ol>
+<p>For client-server setups it is better to use HTTP or Akka I/O(Not yet ported to Akka.NET)</p>
+<h2 id="marking-points-for-scaling-up-with-routers">Marking Points for Scaling Up with Routers</h2>
+<p>In addition to being able to run different parts of an actor system on different nodes of a cluster, it is also possible to scale up onto more cores by multiplying actor sub-trees which support parallelization (think for example a search engine processing different queries in parallel). The clones can then be routed to in different fashions, e.g. round-robin. The only thing necessary to achieve this is that the developer needs to declare a certain actor as <code>“WithRouter”</code>, then—in its stead—a router actor will be created which will spawn up a configurable number of children of the desired type and route to them in the configured fashion. Once such a router has been declared, its configuration can be freely overridden from the configuration file, including mixing it with the remote deployment of (some of) the children. Read more about this in [[Routing]]</p>
+<h2 id="using-remoting">Using Remoting</h2>
+<h4 id="server-">Server:</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> config = ConfigurationFactory.ParseString(<span class="hljs-string">@"
+akka {
+    actor {
+        provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+    }
+
+    remote {
+        helios.tcp {
+            port = 8080
+            hostname = localhost
+        }
+    }
+}
+"</span>);
+
+<span class="hljs-keyword">using</span> (ActorSystem system = ActorSystem.Create(<span class="hljs-string">"MyServer"</span>, config))
+{
+    system.ActorOf&lt;GreetingActor&gt;(<span class="hljs-string">"greeter"</span>);
+    Console.ReadKey();
+}
+</code></pre>
+<h4 id="client-">Client:</h4>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> config = ConfigurationFactory.ParseString(<span class="hljs-string">@"
+akka {
+    actor {
+        provider = ""Akka.Remote.RemoteActorRefProvider, Akka.Remote""
+    }
+    remote {
+        helios.tcp {
+            port = 8090
+            hostname = localhost
+        }
+    }
+}
+"</span>);
+
+<span class="hljs-keyword">using</span>(<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MyClient"</span>, config))
+{
+    <span class="hljs-comment">//get a reference to the remote actor</span>
+    <span class="hljs-keyword">var</span> greeter = system
+        .ActorSelection(<span class="hljs-string">"akka.tcp://MyServer@localhost:8080/user/greeter"</span>);
+    <span class="hljs-comment">//send a message to the remote actor</span>
+    greeter.Tell(<span class="hljs-keyword">new</span> Greet { Who = <span class="hljs-string">"Roger"</span> });
+
+    Console.ReadLine();
+}
+</code></pre>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

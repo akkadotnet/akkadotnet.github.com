@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8" />
+<title>Terminology | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!-- Live reload -->
+<script src="//localhost:35729/livereload.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu ">
+            <a href="/">
+              HOME<span>&nbsp;</span>
+            </a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Terminology<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Terminology.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><p>In this chapter we attempt to establish a common terminology to define a solid ground for communicating about concurrent, distributed systems which Akka targets. Please note that, for many of these terms, there is no single agreed definition. We simply seek to give working definitions that will be used in the scope of the Akka documentation.</p>
+<h2 id="concurrency-vs-parallelism">Concurrency vs. Parallelism</h2>
+<p>Concurrency and parallelism are related concepts, but there are small differences. Concurrency means that two or more tasks are making progress even though they might not be executing simultaneously. This can for example be realized with time slicing where parts of tasks are executed sequentially and mixed with parts of other tasks. Parallelism on the other hand arise when the execution can be truly simultaneous.</p>
+<h4 id="concurrency">Concurrency</h4>
+<p><img class="img-responsive" src="images/concurrency.png" alt="Concurrency"></p>
+<h4 id="parallelism">Parallelism</h4>
+<p><img class="img-responsive" src="images/parallelism.png" alt="Parallelism"></p>
+<h2 id="asynchronous-vs-synchronous">Asynchronous vs. Synchronous</h2>
+<p>A method call is considered synchronous if the caller cannot make progress until the method returns a value or throws an exception. On the other hand, an asynchronous call allows the caller to progress after a finite number of steps, and the completion of the method may be signalled via some additional mechanism (it might be a registered callback, a Future, or a message).</p>
+<p>A synchronous API may use blocking to implement synchrony, but this is not a necessity. A very CPU intensive task might give a similar behavior as blocking. In general, it is preferred to use asynchronous APIs, as they guarantee that the system is able to progress. Actors are asynchronous by nature: an actor can progress after a message send without waiting for the actual delivery to happen.</p>
+<h2 id="non-blocking-vs-blocking">Non-blocking vs. Blocking</h2>
+<p>We talk about blocking if the delay of one thread can indefinitely delay some of the other threads. A good example is a resource which can be used exclusively by one thread using mutual exclusion. If a thread holds on to the resource indefinitely (for example accidentally running an infinite loop) other threads waiting on the resource can not progress. In contrast, non-blocking means that no thread is able to indefinitely delay others.</p>
+<p>Non-blocking operations are preferred to blocking ones, as the overall progress of the system is not trivially guaranteed when it contains blocking operations.</p>
+<h2 id="deadlock-vs-starvation-vs-live-lock">Deadlock vs. Starvation vs. Live-lock</h2>
+<p>Deadlock arises when several participants are waiting on each other to reach a specific state to be able to progress. As none of them can progress without some other participant to reach a certain state (a &quot;Catch-22&quot; problem) all affected subsystems stall. Deadlock is closely related to blocking, as it is necessary that a participant thread be able to delay the progression of other threads indefinitely.</p>
+<p>In the case of deadlock, no participants can make progress, while in contrast Starvation happens, when there are participants that can make progress, but there might be one or more that cannot. Typical scenario is the case of a naive scheduling algorithm that always selects high-priority tasks over low-priority ones. If the number of incoming high-priority tasks is constantly high enough, no low-priority ones will be ever finished.</p>
+<p>Livelock is similar to deadlock as none of the participants make progress. The difference though is that instead of being frozen in a state of waiting for others to progress, the participants continuously change their state. An example scenario when two participants have two identical resources available. They each try to get the resource, but they also check if the other needs the resource, too. If the resource is requested by the other participant, they try to get the other instance of the resource. In the unfortunate case it might happen that the two participants &quot;bounce&quot; between the two resources, never acquiring it, but always yielding to the other.</p>
+<h2 id="race-condition">Race Condition</h2>
+<p>We call it a Race condition when an assumption about the ordering of a set of events might be violated by external non-deterministic effects. Race conditions often arise when multiple threads have a shared mutable state, and the operations of thread on the state might be interleaved causing unexpected behavior. While this is a common case, shared state is not necessary to have race conditions. One example could be a client sending unordered packets (e.g UDP datagrams) P1, P2 to a server. As the packets might potentially travel via different network routes, it is possible that the server receives P2 first and P1 afterwards. If the messages contain no information about their sending order it is impossible to determine by the server that they were sent in a different order. Depending on the meaning of the packets this can cause race conditions.</p>
+<p>Note
+The only guarantee that Akka provides about messages sent between a given pair of actors is that their order is always preserved. see Message Delivery Reliability</p>
+<h2 id="non-blocking-guarantees-progress-conditions-">Non-blocking Guarantees (Progress Conditions)</h2>
+<p>As discussed in the previous sections blocking is undesirable for several reasons, including the dangers of deadlocks and reduced throughput in the system. In the following sections we discuss various non-blocking properties with different strength.</p>
+<h3 id="wait-freedom">Wait-freedom</h3>
+<p>A method is wait-free if every call is guaranteed to finish in a finite number of steps. If a method is bounded wait-free then the number of steps has a finite upper bound.</p>
+<p>From this definition it follows that wait-free methods are never blocking, therefore deadlock can not happen. Additionally, as each participant can progress after a finite number of steps (when the call finishes), wait-free methods are free of starvation.</p>
+<h3 id="lock-freedom">Lock-freedom</h3>
+<p>Lock-freedom is a weaker property than wait-freedom. In the case of lock-free calls, infinitely often some method finishes in a finite number of steps. This definition implies that no deadlock is possible for lock-free calls. On the other hand, the guarantee that some call finishes in a finite number of steps is not enough to guarantee that all of them eventually finish. In other words, lock-freedom is not enough to guarantee the lack of starvation.</p>
+<h3 id="obstruction-freedom">Obstruction-freedom</h3>
+<p>Obstruction-freedom is the weakest non-blocking guarantee discussed here. A method is called obstruction-free if there is a point in time after which it executes in isolation (other threads make no steps, e.g.: become suspended), it finishes in a bounded number of steps. All lock-free objects are obstruction-free, but the opposite is generally not true.</p>
+<p>Optimistic concurrency control (OCC) methods are usually obstruction-free. The OCC approach is that every participant tries to execute its operation on the shared object, but if a participant detects conflicts from others, it rolls back the modifications, and tries again according to some schedule. If there is a point in time, where one of the participants is the only one trying, the operation will succeed.</p>
+<h2 id="recommended-literature">Recommended literature</h2>
+<ul>
+<li>The Art of Multiprocessor Programming, M. Herlihy and N Shavit, 2008. ISBN 978-0123705914</li>
+<li>Java Concurrency in Practice, B. Goetz, T. Peierls, J. Bloch, J. Bowbeer, D. Holmes and D. Lea, 2006. ISBN 978-0321349606</li>
+</ul>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
