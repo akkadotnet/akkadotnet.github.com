@@ -187,7 +187,7 @@
     .<span class="hljs-type">MinimumLevel</span>.<span class="hljs-type">Information</span><span class="hljs-literal">()</span>
     .<span class="hljs-type">CreateLogger</span><span class="hljs-literal">()</span>;
 <span class="hljs-type">Serilog</span>.<span class="hljs-type">Log</span>.<span class="hljs-type">Logger</span> = logger;
-var system = <span class="hljs-type">ActorSystem</span>.<span class="hljs-type">Create</span>(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=['Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog']}"</span>);
+var system = <span class="hljs-type">ActorSystem</span>.<span class="hljs-type">Create</span>(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=[\"Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog\"]}"</span>);
 </code></pre>
 <h2 id="logging">Logging</h2>
 <p>To log inside an actor, using the normal <code>string.Format()</code> syntax, get the logger and log:</p>
