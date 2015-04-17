@@ -266,9 +266,9 @@ PM&gt; install-package Akka.Remote
 }
 </code></pre>
 <p>As you can see the main point here is keeping a static reference to your <code>ActorSystem</code> . This ensures it won&#39;t be accidentally garbage collected and gets disposed and created with the start and stop events of your web application. </p>
-<blockquote>
-<p>Warning: Although hosting inside an ASP.NET Application is easy. A <strong>word of caution</strong>: When you are hosting inside of <code>IIS</code> the applicationpool your app lives in could be stopped and started at the whim of <code>IIS</code>. This in turn means your <code>ActorSystem</code> could be stopped at any given time.</p>
-</blockquote>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br>Although hosting inside an ASP.NET Application is easy. A <strong>word of caution</strong>: When you are hosting inside of <code>IIS</code> the applicationpool your app lives in could be stopped and started at the whim of <code>IIS</code>. This in turn means your <code>ActorSystem</code> could be stopped at any given time.</p>
+</div>
 <p>Typically you use a very lightweight <code>ActorSystem</code> inside ASP.NET applications, and offload heavy-duty work to a seperate Windows Service via Akka.Remote / Akka.Cluster</p>
 </div>
 
