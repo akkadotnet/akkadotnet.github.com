@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+		<meta charset="utf-8" />
+		<title>Routers | Akka.NET</title>
+		
+		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+		<meta name="description" content="" />
+		<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		
+		<!-- mobile settings -->
+		<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+		
+		<!-- Favicon -->
+		<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+		
+		<!-- WEB FONTS -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+		
+		<!-- CORE CSS -->
+		<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+		
+		<!-- FAV ICON -->
+		<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+		
+		<!-- REVOLUTION SLIDER -->
+		<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+		
+		<!-- BLOG -->
+		<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+		
+		<!-- THEME CSS -->
+		<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+		<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+		
+		<!-- Highlighting -->
+		<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+		<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+		
+		<!-- Modernizr -->
+		<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+		
+		<!-- Live reload -->
+		<script src="//localhost:35729/livereload.js"></script>
+		
+		<!--[if lte IE 8]>
+		  <script src="/theme_assets/plugins/respond.js"></script>
+		<![endif]-->
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+			  <header id="topBar">
+			    <div class="container">
+			
+			
+			      <!-- Logo -->
+			      <a class="logo" href="/">
+			        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+			      </a>
+			
+			    </div><!-- /.container -->
+			  </header>
+			  <div id="topNav">
+			    <div class="container">
+			      <!-- Mobile Menu Button -->
+			      <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+			        <i class="fa fa-bars"></i>
+			      </button>
+			  
+			      <!-- Search -->
+			      <form class="search" method="get" action="/search">
+			        <input type="text" class="form-control" name="q" value="" placeholder="Search">
+			        <button class="fa fa-search"></button>
+			      </form>
+			      <!-- /Search -->
+			  
+			      <!-- Top Nav -->
+			      <div class="navbar-collapse nav-main-collapse collapse inline-block">
+			        <nav class="nav-main">
+			  
+			  
+			          <!-- pageurl  -->
+			          <ul id="topMain" class="nav nav-pills nav-main">
+			            <li class="mega-menu ">
+			              <a href="/">
+			                HOME<span>&nbsp;</span>
+			              </a>
+			            </li>
+			            <li class="mega-menu  active">
+			              <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+			            </li>
+			            <li class="mega-menu">
+			              <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+			            </li>
+			            <li class="mega-menu">
+			              <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+			            </li>
+			            <li class="mega-menu ">
+			              <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+			            </li>
+			            <li class="mega-menu ">
+			              <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+			            </li>
+			          </ul>
+			  
+			        </nav>
+			      </div>
+			  </div></div>			
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Routers<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Routers.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+<div><h1 id="routers">Routers</h1>
+<p>A <em>router</em> is a special type of actor whose job is to route messages to other actors called <em>routees</em>. Different routers use different <em>strategies</em> to route messages efficiently.</p>
+<p>Routers can be used inside or outside of an actor, and you can manage the routees yourself or use a self contained router actor with configuration capabilities.</p>
+<p>Akka.NET comes with several useful routers you can choose right out of the box, according to your application&#39;s needs. But it is also possible to create your own.</p>
+<div class="alert alert-default">
+<p><strong>Note:</strong><br/>
+In general, any message sent to a router will be forwarded to one of its routees, but there is one exception.
+The special <a href="#Broadcast Messages">Broadcast Message</a> will be sent to all routees.</p>
+</div>
+<h2 id="deployment">Deployment</h2>
+<p>Routers can be deployed in multiple ways, using code or configuration.</p>
+<h4 id="code-deployment">Code deployment</h4>
+<p>The example below shows how to deploy 5 workers using a round robin router:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> props = Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>));
+<span class="hljs-keyword">var</span> actor = system.ActorOf(props, <span class="hljs-string">"worker"</span>);
+</code></pre>
+<p>It&#39;s important to understand that although you create the Props and add the router later, the deployment happens in reverse order, with the workers being added to the router.
+The above code can also be written as:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> props = <span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>).Props(Props.Create&lt;Worker&gt;());
+</code></pre>
+<h4 id="configuration-deployment">Configuration deployment</h4>
+<p>The same router may be defined using a <a href="../concepts/Configuration">HOCON deployment configuration</a>.</p>
+<p>In order to do that, define a HOCON section with the path of the actor, and create the actor in that path using <code>FromConfig.Instance</code>.</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /workers {
+    router = <span class="hljs-command">round</span>-robin-pool
+    nr-<span class="hljs-keyword">of</span>-instances = <span class="hljs-number">5</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> props = Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance);
+<span class="hljs-keyword">var</span> actor = system.ActorOf(props, <span class="hljs-string">"workers"</span>);
+</code></pre>
+<p>For router groups, the same idea applies with slightly different syntax:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /workers {
+    <span class="hljs-variable">router =</span> round-robin-group
+    routees.<span class="hljs-variable">paths =</span> [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> props = Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance);
+<span class="hljs-keyword">var</span> actor = system.ActorOf(props, <span class="hljs-string">"workers"</span>);
+</code></pre>
+<p>As you can see above, the advantage of using HOCON for routers is that you can change the deployment of routers easily without recompiling the code.</p>
+<h2 id="pools-vs-groups">Pools vs. Groups</h2>
+<p>There are two types of routers:</p>
+<ul>
+<li><p><strong>Pools</strong></p>
+<p>Router &quot;Pools&quot; are routers that create their own worker actors, that is; you provide the <em>number of instances</em> as a parameter to the router and the router will handle routee creation by itself.</p>
+</li>
+<li><p><strong>Groups</strong></p>
+<p>Sometimes, rather than having the router actor create its routees, it is desirable to create routees yourself and provide them to the router for its use. You can do this by passing the paths of the routees to the router&#39;s configuration. Messages will be sent with <code>ActorSelection</code> to these paths.</p>
+</li>
+</ul>
+<div class="alert alert-default">
+<p><strong>Note:</strong><br />
+Most routing strategies listed below are available in both types. Some of them may be available only in one type due to implementation requirements.</p>
+</div>
+<h4 id="supervision">Supervision</h4>
+<p>Routers are implemented as actors, so a router is supervised by it&#39;s parent, and they may supervise children.</p>
+<p><em>Group routers</em> use routees created somewhere else, it doesn&#39;t have children of its own. If a routee dies, a group router will have no knowledge of it.</p>
+<p><em>Pool routers</em> on the other hand create their own children. The router is therefore also the routee&#39;s supervisor.</p>
+<p>By default, routers use the <code>OneForOneStrategy</code>, so if a child dies, only that actor is restarted. If you want to change this behavior, the supervision strategy of the router actor can be configured with the <code>SupervisorStrategy</code> property of the Pool.</p>
+<h2 id="routing-strategies">Routing Strategies</h2>
+<p>These are the routing strategies provided by Akka.NET out of the box.</p>
+<h3 id="roundrobin">RoundRobin</h3>
+<p><code>RoundRobinPool</code> and <code>RoundRobinGroup</code> are routers that sends messages to routees in <a href="http://en.wikipedia.org/wiki/Round-robin">round-robin</a> order. It&#39;s the simplest way to distribute messages to multiple worker actors, on a best-effort basis.</p>
+<p><img class="img-responsive" src="../images/RoundRobinRouter.png" alt="Round Robin Router"></p>
+<h4 id="usage-">Usage:</h4>
+<p>RoundRobinPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /<span class="hljs-keyword">some</span>-pool {
+    router = <span class="hljs-command">round</span>-robin-pool
+    nr-<span class="hljs-keyword">of</span>-instances = <span class="hljs-number">5</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>RoundRobinPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>RoundRobinGroup defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /<span class="hljs-keyword">some</span>-group {
+    router = <span class="hljs-command">round</span>-robin-group
+    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<p>RoundRobinGroup defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span> [] { <span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w3"</span>, <span class="hljs-string">"/user/workers/w3"</span> }
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(workers)), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<h3 id="broadcast">Broadcast</h3>
+<p>The <code>BroadcastPool</code> and <code>BroadcastGroup</code> routers will, as the name implies, broadcast any message to all of its routees.</p>
+<p><img class="img-responsive" src="../images/BroadcastRouter.png" alt="Broadcast Router"></p>
+<h4 id="usage-">Usage:</h4>
+<p>BroadcastPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /<span class="hljs-keyword">some</span>-pool {
+    router = broadcast-pool
+    nr-<span class="hljs-keyword">of</span>-instances = <span class="hljs-number">5</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>BroadcastPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> BroadcastPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>BroadcastGroup defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> {
+    router = broadcast-<span class="hljs-keyword">group</span>
+    routees.paths = [<span class="hljs-string">"/user/a1"</span>, <span class="hljs-string">"/user/a2"</span>, <span class="hljs-string">"/user/a3"</span>]
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<p>BroadcastGroup defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> actors = <span class="hljs-keyword">new</span> [] { <span class="hljs-string">"/user/a1"</span>, <span class="hljs-string">"/user/a2"</span>, <span class="hljs-string">"/user/a3"</span> }
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> BroadcastGroup(actors)), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<h3 id="random">Random</h3>
+<p>The <code>RandomPool</code> and <code>RandomGroup</code> routers will forward messages to routees in random order.</p>
+<h4 id="usage-">Usage:</h4>
+<p>RandomPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /<span class="hljs-keyword">some</span>-pool {
+    router = random-pool
+    nr-<span class="hljs-keyword">of</span>-instances = <span class="hljs-number">5</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>RandomPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> RandomPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>RandomGroup defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> {
+    router = random-<span class="hljs-keyword">group</span>
+    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<p>RandomGroup defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span> [] { <span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w3"</span>, <span class="hljs-string">"/user/workers/w3"</span> }
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> RandomGroup(workers)), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<h3 id="consistenthashing">ConsistentHashing</h3>
+<p>The <code>ConsistentHashingPool</code> and <code>ConsistentHashingGroup</code> are routers that use a <a href="http://en.wikipedia.org/wiki/Consistent_hashing">consistent hashing algorithm</a> to select a routee to forward the message. The idea is that messages with the same key are forwarded to the same routee. Any .NET object can be used as a key, although it&#39;s usually a number, string or Guid.</p>
+<p><img class="img-responsive" src="../images/ConsistentHashRouter.png" alt="ConsistentHash Router"></p>
+<p><code>ConsistentHash</code> can be very useful when dealing with <strong>Commands</strong> in the sense of <a href="http://en.wikipedia.org/wiki/Command%E2%80%93query_separation#Command_Query_Responsibility_Segregation"><strong>CQRS</strong></a> or [<strong>Domain Driven Design</strong>].</p>
+<p>For example, let&#39;s assume we have the following incoming sequence of <strong>&quot;Customer Commands&quot;</strong>:</p>
+<p><img class="img-responsive" src="../images/ConsistentHash1.png" alt="ConsistentHash Router example"></p>
+<p>In this case we might want to group all messages based on <strong>&quot;Customer ID&quot;</strong> (ID in the diagram).</p>
+<p>By using a <code>ConsistentHash</code> router we can now process multiple commands in parallel for different Customers, while still processing messages for each specific Customer in ordered sequence, and thus preventing us from getting race conditions with ourselves when applying each command on each customer entity.</p>
+<p><img class="img-responsive" src="../images/ConsistentHash2.png" alt="ConsistentHash Router example"></p>
+<p>There are 3 ways to define what data to use for the consistent hash key.</p>
+<ol>
+<li><p>You can define a <em>hash mapping delegate</em> using the <code>WithHashMapper</code> method of the router to map incoming messages to their consistent hash key. This makes the decision transparent for the sender.</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">new</span> ConsistentHashingPool(<span class="hljs-number">5</span>).WithHashMapping(o =&gt;
+{
+   <span class="hljs-keyword">if</span> (o <span class="hljs-keyword">is</span> IHasCustomKey)
+       <span class="hljs-keyword">return</span> ((IHasCustomKey)o).Key;
+
+   <span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+});
+</code></pre>
+</li>
+<li><p>The messages may implement <code>IConsistentHashable</code>. The key is part of the message and it&#39;s convenient to define it together with the message definition.</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SomeMessage</span> : <span class="hljs-title">IConsistentHashable</span>
+{
+   <span class="hljs-keyword">public</span> Guid GroupID { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
+   <span class="hljs-keyword">public</span> <span class="hljs-keyword">object</span> ConsistentHashKey {  <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> GroupID; } }
+}
+</code></pre>
+</li>
+<li><p>The messages can be wrapped in a <code>ConsistentHashableEnvelope</code> to define what data to use for the consistent hash key. The sender knows the key to use.</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SomeMessage</span>
+{
+  <span class="hljs-keyword">public</span> Guid GroupID { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+<span class="hljs-keyword">var</span> originalMsg = <span class="hljs-keyword">new</span> SomeMessage { GroupID = Guid.NewGuid(); };
+<span class="hljs-keyword">var</span> msg = <span class="hljs-keyword">new</span> ConsistentHashableEnvelope(originalMsg, originalMsg.GroupID);
+</code></pre>
+</li>
+</ol>
+<p>You may implement more than one hashing mechanism at the same time. Akka.NET will try them in the order above. That is, if the HashMapping method returns null, Akka.NET will check for the IConsistentHashable interface in the message (2 and 3 are technically the same).</p>
+<h4 id="usage-">Usage:</h4>
+<p>ConsistentHashingPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-pool {
+    <span class="hljs-variable">router =</span> consistent-hashing-pool
+    <span class="hljs-variable">nr-of-instances =</span> <span class="hljs-number">5</span>
+    <span class="hljs-variable">virtual-nodes-factor =</span> <span class="hljs-number">10</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>ConsistentHashingPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>ConsistentHashingGroup defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> {
+    router = consistent-hashing-<span class="hljs-keyword">group</span>
+    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+    <span class="hljs-keyword">virtual</span>-nodes-factor = <span class="hljs-number">10</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<p>ConsistentHashingGroup defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span> [] { <span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w3"</span>, <span class="hljs-string">"/user/workers/w3"</span> }
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingGroup(workers)), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Notes:</strong><br></p>
+<ol>
+<li><code>virtual-nodes-factor</code> is the number of virtual nodes per routee that is used in the consistent hash node ring - if not defined, the default value is 10 and you shouldn&#39;t need to change it unless you understand how the algorithm works and know what you are doing.</li>
+<li>It is possible to define this value in code using the <code>WithVirtualFactor(...)</code> method of the ConsistentHashingPool/Group object.</li>
+</ol>
+</div>
+<h3 id="tailchopping">TailChopping</h3>
+<p>The <code>TailChoppingPool</code> and <code>TailChoppingGroup</code> routers send the message to a random routee, and if no response is received after a specified delay, send it to another randomly selected routee. It waits for the first reply from any of the routees, and forwards it back to the original sender. Other replies are discarded. If no reply is received after a specified interval, a timeout Failure is generated.</p>
+<p>The goal of this router is to decrease latency by performing redundant queries to multiple routees, assuming that one of the other actors may still be faster to respond than the initial one.</p>
+<p>This optimization was described nicely in a blog post by Peter Bailis: <a href="http://www.bailis.org/blog/doing-redundant-work-to-speed-up-distributed-queries/">Doing redundant work to speed up distributed queries</a>.</p>
+<h4 id="usage-">Usage:</h4>
+<p>TailChoppingPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-pool {
+    router = tail-chopping-pool
+    nr-<span class="hljs-operator">of</span>-instances = <span class="hljs-number">5</span>
+    <span class="hljs-operator">within</span> = <span class="hljs-number">10</span> <span class="hljs-built_in">seconds</span>
+    tail-chopping-router.interval = <span class="hljs-number">20</span> <span class="hljs-built_in">milliseconds</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>TailChoppingPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> within = TimeSpan.FromSeconds(<span class="hljs-number">10</span>);
+<span class="hljs-keyword">var</span> interval = TimeSpan.FromMilliseconds(<span class="hljs-number">20</span>);
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> TailChoppingPool(<span class="hljs-number">5</span>, within, interval)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>TailChoppingGroup defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-group {
+    <span class="hljs-variable">router =</span> tail-chopping-group
+    routees.<span class="hljs-variable">paths =</span> [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+    <span class="hljs-variable">within =</span> <span class="hljs-number">10</span> seconds
+    tail-chopping-router.<span class="hljs-variable">interval =</span> <span class="hljs-number">20</span> milliseconds
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<p>TailChoppingGroup defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span> [] { <span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w3"</span>, <span class="hljs-string">"/user/workers/w3"</span> }
+<span class="hljs-keyword">var</span> within = TimeSpan.FromSeconds(<span class="hljs-number">10</span>);
+<span class="hljs-keyword">var</span> interval = TimeSpan.FromMilliseconds(<span class="hljs-number">20</span>);
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> TailChoppingGroup(workers, within, interval)), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Notes:</strong><br /></p>
+<ol>
+<li><code>within</code> is the time to wait for a reply from any routee before timing out</li>
+<li><code>tail-chopping-router.interval</code> is the interval between requests to the other routees</li>
+</ol>
+</div>
+<h3 id="scattergatherfirstcompleted">ScatterGatherFirstCompleted</h3>
+<p>The <code>ScatterGatherFirstCompletedPool</code> and <code>ScatterGatherFirstCompletedRouter</code> routers will broadcast the message to all routees and reply back to the original sender with the first reply it receives. All other replies are discarded. If no reply is received after a specified interval, a timeout Failure is generated.</p>
+<p>This is useful in scenarios where you can accept any reply to a query and doesn&#39;t care who answers (eg. you may query multiple servers in a cluster just to know if any of them is online - if one answers, you may not care about the others).</p>
+<p><img class="img-responsive" src="../images/ScatterGatherFirstCompletedRouter.png" alt="ScatterGatherFirstCompleted Router"></p>
+<h4 id="usage-">Usage:</h4>
+<p>ScatterGatherFirstCompletedPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-pool {
+    router = tail-chopping-pool
+    nr-<span class="hljs-operator">of</span>-instances = <span class="hljs-number">5</span>
+    <span class="hljs-operator">within</span> = <span class="hljs-number">10</span> <span class="hljs-built_in">seconds</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>ScatterGatherFirstCompletedPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> within = TimeSpan.FromSeconds(<span class="hljs-number">10</span>);
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> ScatterGatherFirstCompletedPool(<span class="hljs-number">5</span>, within)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>ScatterGatherFirstCompletedPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-group {
+    <span class="hljs-variable">router =</span> tail-chopping-group
+    routees.<span class="hljs-variable">paths =</span> [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+    <span class="hljs-variable">within =</span> <span class="hljs-number">10</span> seconds
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<p>ScatterGatherFirstCompletedGroup defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span> [] { <span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w3"</span>, <span class="hljs-string">"/user/workers/w3"</span> }
+<span class="hljs-keyword">var</span> within = TimeSpan.FromSeconds(<span class="hljs-number">10</span>);
+<span class="hljs-keyword">var</span> router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> ScatterGatherFirstCompletedGroup(workers, within)), <span class="hljs-string">"some-group"</span>);
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Notes:</strong><br /></p>
+<ol>
+<li><code>within</code> is the time to wait for a reply from any routee before timing out</li>
+</ol>
+</div>
+<h3 id="smallestmailbox">SmallestMailbox</h3>
+<p>The <code>SmallestMailboxPool</code> router will send the message to the routee with fewest messages in mailbox. The selection is done in this order:</p>
+<ol>
+<li>Pick any idle routee (not processing message) with empty mailbox</li>
+<li>Pick any routee with empty mailbox</li>
+<li>Pick routee with fewest pending messages in mailbox</li>
+<li>Pick any remote routee, remote actors are consider lowest priority, since their mailbox size is unknown</li>
+</ol>
+<p><img class="img-responsive" src="../images/SmallestMailbox.png" alt="SmallestMailbox Router"></p>
+<h4 id="usage-">Usage:</h4>
+<p>SmallestMailboxPool defined in configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /<span class="hljs-keyword">some</span>-pool {
+    router = smallest-mailbox-pool
+    nr-<span class="hljs-keyword">of</span>-instances = <span class="hljs-number">5</span>
+  }
+}
+</code></pre>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(FromConfig.Instance), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<p>SmallestMailboxPool defined in code:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> SmallestMailboxPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
+</code></pre>
+<h2 id="advanced">Advanced</h2>
+<h3 id="how-routing-is-designed-within-akka-net">How Routing is Designed within Akka.NET</h3>
+<p>On the surface routers look like normal actors, but they are actually implemented differently. Routers are designed to be extremely efficient at receiving messages and passing them quickly on to routees.</p>
+<p>A normal actor can be used for routing messages, but an actor&#39;s single-threaded processing can become a bottleneck. Routers can achieve much higher throughput with an optimization to the usual message-processing pipeline that allows concurrent routing. This is achieved by embedding routers&#39; routing logic directly in their ActorRef rather than in the router actor. Messages sent to a router&#39;s ActorRef can be immediately routed to the routee, bypassing the single-threaded router actor entirely.</p>
+<p>The cost to this is, of course, that the internals of routing code are more complicated than if routers were implemented with normal actors. Fortunately all of this complexity is invisible to consumers of the routing API. However, it is something to be aware of when implementing your own routers.</p>
+<h3 id="router-logic">Router Logic</h3>
+<p>All routers implemented through <em>routing logic</em> classes (eg. RoundRobinRoutingLogic, TailChoppingRoutingLogic, etc). Pools and groups are implemented on top of these classes.</p>
+<p>These classes are considered low-level and are exposed for extensibility purposes. They shouldn&#39;t be needed in normal applications. Pools and Groups are the recommended way to use routers.</p>
+<p>Here is an example of how to use the routerlogic directly:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> routees = Enumerable
+    .Range(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>)
+    .Select(i =&gt; <span class="hljs-keyword">new</span> ActorRefRoutee(system.ActorOf&lt;Worker&gt;(<span class="hljs-string">"w"</span> + i)))
+    .ToArray();
+
+<span class="hljs-keyword">var</span> router = <span class="hljs-keyword">new</span> Router(<span class="hljs-keyword">new</span> RoundRobinRoutingLogic(), routees);
+
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++)
+    router.Route(<span class="hljs-string">"msg #"</span> + i, ActorRefs.NoSender);
+</code></pre>
+</div>
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+			  <div class="container">
+			    <div class="row">
+			        <!-- col #1 -->
+			        <div class="spaced dark col-md-3">
+			            <h4>About <strong>Akka.NET</strong></h4>
+			            <p class="block">
+			                Akka.NET is a port of the popular
+			                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+			                <br/>
+			                <br/> This is a community driven port and
+			                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+			                <br/> makes the original Java/Scala version.
+			                <br/>
+			            </p>
+			            <!-- social -->
+			            <p class="block">
+			                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+			                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+			                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+			                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+			            </p><!-- /social -->
+			        </div>
+			        <!-- /col #1 -->
+			        <!-- col #3 -->
+			        <div class="spaced col-md-6 col-sm-4">
+			            <h4>Recent <strong>Tweets</strong></h4>
+			            <ul class="list-unstyled fsize13" id="recent_tweets">
+			            </ul>
+			        </div>
+			        <!-- /col #3 -->
+			        <div class="spaced col-md-3 col-sm-4">
+			            <h4>Keep <strong>Updated</strong></h4>
+			            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+			            <!-- Begin MailChimp Signup Form -->
+			            <div id="mc_embed_signup">
+			                <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+			                    <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+			                    <span class="input-group-btn">
+			              <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+			            </span>
+			                    <div id="mce-responses" class="clear">
+			                        <div class="response" id="mce-error-response" style="display:none"></div>
+			                        <div class="response" id="mce-success-response" style="display:none"></div>
+			                    </div>
+			                    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+			                    <div style="position: absolute; left: -5000px;">
+			                        <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+			                    </div>
+			                    <div class="clear"></div>
+			                </form>
+			            </div>
+			            <!--End mc_embed_signup-->
+			        </div>
+			    </div>
+			  </div>
+			  <hr />
+			  <!-- <div class="copyright">
+			    <div class="container text-center fsize12"></div>
+			  </div> -->
+			</footer>
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+		
+		<!-- REVOLUTION SLIDER -->
+		<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+		<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+		<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+		<script type="text/javascript" src="/js/jquery-toc.js"></script>
+		<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+		<script type="text/javascript" src="/js/scripts.js"></script>		<!-- REACTIVE MANIFESTO BANNER -->
+		<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+	</body>
+</html>
