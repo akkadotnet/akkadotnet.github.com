@@ -5,7 +5,7 @@
 	<head>
 		
 		<meta charset="utf-8" />
-		<title>Akka.NET Documentation | Akka.NET</title>
+		<title>Stashing Messages | Akka.NET</title>
 		
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
@@ -142,7 +142,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Akka.NET Documentation.md" > (Edit on Github)</a></li>
+							<li class="active">Stashing Messages<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Stashing Messages.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -170,92 +170,103 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+<div><h2 id="stashing-messages">Stashing Messages</h2>
+<h3 id="what-is-the-stash-">What is the Stash?</h3>
+<p>The Stash is a feature you can enable in your actors so they can temporarily stash away messages they cannot or should not handle at the moment. Another way to see it is that stashing allows you to keep processing messages you can handle while saving for later messages you can&#39;t.</p>
+<p>Stashes are handled by Akka.NET out of the actor instance just like the mailbox, so if the actor dies while processing a message, the stash is preserved. This feature is usually used together with <a href="Switchable Behaviors">Become/Unbecome</a>, as they fit together very well, but this is not a requirement.</p>
+<h3 id="stash-types">Stash Types</h3>
+<p>Akka.NET provides two interfaces for stashing:</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li><code>IWithBoundedStash</code> - a stash with limited storage</li>
+<li><code>IWithUnboundedStash</code> - a stash with unlimited storage</li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
+<div class="alert alert-default">
+<p><strong>Note:</strong>
+As of Akka.NET 1.0, the Bounded Stash is not fully implemented, and it will behave just like an Unbounded Stash.</p>
+</div>
+<h3 id="using-the-stash">Using the Stash</h3>
+<p>In order to add a stash to an actor, implement one of the <a href="#stash-types">stash interfaces</a> in your actor and add the required <code>Stash</code> property:</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span> : <span class="hljs-title">ReceiveActor</span>, <span class="hljs-title">IWithUnboundedStash</span>
+{
+    <span class="hljs-keyword">public</span> IStash Stash { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<p>Akka.NET recognizes the interface during actor creation and sets the correct stash in the property.</p>
+<p>To use the stash, call the methods on the Stash property:</p>
 <ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li><a href="Use case and Deployment Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
+<li><code>Stash()</code> - adds the current message to the stash</li>
+<li><code>Unstash()</code> - unstashes the oldest message in the stash and prepends to the mailbox</li>
+<li><code>UnstashAll()</code> - unstashes all messages from the mail box and prepends in the mailbox (it keeps the messages in the same order as received, unstashing older messages before newer)</li>
 </ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
+<p>It is illegal to stash the same message twice. Also, calling any of these methods do not interrupt the current message processing. Usually these methods are called as the last thing you do in your <em>receive logic</em>, so that the next step is usually processing the next message.</p>
+<p>The example below shows how to implement an actor with a protocol behavior. The protocol works as follows:</p>
+<ol>
+<li>The actor starts as <strong>idle</strong> and can receive only <strong>open</strong> messages</li>
+<li>If it receives an <strong>open</strong> message, the actor becomes <strong>open</strong></li>
+<li>While the actor is <strong>open</strong>:<ul>
+<li>it can only receive messages to <strong>write</strong> or <strong>close</strong></li>
+<li>any other messages are stashed until the connection is closed</li>
 </ul>
 </li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
+<li>If a <strong>close</strong> message is received, the actor unstashes any other requests received while <strong>open</strong> and becomes <strong>idle</strong></li>
+</ol>
+<div class="alert alert-default">
+<p><strong>Note:</strong> This example requires understanding of <a href="Switchable Behaviors">BecomeStacked/UnbecomeStacked</a>.</p>
+</div>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ActorWithProtocol</span> : <span class="hljs-title">UntypedActor</span>, <span class="hljs-title">IWithUnboundedStash</span>
+{
+    <span class="hljs-keyword">public</span> IStash Stash { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+    </span>{
+        <span class="hljs-comment">// idle</span>
+        <span class="hljs-keyword">if</span> (message.Equals(<span class="hljs-string">"open"</span>))
+        {
+            <span class="hljs-comment">// open</span>
+            BecomeStacked(m =&gt;
+            {
+                <span class="hljs-keyword">if</span> (m.Equals(<span class="hljs-string">"write"</span>))
+                {
+                    <span class="hljs-comment">// do the writing</span>
+                }
+                <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(m.Equals(<span class="hljs-string">"close"</span>)</span>)
+                </span>{
+                    Stash.UnstashAll();
+                    UnbecomeStacked();
+                }
+                <span class="hljs-keyword">else</span>
+                {
+                    Stash.Stash();
+                }
+            });
+        }
+    }
+}
+</code></pre>
+<h4 id="other-use-cases">Other use cases</h4>
+<p>While the above example is very simple, one can imagine the stashing concept being applied to many scenarios:</p>
+<ul>
+<li>An actor that connects to an external server could stash messages while that server is unavailable and unstash them once it comes back online;</li>
+<li>An actor could stash query requests while it fetches a dataset to produce responses;</li>
+<li>An actor could decide to reduce it&#39;s throughput during peak hours by stashing certain messages and unstashing them at specific intervals to process them in batches instead of real time;</li>
 </ul>
+<h3 id="advanced">Advanced</h3>
+<p>There are some APIs on IStash that are considered <strong>internal</strong> but are exposed publicly for some advanced scenarios. These APIs use <code>Envelope</code> object which hold is the way Akka.NET holds messages internally.</p>
+<ul>
+<li><p><code>void Prepend(IEnumerable&lt;Envelope&gt; envelopes)</code></p>
+<p>Allows you to prepend messages to the stash (<code>Stash</code> method always appends them). This may be used if certain message types should be processed before others during unstash.</p>
+</li>
+<li><p><code>void UnstashAll(Func&lt;Envelope, bool&gt; predicate)</code></p>
+<p>This version of UnstashAll allows you to unstash all messages that match a specific predicate. You may filter messages by sender or content.</p>
+<p>Unstash all messages that match a specific predicate.</p>
+</li>
+<li><p><code>IEnumerable&lt;Envelope&gt; ClearStash()</code></p>
+<p>Clears the stash returning all messages that will be discarded.</p>
 </li>
 </ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="TypedActor">Typed Actors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Dispatchers">Dispatchers</a></li>
-<li><a href="Mailbox">Mailboxes</a></li>
-<li><a href="Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Remoting">Remoting</a></li>
-<li><a href="Serialization">Serialization</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="EventStream">EventStream</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka.NET">Building and Distributing Akka.NET</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+<div class="alert alert-default">
+<p><strong>Note:</strong> The internal API may change without notice, but are part of Akka 1.0.</p>
+</div>
 </div>
 
 						</div>
