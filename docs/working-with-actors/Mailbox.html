@@ -5,7 +5,7 @@
 	<head>
 		
 		<meta charset="utf-8" />
-		<title>Akka.NET Documentation | Akka.NET</title>
+		<title>Mailboxes | Akka.NET</title>
 		
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
@@ -142,7 +142,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Akka.NET Documentation.md" > (Edit on Github)</a></li>
+							<li class="active">Mailboxes<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Mailboxes.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -170,91 +170,64 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
-<ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
-</ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li><a href="Use case and Deployment Scenarios">Use-case and Deployment Scenarios</a></li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
+<div><h1 id="mailboxes">Mailboxes</h1>
+<h2 id="what-mailboxes-do-">What Mailboxes Do?</h2>
+<p>In Akka.NET, Mailboxes hold messages that are destined for an actor. When you send a message to an actor, the message doesn&#39;t go directly to the actor, but goes to the actor&#39;s mailbox until the actor has time to process it.</p>
+<p>A mailbox can be described as a queue of messages. Messages are usually then delivered from the mailbox to the actor one at a time in the order they were received, but there are implementations like the <a href="#unboundedprioritymailbox">Priority Mailbox</a> that can change the order of delivery.</p>
+<p>Normally every actor has its own mailbox, but this is not a requirement. There are implementations of <a href="Routers">routers</a> where all routees share a single mailbox.</p>
+<h3 id="using-a-mailbox">Using a Mailbox</h3>
+<p>To make an actor use a specific mailbox, you can set it up one of the following locations:</p>
+<ol>
+<li><p>In the actor&#39;s props</p>
+<pre><code class="hljs lang-cs">Props.Create&lt;ActorType&gt;().WithMailbox(<span class="hljs-string">"my-custom-mailbox"</span>);
+</code></pre>
 </li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
+<li><p>In the actor&#39;s deployment configuration</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+   /<span class="hljs-keyword">my</span>-actor-path {
+       mailbox = <span class="hljs-keyword">my</span>-custom-mailbox
+   }
+}
+</code></pre>
 </li>
-</ul>
-<h3 id="actors">Actors</h3>
+</ol>
+<p>The <code>my-custom-mailbox</code> is a key that was setup using the <a href="#configuring-custom-mailboxes">mailbox configuration</a>.</p>
+<h3 id="configuring-custom-mailboxes">Configuring Custom Mailboxes</h3>
+<p>In order to use a custom mailbox, it must be first configured with a key that the actor system can lookup. You can do this using a custom HOCON setting.</p>
+<p>The example below will setup a mailbox key called <code>my-custom-mailbox</code> pointing to a custom mailbox implementation.</p>
+<pre><code class="hljs lang-hocon">my-custom-mailbox {
+    mailbox-<span class="hljs-class"><span class="hljs-keyword">type</span> </span>= <span class="hljs-string">"MyProject.CustomMailbox, MyProjectAssembly"</span>
+}
+</code></pre>
+<h3 id="built-in-mailboxes">Built-in Mailboxes</h3>
 <ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="TypedActor">Typed Actors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Remoting">Remoting</a></li>
-<li><a href="Serialization">Serialization</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="EventStream">EventStream</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
+<li><h4 id="unboundedmailbox">UnboundedMailbox</h4>
+<p><strong>This is the default mailbox</strong> used by Akka.NET. It&#39;s a non-blocking unbounded mailbox, and should be good enough for most cases.</p>
 </li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka.NET">Building and Distributing Akka.NET</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
+<li><h4 id="unboundedprioritymailbox">UnboundedPriorityMailbox</h4>
+<p>The unbounded mailbox priority mailbox is blocking mailbox that allows message prioritization, so that you can choose the order the actor should process messages that are already in the mailbox.</p>
+<p>In order to use this mailbox, you need to extend the <code>UnboundedPriorityMailbox</code> class and provide an ordering logic. The value returned by the <code>PriorityGenerator</code> method will be used to order the message in the mailbox. Lower values will be delivered first. Messages ordered by the same number will remain in delivery order.</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">IssueTrackerMailbox</span> : <span class="hljs-title">UnboundedPriorityMailbox</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">PriorityGenerator</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+    </span>{
+        <span class="hljs-keyword">var</span> issue = message <span class="hljs-keyword">as</span> Issue;
+
+        <span class="hljs-keyword">if</span> (issue != <span class="hljs-keyword">null</span>) {
+
+            <span class="hljs-keyword">if</span> (issue.IsSecurityFlaw)
+                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+
+            <span class="hljs-keyword">if</span> (issue.IsBug)
+                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+        }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;
+    }
+}
+</code></pre>
+<p>Once the class is implemented, you should set it up using the <a href="#using-a-mailbox">instructions above</a>.</p>
+</li>
 </ul>
 </div>
 
