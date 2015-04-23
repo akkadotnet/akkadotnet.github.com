@@ -172,7 +172,7 @@
 
 <div><h1 id="routers">Routers</h1>
 <p>A <em>router</em> is a special type of actor whose job is to route messages to other actors called <em>routees</em>. Different routers use different <em>strategies</em> to route messages efficiently.</p>
-<p>Routers can be used inside or outside of an actor, and you can manage the routees yourself or use a self contained router actor with configuration capabilities.</p>
+<p>Routers can be used inside or outside of an actor, and you can manage the routees yourself or use a self contained router actor with configuration capabilities, and can also <a href="#dynamically-resizable-pools">resize dynamically</a> under load.</p>
 <p>Akka.NET comes with several useful routers you can choose right out of the box, according to your application&#39;s needs. But it is also possible to create your own.</p>
 <div class="alert alert-default">
 <p><strong>Note:</strong><br/>
@@ -518,6 +518,42 @@ Most routing strategies listed below are available in both types. Some of them m
 <p>SmallestMailboxPool defined in code:</p>
 <pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> SmallestMailboxPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
 </code></pre>
+<h2 id="dynamically-resizable-pools">Dynamically Resizable Pools</h2>
+<p>Routers pools can be dynamically resized to adjust the responsiveness of the system under load.</p>
+<p>This is done by adding a <code>resizer</code> section to your router configuration:</p>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+    /my-router {
+        router = <span class="hljs-built_in">round</span>-robin-pool
+        resizer {
+            enabled = <span class="hljs-command"><span class="hljs-keyword">on</span></span>
+            <span class="hljs-built_in">lower</span>-bound = <span class="hljs-number">1</span>
+            <span class="hljs-built_in">upper</span>-bound = <span class="hljs-number">10</span>
+        }
+    }
+}
+</code></pre>
+<p>You can also set a resizer in code when creating a router.</p>
+<pre><code class="hljs lang-cs"><span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>, <span class="hljs-keyword">new</span> DefaultResizer(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>))
+</code></pre>
+<p>These are settings you usually change in the resizer:</p>
+<ul>
+<li><code>enabled</code> - Turns on or off the resizer. The default is <code>off</code>.</li>
+<li><code>lower-bound</code> - The minimum number of routees that should remain active. The default is <code>1</code>.</li>
+<li><code>upper-bound</code> - The maximum number of routees that should be created. The default is <code>10</code>.</li>
+</ul>
+<p>The default resizer works by checking the pool size every X messages, and deciding to increase or decrease the pool accordingly. The following settings are used to fine-tune the resizer and are considered <em>good enough</em> for most cases, but can be changed if needed:</p>
+<ul>
+<li><code>messages-per-resize</code> - The # of messages to route before checking if resize is needed. The default is <code>10</code>.</li>
+<li><code>rampup-rate</code> - Percentage to increase the pool size. The default is <code>0.2</code>, meaning it will increase the pool size in 20% when resizing.</li>
+<li><code>backoff-rate</code> - Percentage to decrease the pool size. The default is <code>0.1</code>, meaning it will decrease the pool size in 10% when resizing.</li>
+<li><code>pressure-threshold</code> - A threshold used to decide if the pool should be increased. The default is <code>1</code>, meaning it will decide to increase the pool if all routees are busy and have at least 1 message in the mailbox.<ul>
+<li><code>0</code> - the routee is busy and have no messages in the mailbox</li>
+<li><code>1</code> - the routee is busy and have at least 1 message waiting in the mailbox</li>
+<li><code>N</code> - the routee is busy and have N messages waiting in the mailbox (where N &gt; 1)</li>
+</ul>
+</li>
+<li><code>backoff-threshold</code> - A threshold used to decide if the pool should be decreased. The default is <code>0.3</code>, meaning it will decide to decrease the pool if less than 30% of the routers are busy.</li>
+</ul>
 <h2 id="advanced">Advanced</h2>
 <h3 id="how-routing-is-designed-within-akka-net">How Routing is Designed within Akka.NET</h3>
 <p>On the surface routers look like normal actors, but they are actually implemented differently. Routers are designed to be extremely efficient at receiving messages and passing them quickly on to routees.</p>
