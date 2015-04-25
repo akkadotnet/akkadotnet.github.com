@@ -212,6 +212,10 @@
 <span class="hljs-keyword">var</span> greeter = system.ActorOf&lt;GreetingActor&gt;(<span class="hljs-string">"greeter"</span>);
 <span class="hljs-comment">//send a message to the actor</span>
 greeter.Tell(<span class="hljs-keyword">new</span> Greet(<span class="hljs-string">"World"</span>));
+
+<span class="hljs-comment">//this prevents the app from exiting</span>
+<span class="hljs-comment">//Before the async work is done</span>
+Console.ReadLine();
 </code></pre>
 <p>See also:</p>
 <ul>
