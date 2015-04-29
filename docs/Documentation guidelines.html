@@ -5,7 +5,7 @@
 	<head>
 		
 		<meta charset="utf-8" />
-		<title>Dependency injection | Akka.NET</title>
+		<title>Documentation guidelines | Akka.NET</title>
 		
 		<meta name="keywords" content="Actor,Finite state machine, concurrency" />
 		<meta name="description" content="" />
@@ -140,7 +140,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Dependency injection<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Dependency injection.md" > (Edit on Github)</a></li>
+							<li class="active">Documentation guidelines<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Documentation guidelines.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -168,74 +168,47 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-<div><h1 id="dependency-injection">Dependency Injection</h1>
-<p>If your Actor has a constructor that takes parameters then those need to be part of the Props as well. But there are cases when a factory method must be used, for example when the actual constructor arguments are determined by a dependency injection framework.</p>
-<p>The basic functionality is provided by a <code>DependencyResolver</code> class, that can create <code>Props</code> using the DI container.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create your DI container of preference</span>
-<span class="hljs-keyword">var</span> someContainer = ... ;
-
-<span class="hljs-comment">// Create the actor system</span>
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-
-<span class="hljs-comment">// Create the dependency resolver for the actor system</span>
-IDependencyResolver propsResolver = <span class="hljs-keyword">new</span> XyzDependencyResolver(someContainer, system);
-
-<span class="hljs-comment">// Create the Props using the IDependencyResolver instance</span>
-system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
-system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
-</code></pre>
-<p>Creating child Actors from inside an Actor can be done using the DI() extension method.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//In for example the PreStart...</span>
-<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span>
-</span>{
-    myWorker = Context.DI().ActorOf&lt;TypedWorker&gt;(<span class="hljs-string">"childWorker"</span>);
+<div><h1 id="documentation-guidelines">Documentation guidelines</h1>
+<p>When developers or users have problems with software the usual forum quip is to read the manual. Sometimes in nice tones and others not so nice. It&#39;s great when the documentation is succinct and easy to read and comprehend. All to often though there are huge swathes of missing, incomplete or downright wrong bits that leave people more confused than before they read the documentation.</p>
+<p>So the call goes out for people to help build up the documentation. Which is great until you have a lot of people with their own ideas how everything should be laid out trying to contribute. To alleviate the confusion guidelines are setup. This document illustrates the documentation guidelines for this project.</p>
+<p>There is a ton of work that still needs to be done especially in the API documentation department. Please don&#39;t hesitate to join and contribute to the project. We welcome everyone and could use your help.</p>
+<h2 id="website">Website</h2>
+<p>When writing documentation for the website, the project uses <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a> when crafting the documents. The rendering of the website is done with Marked.JS. Thus, any editor based on this will give you the best preview/edit experience, such as <a href="https://atom.io/">Atom</a> or <a href="https://stackedit.io/">StackEdit</a>.</p>
+<p>To contribute to the website&#39;s documentation, go to the github project page <a href="https://github.com/akkadotnet/getakka.net">getakka.net</a>. Please be sure to read the <a href="https://github.com/akkadotnet/getakka.net/blob/master/README.md">Readme.md</a> before getting started to get acquainted with the project&#39;s workflow.</p>
+<h2 id="code">Code</h2>
+<p>When documenting code, please use the standard .NET convention of <a href="https://msdn.microsoft.com/en-us/library/vstudio/b2s063f7(v=vs.110">XML documentation comments</a>.aspx). This allows the project to use tools like Sandcastle to generate the API documentation for the project. The latest stable API documentation can be found <a href="http://api.getakka.net/docs/stable/index.html">here</a>.</p>
+<p>Please be mindful to including <em>useful</em> comments when documenting a class or method. <em>Useful</em> comments means to include full English sentences when summarizing the code and not relying on pre-generated comments from a tool like GhostDoc. Tools like these are great in what they do <em>if</em> supplemented with well reasoned grammar.</p>
+<p><strong>BAD</strong> obviously auto-generated comment</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
+<span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> Class Serializer.</span>
+<span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Serializer</span>
+{
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span>     Froms the binary.</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="bytes"&gt;</span>The bytes.<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="type"&gt;</span>The type.<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;returns&gt;</span>System.Object.<span class="hljs-xmlDocTag">&lt;/returns&gt;</span></span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes, Type type)</span></span>;
 }
 </code></pre>
-<p>Currenty, the following Akka.NET Dependency Injection plugins are available:</p>
-<h2 id="autofac">AutoFac</h2>
-<p>In order to use this plugin, install the Nuget package with <code>Install-Package Akka.DI.AutoFac</code>, then follow the instructions:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
-<span class="hljs-keyword">var</span> builder = <span class="hljs-keyword">new</span> Autofac.ContainerBuilder();
-builder.RegisterType&lt;WorkerService&gt;().As&lt;IWorkerService&gt;();
-builder.RegisterType&lt;TypedWorker&gt;();
-<span class="hljs-keyword">var</span> container = builder.Build();
-
-<span class="hljs-comment">// Create the ActorSystem and Dependency Resolver</span>
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-<span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> AutoFacDependencyResolver(container, system);
+<p><strong>GOOD</strong> clear succinct comment</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
+<span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> A Serializer represents a bimap between an object and an array of bytes representing that object.</span>
+<span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Serializer</span>
+{
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> Deserializes a byte array into an object of type <span class="hljs-xmlDocTag">&lt;paramref name="type"/&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="bytes"&gt;</span>The array containing the serialized object<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="type"&gt;</span>The type of object contained in the array<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;returns&gt;</span>The object contained in the array<span class="hljs-xmlDocTag">&lt;/returns&gt;</span></span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes, Type type)</span></span>;
+}
 </code></pre>
-<h2 id="castlewindsor">CastleWindsor</h2>
-<p>In order to use this plugin, install the Nuget package with <code>Install-Package Akka.DI.CastleWindsor</code>, then follow the instructions:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
-<span class="hljs-keyword">var</span> container = <span class="hljs-keyword">new</span> WindsorContainer();
-container.Register(Component.For&lt;IWorkerService&gt;().ImplementedBy&lt;WorkerService&gt;());
-container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-string">"TypedWorker"</span>).LifestyleTransient());
-
-<span class="hljs-comment">// Create the ActorSystem and Dependency Resolver</span>
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-<span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> WindsorDependencyResolver(container, system);
-</code></pre>
-<h2 id="ninject">Ninject</h2>
-<p>In order to use this plugin, install the Nuget package with <code>Install-Package Akka.DI.Ninject</code>, then follow the instructions:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
-<span class="hljs-keyword">var</span> container = <span class="hljs-keyword">new</span> Ninject.StandardKernel();
-container.Bind&lt;TypedWorker&gt;().To(<span class="hljs-keyword">typeof</span>(TypedWorker));
-container.Bind&lt;IWorkerService&gt;().To(<span class="hljs-keyword">typeof</span>)WorkerService));
-
-<span class="hljs-comment">// Create the ActorSystem and Dependency Resolver</span>
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-<span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> NinjectDependencyResolver(container,system);
-</code></pre>
-<h2 id="other-frameworks">Other frameworks</h2>
-<p>Support for additional dependency injection frameworks may be added in the future, but you can easily implement your own by implementing an <a href="DI Core">Actor Producer Extension</a>.</p>
-<div class="alert alert-warning">
-<p><strong>Warning</strong> You might be tempted at times to use an <code>IndirectActorProducer</code> which always returns the same instance, e.g. by using a static field. This is not supported, as it goes against the meaning of an actor restart, which is described here: <a href="Supervision#what-restarting-means">What Restarting Means</a>.</p>
-</div>
-<p>When using a dependency injection framework, there are a few things you have to keep in mind.</p>
-<p>When scoping <strong>Actor</strong> type dependencies using your DI container only <code>TransientLifestyle</code> or <code>InstancePerDependency</code> like scopes are supported.
-This is due to the fact that Akka explicitly manages the lifecycle of its Actors. So any scope which interferes with that is not supported.</p>
-<p>This also means that when injecting dependencies into your Actor, using a <code>Singleton</code> or <code>Transient</code> scope is <strong>fine</strong>. But having that dependency scoped per <code>httpwebrequest</code> for example <strong>won&#39;t</strong> work.</p>
-<p>Techniques for dependency injection and integration with dependency injection frameworks are described in more depth in the <a href="http://letitcrash.com/post/55958814293/akka-dependency-injection">Using Akka with Dependency Injection</a> guideline.</p>
+<p>We&#39;ve all seen the bad examples at one time or another, but rarely do we see the good examples. A nice rule of thumb to remember is to write the comments you would want to see and readwhile perusing the API documentation.</p>
 </div>
 
 						</div>
