@@ -169,7 +169,7 @@
 							<div id="main_content">
 
 <div><h1 id="dependency-injection">Dependency Injection</h1>
-<p>If your UntypedActor has a constructor that takes parameters then those need to be part of the Props as well, as described above. But there are cases when a factory method must be used, for example when the actual constructor arguments are determined by a dependency injection framework.</p>
+<p>If your Actor has a constructor that takes parameters then those need to be part of the Props as well. But there are cases when a factory method must be used, for example when the actual constructor arguments are determined by a dependency injection framework.</p>
 <p>The basic functionality is provided by a <code>DependencyResolver</code> class, that can create <code>Props</code> using the DI container.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create your DI container of preference</span>
 <span class="hljs-keyword">var</span> someContainer = ... ;
@@ -183,6 +183,13 @@ IDependencyResolver propsResolver = <span class="hljs-keyword">new</span> XyzDep
 <span class="hljs-comment">// Create the Props using the IDependencyResolver instance</span>
 system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
 system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
+</code></pre>
+<p>Creating child Actors from inside an Actor can be done using the DI() extension method.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">//In for example the PreStart...</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span>
+</span>{
+    myWorker = Context.DI().ActorOf&lt;TypedWorker&gt;(<span class="hljs-string">"childWorker"</span>);
+}
 </code></pre>
 <p>Currenty, the following Akka.NET Dependency Injection plugins are available:</p>
 <h2 id="autofac">AutoFac</h2>
@@ -213,7 +220,7 @@ container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-st
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
 <span class="hljs-keyword">var</span> container = <span class="hljs-keyword">new</span> Ninject.StandardKernel();
 container.Bind&lt;TypedWorker&gt;().To(<span class="hljs-keyword">typeof</span>(TypedWorker));
-container.Bind&lt;IWorkerService&gt;()To(<span class="hljs-keyword">typeof</span>)WorkerService));
+container.Bind&lt;IWorkerService&gt;().To(<span class="hljs-keyword">typeof</span>)WorkerService));
 
 <span class="hljs-comment">// Create the ActorSystem and Dependency Resolver</span>
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
@@ -223,7 +230,10 @@ container.Bind&lt;IWorkerService&gt;()To(<span class="hljs-keyword">typeof</span
 <div class="alert alert-warning">
 <p><strong>Warning</strong> You might be tempted at times to use an IndirectActorProducer which always returns the same instance, e.g. by using a static field. This is not supported, as it goes against the meaning of an actor restart, which is described here: <a href="Supervision#what-restarting-means">What Restarting Means</a>.</p>
 </div>
-<p>When using a dependency injection framework, actor MUST NOT have singleton scope.</p>
+<p>When using a dependency injection framework, there are a few things you have to keep in mind.</p>
+<p>When scoping <strong>Actor</strong> type dependencies using your DI container only <code>TransientLifestyle</code> or <code>InstancePerDependency</code> like scopes are supported.
+This is due to the fact that Akka explicitly manages the lifecycle of its Actors. So any scope which interferes with that is not supported.</p>
+<p>This also means that when injecting dependencies into your Actor, using a <code>Singleton</code> or <code>Transient</code> scope is <strong>fine</strong>. But having that dependency scoped per <code>httpwebrequest</code> for example <strong>won&#39;t</strong> work.</p>
 <p>Techniques for dependency injection and integration with dependency injection frameworks are described in more depth in the <a href="http://letitcrash.com/post/55958814293/akka-dependency-injection">Using Akka with Dependency Injection</a> guideline.</p>
 </div>
 
