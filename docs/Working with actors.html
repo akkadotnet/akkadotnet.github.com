@@ -217,7 +217,7 @@ inbox.Send(target, <span class="hljs-string">"hello"</span>);
 ...
 <span class="hljs-keyword">var</span> inbox = Inbox.Create(system);
 inbox.Watch(target);
-target.Tell(PoisonPill.Instance, ActorRef.NoSender);
+target.Tell(PoisonPill.Instance, ActorRefs.NoSender);
 
 <span class="hljs-keyword">try</span>
 {
@@ -254,25 +254,30 @@ target.Tell(PoisonPill.Instance, ActorRef.NoSender);
 </li>
 </ul>
 <p>The remaining visible methods are user-overridable life-cycle hooks which are described in the following:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span> </span>{
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span>
+</span>{
 }
 
-<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span><span class="hljs-params">(Exception reason, <span class="hljs-keyword">object</span> message)</span> </span>{
-  <span class="hljs-keyword">foreach</span> (ActorRef each <span class="hljs-keyword">in</span> Context.GetChildren()) {
-    Context.Unwatch(each);
-    Context.Stop(each);
-  }
-  PostStop();
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span><span class="hljs-params">(Exception reason, <span class="hljs-keyword">object</span> message)</span>
+</span>{
+    <span class="hljs-keyword">foreach</span> (ActorRef each <span class="hljs-keyword">in</span> Context.GetChildren())
+    {
+      Context.Unwatch(each);
+      Context.Stop(each);
+    }
+    PostStop();
 }
 
-<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostRestart</span><span class="hljs-params">(Exception reason)</span> </span>{
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostRestart</span><span class="hljs-params">(Exception reason)</span>
+</span>{
   PreStart();
 }
 
-<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostStop</span><span class="hljs-params">()</span> </span>{
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostStop</span><span class="hljs-params">()</span>
+</span>{
 }
 </code></pre>
-<p>The implementations shown above are the defaults provided by the UntypedActor class.</p>
+<p>The implementations shown above are the defaults provided by the <code>UntypedActor</code> class.</p>
 <h2 id="identifying-actors-via-actor-selection">Identifying Actors via Actor Selection</h2>
 <p>As described in Actor References, Paths and Addresses, each actor has a unique logical path, which is obtained by following the chain of actors from child to parent until reaching the root of the actor system, and it has a physical path, which may differ if the supervision chain includes any remote supervisors. These paths are used by the system to look up actors, e.g. when a remote message is received and the recipient is searched, but they are also useful more directly: actors may look up other actors by specifying absolute or relative paths—logical or physical—and receive back an ActorSelection with the result:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// will look up this absolute path</span>
@@ -396,18 +401,21 @@ t.PipeTo(actorC, Self);
 <p>This example demonstrates Ask together with the Pipe Pattern on Tasks, because this is likely to be a common combination. Please note that all of the above is completely non-blocking and asynchronous: Ask produces a Task, two of which are awaited until both are completed, and when that happens, a new Result object is forwarded to another actor.</p>
 <p>Using Ask will send a message to the receiving Actor as with Tell, and the receiving actor must reply with  <code>Sender.Tell(reply, Self)</code> in order to complete the returned Task with a value. The Ask operation involves creating an internal actor for handling this reply, which needs to have a timeout after which it is destroyed in order not to leak resources; see more below.</p>
 <div class="alert alert-warning">
-<p><strong>Warning</strong><br/>
-To complete the Task with an exception you need send a Failure message to the sender. This is not done automatically when an actor throws an exception while processing a message.</p>
+<p><strong>Warning</strong><br/> To complete the Task with an exception you need send a Failure
+message to the sender. This is not done automatically when an actor throws an
+exception while processing a message.</p>
 </div>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">try</span> {
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">try</span>
+{
     <span class="hljs-keyword">var</span> result = operation();
     Sender.Tell(result, Self);
 }
-<span class="hljs-keyword">catch</span> (Exception e) {
+<span class="hljs-keyword">catch</span> (Exception e)
+{
     Sender.Tell(<span class="hljs-keyword">new</span> Failure { Exception = e }, Self);
 }
 </code></pre>
-<p>If the actor does not complete the task, it will expire after the timeout period, specified as parameter to the Ask method, and the task will be cancelled and throw a TaskCancelledException.</p>
+<p>If the actor does not complete the task, it will expire after the timeout period, specified as parameter to the Ask method, and the task will be cancelled and throw a <code>TaskCancelledException</code>.</p>
 <p>For more information on Tasks, check out the <a href="https://msdn.microsoft.com/en-us/library/dd537609(v=vs.110">MSDN documentation</a>.aspx).</p>
 <div class="alert alert-warning">
 <p><strong>Warning</strong><br/>
@@ -418,7 +426,7 @@ When using task callbacks inside actors, you need to carefully avoid closing ove
 <pre><code class="hljs lang-csharp">target.Forward(result, Context);
 </code></pre>
 <h2 id="receive-messages">Receive messages</h2>
-<p>When an actor receives a message it is passed into the OnReceive method, this is an abstract method on the UntypedActor base class that needs to be defined.</p>
+<p>When an actor receives a message it is passed into the <code>OnReceive</code> method, this is an abstract method on the <code>UntypedActor</code> base class that needs to be defined.</p>
 <p>Here is an example:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyUntypedActor</span> : <span class="hljs-title">UntypedActor</span>
 {
@@ -458,7 +466,7 @@ When using task callbacks inside actors, you need to carefully avoid closing ove
 </code></pre>
 <div class="alert alert-default">
 <p><strong>Note</strong><br/>
-Since stopping an actor is asynchronous, you cannot immediately reuse the name of the child you just stopped; this will result in an InvalidActorNameException. Instead, watch the terminating actor and create its replacement in response to the Terminated message which will eventually arrive.</p>
+Since stopping an actor is asynchronous, you cannot immediately reuse the name of the child you just stopped; this will result in an <code>InvalidActorNameException</code>. Instead, watch the terminating actor and create its replacement in response to the Terminated message which will eventually arrive.</p>
 </div>
 <h3 id="poisonpill">PoisonPill</h3>
 <p>You can also send an actor the Akka.Actor.PoisonPill message, which will stop the actor when the message is processed. PoisonPill is enqueued as ordinary messages and will be handled after messages that were already queued in the mailbox.</p>
@@ -504,13 +512,14 @@ Since stopping an actor is asynchronous, you cannot immediately reuse the name o
         {
             Sender.Tell(<span class="hljs-string">"service unavailable, shutting down"</span>, Self);
         }
-        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(message <span class="hljs-keyword">is</span> Terminated)</span> </span>{
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(message <span class="hljs-keyword">is</span> Terminated)</span>
+        </span>{
             Context.Stop(Self);
         }
     }
 }
 </code></pre>
-<p>When <code>GracefulStop()</code> returns successfully, the actor’s <code>PostStop()</code> hook will have been executed: there exists a happens-before edge between the end of PostStop() and the return of GracefulStop().</p>
+<p>When <code>GracefulStop()</code> returns successfully, the actor’s <code>PostStop()</code> hook will have been executed: there exists a happens-before edge between the end of <code>PostStop()</code> and the return of <code>GracefulStop()</code>.</p>
 <p>In the above example a &quot;shutdown&quot; message is sent to the target actor to initiate the process of stopping the actor. You can use PoisonPill for this, but then you have limited possibilities to perform interactions with other actors before stopping the target actor. Simple cleanup tasks can be handled in PostStop.</p>
 <div class="alert alert-warning">
 <p><strong>Warning</strong><br/>

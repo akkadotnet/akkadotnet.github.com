@@ -170,27 +170,30 @@
 
 <div><h1 id="using-serilog">Using Serilog</h1>
 <h2 id="setup">Setup</h2>
-<p>Install the package <strong>Akka.Logger.Serilog</strong> to utilize <a href="http://serilog.net/">Serilog</a></p>
+<p>Install the package <strong>Akka.Logger.Serilog</strong> to utilize
+<a href="http://serilog.net/">Serilog</a></p>
 <pre><code>PM&gt; Install-Package Akka<span class="hljs-class">.Logger</span><span class="hljs-class">.Serilog</span>
 </code></pre><p>This will also install the required Serilog packages.</p>
-<p>Next, you&#39;ll need to configure the global <code>Log.Logger</code> and also specify to use the logger in the config when creating the system, for example like this:</p>
-<pre><code class="hljs lang-C#">var logger = <span class="hljs-keyword">new</span> <span class="hljs-type">LoggerConfiguration</span><span class="hljs-literal">()</span>
-    .<span class="hljs-type">WriteTo</span>.<span class="hljs-type">ColoredConsole</span><span class="hljs-literal">()</span>
-    .<span class="hljs-type">MinimumLevel</span>.<span class="hljs-type">Information</span><span class="hljs-literal">()</span>
-    .<span class="hljs-type">CreateLogger</span><span class="hljs-literal">()</span>;
-<span class="hljs-type">Serilog</span>.<span class="hljs-type">Log</span>.<span class="hljs-type">Logger</span> = logger;
-var system = <span class="hljs-type">ActorSystem</span>.<span class="hljs-type">Create</span>(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=[\"Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog\"]}"</span>);
+<p>Next, you&#39;ll need to configure the global <code>Log.Logger</code> and also specify to use
+the logger in the config when creating the system, for example like this:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> logger = <span class="hljs-keyword">new</span> LoggerConfiguration()
+    .WriteTo.ColoredConsole()
+    .MinimumLevel.Information()
+    .CreateLogger();
+Serilog.Log.Logger = logger;
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=['Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog']}"</span>);
 </code></pre>
 <h2 id="logging">Logging</h2>
-<p>To log inside an actor, using the normal <code>string.Format()</code> syntax, get the logger and log:</p>
-<pre><code class="hljs lang-C#"><span class="hljs-built_in">var</span> <span class="hljs-keyword">log</span> <span class="hljs-subst">=</span> Context<span class="hljs-built_in">.</span>GetLogger();
-<span class="hljs-attribute">...</span>
-<span class="hljs-keyword">log</span><span class="hljs-built_in">.</span>Info(<span class="hljs-string">"The value is {0}"</span>, counter);
+<p>To log inside an actor, using the normal <code>string.Format()</code> syntax, get the
+logger and log:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> log = Context.GetLogger();
+...
+log.Info(<span class="hljs-string">"The value is {0}"</span>, counter);
 </code></pre>
 <p>To log using Serilog syntax you need to use the <code>SerilogLogMessageFormatter</code>:</p>
-<pre><code class="hljs lang-C#"><span class="hljs-built_in">var</span> <span class="hljs-keyword">log</span> <span class="hljs-subst">=</span> Context<span class="hljs-built_in">.</span>GetLogger(<span class="hljs-literal">new</span> SerilogLogMessageFormatter());
-<span class="hljs-attribute">...</span>
-<span class="hljs-keyword">log</span><span class="hljs-built_in">.</span>Info(<span class="hljs-string">"The value is {Counter}"</span>, counter);
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> log = Context.GetLogger(<span class="hljs-keyword">new</span> SerilogLogMessageFormatter());
+...
+log.Info(<span class="hljs-string">"The value is {Counter}"</span>, counter);
 </code></pre>
 </div>
 

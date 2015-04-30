@@ -169,62 +169,62 @@
 							<div id="main_content">
 
 <div><h2 id="persistence">Persistence</h2>
-<p>Akka.Persistence plugin enables to create a stateful actors, which internal state may be stored inside persistent data storage and used for recovery in case of restart, migration or VM crash. Core concept behind Akka persistence lays in storing not only actor state directly (in form of the snapshots) but also history of all of the changes of that actor&#39;s state. This is quite useful solution common in patterns such as eventsourcing. Changes are immutable by nature, as they describe facts already reported in the history, and can be stored inside event journal in append-only mode. While recovering, actor restores it&#39;s state from the latests snapshot available - which can reduce recovery time - and then recreates it further by replaying events stored inside journal. Among other features provided by persistence plugin is support for command query segregation model and point-to-point communication with at-least-once delivery semantics.</p>
+<p>Akka.Persistence plugin enables the creation of stateful actors whose internal state may be stored inside persistent data storage and used for recovery in case of restart, migration or VM crash. The core concept behind Akka persistence lays in storing not only the actor&#39;s state directly (in the form of snapshots) but also history of all of the changes of that actor&#39;s state. This is quite  useful solution common in patterns such as eventsourcing. Changes are immutable by nature, as they describe facts already reported in the history, and can be stored inside event journal in append-only mode. While recovering, the actor restores it&#39;s state from the latests snapshot available - which can reduce recovery time - and then recreates it further by replaying events stored inside the journal. Among other features provided by the persistence plugin is support for command query segregation model and point-to-point communication with <a href="concepts/message-delivery-reliability#discussion-what-does-at-most-once-mean-">at-least-once</a> delivery semantics.</p>
 <h3 id="architecture">Architecture</h3>
 <p>Akka.Persistence features are available through new set of actor base classes:</p>
 <ul>
-<li><code>PersistentActor</code> is a persistent, stateful equivalent of <em>ActorBase</em> class. It&#39;s able to persist event inside the journal, creating snapshots in snapshot stores and recover from them in thread-safe manner. It can be used for both changing and reading state of the actor.</li>
-<li><code>PersistentView</code> is used to recreate internal state of other persistent actor based on journaled messages. It works in read-only manner - it cannot journal any event by itself.</li>
-<li><code>GuaranteedDeliveryActor</code> may be used to ensure at-least-once delivery semantics between communicating actors, even in case when either sender or receiver VM crashes.</li>
-<li><code>Journal</code> stores a sequence of events send by the persistent actor. The storage backend of the journal is pluggable. By default it uses in-memory message stream and is NOT a persistent storage.</li>
+<li><code>PersistentActor</code> is a persistent, stateful equivalent of the <code>ActorBase</code> class. It&#39;s able to persist events inside the journal, creating snapshots in snapshot stores and recover from them in a  thread-safe manner. It can be used for both changing and reading state of the actor.</li>
+<li><code>PersistentView</code> is used to recreate the internal state of other persistent actor based on journaled messages. It works in a read-only manner - it cannot journal any event by itself.</li>
+<li><code>GuaranteedDeliveryActor</code> may be used to ensure <a href="concepts/message-delivery-reliability#discussion-what-does-at-most-once-mean-">at-least-once</a> delivery semantics between communicating actors, even in case when either sender or receiver VM crashes.</li>
+<li><code>Journal</code> stores a sequence of events send by the persistent actor. The storage backend of the journal is pluggable. By default it uses an in-memory message stream and is NOT a persistent storage.</li>
 <li><code>Snapshot store</code> is used to persist snapshots of either persistent actor&#39;s or view&#39;s internal state. They can be used to reduce recovery times in case when a lot of events needs to be replayed for specific persistent actor. Storage backend of the snapshot store is pluggable. By default it uses local file system.</li>
 </ul>
 <h3 id="persistent-actors">Persistent actors</h3>
-<p>Unlike default <code>ActorBase</code> class <code>PersistentActor</code> and it&#39;s derivatives requires to setup a few more additional members:</p>
+<p>Unlike the default <code>ActorBase</code> class, <code>PersistentActor</code> and it&#39;s derivatives requires the setup of a few more additional members:</p>
 <ul>
 <li><code>PersistenceId</code> is a persistent actor&#39;s identifier that doesn&#39;t change across different actor incarnations. It&#39;s used to retrieve an event stream required by the persistent actor to recover it&#39;s internal state.</li>
-<li><code>ReceiveRecover</code> is a method invoked during actor&#39;s recovery cycle. Incoming objects may be user-defined events as well as system messages, for example <code>SnapshotOffer</code> which is used to deliver latest actor state saved in the snapshot store.</li>
-<li><code>ReceiveCommand</code> is an equivalent of basic <code>Receive</code> method of default Akka.NET actors.</li>
+<li><code>ReceiveRecover</code> is a method invoked during an actor&#39;s recovery cycle. Incoming objects may be user-defined events as well as system messages, for example <code>SnapshotOffer</code> which is used to deliver latest actor state saved in the snapshot store.</li>
+<li><code>ReceiveCommand</code> is an equivalent of the basic <code>Receive</code> method of default Akka.NET actors.</li>
 </ul>
 <p>Persistent actors also offer a set of specialized members:</p>
 <ul>
-<li><code>Persist</code> and <code>PersistAsync</code> methods can be used to send events to event journal in order to store them inside. Second argument in a callback invoked when journal confirms, that events have been stored successfully.</li>
-<li><code>Defer</code> and <code>DeferAsync</code> are used to perform various operations <em>after</em> events will be persisted and their callback handlers will be invoked. Unlike persist methods, defer won&#39;t store and event in a persistent storage. Defer methods may NOT be invoked in case when actor is restarted even thou journal will successfully persist events sent.</li>
+<li><code>Persist</code> and <code>PersistAsync</code> methods can be used to send events to the event journal in order to store them inside. The second argument is a callback invoked when the journal confirms that events have been stored successfully.</li>
+<li><code>Defer</code> and <code>DeferAsync</code> are used to perform various operations <em>after</em> events will be persisted and their callback handlers will be invoked. Unlike the persist methods, defer won&#39;t store an event in persistent storage. Defer methods may NOT be invoked in case when the actor is restarted even though the journal will successfully persist events sent.</li>
 <li><code>DeleteMessages</code> will order attached journal to remove part of it&#39;s events. It can be either logical deletion - messages are marked as deleted, but are not removed physically from the backend storage - or a physical one, when the messages are removed physically from the journal.</li>
-<li><code>LoadSnapshot</code> will sent request to snapshot store to resent a current actor&#39;s snapshot.</li>
-<li><code>SaveSnapshot</code> will sent current actor&#39;s internal state as snapshot to be saved by configured snapshot store.</li>
-<li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from snapshot store in case, when they are no longer needed.</li>
-<li><code>OnReplaySuccess</code> is a virtual method which will be called when recovery cycle will end successfully.</li>
-<li><code>OnReplayFailure</code> is a virtual method which will be called when recovery cycle will fail unexpectedly from some reason.</li>
-<li><code>IsRecovering</code> property determines if current actor is performing a recovery cycle at the moment.</li>
-<li><code>SnapshotSequenceNr</code> property may be used to determine sequence number used for marking persisted events. This value is changing in monotically increasing manner.</li>
+<li><code>LoadSnapshot</code> will send a request to the snapshot store to resend the current actor&#39;s snapshot.</li>
+<li><code>SaveSnapshot</code> will send the current actor&#39;s internal state as a snapshot to be saved by the configured snapshot store.</li>
+<li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from the snapshot store in cases where they are no longer needed.</li>
+<li><code>OnReplaySuccess</code> is a virtual method which will be called when the recovery cycle ends successfully.</li>
+<li><code>OnReplayFailure</code> is a virtual method which will be called when the recovery cycle fails unexpectedly from some reason.</li>
+<li><code>IsRecovering</code> property determines if the current actor is performing a recovery cycle at the moment.</li>
+<li><code>SnapshotSequenceNr</code> property may be used to determine the sequence number used for marking persisted events. This value changes in a monotonically increasing manner.</li>
 </ul>
-<p>In case when a manual recovery cycle initialization is necessary, it may be invoked by sending a <code>Recover</code> message to persistent actor.</p>
+<p>In case a manual recovery cycle initialization is necessary, it may be invoked by sending a <code>Recover</code> message to a persistent actor.</p>
 <h3 id="persistent-views">Persistent views</h3>
-<p>While persistent actor may be used to producing and persisting an events, views are used only to read internal state based on them. Like persistent actor, view has a <code>PersistenceId</code> to specify collection of events to be resent to current view. This value should however be correlated with PersistentId of actor - producer of the events.</p>
+<p>While a persistent actor may be used to produce and persist events, views are used only to read internal state based on them. Like the persistent actor, a view has a <code>PersistenceId</code> to specify a  collection of events to be resent to current view. This value should however be correlated with the  <code>PersistentId</code> of an actor who is the producer of the events.</p>
 <p>Other members:</p>
 <ul>
-<li><code>ViewId</code> property is an view unique identifier that doesn&#39;t change across different actor incarnations. It&#39;s useful in case when there should be a multiple different views associated with a single persistent actor, but showing it&#39;s state from a different perspectives.</li>
-<li><code>IsAutoUpdate</code> property determines if view will try to automatically update it&#39;s state in specified time intervals. Without it, view won&#39;t update it&#39;s state until it receives an explicit <code>Update</code> message. This value can be set through configuration with <em>akka.persistence.view.auto-update</em> set to either <em>on</em> (by default) or <em>off</em>.</li>
-<li><code>AutoUpdateInterval</code> specifies time interval in which view will be updating itself - only in case when <em>IsAutoUpdate</em> flag is on. This value can be set through configuration with <em>akka.persistence.view.auto-update-interval</em> key (5 seconds by default).</li>
-<li><code>AutoUpdateReplayMax</code> property determines maximum number of events to be replayed during a single <em>Update</em> cycle. This value can be set through configuration with <em>akka.persistence.view.auto-update-replay-max</em> key (by default it&#39;s -1 - no limit).</li>
-<li><code>LoadSnapshot</code> will sent request to snapshot store to resent a current view&#39;s snapshot.</li>
-<li><code>SaveSnapshot</code> will sent current view&#39;s internal state as snapshot to be saved by configured snapshot store.</li>
-<li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from snapshot store in case, when they are no longer needed.</li>
+<li><code>ViewId</code> property is a view unique identifier that doesn&#39;t change across different actor incarnations. It&#39;s useful in cases where there are multiple different views associated with a single persistent actor, but showing its state from a different perspectives.</li>
+<li><code>IsAutoUpdate</code> property determines if the view will try to automatically update its state in specified time intervals. Without it, the view won&#39;t update its state until it receives an explicit <code>Update</code> message. This value can be set through configuration with <em>akka.persistence.view.auto-update</em> set to either <em>on</em> (by default) or <em>off</em>.</li>
+<li><code>AutoUpdateInterval</code> specifies a time interval in which the view will be updating itself - only in cases where the <em>IsAutoUpdate</em> flag is on. This value can be set through configuration with <em>akka.persistence.view.auto-update-interval</em> key (5 seconds by default).</li>
+<li><code>AutoUpdateReplayMax</code> property determines the maximum number of events to be replayed during a single <em>Update</em> cycle. This value can be set through configuration with <em>akka.persistence.view.auto-update-replay-max</em> key (by default it&#39;s -1 - no limit).</li>
+<li><code>LoadSnapshot</code> will send a request to the snapshot store to resend a current view&#39;s snapshot.</li>
+<li><code>SaveSnapshot</code> will send the current view&#39;s internal state as a snapshot to be saved by the  configured snapshot store.</li>
+<li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from the snapshot store in cases where they are no longer needed.</li>
 </ul>
 <h3 id="guaranteed-delivery">Guaranteed delivery</h3>
-<p>Guaranteed delivery actors are specializations of persistent actors and may be used to provide at-least-once delivery semantics, even in case when one of the communication endpoints will crash. Because it&#39;s possible that the same message will be send twice, actor&#39;s receive behavior must work in the idempotent manner.</p>
+<p>Guaranteed delivery actors are specializations of persistent actors and may be used to provide <a href="concepts/message-delivery-reliability#discussion-what-does-at-most-once-mean-">at-least-once</a> delivery semantics, even in cases where one of the communication endpoints crashes. Because it&#39;s possible that the same message will be send twice, actor&#39;s receive behavior must work in the idempotent manner.</p>
 <p>Members:</p>
 <ul>
-<li><code>Deliver</code> method is used to send message to another actor in at-least-once delivery semantics. Message sent this way must be confirmed by the other endpoint with <code>ConfirmDelivery</code> method. Otherwise it will be resend again and again until the redelivery limit will be reached.</li>
-<li><code>GetDeliverySnapshot</code> and <code>SetDeliverySnapshot</code> methods are used as part of delivery snapshotting strategy. They return/reset state of the current guaranteed delivery actor unconfirmed messages. In order to save custom deliverer state inside snapshot, a returned delivery snapshot should be included into that snapshot and reset in <em>ReceiveRecovery</em> method, when <code>SnapshotOffer</code> arrives.</li>
-<li><code>RedeliveryBurstLimit</code> is a virtual property which determines maximum number of unconfirmed messages to be send in each redelivery attempt. It may be useful to prevent message overflow scenarios. It may be overridden or configured inside HOCON configuration under <em>akka.persistence.at-least-once-delivery.redelivery-burst-limit</em> path (10 000 by default).</li>
-<li><code>UnconfirmedDeliveryAttemptsToWarn</code> is a virtual property which determines, how many unconfirmed deliveries may be sent before guaranteed delivery actor will send an <code>UnconfirmedWarning</code> message to itself. Count is reset after actor&#39;s restart. It may be overridden or configured inside HOCON configuration under <em>akka.persistence.at-least-once-delivery.warn-after-number-of-unconfirmed-attempts</em> path (5 by default).</li>
-<li><code>MaxUnconfirmedMessages</code> is a virtual property which determines maximum of unconfirmed deliveries hold in memory. After this threshold is exceeded any <code>Deliver</code> method will raise <code>MaxUnconfirmedMessagesExceededException</code>. It may be overridden or configured inside HOCON configuration under <em>akka.persistence.at-least-once-delivery.max-unconfirmed-messages</em> path (100 000 by default).</li>
-<li><code>UnconfirmedCount</code> property shows a number of the unconfirmed messages.</li>
+<li><code>Deliver</code> method is used to send a message to another actor in <a href="concepts/message-delivery-reliability#discussion-what-does-at-most-once-mean-">at-least-once</a> delivery semantics. A message sent this way must be confirmed by the other endpoint with the  <code>ConfirmDelivery</code> method. Otherwise it will be resent again and again until the redelivery limit is reached.</li>
+<li><code>GetDeliverySnapshot</code> and <code>SetDeliverySnapshot</code> methods are used as part of a delivery snapshotting strategy. They return/reset state of the current guaranteed delivery actor&#39;s unconfirmed messages. In order to save custom deliverer state inside a snapshot, a returned delivery snapshot should be included in that snapshot and reset in <em>ReceiveRecovery</em> method, when <code>SnapshotOffer</code> arrives.</li>
+<li><code>RedeliveryBurstLimit</code> is a virtual property which determines the maximum number of unconfirmed messages to be send in each redelivery attempt. It may be useful in preventing message overflow scenarios. It may be overridden or configured inside HOCON configuration under <em>akka.persistence.at-least-once-delivery.redelivery-burst-limit</em> path (10 000 by default).</li>
+<li><code>UnconfirmedDeliveryAttemptsToWarn</code> is a virtual property which determines how many unconfirmed deliveries may be sent before guaranteed delivery actor will send an <code>UnconfirmedWarning</code> message to itself. The count is reset after the actor&#39;s restart. It may be overridden or configured inside HOCON configuration under <em>akka.persistence.at-least-once-delivery.warn-after-number-of-unconfirmed-attempts</em> path (5 by default).</li>
+<li><code>MaxUnconfirmedMessages</code> is a virtual property which determines the maximum number of unconfirmed deliveries to hold in memory. After this threshold is exceeded, any <code>Deliver</code> method will raise <code>MaxUnconfirmedMessagesExceededException</code>. It may be overridden or configured inside HOCON configuration under <em>akka.persistence.at-least-once-delivery.max-unconfirmed-messages</em> path (100 000 by default).</li>
+<li><code>UnconfirmedCount</code> property shows the number of unconfirmed messages.</li>
 </ul>
 <h3 id="journals">Journals</h3>
-<p>Journal is a specialized type of an actor, which exposes an API to handle incoming events and store them in backend storage. By default Akka.Persitence uses a <code>MemoryJournal</code> which stores all events in memory and therefore it&#39;s not a persistent storage. Custom journal configuration path may be specified inside <em>akka.persistence.journal.plugin</em> path and by default it requires two keys set: <em>class</em> and <em>plugin-dispatcher</em>. Example configuration:</p>
+<p>Journal is a specialized type of actor which exposes an API to handle incoming events and store them in backend storage. By default Akka.Persitence uses a <code>MemoryJournal</code> which stores all events in memory and therefore it&#39;s not persistent storage. A custom journal configuration path may be specified inside <em>akka.persistence.journal.plugin</em> path and by default it requires two keys set: <em>class</em> and <em>plugin-dispatcher</em>. Example configuration:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
     <span class="hljs-title">persistence</span> {
         <span class="hljs-title">journal</span> {
@@ -246,7 +246,7 @@
 }
 </code></pre>
 <h3 id="snapshot-store">Snapshot store</h3>
-<p>Snapshot store is a specialized type of an actor, which exposes an API to handle incoming snapshot-related requests and is able to save snapshots in some backend storage. By default Akka.Persistence uses a <code>LocalSnapshotStore</code>, which uses a local file system as a storage. Custom snapshot store configuration path may be specified inside <em>akka.persistence.snapshot-store.plugin</em> path and by default it requires two keys set: <em>class</em> and <em>plugin-dispatcher</em>. Example configuration:</p>
+<p>Snapshot store is a specialized type of actor which exposes an API to handle incoming snapshot-related requests and is able to save snapshots in some backend storage. By default Akka.Persistence uses a <code>LocalSnapshotStore</code>, which uses a local file system as storage. A custom snapshot store configuration path may be specified inside <em>akka.persistence.snapshot-store.plugin</em> path and by default it requires two keys set: <em>class</em> and <em>plugin-dispatcher</em>. Example configuration:</p>
 <pre><code class="hljs lang-hocon">akka {
     persistence {
         snapshot-store {
@@ -274,7 +274,7 @@
 }
 </code></pre>
 <h3 id="contributing">Contributing</h3>
-<p>Akka persistence plugin gives a custom journal and snapshot store creator a built-in set of test, which can be used to verify correctness of the implemented backend storage plugins. It&#39;s available through <code>Akka.Persistence.TestKit</code> package and uses xUnit as default test framework.</p>
+<p>Akka persistence plugin gives a custom journal and snapshot store creator a built-in set of tests, which can be used to verify correctness of the implemented backend storage plugins. It&#39;s available through <code>Akka.Persistence.TestKit</code> package and uses <a href="http://xunit.github.io/">xUnit</a> as the default test framework.</p>
 </div>
 
 						</div>

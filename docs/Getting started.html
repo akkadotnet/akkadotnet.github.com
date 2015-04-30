@@ -209,7 +209,7 @@ Once we have our console application, we need to open up the Package Manager Con
 
 <span class="hljs-keyword">namespace</span> <span class="hljs-title">ConsoleApplication11</span>
 {
-    <span class="hljs-comment">//Create an (immutable) message type that your actor will respond to</span>
+    <span class="hljs-comment">// Create an (immutable) message type that your actor will respond to</span>
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greet</span>
     {
         <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span><span class="hljs-params">(<span class="hljs-keyword">string</span> who)</span>
@@ -227,7 +227,7 @@ Once we have our console application, we need to open up the Package Manager Con
     }
 }
 </code></pre>
-<p>Once we have the message type, we can create our Actor:</p>
+<p>Once we have the message type, we can create our actor:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
 <span class="hljs-keyword">using</span> System.Collections.Generic;
 <span class="hljs-keyword">using</span> System.Linq;
@@ -302,18 +302,20 @@ Once we have our console application, we need to open up the Package Manager Con
     {
         <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
         </span>{
-            <span class="hljs-comment">//create a new actor system (a container for your actors)</span>
+            <span class="hljs-comment">// Create a new actor system (a container for your actors)</span>
             <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-            <span class="hljs-comment">//create your actor and get a reference to it.</span>
-            <span class="hljs-comment">//this will be an "ActorRef", which is not a</span>
-            <span class="hljs-comment">//reference to the actual actor instance</span>
-            <span class="hljs-comment">//but rather a client or proxy to it</span>
+
+            <span class="hljs-comment">// Create your actor and get a reference to it.</span>
+            <span class="hljs-comment">// This will be an "ActorRef", which is not a</span>
+            <span class="hljs-comment">// reference to the actual actor instance</span>
+            <span class="hljs-comment">// but rather a client or proxy to it.</span>
             <span class="hljs-keyword">var</span> greeter = system.ActorOf&lt;GreetingActor&gt;(<span class="hljs-string">"greeter"</span>);
-            <span class="hljs-comment">//send a message to the actor</span>
+
+            <span class="hljs-comment">// Send a message to the actor</span>
             greeter.Tell(<span class="hljs-keyword">new</span> Greet(<span class="hljs-string">"World"</span>));
 
-            <span class="hljs-comment">//this prevents the app from exiting</span>
-            <span class="hljs-comment">//Before the async work is done</span>
+            <span class="hljs-comment">// This prevents the app from exiting</span>
+            <span class="hljs-comment">// before the async work is done</span>
             Console.ReadLine();
         }
     }

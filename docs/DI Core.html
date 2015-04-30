@@ -169,110 +169,173 @@
 							<div id="main_content">
 
 <div><h1 id="akka-di-core">Akka.DI.Core</h1>
-<p><strong>Actor Producer Extension</strong> library used to create Dependency Injection Container for the <a href="https://github.com/akkadotnet/akka.net">Akka.NET</a> framework.</p>
+<p><strong>Actor Producer Extension</strong> library used to create Dependency Injection
+Container for the <a href="https://github.com/akkadotnet/akka.net">Akka.NET</a> framework.</p>
 <h1 id="what-is-it-">What is it?</h1>
-<p><strong>Akka.DI.Core</strong> is an <strong>ActorSystem extension</strong> library for the Akka.NET framework that provides a simple way to create an Actor Dependency Resolver that can be used an alternative to the basic capabilities of <a href="Props">Props</a> when you have Actors with multiple dependencies.</p>
+<p><strong>Akka.DI.Core</strong> is an <strong>ActorSystem extension</strong> library for the Akka.NET
+framework that provides a simple way to create an Actor Dependency Resolver
+that can be used an alternative to the basic capabilities of <a href="Props">Props</a>
+when you have actors with multiple dependencies.</p>
 <h1 id="how-do-you-create-an-extension-">How do you create an Extension?</h1>
 <ul>
 <li>Create a new class library</li>
-<li>Reference your favorite IOC Container, the Akka.DI.Core and of course Akka</li>
-<li>Create a class and implement the IDependencyResolver</li>
+<li>Reference your favorite IoC Container, the Akka.DI.Core and of course Akka</li>
+<li>Create a class and implement the <code>IDependencyResolver</code></li>
 </ul>
-<p>Let&#39;s walk through the process of creating one for CastleWindsor container. You need to create  a new project named Akka.DI.CastleWindsor with all the necessary references including Akka.DI.Core, Akka and CastleWindosor. Name the initial class WindsorDependencyResolver.</p>
+<p>Let&#39;s walk through the process of creating one for the CastleWindsor container.
+You need to create  a new project named Akka.DI.CastleWindsor with all the
+necessary references including Akka.DI.Core, Akka and CastleWindosor.
+Name the initial class <code>WindsorDependencyResolver</code>.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WindsorDependencyResolver</span> : <span class="hljs-title">IDependencyResolver</span>
 {
-    <span class="hljs-function">Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> ActorName)</span>
-    </span>{
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> NotImplementedException();
-    }
-
-    <span class="hljs-function">Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(<span class="hljs-keyword">string</span> ActorName)</span>
-    </span>{
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> NotImplementedException();
-    }
-
-    Props Create&lt;TActor&gt;()
-    {
-        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> NotImplementedException();
-    }
+    <span class="hljs-comment">// we'll implement IDependencyResolver in the following steps</span>
 }
 </code></pre>
 <p>Add a constructor and private fields.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> IWindsorContainer container;
-<span class="hljs-keyword">private</span> ActorSystem system;
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> IWindsorContainer _container;
+<span class="hljs-keyword">private</span> ConcurrentDictionary&lt;<span class="hljs-keyword">string</span>, Type&gt; _typeCache;
+<span class="hljs-keyword">private</span> ActorSystem _system;
 
 <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
 </span>{
     <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"system"</span>);
     <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"container"</span>);
-    <span class="hljs-keyword">this</span>.container = container;
-    <span class="hljs-keyword">this</span>.system = system;
-    <span class="hljs-keyword">this</span>.system.AddDependencyResolver(<span class="hljs-keyword">this</span>);
+    _container = container;
+    _typeCache = <span class="hljs-keyword">new</span> ConcurrentDictionary&lt;<span class="hljs-keyword">string</span>, Type&gt;(StringComparer.InvariantCultureIgnoreCase);
+    _system = system;
+    _system.AddDependencyResolver(<span class="hljs-keyword">this</span>);
 }
 </code></pre>
 <p>You have defined three private fields</p>
 <ul>
-<li>IWindsorContainer container<ul>
-<li>Reference to the container</li>
+<li><code>IWindsorContainer _container</code> is a reference to the CastleWindsor
+   container.</li>
+<li><code>ConcurrentDictionary&lt;string, Type&gt; _typeCache</code> is a thread safe map that
+   contains actor name/type associations.</li>
+<li><code>ActorSystem _system</code> is a reference to the ActorSystem.</li>
 </ul>
-</li>
-<li>ActorSystem system<ul>
-<li>Reference to the ActorSystem</li>
-</ul>
-</li>
-</ul>
-<p>First you need to implement GetType. This is a basic implementation and is just from demonstration purposes. Essentially this is used by the Extension to get the Type of the Actor from it&#39;s type name.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function">Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+<p>First you need to implement <code>GetType</code>. This is a basic implementation and
+is just for demonstration purposes. Essentially this is used by the extension
+to get the type of the actor from it&#39;s type name.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
 </span>{
-    <span class="hljs-keyword">var</span> firstTry = Type.GetType(actorName);
-    Func&lt;Type&gt; searchForType = () =&gt;
-    {
-        <span class="hljs-keyword">return</span>
-        AppDomain.
-            CurrentDomain.
-            GetAssemblies().
-            SelectMany(x =&gt; x.GetTypes()).
-            Where(t =&gt; t.Name.Equals(actorName)).
-            FirstOrDefault();
-    };
-    <span class="hljs-keyword">return</span> firstTry ?? searchForType();
+    _typeCache.
+        TryAdd(actorName,
+            actorName.GetTypeValue() ??
+            _container.Kernel
+            .GetAssignableHandlers(<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">object</span>))
+            .Where(handler =&gt; handler.ComponentModel.Name.Equals(actorName, StringComparison.InvariantCultureIgnoreCase))
+            .Select(handler =&gt; handler.ComponentModel.Implementation)
+            .FirstOrDefault());
+
+     <span class="hljs-keyword">return</span> _typeCache[actorName];
 }
 </code></pre>
-<p>Secondly you need to implement the CreateActorFactory method which will be used by the extension to create the Actor. This implementation will depend upon the API of the container.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+<p>Secondly you need to implement the <code>CreateActorFactory</code> method which will be
+used by the extension to create the actor. This implementation will depend upon
+the API of the container.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(Type actorType)</span>
 </span>{
-    <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(GetType(actorName));
+    <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(actorType);
 }
 </code></pre>
-<p>Lastly, you implement the Create<TActor> which is used register the Props configuration for the referenced Actor Type with the ActorSystem. This method will always be the same implementation.</p>
+<p>Thirdly, you implement the <code>Create&lt;TActor&gt;</code> which is used register the
+<code>Props</code> configuration for the referenced actor type with the <code>ActorSystem</code>.
+This method will always be the same implementation.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> Props Create&lt;TActor&gt;() <span class="hljs-keyword">where</span> TActor : ActorBase
 {
     <span class="hljs-keyword">return</span> system.GetExtension&lt;DIExt&gt;().Props(<span class="hljs-keyword">typeof</span>(TActor).Name);
 }
 </code></pre>
-<p>So with that you can do something like the following code example:</p>
-<pre><code class="hljs lang-csharp">IWindsorContainer container = <span class="hljs-keyword">new</span> WindsorContainer();
+<p>Lastly, you implement the Release method which in this instance is very simple.
+This method is used to remove the actor from the underlying container.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Release</span><span class="hljs-params">(ActorBase actor)</span>
+</span>{
+    <span class="hljs-keyword">this</span>.container.Release(actor);
+}
+</code></pre>
+<p><strong>Note: For further details on the importance of the release method please read
+the following blog <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">post</a>.</strong></p>
+<p>The resulting class should look similar to the following:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WindsorDependencyResolver</span> : <span class="hljs-title">IDependencyResolver</span>
+{
+    <span class="hljs-keyword">private</span> IWindsorContainer container;
+    <span class="hljs-keyword">private</span> ConcurrentDictionary&lt;<span class="hljs-keyword">string</span>, Type&gt; typeCache;
+    <span class="hljs-keyword">private</span> ActorSystem system;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
+    </span>{
+        <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"system"</span>);
+        <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"container"</span>);
+        <span class="hljs-keyword">this</span>.container = container;
+        typeCache = <span class="hljs-keyword">new</span> ConcurrentDictionary&lt;<span class="hljs-keyword">string</span>, Type&gt;(StringComparer.InvariantCultureIgnoreCase);
+        <span class="hljs-keyword">this</span>.system = system;
+        <span class="hljs-keyword">this</span>.system.AddDependencyResolver(<span class="hljs-keyword">this</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+    </span>{
+        typeCache.TryAdd(actorName, actorName.GetTypeValue() ??
+            container.Kernel
+              .GetAssignableHandlers(<span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">object</span>))
+              .Where(handler =&gt; handler.ComponentModel.Name.Equals(actorName, StringComparison.InvariantCultureIgnoreCase))
+              .Select(handler =&gt; handler.ComponentModel.Implementation)
+              .FirstOrDefault());
+
+        <span class="hljs-keyword">return</span> typeCache[actorName];
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(Type actorType)</span>
+    </span>{
+        <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(actorType);
+    }
+
+    <span class="hljs-keyword">public</span> Props Create&lt;TActor&gt;() <span class="hljs-keyword">where</span> TActor : ActorBase
+    {
+        <span class="hljs-keyword">return</span> system.GetExtension&lt;DIExt&gt;().Props(<span class="hljs-keyword">typeof</span>(TActor));
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Release</span><span class="hljs-params">(ActorBase actor)</span>
+    </span>{
+        <span class="hljs-keyword">this</span>.container.Release(actor);
+    }
+}
+</code></pre>
+<p>Now, with the preceding class, you can do something like the following example:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Setup CastleWindsor</span>
+IWindsorContainer container = <span class="hljs-keyword">new</span> WindsorContainer();
 container.Register(Component.For&lt;IWorkerService&gt;().ImplementedBy&lt;WorkerService&gt;());
 container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-string">"TypedWorker"</span>).LifestyleTransient());
 
-<span class="hljs-comment">//Create ActorSystem</span>
+<span class="hljs-comment">// Create the ActorSystem</span>
 <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>))
 {
-   <span class="hljs-comment">//Create the dependency resolver</span>
-   IDependencyResolver propsResolver =
-        <span class="hljs-keyword">new</span> WindsorDependencyResolver(container,system);
+    <span class="hljs-comment">// Create the dependency resolver</span>
+    IDependencyResolver resolver = <span class="hljs-keyword">new</span> WindsorDependencyResolver(container, system);
 
-        system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
-        system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
+    <span class="hljs-comment">// Register the actors with the system</span>
+    system.ActorOf(resolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
+    system.ActorOf(resolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
 
-    <span class="hljs-keyword">var</span> hashGroup =
-        system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingGroup(config)));
+    <span class="hljs-comment">// Create the router</span>
+    IActorRef router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingGroup(config)));
 
-    TypedActorMessage msg =
-       <span class="hljs-keyword">new</span> TypedActorMessage { Id = <span class="hljs-number">1</span>,
-                               Name = Guid.NewGuid().ToString() };
-     hashGroup.Tell(msg);
+    <span class="hljs-comment">// Create the message to send</span>
+    TypedActorMessage message = <span class="hljs-keyword">new</span> TypedActorMessage
+    {
+       Id = <span class="hljs-number">1</span>,
+       Name = Guid.NewGuid().ToString()
+    };
+
+    <span class="hljs-comment">// Send the message to the router</span>
+    router.Tell(message);
 }
+</code></pre>
+<h2 id="creating-child-actors-using-di">Creating Child Actors using DI</h2>
+<p>When you want to create child actors from within your existing actors using
+Dependency Injection you can use the Actor Content extension just like in
+the following example.</p>
+<pre><code class="hljs lang-csharp">Context.DI().ActorOf&lt;TypedActor&gt;().Tell(message);
 </code></pre>
 </div>
 

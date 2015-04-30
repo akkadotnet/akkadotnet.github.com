@@ -183,7 +183,7 @@
 </ul>
 <h3 id="creating-actors-with-actor-computation-expression">Creating actors with <code>actor</code> computation expression</h3>
 <p>Unlike C# actors, which represent object oriented nature of the language, F# is able to define an actor&#39;s logic in more functional way. It is done by using <code>actor</code> computation expression. In most of the cases, an expression inside <code>actor</code> is expected to be represented as self-invoking recursive function - also invoking an other functions while maintaining recursive cycle is allowed, i.e. to change actor&#39;s behavior or even to create more advanced constructs like Finite State Machines.</p>
-<p>It&#39;s important to remember, that each actor returning point should point to the next recursive function call - any other value returned will result in stopping current actor (see: <a href="Actor lifecycle">Actor Lifecycle</a>).</p>
+<p>It&#39;s important to remember, that each actor returning point should point to the next recursive function call - any other value returned will result in stopping the current actor (see: <a href="Actor lifecycle">Actor Lifecycle</a>).</p>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> aref =
     spawn system <span class="hljs-string">"my-actor"</span>
@@ -195,7 +195,7 @@
             }
             loop())
 </code></pre>
-<p>Since construct used in an example above is quite popular, you may also use following shorthand functions to define message handler&#39;s behavior:</p>
+<p>Since the construct used in the above example is quite popular, you may also use the following shorthand functions to define the message handler&#39;s behavior:</p>
 <ul>
 <li><code>actorOf (fn : &#39;Message -&gt; unit) (mailbox : Actor&lt;&#39;Message&gt;) : Cont&lt;&#39;Message, &#39;Returned&gt;</code> - uses a function, which takes a message as the only parameter. Mailbox parameter is injected by spawning functions.</li>
 <li><code>actorOf2 (fn : Actor&lt;&#39;Message&gt; -&gt; &#39;Message -&gt; unit) (mailbox : Actor&lt;&#39;Message&gt;) : Cont&lt;&#39;Message, &#39;Returned&gt;</code> - uses a function, which takes both the message and an Actor instance as the parameters. Mailbox parameter is injected by spawning functions.</li>
@@ -210,17 +210,17 @@
 <span class="hljs-keyword">let</span> blackHole = spawn system <span class="hljs-string">"black-hole"</span> (actorOf (<span class="hljs-keyword">fun</span> msg -&gt; ()))
 </code></pre>
 <h4 id="spawning-actors">Spawning actors</h4>
-<p>Paragraph above already has shown, how actors may be created with help of the spawning function. There are several spawning function, which may be used to instantiate actors:</p>
+<p>The above paragraph has already shown how actors may be created with the help of a spawning function. There are several spawning functions, which may be used to instantiate actors:</p>
 <ul>
-<li><code>spawn (actorFactory : ActorRefFactory) (name : string) (f : Actor&lt;&#39;Message&gt; -&gt; Cont&lt;&#39;Message, &#39;Returned&gt;) : ActorRef</code> - spawns an actor using specified actor computation expression. The actor can only be used locally.</li>
-<li><code>spawnOpt (actorFactory : ActorRefFactory) (name : string) (f : Actor&lt;&#39;Message&gt; -&gt; Cont&lt;&#39;Message, &#39;Returned&gt;) (options : SpawnOption list) : ActorRef</code> - spawns an actor using specified actor computation expression, with custom spawn option settings. The actor can only be used locally.</li>
-<li><code>spawne (actorFactory : ActorRefFactory) (name : string) (expr : Expr&lt;Actor&lt;&#39;Message&gt; -&gt; Cont&lt;&#39;Message, &#39;Returned&gt;&gt;) (options : SpawnOption list) : ActorRef</code> - spawns an actor using specified actor computation expression, using an Expression AST. The actor code can be deployed remotely.</li>
-<li><code>spawnObj (actorFactory : ActorRefFactory) (name : string) (f : Quotations.Expr&lt;(unit -&gt; #ActorBase)&gt;) : ActorRef</code> - spawns an actor using specified actor quotation. The actor can only be used locally.</li>
-<li><code>spawnObjOpt (actorFactory : ActorRefFactory) (name : string) (f : Quotations.Expr&lt;(unit -&gt; #ActorBase)&gt;) (options : SpawnOption list) : ActorRef</code> - spawns an actor using specified actor quotation, with custom spawn option settings. The actor can only be used locally.</li>
+<li><code>spawn (actorFactory : IActorRefFactory) (name : string) (f : Actor&lt;&#39;Message&gt; -&gt; Cont&lt;&#39;Message, &#39;Returned&gt;) : IActorRef</code> - spawns an actor using a specified actor computation expression. The actor can only be used locally.</li>
+<li><code>spawnOpt (actorFactory : IActorRefFactory) (name : string) (f : Actor&lt;&#39;Message&gt; -&gt; Cont&lt;&#39;Message, &#39;Returned&gt;) (options : SpawnOption list) : IActorRef</code> - spawns an actor using a  specified actor computation expression, with custom spawn option settings. The actor can only be used locally.</li>
+<li><code>spawne (actorFactory : IActorRefFactory) (name : string) (expr : Expr&lt;Actor&lt;&#39;Message&gt; -&gt; Cont&lt;&#39;Message, &#39;Returned&gt;&gt;) (options : SpawnOption list) : IActorRef</code> - spawns an actor using a  specified actor computation expression, using an Expression AST. The actor code can be deployed remotely.</li>
+<li><code>spawnObj (actorFactory : IActorRefFactory) (name : string) (f : Quotations.Expr&lt;(unit -&gt; #ActorBase)&gt;) : IActorRef</code> - spawns an actor using a specified actor quotation. The actor can only be used locally.</li>
+<li><code>spawnObjOpt (actorFactory : IActorRefFactory) (name : string) (f : Quotations.Expr&lt;(unit -&gt; #ActorBase)&gt;) (options : SpawnOption list) : IActorRef</code> - spawns an actor using a specified actor quotation, with custom spawn option settings. The actor can only be used locally.</li>
 </ul>
-<p>All of these functions may be used with either actor system or actor itself. In the first case spawned actor will be placed under <em>/user</em> root guardian of the current actor system hierarchy. In second option spawned actor will become child of the actor used as [actorFactory] parameter of the spawning function.</p>
+<p>All of these functions may be used with either the actor system or the actor itself. In the first case the spawned actor will be placed under <em>/user</em> root guardian of the current actor system hierarchy. In the second option the spawned actor will become a child of the actor used as the  <code>actorFactory</code> parameter of the spawning function.</p>
 <h4 id="dealing-with-disposable-resources">Dealing with disposable resources</h4>
-<p>When executing application logic inside receive function, be aware of a constant threat of stopping a current actor at any time for various reasons. This is an especially problematic situation when you&#39;re using a resource allocation - when actor will be stopped suddenly, you may be left with potentially heavy resources still waiting for being released.</p>
+<p>When executing application logic inside the receive function, be aware of a constant threat of stopping a current actor at any time for various reasons. This is an especially problematic situation when you are using a resource allocation - when an actor stops suddenly, you may be left with potentially heavy resources still waiting to be released.</p>
 <p>Use <code>mailbox.Defer (deferredFunc)</code> in situations when you must ensure operation to be executed at the end of the actor lifecycle.</p>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> disposableActor (mailbox:Actor&lt;_&gt;) =
@@ -238,25 +238,26 @@
 <ul>
 <li><code>SpawnOption.Deploy(Akka.Actor.Deploy)</code> - defines deployment strategy for created actors (see: [[Deploy]]). This option may be used along with <code>spawne</code> function to enable remote actors deployment.</li>
 <li><code>SpawnOption.Router(Akka.Routing.RouterConfig)</code> - defines an actor to be a router as well as it&#39;s routing specifics (see: <a href="Routing">Routing</a>).</li>
-<li><code>SpawnOption.SupervisiorStrategy(Akka.Actor.SupervisiorStrategy)</code> - defines a supervisor strategy of the current actor. It will affect it&#39;s children (see: <a href="Supervision">Supervision</a>).</li>
+<li><code>SpawnOption.SupervisiorStrategy(Akka.Actor.SupervisiorStrategy)</code> - defines a supervisor strategy of the current actor. It will affect its children (see: <a href="Supervision">Supervision</a>).</li>
 <li><code>SpawnOption.Dispatcher(string)</code> - defines a type of the dispatcher used for resources management for the created actors. (See: <a href="Dispatchers">Dispatchers</a>)</li>
 <li><code>SpawnOption.Mailbox(string)</code> - defines a type of the mailbox used for the created actors. (See: <a href="Mailbox">Mailboxes</a>)</li>
 </ul>
 <p>Example (deploy actor remotely):</p>
-<pre><code>open Akka<span class="hljs-class">.Actor</span>
-let remoteRef =
+<pre><code class="hljs lang-fsharp"><span class="hljs-keyword">open</span> Akka.Actor
+<span class="hljs-keyword">let</span> remoteRef =
     spawne system <span class="hljs-string">"my-actor"</span> &lt;@ actorOf myFunc @&gt;
-        [SpawnOption<span class="hljs-class">.Deploy</span> (<span class="hljs-function"><span class="hljs-title">Deploy</span><span class="hljs-params">(RemoteScope(Address.Parse <span class="hljs-string">"akka.tcp://remote-system@127.0.0.1:9000/"</span>)</span></span>))]
-</code></pre><h3 id="ask-and-tell-operators">Ask and tell operators</h3>
-<p>While you may use traditional <code>ActorRef.Tell</code> and <code>ActorRef.Ask</code> methods, it&#39;s more convenient to use dedicated <code>&lt;!</code> and <code>&lt;?</code> operators to perform related operations.</p>
+        [SpawnOption.Deploy (Deploy(RemoteScope(Address.Parse <span class="hljs-string">"akka.tcp://remote-system@127.0.0.1:9000/"</span>)))]
+</code></pre>
+<h3 id="ask-and-tell-operators">Ask and tell operators</h3>
+<p>While you may use traditional <code>IActorRef.Tell</code> and <code>IActorRef.Ask</code> methods, it&#39;s more convenient to use dedicated <code>&lt;!</code> and <code>&lt;?</code> operators to perform related operations.</p>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp">aref &lt;! message
 async { <span class="hljs-keyword">let</span>! response = aref &lt;? request }
 </code></pre>
 <h3 id="actor-selection">Actor selection</h3>
-<p>Actors may be referenced not only by <code>ActorRef</code>s, but also through actor path selection (see: <a href="Addressing">Addressing</a>). With F# API you may select an actor with known path using <code>select</code> function:</p>
+<p>Actors may be referenced not only by <code>IActorRef</code>s, but also through actor path selection (see: <a href="Addressing">Addressing</a>). With the F# API you may select an actor with a known path using the <code>select</code> function:</p>
 <ul>
-<li><code>select (path : string) (selector : ActorRefFactory) : ActorSelection</code> - where path is a valid URI string used to recognize actor path, and the selector is either actor system or actor itself.</li>
+<li><code>select (path : string) (selector : IActorRefFactory) : ActorSelection</code> - where path is a valid URI string used to recognize an actor path, and the selector is either an actor system or an actor itself.</li>
 </ul>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> aref = spawn system <span class="hljs-string">"my-actor"</span> (actorOf2 (<span class="hljs-keyword">fun</span> mailbox m -&gt; printfn <span class="hljs-string">"%A said %s"</span> (mailbox.Self.Path) m))
@@ -265,7 +266,7 @@ aref &lt;! <span class="hljs-string">"one"</span>
 aref2 &lt;! <span class="hljs-string">"two"</span>
 </code></pre>
 <h3 id="inboxes">Inboxes</h3>
-<p>Inboxes are actor-like objects used to be listened by other actors. They are a good choice to watch over other actors lifecycle. Some of the inbox-related functions may block current thread and therefore should not be used inside actors.</p>
+<p>Inboxes are actor-like objects used to listen to other actors. They are a good choice to watch over other actors lifecycle. Some of the inbox-related functions may block current thread and therefore should not be used inside actors.</p>
 <ul>
 <li><code>inbox (system : ActorSystem) : Inbox</code> - creates a new inbox in provided actor system scope.</li>
 <li><code>receive (timeout : TimeSpan) (i : Inbox) : &#39;Message option</code> - receives a next message sent to the inbox. This is a blocking operation. Returns <code>None</code> if timeout occurred or message is incompatible with expected response type.</li>
@@ -284,19 +285,19 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
 <h3 id="monitoring">Monitoring</h3>
 <p>Actors and Inboxes may be used to monitor lifetime of other actors. This is done by <code>monitor</code>/<code>demonitor</code> functions:</p>
 <ul>
-<li><code>monitor (subject: ActorRef) (watcher: ICanWatch) : ActorRef</code> - starts monitoring a referred actor.</li>
-<li><code>demonitor (subject: ActorRef) (watcher: ICanWatch) : ActorRef</code> - stops monitoring of the previously monitored actor.</li>
+<li><code>monitor (subject: IActorRef) (watcher: ICanWatch) : IActorRef</code> - starts monitoring a referred actor.</li>
+<li><code>demonitor (subject: IActorRef) (watcher: ICanWatch) : IActorRef</code> - stops monitoring of the previously monitored actor.</li>
 </ul>
 <p>Monitored actors will automatically send a <code>Terminated</code> message to their watchers when they die.</p>
 <h3 id="actor-supervisor-strategies">Actor supervisor strategies</h3>
 <p>Actors have a place in their system&#39;s hierarchy trees. To manage failures done by the child actors, their parents/supervisors may decide to use specific supervisor strategies (see: <a href="Supervision">Supervision</a>) in order to react to the specific types of errors. In F# this may be configured using functions of the <code>Strategy</code> module:</p>
 <ul>
 <li><code>Strategy.OneForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution.</li>
-<li><code>Strategy.OneForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
-<li><code>OneForOne (decider : Expr&lt;(exn -&gt; Directive)&gt;, ?retries : int, ?timeout : TimeSpan)  : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur. <strong>Strategies created this way may be serialized and deserialized on remote nodes</strong> .</li>
+<li><code>Strategy.OneForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. The <code>retries</code> parameter defines a number of times an actor could be restarted. If it&#39;s a negative value, there is no limit. The <code>timeout</code> parameter defines a time window for the  number of retries to occur.</li>
+<li><code>OneForOne (decider : Expr&lt;(exn -&gt; Directive)&gt;, ?retries : int, ?timeout : TimeSpan)  : SupervisorStrategy</code> - returns a supervisor strategy applicable only to child actor which faulted during execution. The <code>retries</code> parameter defines a number of times an actor could be restarted. If it&#39;s a negative value, there is no limit. The <code>timeout</code> parameter defines a time window for the number of retries to occur. <strong>Strategies created this way may be serialized and deserialized on remote nodes</strong> .</li>
 <li><code>Strategy.AllForOne (decider : exn -&gt; Directive) : SupervisorStrategy</code> - returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution.</li>
-<li><code>Strategy.AllForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> -  returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur.</li>
-<li><code>AllForOne (decider : Expr&lt;(exn -&gt; Directive)&gt;, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> - returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution. [retries] param defines a number of times, an actor could be restarted. If it&#39;s a negative value, there is not limit. [timeout] param defines a time window for number of retries to occur. <strong>Strategies created this way may be serialized and deserialized on remote nodes</strong> .</li>
+<li><code>Strategy.AllForOne (decider : exn -&gt; Directive, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> -  returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution. The <code>retries</code> parameter defines a number of times an actor could be restarted. If it&#39;s a negative value, there is no limit. The <code>timeout</code> parameter defines a time window for the number of retries to occur.</li>
+<li><code>AllForOne (decider : Expr&lt;(exn -&gt; Directive)&gt;, ?retries : int, ?timeout : TimeSpan) : SupervisorStrategy</code> - returns a supervisor strategy applicable to each supervised actor when any of them had faulted during execution. The <code>retries</code> parameter defines a number of times an actor could be restarted. If it&#39;s a negative value, there is no limit. The <code>timeout</code> parameter defines a time window for the number of retries to occur. <strong>Strategies created this way may be serialized and deserialized on remote nodes</strong> .</li>
 </ul>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">let</span> aref =
@@ -315,10 +316,10 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
           SpawnOption.Deploy (Deploy (RemoteScope remoteNodeAddr)) ]
 </code></pre>
 <h3 id="publish-subscribe-support">Publish/Subscribe support</h3>
-<p>While you may use built-in set of the event stream methods (see: Event Streams), there is an option of using dedicated F# API functions:</p>
+<p>While you may use built-in set of the event stream methods (see: [Event Streams]), there is an option of using the dedicated F# API functions:</p>
 <ul>
-<li><code>subscribe (channel: System.Type) (ref: ActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - subscribes an actor reference to target channel of the provided event stream. Channels are associated with specific types of a message emitted by the publishers.</li>
-<li><code>unsubscribe (channel: System.Type) (ref: ActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - unsubscribes an actor reference from target channel of the provided event stream.</li>
+<li><code>subscribe (channel: System.Type) (ref: IActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - subscribes an actor reference to the target channel of the provided event stream. Channels are associated with specific types of a message emitted by the publishers.</li>
+<li><code>unsubscribe (channel: System.Type) (ref: IActorRef) (eventStream: Akka.Event.EventStream) : bool</code> - unsubscribes an actor reference from the target channel of the provided event stream.</li>
 <li><code>publish (event: &#39;Event) (eventStream: Akka.Event.EventStream) : unit</code> - publishes an event on the provided event stream. Event channel is resolved from event&#39;s type.</li>
 </ul>
 <p>Example:</p>
@@ -347,7 +348,7 @@ subscriber &lt;! Unsubscribe
 publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>)
 </code></pre>
 <h3 id="logging">Logging</h3>
-<p>F# API supports two groups of logging functions - one that operates directly on strings and second (which may be recognized by <em>f</em> suffix in function names) which operates using F# string formatting features. Major difference is performance - first one is less powerful, but it&#39;s also faster than the second one.</p>
+<p>The F# API supports two groups of logging functions - one that operates directly on strings and another (which may be recognized by <em>f</em> suffix in function names) that operates using F# string formatting features. The major difference is performance - the former is less powerful, but it&#39;s also faster than the latter.</p>
 <p>Both groups support logging on various levels (DEBUG, &lt;default&gt; INFO, WARNING and ERROR). Actor system&#39;s logging level may be managed through configuration, i.e.:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
     <span class="hljs-title">actor</span> {
@@ -369,8 +370,8 @@ publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>)
 <li><code>logException (mailbox: Actor&lt;&#39;a&gt;) (e : exn) : unit</code> - this function logs a message from provided <code>System.Exception</code> object at the Error level.</li>
 </ul>
 <h3 id="interop-with-task-parallel-library">Interop with Task Parallel Library</h3>
-<p>Since both TPL an Akka frameworks can be used for parallel processing, sometimes they need to work both inside the same application.</p>
-<p>To operate directly between <code>Async</code> results and actors, use <code>pipeTo</code> function (and it&#39;s abbreviations in form of <code>&lt;!|</code> and <code>|!&gt;</code> operators) to inform actor about tasks ending their processing pipelines. Piping functions used on tasks will move async result directly to the mailbox of a target actor.</p>
+<p>Since both TPL and Akka frameworks can be used for parallel processing, sometimes they need to work both inside the same application.</p>
+<p>To operate directly between <code>Async</code> results and actors, use <code>pipeTo</code> function (and its abbreviations in the form of <code>&lt;!|</code> and <code>|!&gt;</code> operators) to inform actor about tasks ending their processing pipelines. Piping functions used on tasks will move async result directly to the mailbox of a target actor.</p>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp"><span class="hljs-keyword">open</span> System.IO
 <span class="hljs-keyword">let</span> handler (mailbox: Actor&lt;obj&gt;) msg =

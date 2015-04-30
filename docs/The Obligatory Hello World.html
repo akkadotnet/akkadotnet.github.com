@@ -172,7 +172,7 @@
 <p>This example shows how to define and consume actors in both C# and F#</p>
 <h2 id="hello-world-using-the-c-api">Hello World using the C# API</h2>
 <h4 id="define-a-message-">Define a message:</h4>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//Create an (immutable) message type that your actor will respond to</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create an (immutable) message type that your actor will respond to</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greet</span>
 {
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span><span class="hljs-params">(<span class="hljs-keyword">string</span> who)</span>
@@ -183,7 +183,7 @@
 }
 </code></pre>
 <h4 id="define-your-actor-using-the-receiveactor-api">Define your actor using the <code>ReceiveActor</code> API</h4>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//Create the actor class</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create the actor class</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GreetingActor</span> : <span class="hljs-title">ReceiveActor</span>
 {
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span><span class="hljs-params">()</span>
@@ -202,17 +202,19 @@
 }
 </code></pre>
 <h4 id="usage-">Usage:</h4>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//create a new actor system (a container for your actors)</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create a new actor system (a container for your actors)</span>
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-<span class="hljs-comment">//create your actor and get a reference to it.</span>
-<span class="hljs-comment">//this will be an "ActorRef", which is not a reference to the actual actor instance</span>
-<span class="hljs-comment">//but rather a client or proxy to it</span>
+
+<span class="hljs-comment">// Create your actor and get a reference to it.</span>
+<span class="hljs-comment">// This will be an "IActorRef", which is not a reference to the actual actor</span>
+<span class="hljs-comment">// instance but rather a client or proxy to it.</span>
 <span class="hljs-keyword">var</span> greeter = system.ActorOf&lt;GreetingActor&gt;(<span class="hljs-string">"greeter"</span>);
-<span class="hljs-comment">//send a message to the actor</span>
+
+<span class="hljs-comment">// Send a message to the actor.</span>
 greeter.Tell(<span class="hljs-keyword">new</span> Greet(<span class="hljs-string">"World"</span>));
 
-<span class="hljs-comment">//this prevents the app from exiting</span>
-<span class="hljs-comment">//Before the async work is done</span>
+<span class="hljs-comment">// This prevents the app from exiting</span>
+<span class="hljs-comment">// before the async work is done.</span>
 Console.ReadLine();
 </code></pre>
 <p>See also:</p>

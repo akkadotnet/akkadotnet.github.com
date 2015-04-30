@@ -177,7 +177,7 @@
 <pre><code class="hljs lang-csharp">_log.Debug(<span class="hljs-string">"Some message"</span>);
 </code></pre>
 <h2 id="standard-loggers">Standard Loggers</h2>
-<p>Akka .NET comes with two built in loggers.</p>
+<p>Akka.NET comes with two built in loggers.</p>
 <ul>
 <li><strong>StandardOutLogger</strong></li>
 <li><strong>BusLogging</strong></li>
@@ -197,7 +197,7 @@
 }
 </code></pre>
 <h2 id="logging-unhandled-messages">Logging Unhandled messages</h2>
-<p>It is possible to configure akka so that Unhandled Messages are logged as Debug log events for debug purposes. This can be achieved using the following configuration setting:</p>
+<p>It is possible to configure akka so that Unhandled messages are logged as Debug log events for debug purposes. This can be achieved using the following configuration setting:</p>
 <pre><code class="hljs lang-hocon">akka {
     actor.debug.unhandled = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>
 }
