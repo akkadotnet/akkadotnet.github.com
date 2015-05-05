@@ -328,12 +328,6 @@ container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-st
     router.Tell(message);
 }
 </code></pre>
-<h2 id="creating-child-actors-using-di">Creating Child Actors using DI</h2>
-<p>When you want to create child actors from within your existing actors using
-Dependency Injection you can use the Actor Content extension just like in
-the following example.</p>
-<pre><code class="hljs lang-csharp">Context.DI().ActorOf&lt;TypedActor&gt;().Tell(message);
-</code></pre>
 </div>
 
 						</div>
