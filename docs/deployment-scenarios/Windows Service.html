@@ -166,16 +166,21 @@
 							<div id="main_content">
 
 <div><h1 id="windows-service">Windows Service</h1>
-<p>For windows service deployment its recommended to use <a href="http://topshelf.readthedocs.org/en/latest/index.html">TopShelf</a> to build your Windows Services. It radically simplifies hosting Windows Services.</p>
-<p>The quickest way to get started with TopShelf is by creating a Console Application. Which would look like this:</p>
+<p>For windows service deployment its recommended to use
+<a href="http://topshelf.readthedocs.org/en/latest/index.html">TopShelf</a>
+to build your Windows Services. It radically simplifies hosting Windows Services.</p>
+<p>The quickest way to get started with TopShelf is by creating a Console
+Application. Which would look like this:</p>
 <h4 id="program-cs">Program.cs</h4>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Actor;
 <span class="hljs-keyword">using</span> Topshelf;
 </code></pre>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span> {
-    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span> </span>{
-
-        HostFactory.Run(x =&gt; {
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
+    </span>{
+        HostFactory.Run(x =&gt;
+        {
             x.Service&lt;MyActorService&gt;(s =&gt;
             {
                 s.ConstructUsing(n =&gt; <span class="hljs-keyword">new</span> MyActorService());
@@ -186,32 +191,36 @@
 
             x.RunAsLocalSystem();
             x.UseAssemblyInfoForServiceInfo();
-        });            
+        });
     }
 }
 
 <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
 <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> This class acts as an interface between your application and TopShelf</span>
 <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActorService</span> {
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActorService</span>
+{
     <span class="hljs-keyword">private</span> ActorSystem mySystem;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Start</span><span class="hljs-params">()</span> </span>{
-
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Start</span><span class="hljs-params">()</span>
+    </span>{
         <span class="hljs-comment">//this is where you setup your actor system and other things</span>
         mySystem = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span><span class="hljs-params">()</span> </span>{
-
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span><span class="hljs-params">()</span>
+    </span>{
         <span class="hljs-comment">//this is where you stop your actor system</span>
         mySystem.Shutdown();
     }
 }
 </code></pre>
-<p>The above example is the simplest way imaginable. However there are also other styles of integration with TopShelf that give you more control.</p>
-<p>Installing with Topshelf is as easy as calling <code>myConsoleApp.exe install</code> on the command line. </p>
-<p>For all the options and settings check out their <a href="http://topshelf.readthedocs.org/en/latest/index.html">docs</a>.</p>
+<p>The above example is the simplest way imaginable. However there are also other
+styles of integration with TopShelf that give you more control.</p>
+<p>Installing with Topshelf is as easy as calling <code>myConsoleApp.exe install</code> on
+the command line.</p>
+<p>For all the options and settings check out their
+<a href="http://topshelf.readthedocs.org/en/latest/index.html">docs</a>.</p>
 </div>
 
 						</div>

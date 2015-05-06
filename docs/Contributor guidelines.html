@@ -167,24 +167,35 @@
 
 <div><h1 id="contributor-guidelines">Contributor guidelines</h1>
 <h2 id="to-be-considered-while-porting-akka-to-akka-net">To be considered while porting Akka to Akka.NET</h2>
-<p>Here are some guidelines to keep in mind when you&#39;re considering making some changes to AkkaDotNet:</p>
+<p>Here are some guidelines to keep in mind when you&#39;re considering making some
+changes to Akka.NET:</p>
 <ul>
-<li>Be .NET idiomatic, e.g. do not port <code>Duration</code> or <code>Future</code>, use <code>Timespan</code> and <code>Task&lt;T&gt;</code></li>
-<li>Stay as close as possible to the original JVM implementation, <a href="https://github.com/akka/akka">https://github.com/akka/akka</a></li>
-<li>Do not add features that does not exist in JVM Akka into the core Akka.NET framework</li>
+<li>Be .NET idiomatic, e.g. do not port <code>Duration</code> or <code>Future</code>, use <code>Timespan</code>
+and <code>Task&lt;T&gt;</code></li>
+<li>Stay as close as possible to the original JVM implementation,
+<a href="https://github.com/akka/akka">https://github.com/akka/akka</a></li>
+<li>Do not add features that does not exist in JVM Akka into the core Akka.NET
+framework</li>
 <li>Please include relevant unit tests / specs along with your changes if appropriate.</li>
-<li>Try to include descriptive commit messages, even if you squash them before sending a pull request.</li>
-<li>If you aren&#39;t sure how something works or want to solicit input from other AkkaDotNet developers before making a change, you can <a href="https://github.com/akkadotnet/akka.net/issues/new">create an issue</a> with the <code>discussion</code> tag or reach out to <a href="https://twitter.com/AkkaDotNet">AkkaDotNet on Twitter</a>.</li>
+<li>Try to include descriptive commit messages, even if you squash them before
+sending a pull request.</li>
+<li>If you aren&#39;t sure how something works or want to solicit input from other
+Akka.NET developers before making a change, you can <a href="https://github.com/akkadotnet/akka.net/issues/new">create an issue</a>
+with the <code>discussion</code> tag or reach out to <a href="https://twitter.com/AkkaDotNet">AkkaDotNet on Twitter</a>.</li>
 </ul>
 <h2 id="coding-conventions">Coding conventions</h2>
 <ul>
 <li>Use the default Resharper guidelines for code<ul>
 <li>Private member fields start with <code>_</code>, i.e. <code>_camelCased</code></li>
 <li>PascalCased public and protected Properties and Methods.</li>
+<li>avoid using <code>this</code> when accessing class variables, e.g. BAD <code>this.fieldName</code></li>
 <li>TODO.. Anyone got a complete list for this?</li>
 </ul>
 </li>
 <li>4 spaces for indentation</li>
+<li>use <a href="http://en.wikipedia.org/wiki/Indent_style#Allman_style">Allman style</a>
+brackets for C# code and <a href="http://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS">1TBS style</a>
+brackets for HOCON and F# code.</li>
 <li>No protected fields. Create a private field and a protected property instead.</li>
 </ul>
 <h2 id="tests">Tests</h2>

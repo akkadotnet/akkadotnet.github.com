@@ -168,14 +168,14 @@
 <div><h1 id="scheduler">Scheduler</h1>
 <p>Sometimes the need for making things happen in the future arises, and where do
 you go look then?  Look no further than <code>ActorSystem</code>! There you find the
-<code>Scheduler</code> property that returns an instance of
-<code>Akka.Actor.Scheduler</code>, this instance is unique per ActorSystem and is
-used internally for scheduling things to happen at specific points in time.</p>
+<code>Scheduler</code> property that returns an instance of <code>Akka.Actor.Scheduler</code>,
+this instance is unique per ActorSystem and is used internally for scheduling
+things to happen at specific points in time.</p>
 <p>You can schedule sending of messages to actors and execution of tasks
-(Action delegate).  You will get a <code>Task</code> back.
-By providing a <code>CancellationTokenSource</code> you can cancel the scheduled task.</p>
+(Action delegate). You will get a <code>Task</code> back. By providing a
+<code>CancellationTokenSource</code> you can cancel the scheduled task.</p>
 <div class="alert alert-warning">
-<p><strong>warning</strong><br/>
+<p><strong>Warning</strong><br/>
 Scheduling timing is inexact.</p>
 </div>
 <h2 id="some-examples">Some examples</h2>
@@ -188,15 +188,16 @@ system
              TimeSpan.FromSeconds(<span class="hljs-number">5</span>),
              someActor, someMessage);
 </code></pre>
-<p>The above example will schedule &quot;someMessage&quot; to be sent to &quot;someActor&quot; every 5 seconds.</p>
+<p>The above example will schedule &quot;someMessage&quot; to be sent to &quot;someActor&quot;
+every 5 seconds.</p>
 <div class="alert alert-warning">
-<p><strong>warning</strong><br/>
-If you schedule a closure you should be extra careful
-to not pass or close over unstable references. In practice this means that you should
-not call methods on the enclosing Actor from within the closure.
-If you need to schedule an invocation it is better to use the <code>Schedule()</code>
-variant accepting a message and an <code>ActorRef</code> to schedule a message to self
-(containing the necessary parameters) and then call the method when the message is received.</p>
+<p><strong>Warning</strong><br/>
+If you schedule a closure you should be extra careful to not pass or close over
+unstable references. In practice this means that you should not call methods on
+the enclosing actor from within the closure. If you need to schedule an
+invocation it is better to use the <code>Schedule()</code> variant accepting a message
+and an <code>IActorRef</code> to schedule a message to self (containing the necessary
+parameters) and then call the method when the message is received.</p>
 </div>
 </div>
 

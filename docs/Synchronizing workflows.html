@@ -166,8 +166,7 @@
 							<div id="main_content">
 
 <div><h1 id="synchronizing-workflows">Synchronizing workflows</h1>
-<pre><code class="hljs lang-csharp">
-<span class="hljs-comment">//add whatever contextual information necessary for</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">//add whatever contextual information necessary for</span>
 <span class="hljs-comment">//jobs in these classes</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SubTaskStarted</span> {}
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SubTaskEnded</span> {}
@@ -176,16 +175,16 @@
 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobSynchronizer</span> : <span class="hljs-title">ReceiveActor</span>
 {
-     <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ActorRef _notifyStatus ;
+     <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> IActorRef _notifyStatus;
 
      <span class="hljs-comment">//TODO: don't use a counter incase of lost messages.</span>
      <span class="hljs-comment">//use a dict of actorref , bool for completion status per actor instead</span>
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _jobCount;
 
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(ActorRef notifyStatus)</span>
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(IActorRef notifyStatus)</span>
      </span>{
           SetReceiveTimeout(TimeSpan.FromSeconds(<span class="hljs-number">5</span>));
-          _notifyStatus = notifyStatus ;
+          _notifyStatus = notifyStatus;
           Receive&lt;SubTaskStarted&gt;(_ =&gt;
           {
              _jobCount ++;
@@ -200,7 +199,7 @@
           {
               <span class="hljs-comment">//kill timeout</span>
               SetReceiveTimeout(<span class="hljs-keyword">null</span>);
-              <span class="hljs-comment">//</span>
+
               _notifyStatus.Tell(<span class="hljs-keyword">new</span> TasksFailed());
           });
      }
@@ -216,8 +215,8 @@
 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span> : <span class="hljs-title">ReceiveActor</span>
 {
-     <span class="hljs-keyword">private</span> ActorRef _synchronizer;
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Worker</span><span class="hljs-params">(ActorRef synchronizer)</span>
+     <span class="hljs-keyword">private</span> IActorRef _synchronizer;
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Worker</span><span class="hljs-params">(IActorRef synchronizer)</span>
      </span>{
            _synchronizer = synchronizer;
            Receive&lt;DoSomeWork&gt;(work =&gt;

@@ -174,10 +174,13 @@
 <h2 id="how-are-messages-defined-">How are messages defined?</h2>
 <p>In Akka.NET messages are simple POCO classes:</p>
 <h4 id="-c-"><code>C#</code></h4>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>{
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span></span>{
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span>
+    </span>{
         Name = name;
     }
+
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name {<span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>;}
 }
 </code></pre>
@@ -194,22 +197,27 @@
 
 
 <span class="hljs-comment">/* message definition */</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>{
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span></span>{
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span>
+    </span>{
         Name = name;
     }
+
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name {<span class="hljs-keyword">get</span>;<span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>;}
 }
 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Hi</span>{}
 
 <span class="hljs-comment">/* actor definition */</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span> : <span class="hljs-title">ReceiveActor</span>{
-
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span> : <span class="hljs-title">ReceiveActor</span>
+{
     <span class="hljs-keyword">string</span> lastActorName;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span><span class="hljs-params">()</span></span>{
-        Receive&lt;MyMessage&gt;(msg =&gt; {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span><span class="hljs-params">()</span>
+    </span>{
+        Receive&lt;MyMessage&gt;(msg =&gt;
+        {
             lastActorName = msg.Name;
         });
         Receive&lt;Hi&gt;(hi =&gt; Console.WriteLine(<span class="hljs-string">"Hi {0}!"</span>,lastActorName));

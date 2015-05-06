@@ -222,7 +222,7 @@ system.ActorOf(DemoActor.Props(<span class="hljs-number">42</span>), <span class
 which is available on <code>ActorSystem</code> and <code>ActorContext</code>.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// ActorSystem is a heavy object: create only one per application</span>
 ActorSystem system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
-ActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myactor"</span>);
+IActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myactor"</span>);
 </code></pre>
 <p>Using the <code>ActorSystem</code> will create top-level actors, supervised by the actor
 system’s provided guardian actor, while using an actor’s context will create
