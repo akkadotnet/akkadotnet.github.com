@@ -169,8 +169,8 @@
 <p>This is an informal spec, but hopefully it&#39;s clear.</p>
 <h2 id="goals-background">Goals / Background</h2>
 <p>The primary goal is: keep the semantics (tree structure; set of
-types; encoding/escaping) from JSON, but make it more convenient
-as a human-editable config file format.</p>
+types; encoding/escaping) from JSON (JavaScript Object Notation),
+but make it more convenient as a human-editable config file format.</p>
 <p>The following features are desirable, to support human usage:</p>
 <ul>
 <li>less noisy / less pedantic syntax</li>
@@ -302,7 +302,7 @@ wins), and then the object falls back to the non-object (no
 merging, object is the new value). So the two objects never see
 each other.</p>
 <p>These two are equivalent:</p>
-<pre><code>{
+<pre><code class="hljs lang-hocon">{
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}</span>,
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
 </span>}
@@ -310,8 +310,9 @@ each other.</p>
 {
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span></span>, "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
 </span>}
-</code></pre><p>And these two are equivalent:</p>
-<pre><code>{
+</code></pre>
+<p>And these two are equivalent:</p>
+<pre><code class="hljs lang-hocon">{
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">a</span>" : <span class="hljs-value"><span class="hljs-number">42</span> </span>}</span>,
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value"><span class="hljs-literal">null</span></span>,
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
@@ -320,7 +321,8 @@ each other.</p>
 {
     "<span class="hljs-attribute">foo</span>" : <span class="hljs-value">{ "<span class="hljs-attribute">b</span>" : <span class="hljs-value"><span class="hljs-number">43</span> </span>}
 </span>}
-</code></pre><p>The intermediate setting of <code>&quot;foo&quot;</code> to <code>null</code> prevents the object merge.</p>
+</code></pre>
+<p>The intermediate setting of <code>&quot;foo&quot;</code> to <code>null</code> prevents the object merge.</p>
 <h3 id="unquoted-strings">Unquoted strings</h3>
 <p>A sequence of characters outside of a quoted string is a string
 value if:</p>
@@ -461,15 +463,16 @@ overrides the first.</p>
 <p>Arrays and objects cannot be field keys, whether concatenation is
 involved or not.</p>
 <p>Here are several ways to define <code>a</code> to the same object value:</p>
-<pre><code><span class="hljs-comment">// one object</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-comment">// one object</span>
 <span class="hljs-string">a :</span> { <span class="hljs-string">b :</span> <span class="hljs-number">1</span>, <span class="hljs-string">c :</span> <span class="hljs-number">2</span> }
 <span class="hljs-comment">// two objects that are merged via concatenation rules</span>
 <span class="hljs-string">a :</span> { <span class="hljs-string">b :</span> <span class="hljs-number">1</span> } { <span class="hljs-string">c :</span> <span class="hljs-number">2</span> }
 <span class="hljs-comment">// two fields that are merged</span>
 <span class="hljs-string">a :</span> { <span class="hljs-string">b :</span> <span class="hljs-number">1</span> }
 <span class="hljs-string">a :</span> { <span class="hljs-string">c :</span> <span class="hljs-number">2</span> }
-</code></pre><p>Here are several ways to define <code>a</code> to the same array value:</p>
-<pre><code>// <span class="hljs-constant">one</span> array
+</code></pre>
+<p>Here are several ways to define <code>a</code> to the same array value:</p>
+<pre><code class="hljs lang-hocon">// <span class="hljs-constant">one</span> array
 <span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
 // two arrays that are concatenated</span>
 <span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
@@ -477,17 +480,20 @@ involved or not.</p>
 // (see "self-referential substitutions" below)</span>
 <span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
 <span class="hljs-operator">a</span> : ${<span class="hljs-operator">a</span>} [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
-</code></pre><p>A common use of object concatenation is &quot;inheritance&quot;:</p>
-<pre><code><span class="hljs-type">data</span>-center-<span class="hljs-keyword">generic</span> = { cluster-<span class="hljs-built_in">size</span> = <span class="hljs-number">6</span> }
+</code></pre>
+<p>A common use of object concatenation is &quot;inheritance&quot;:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-type">data</span>-center-<span class="hljs-keyword">generic</span> = { cluster-<span class="hljs-built_in">size</span> = <span class="hljs-number">6</span> }
 <span class="hljs-type">data</span>-center-east = ${<span class="hljs-type">data</span>-center-<span class="hljs-keyword">generic</span>} { <span class="hljs-keyword">name</span> = <span class="hljs-string">"east"</span> }
-</code></pre><p>A common use of array concatenation is to add to paths:</p>
-<pre><code><span class="hljs-keyword">path</span> =<span class="hljs-sqbracket"> [ /bin ]</span>
+</code></pre>
+<p>A common use of array concatenation is to add to paths:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-keyword">path</span> =<span class="hljs-sqbracket"> [ /bin ]</span>
 <span class="hljs-keyword">path</span> = <span class="hljs-cbracket">${path}</span><span class="hljs-sqbracket"> [ /usr/bin ]</span>
-</code></pre><h4 id="note-arrays-without-commas-or-newlines">Note: Arrays without commas or newlines</h4>
+</code></pre>
+<h4 id="note-arrays-without-commas-or-newlines">Note: Arrays without commas or newlines</h4>
 <p>Arrays allow you to use newlines instead of commas, but not
 whitespace instead of commas. Non-newline whitespace will produce
 concatenation rather than separate elements.</p>
-<pre><code>// this is an<span class="hljs-instruction"> array </span>with one element, the string <span class="hljs-string">"1 2 3 4"</span>
+<pre><code class="hljs lang-hocon">// this is an<span class="hljs-instruction"> array </span>with one element, the string <span class="hljs-string">"1 2 3 4"</span>
 <span class="hljs-keyword">[</span> 1 2 3 4 ]
 // this is an<span class="hljs-instruction"> array </span>of four integers
 <span class="hljs-keyword">[</span> 1
@@ -500,11 +506,13 @@ concatenation rather than separate elements.</p>
 // an<span class="hljs-instruction"> array </span>of two arrays
 <span class="hljs-keyword">[</span> <span class="hljs-keyword">[</span> 1, 2 ]
   <span class="hljs-keyword">[</span> 3, 4 ] ]
-</code></pre><p>If this gets confusing, just use commas. The concatenation
+</code></pre>
+<p>If this gets confusing, just use commas. The concatenation
 behavior is useful rather than surprising in cases like:</p>
-<pre><code><span class="hljs-collection">[ This is an unquoted string my name is $<span class="hljs-collection">{name}</span>, Hello $<span class="hljs-collection">{world}</span> ]</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-collection">[ This is an unquoted string my name is $<span class="hljs-collection">{name}</span>, Hello $<span class="hljs-collection">{world}</span> ]</span>
 <span class="hljs-collection">[ $<span class="hljs-collection">{a}</span> $<span class="hljs-collection">{b}</span>, $<span class="hljs-collection">{x}</span> $<span class="hljs-collection">{y}</span> ]</span>
-</code></pre><p>Non-newline whitespace is never an element or field separator.</p>
+</code></pre>
+<p>Non-newline whitespace is never an element or field separator.</p>
 <h3 id="path-expressions">Path expressions</h3>
 <p>Path expressions are used to write out a path through the object
 graph. They appear in two places; in substitutions, like
@@ -552,24 +560,32 @@ expanded to create an object for each path element other than the
 last. The last path element, combined with the value, becomes a
 field in the most-nested object.</p>
 <p>In other words:</p>
-<pre><code>foo<span class="hljs-class">.bar</span> : <span class="hljs-number">42</span>
-</code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-tag">foo</span> { <span class="hljs-attribute">bar </span>: <span class="hljs-number">42</span> }
-</code></pre><p>and:</p>
-<pre><code>foo<span class="hljs-class">.bar</span><span class="hljs-class">.baz</span> : <span class="hljs-number">42</span>
-</code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-tag">foo</span> { <span class="hljs-tag">bar</span> { <span class="hljs-attribute">baz </span>: <span class="hljs-number">42</span> } }
-</code></pre><p>and so on. These values are merged in the usual way; which implies
+<pre><code class="hljs lang-hocon">foo<span class="hljs-class">.bar</span> : <span class="hljs-number">42</span>
+</code></pre>
+<p>is equivalent to:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">foo</span> { <span class="hljs-attribute">bar </span>: <span class="hljs-number">42</span> }
+</code></pre>
+<p>and:</p>
+<pre><code class="hljs lang-hocon">foo<span class="hljs-class">.bar</span><span class="hljs-class">.baz</span> : <span class="hljs-number">42</span>
+</code></pre>
+<p>is equivalent to:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">foo</span> { <span class="hljs-tag">bar</span> { <span class="hljs-attribute">baz </span>: <span class="hljs-number">42</span> } }
+</code></pre>
+<p>and so on. These values are merged in the usual way; which implies
 that:</p>
-<pre><code><span class="hljs-tag">a</span><span class="hljs-class">.x</span> : <span class="hljs-number">42</span>, <span class="hljs-tag">a</span><span class="hljs-class">.y</span> : <span class="hljs-number">43</span>
-</code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-tag">a</span> { <span class="hljs-attribute">x </span>: <span class="hljs-number">42</span>, <span class="hljs-attribute">y </span>: <span class="hljs-number">43</span> }
-</code></pre><p>Because path expressions work like value concatenations, you can
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">a</span><span class="hljs-class">.x</span> : <span class="hljs-number">42</span>, <span class="hljs-tag">a</span><span class="hljs-class">.y</span> : <span class="hljs-number">43</span>
+</code></pre>
+<p>is equivalent to:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">a</span> { <span class="hljs-attribute">x </span>: <span class="hljs-number">42</span>, <span class="hljs-attribute">y </span>: <span class="hljs-number">43</span> }
+</code></pre>
+<p>Because path expressions work like value concatenations, you can
 have whitespace in keys:</p>
-<pre><code><span class="hljs-tag">a</span> <span class="hljs-tag">b</span> c : <span class="hljs-number">42</span>
-</code></pre><p>is equivalent to:</p>
-<pre><code><span class="hljs-comment">"a b c"</span> : <span class="hljs-number">42</span>
-</code></pre><p>Because path expressions are always converted to strings, even
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">a</span> <span class="hljs-tag">b</span> c : <span class="hljs-number">42</span>
+</code></pre>
+<p>is equivalent to:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-comment">"a b c"</span> : <span class="hljs-number">42</span>
+</code></pre>
+<p>Because path expressions are always converted to strings, even
 single values that would normally have another type become
 strings.</p>
 <ul>
@@ -597,10 +613,12 @@ environment variables or other external sources of configuration.
 <p>Substitutions are not parsed inside quoted strings. To get a
 string containing a substitution, you must use value concatenation
 with the substitution in the unquoted portion:</p>
-<pre><code>key : ${animal.favorite} <span class="hljs-keyword">is</span> <span class="hljs-keyword">my</span> favorite animal
-</code></pre><p>Or you could quote the non-substitution portion:</p>
-<pre><code><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span><span class="hljs-string">" is my favorite animal"</span>
-</code></pre><p>Substitutions are resolved by looking up the path in the
+<pre><code class="hljs lang-hocon">key : ${animal.favorite} <span class="hljs-keyword">is</span> <span class="hljs-keyword">my</span> favorite animal
+</code></pre>
+<p>Or you could quote the non-substitution portion:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span><span class="hljs-string">" is my favorite animal"</span>
+</code></pre>
+<p>Substitutions are resolved by looking up the path in the
 configuration. The path begins with the root configuration object,
 i.e. it is &quot;absolute&quot; rather than &quot;relative.&quot;</p>
 <p>Substitution processing is performed as the last parsing step, so
@@ -654,9 +672,10 @@ substitutions that&#39;s a link in the cycle)</li>
 </ul>
 <p>The idea is to allow a new value for a field to be based on the
 older value:</p>
-<pre><code><span class="hljs-built_in">path</span> : <span class="hljs-string">"a:b:c"</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-built_in">path</span> : <span class="hljs-string">"a:b:c"</span>
 <span class="hljs-built_in">path</span> : $<span class="hljs-keyword">{</span><span class="hljs-built_in">path</span><span class="hljs-keyword">}</span><span class="hljs-string">":d"</span>
-</code></pre><p>A <em>self-referential field</em> is one which:</p>
+</code></pre>
+<p>A <em>self-referential field</em> is one which:</p>
 <ul>
 <li>has a substitution, or value concatenation containing a
 substitution, as its value</li>
@@ -707,10 +726,12 @@ nonexistent value.</p>
 <p>Fields may have <code>+=</code> as a separator rather than <code>:</code> or <code>=</code>. A
 field with <code>+=</code> transforms into a self-referential array
 concatenation, like this:</p>
-<pre><code><span class="hljs-tag">a</span> += b
-</code></pre><p>becomes:</p>
-<pre><code><span class="hljs-keyword">a</span> = <span class="hljs-cbracket">${?a}</span><span class="hljs-sqbracket"> [b]</span>
-</code></pre><p><code>+=</code> appends an element to a previous array. If the previous value
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">a</span> += b
+</code></pre>
+<p>becomes:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-keyword">a</span> = <span class="hljs-cbracket">${?a}</span><span class="hljs-sqbracket"> [b]</span>
+</code></pre>
+<p><code>+=</code> appends an element to a previous array. If the previous value
 was not an array, an error will result just as it would in the
 long form <code>a = ${?a} [b]</code>. Note that the previous value is
 optional (<code>${?a}</code> not <code>${a}</code>), which allows <code>a += b</code> to be the
@@ -721,43 +742,51 @@ implementation of the config lib which does not support <code>+=</code>.</p>
 <h4 id="examples-of-self-referential-substitutions">Examples of Self-Referential Substitutions</h4>
 <p>In isolation (with no merges involved), a self-referential field
 is an error because the substitution cannot be resolved:</p>
-<pre><code><span class="hljs-string">foo :</span> ${foo} <span class="hljs-comment">// an error</span>
-</code></pre><p>When <code>foo : ${foo}</code> is merged with an earlier value for <code>foo</code>,
+<pre><code class="hljs lang-hocon"><span class="hljs-string">foo :</span> ${foo} <span class="hljs-comment">// an error</span>
+</code></pre>
+<p>When <code>foo : ${foo}</code> is merged with an earlier value for <code>foo</code>,
 however, the substitution can be resolved to that earlier value.
 When merging two objects, the self-reference in the overriding
 field refers to the overridden field. Say you have:</p>
-<pre><code><span class="hljs-tag">foo</span> : { <span class="hljs-attribute">a </span>: <span class="hljs-number">1</span> }
-</code></pre><p>and then:</p>
-<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
-</code></pre><p>Then <code>${foo}</code> resolves to <code>{ a : 1 }</code>, the value of the overridden
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">foo</span> : { <span class="hljs-attribute">a </span>: <span class="hljs-number">1</span> }
+</code></pre>
+<p>and then:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
+</code></pre>
+<p>Then <code>${foo}</code> resolves to <code>{ a : 1 }</code>, the value of the overridden
 field.</p>
 <p>It would be an error if these two fields were reversed, so first:</p>
-<pre><code><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
-</code></pre><p>and then second:</p>
-<pre><code><span class="hljs-tag">foo</span> : { <span class="hljs-attribute">a </span>: <span class="hljs-number">1</span> }
-</code></pre><p>Here the <code>${foo}</code> self-reference comes before <code>foo</code> has a value,
+<pre><code class="hljs lang-hocon"><span class="hljs-title">foo</span> : <span class="hljs-variable">${foo}</span>
+</code></pre>
+<p>and then second:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-tag">foo</span> : { <span class="hljs-attribute">a </span>: <span class="hljs-number">1</span> }
+</code></pre>
+<p>Here the <code>${foo}</code> self-reference comes before <code>foo</code> has a value,
 so it is undefined, exactly as if the substitution referenced a
 path not found in the document.</p>
 <p>Because <code>foo : ${foo}</code> conceptually looks to previous definitions
 of <code>foo</code> for a value, the error should be treated as &quot;undefined&quot;
 rather than &quot;intractable cycle&quot;; as a result, the optional
 substitution syntax <code>${?foo}</code> does not create a cycle:</p>
-<pre><code>foo : ${?foo} <span class="hljs-comment">// this field just disappears silently</span>
-</code></pre><p>If a substitution is hidden by a value that could not be merged
+<pre><code class="hljs lang-hocon">foo : ${?foo} <span class="hljs-comment">// this field just disappears silently</span>
+</code></pre>
+<p>If a substitution is hidden by a value that could not be merged
 with it (by a non-object value) then it is never evaluated and no
 error will be reported. So for example:</p>
-<pre><code>foo : ${<span class="hljs-keyword">does</span>-<span class="hljs-keyword">not</span>-exist}
+<pre><code class="hljs lang-hocon">foo : ${<span class="hljs-keyword">does</span>-<span class="hljs-keyword">not</span>-exist}
 foo : <span class="hljs-number">42</span>
-</code></pre><p>In this case, no matter what <code>${does-not-exist}</code> resolves to, we
+</code></pre>
+<p>In this case, no matter what <code>${does-not-exist}</code> resolves to, we
 know <code>foo</code> is <code>42</code>, so <code>${does-not-exist}</code> is never evaluated and
 there is no error. The same is true for cycles like <code>foo : ${foo},
 foo : 42</code>, where the initial self-reference must simply be ignored.</p>
 <p>A self-reference resolves to the value &quot;below&quot; even if it&#39;s part
 of a path expression. So for example:</p>
-<pre><code><span class="hljs-string">foo :</span> { <span class="hljs-string">a :</span> { <span class="hljs-string">c :</span> <span class="hljs-number">1</span> } }
+<pre><code class="hljs lang-hocon"><span class="hljs-string">foo :</span> { <span class="hljs-string">a :</span> { <span class="hljs-string">c :</span> <span class="hljs-number">1</span> } }
 <span class="hljs-string">foo :</span> ${foo.a}
 <span class="hljs-string">foo :</span> { <span class="hljs-string">a :</span> <span class="hljs-number">2</span> }
-</code></pre><p>Here, <code>${foo.a}</code> would refer to <code>{ c : 1 }</code> rather than <code>2</code> and so
+</code></pre>
+<p>Here, <code>${foo.a}</code> would refer to <code>{ c : 1 }</code> rather than <code>2</code> and so
 the final merge would be <code>{ a : 2, c : 1 }</code>.</p>
 <p>Recall that for a field to be self-referential, it must have a
 substitution or value concatenation as its value. If a field has
@@ -766,29 +795,32 @@ self-referential even if there is a reference to the field itself
 inside that object or array.</p>
 <p>Implementations must be careful to allow objects to refer to paths
 within themselves, for example:</p>
-<pre><code><span class="hljs-string">bar :</span> { <span class="hljs-string">foo :</span> <span class="hljs-number">42</span>,
+<pre><code class="hljs lang-hocon"><span class="hljs-string">bar :</span> { <span class="hljs-string">foo :</span> <span class="hljs-number">42</span>,
         <span class="hljs-string">baz :</span> ${bar.foo}
       }
-</code></pre><p>Here, if an implementation resolved all substitutions in <code>bar</code> as
+</code></pre>
+<p>Here, if an implementation resolved all substitutions in <code>bar</code> as
 part of resolving the substitution <code>${bar.foo}</code>, there would be a
 cycle. The implementation must only resolve the <code>foo</code> field in
 <code>bar</code>, rather than recursing the entire <code>bar</code> object.</p>
 <p>Because there is no inherent cycle here, the substitution must
 &quot;look forward&quot; (including looking at the field currently being
 defined). To make this clearer, <code>bar.baz</code> would be <code>43</code> in:</p>
-<pre><code><span class="hljs-string">bar :</span> { <span class="hljs-string">foo :</span> <span class="hljs-number">42</span>,
+<pre><code class="hljs lang-hocon"><span class="hljs-string">bar :</span> { <span class="hljs-string">foo :</span> <span class="hljs-number">42</span>,
         <span class="hljs-string">baz :</span> ${bar.foo}
       }
 <span class="hljs-string">bar :</span> { <span class="hljs-string">foo :</span> <span class="hljs-number">43</span> }
-</code></pre><p>Mutually-referring objects should also work, and are not
+</code></pre>
+<p>Mutually-referring objects should also work, and are not
 self-referential (so they look forward):</p>
-<pre><code><span class="hljs-comment">// bar.a should end up as 4</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-comment">// bar.a should end up as 4</span>
 <span class="hljs-string">bar :</span> { <span class="hljs-string">a :</span> ${foo.d}, <span class="hljs-string">b :</span> <span class="hljs-number">1</span> }
 bar.b = <span class="hljs-number">3</span>
 <span class="hljs-comment">// foo.c should end up as 3</span>
 <span class="hljs-string">foo :</span> { <span class="hljs-string">c :</span> ${bar.b}, <span class="hljs-string">d :</span> <span class="hljs-number">2</span> }
 foo.d = <span class="hljs-number">4</span>
-</code></pre><p>Another tricky case is an optional self-reference in a value
+</code></pre>
+<p>Another tricky case is an optional self-reference in a value
 concatenation, in this example <code>a</code> should be <code>foo</code> not <code>foofoo</code>
 because the self reference has to &quot;look back&quot; to an undefined <code>a</code>:</p>
 <pre><code><span class="hljs-literal">a</span> = ${?<span class="hljs-literal">a</span>}foo
@@ -805,20 +837,23 @@ a cycle, the substitution is missing which is an error unless
 the <code>${?foo}</code> optional-substitution syntax was used.</li>
 </ul>
 <p>For example, this is not possible to resolve:</p>
-<pre><code><span class="hljs-title">bar</span> : <span class="hljs-variable">${foo}</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">bar</span> : <span class="hljs-variable">${foo}</span>
 foo : <span class="hljs-variable">${bar}</span>
-</code></pre><p>A multi-step loop like this should also be detected as invalid:</p>
-<pre><code><span class="hljs-title">a</span> : <span class="hljs-variable">${b}</span>
+</code></pre>
+<p>A multi-step loop like this should also be detected as invalid:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">a</span> : <span class="hljs-variable">${b}</span>
 b : <span class="hljs-variable">${c}</span>
 c : <span class="hljs-variable">${a}</span>
-</code></pre><p>Some cases have undefined behavior because the behavior depends on
+</code></pre>
+<p>Some cases have undefined behavior because the behavior depends on
 the order in which two fields are resolved, and that order is not
 defined. For example:</p>
-<pre><code><span class="hljs-string">a :</span> <span class="hljs-number">1</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-string">a :</span> <span class="hljs-number">1</span>
 <span class="hljs-string">b :</span> <span class="hljs-number">2</span>
 <span class="hljs-string">a :</span> ${b}
 <span class="hljs-string">b :</span> ${a}
-</code></pre><p>Implementations are allowed to handle this by setting both <code>a</code> and
+</code></pre>
+<p>Implementations are allowed to handle this by setting both <code>a</code> and
 <code>b</code> to 1, setting both to <code>2</code>, or generating an error. Ideally
 this situation would generate an error, but that may be difficult
 to implement. Making the behavior defined would require always
