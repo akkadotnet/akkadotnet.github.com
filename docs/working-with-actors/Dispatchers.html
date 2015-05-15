@@ -172,9 +172,9 @@
 							<div id="main_content">
 
 								<div><h1 id="dispatchers">Dispatchers</h1>
-<h2 id="what-dispatchers-do-">What Dispatchers Do?</h2>
+<h2 id="what-do-dispatchers-do-">What Do Dispatchers Do?</h2>
 <p>Dispatchers are responsible for scheduling all code that run inside the <code>ActorSystem</code>. Dispatchers are one of the most important parts of Akka.NET, as they control the throughput and time share for each of the actors, giving each one a fair share of resources.</p>
-<p>By default, all actors share a single <strong>Global Dispatcher</strong>. Unless you change the configuration, this dispatcher uses the <em>.NET Thread Pool</em> behind the scenes, which is optimized for most common scenarios. That means the default configuration should be <em>good enough</em> for most cases.</p>
+<p>By default, all actors share a single <strong>Global Dispatcher</strong>. Unless you change the configuration, this dispatcher uses the <em>.NET Thread Pool</em> behind the scenes, which is optimized for most common scenarios. <strong>That means the default configuration should be <em>good enough</em> for most cases.</strong></p>
 <h4 id="why-should-i-use-different-dispatchers-">Why should I use different dispatchers?</h4>
 <p>When messages arrive in the <a href="Mailbox">actor&#39;s mailbox</a>, the dispatcher schedules the delivery of messages in batches, and tries to deliver the entire batch before releasing the thread to another actor. While the default configuration is <em>good enough</em> for most scenarios, you may want to change (<a href="#configuring-dispatchers">through configuration</a>) how much time the scheduler should spend running each actor.</p>
 <p>There are some other common reasons to select a different dispatcher. These reasons include (but are not limited to):</p>
@@ -224,13 +224,13 @@
 <li><strong>default-dispatcher</strong> - A configuration that uses the <a href="#ThreadPoolDispatcher">ThreadPoolDispatcher</a>. As the name says, this is the default dispatcher configuration used by the global dispatcher, and you don&#39;t need to define anything during deployment to use it.</li>
 <li><strong>task-dispatcher</strong> - A configuration that uses the <a href="#TaskDispatcher">TaskDispatcher</a>.</li>
 <li><strong>default-fork-join-dispatcher</strong> - A configuration that uses the [ForkJoinDispatcher].</li>
-<li><strong>synchronized-dispatcher</strong> - A configuration that uses the [SynchronizedDispatcher].</li>
+<li><strong>synchronized-dispatcher</strong> - A configuration that uses the <a href="#SynchronizedDispatcher">SynchronizedDispatcher</a>.</li>
 </ul>
 <h2 id="built-in-dispatchers">Built-in Dispatchers</h2>
 <p>These are the underlying dispatchers built-in to Akka.NET:</p>
 <ul>
 <li><h3 id="threadpooldispatcher">ThreadPoolDispatcher</h3>
-<p>It schedules code to run in the <a href="https://msdn.microsoft.com/en-us/library/System.Threading.ThreadPool.aspx">.NET Thread Pool</a>, which is <em>good enough</em> for most cases.</p>
+<p>It schedules code to run in the <a href="https://msdn.microsoft.com/en-us/library/System.Threading.ThreadPool.aspx">.NET Thread Pool</a>, which is <strong><em>good enough</em> for most cases.</strong></p>
 <p>The <code>type</code> used in the HOCON configuration for this dispatcher is just <code>Dispatcher</code>.</p>
 <pre><code class="hljs lang-hocon">custom-dispatcher {
   <span class="hljs-class"><span class="hljs-keyword">type</span> </span>= Dispatcher
@@ -249,7 +249,7 @@
 }
 </code></pre>
 </li>
-<li><h3 id="pinneddispather">PinnedDispather</h3>
+<li><h3 id="pinneddispatcher">PinnedDispatcher</h3>
 <p>The <code>PinnedDispatcher</code> uses a single dedicated thread to schedule code executions. Ideally, this dispatcher should be using sparingly.</p>
 <pre><code class="hljs lang-hocon">custom-dedicated-dispatcher {
     <span class="hljs-class"><span class="hljs-keyword">type</span> </span>= PinnedDispatcher
@@ -276,7 +276,7 @@
 </ul>
 </li>
 <li><h3 id="synchronizeddispatcher">SynchronizedDispatcher</h3>
-<p>The <code>SynchronizedDispatcher</code> uses the <em>current</em> <a href="https://msdn.microsoft.com/en-us/magazine/gg598924.aspx">SyncrhonizationContext</a> to schedule executions.</p>
+<p>The <code>SynchronizedDispatcher</code> uses the <em>current</em> <a href="https://msdn.microsoft.com/en-us/magazine/gg598924.aspx">SynchronizationContext</a> to schedule executions.</p>
 <p>You may use this dispatcher to create actors that update UIs in a reactive manner. An application that displays real-time updates of stock prices may have a dedicated actor to update the UI controls directly for example.</p>
 <div class="alert alert-default">
 <p><strong>Note:</strong> As a general rule, actors running in this dispatcher shouldn&#39;t do much work. Avoid doing any extra work that may be done by actors running in other pools.</p>
@@ -298,7 +298,7 @@
 <h4 id="common-dispatcher-configuration">Common Dispatcher Configuration</h4>
 <p>The following configuration keys are available for any dispatcher configuration:</p>
 <ul>
-<li><code>type</code> - (Required) The type of dispatcher to be used: <code>Dispatcher</code>, <code>TaskDispatcher</code>, <code>PinnedDispather</code>, <code>ForkJoinDispatcher</code> or <code>SynchronizedDispatcher</code>.</li>
+<li><code>type</code> - (Required) The type of dispatcher to be used: <code>Dispatcher</code>, <code>TaskDispatcher</code>, <code>PinnedDispatcher</code>, <code>ForkJoinDispatcher</code> or <code>SynchronizedDispatcher</code>.</li>
 <li><code>throughput</code> - (Required) The maximum # of messages processed each time the actor is activated. Most dispatchers default to <code>100</code>.</li>
 <li><code>throughput-deadline-time</code> - The maximum amount of time to process messages when the actor is activated, or <code>0</code> for no limit. The default is <code>0</code>.</li>
 </ul>
