@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">HOCON<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/HOCON.md" > (Edit on Github)</a></li>
+							<li class="active">HOCON<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/hocon.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -619,10 +620,10 @@ environment variables or other external sources of configuration.
 <p>Substitutions are not parsed inside quoted strings. To get a
 string containing a substitution, you must use value concatenation
 with the substitution in the unquoted portion:</p>
-<pre><code class="hljs lang-hocon">key : ${animal.favorite} <span class="hljs-keyword">is</span> <span class="hljs-keyword">my</span> favorite animal
+<pre><code class="hljs lang-hocon">key : ${<span class="hljs-keyword">animal</span>.favorite} <span class="hljs-keyword">is</span> my favorite <span class="hljs-keyword">animal</span>
 </code></pre>
 <p>Or you could quote the non-substitution portion:</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-title">key</span> : <span class="hljs-variable">${animal.favorite}</span><span class="hljs-string">" is my favorite animal"</span>
+<pre><code class="hljs lang-hocon">key : ${<span class="hljs-keyword">animal</span>.favorite}<span class="hljs-string">" is my favorite animal"</span>
 </code></pre>
 <p>Substitutions are resolved by looking up the path in the
 configuration. The path begins with the root configuration object,
@@ -801,9 +802,9 @@ self-referential even if there is a reference to the field itself
 inside that object or array.</p>
 <p>Implementations must be careful to allow objects to refer to paths
 within themselves, for example:</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-string">bar :</span> { <span class="hljs-string">foo :</span> <span class="hljs-number">42</span>,
-        <span class="hljs-string">baz :</span> ${bar.foo}
-      }
+<pre><code class="hljs lang-hocon"><span class="hljs-keyword">bar </span>: { foo : <span class="hljs-number">42</span>,
+        <span class="hljs-keyword">baz </span>: ${<span class="hljs-keyword">bar.foo}
+</span>      }
 </code></pre>
 <p>Here, if an implementation resolved all substitutions in <code>bar</code> as
 part of resolving the substitution <code>${bar.foo}</code>, there would be a

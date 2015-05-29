@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -183,11 +184,11 @@
 {
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> IActorRef _notifyStatus;
 
-     <span class="hljs-comment">//TODO: don't use a counter incase of lost messages.</span>
+     <span class="hljs-comment">//<span class="hljs-doctag"><span class="hljs-keyword">TODO</span></span>: don't use a counter incase of lost messages.</span>
      <span class="hljs-comment">//use a dict of actorref , bool for completion status per actor instead</span>
      <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _jobCount;
 
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span><span class="hljs-params">(IActorRef notifyStatus)</span>
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobSynchronizer</span>(<span class="hljs-params">IActorRef notifyStatus</span>)
      </span>{
           SetReceiveTimeout(TimeSpan.FromSeconds(<span class="hljs-number">5</span>));
           _notifyStatus = notifyStatus;
@@ -210,7 +211,7 @@
           });
      }
 
-     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CheckAllDone</span><span class="hljs-params">()</span>
+     <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">CheckAllDone</span>(<span class="hljs-params"></span>)
      </span>{
          <span class="hljs-keyword">if</span>(_jobCount == <span class="hljs-number">0</span>)
          {
@@ -222,7 +223,7 @@
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span> : <span class="hljs-title">ReceiveActor</span>
 {
      <span class="hljs-keyword">private</span> IActorRef _synchronizer;
-     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Worker</span><span class="hljs-params">(IActorRef synchronizer)</span>
+     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Worker</span>(<span class="hljs-params">IActorRef synchronizer</span>)
      </span>{
            _synchronizer = synchronizer;
            Receive&lt;DoSomeWork&gt;(work =&gt;

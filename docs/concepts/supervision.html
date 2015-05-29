@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Supervision<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Supervision.md" > (Edit on Github)</a></li>
+							<li class="active">Supervision<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/supervision.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -243,7 +244,7 @@ Lifecycle Monitoring in Akka.NET is usually referred to as <code>DeathWatch</cod
     <span class="hljs-comment">// apply the rules below</span>
     <span class="hljs-comment">// e.g. Restart the child, if 10 exceptions occur in 30 seconds or</span>
     <span class="hljs-comment">// less, then stop the actor</span>
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> SupervisorStrategy <span class="hljs-title">SupervisorStrategy</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> SupervisorStrategy <span class="hljs-title">SupervisorStrategy</span>(<span class="hljs-params"></span>)
     </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> OneForOneStrategy( <span class="hljs-comment">//or AllForOneStrategy</span>
             maxNumberOfRetries: <span class="hljs-number">10</span>,
@@ -255,7 +256,7 @@ Lifecycle Monitoring in Akka.NET is usually referred to as <code>DeathWatch</cod
                 <span class="hljs-keyword">if</span> (x <span class="hljs-keyword">is</span> ArithmeticException) <span class="hljs-keyword">return</span> Directive.Resume;
 
                 <span class="hljs-comment">//Error that we cannot recover from, stop the failing actor</span>
-                <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(x <span class="hljs-keyword">is</span> NotSupportedException)</span> return Directive.Stop</span>;
+                <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">x <span class="hljs-keyword">is</span> NotSupportedException</span>) return Directive.Stop</span>;
 
                 <span class="hljs-comment">//In all other cases, just restart the failing actor</span>
                 <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> Directive.Restart;

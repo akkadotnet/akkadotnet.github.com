@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -175,7 +176,7 @@
 <p>For more info see real Akka FSM documentation: <a href="http://doc.akka.io/docs/akka/snapshot/scala/fsm.html">http://doc.akka.io/docs/akka/snapshot/scala/fsm.html</a></p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyFSM</span> : <span class="hljs-title">FSM</span>&lt;<span class="hljs-title">int</span>, <span class="hljs-title">object</span>&gt;
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyFSM</span><span class="hljs-params">(ActorRef target)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyFSM</span>(<span class="hljs-params">ActorRef target</span>)
     </span>{
         Target = target;
         StartWith(<span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> <span class="hljs-keyword">object</span>());
@@ -202,7 +203,7 @@
 
     <span class="hljs-keyword">public</span> IActorRef Target { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">private</span> <span class="hljs-keyword">set</span>; }
 
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span><span class="hljs-params">(Exception reason, <span class="hljs-keyword">object</span> message)</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span>(<span class="hljs-params">Exception reason, <span class="hljs-keyword">object</span> message</span>)
     </span>{
         Target.Tell(<span class="hljs-string">"restarted"</span>);
     }

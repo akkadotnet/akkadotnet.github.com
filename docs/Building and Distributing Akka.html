@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Building and Distributing Akka.NET<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Building and Distributing Akka.NET.md" > (Edit on Github)</a></li>
+							<li class="active">Building and Distributing Akka.NET<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Building and Distributing Akka.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -197,12 +198,12 @@ file.</p>
 <p>The release notes are also used in nuget packages.</p>
 <h3 id="running-tests">Running tests</h3>
 <p>To run unit tests from the command line, run the following command:</p>
-<pre><code>    build <span class="hljs-built_in">test</span>
+<pre><code>    <span class="hljs-keyword">build </span>test
 </code></pre><h3 id="creating-nuget-distributions">Creating Nuget distributions</h3>
 <p>To create nuget packages locally, run the following command:</p>
-<pre><code>    <span class="hljs-title">build</span> nuget
+<pre><code>    <span class="hljs-keyword">build </span>nuget
 </code></pre><p>To create and publish packages to nuget.org, specify the nuget key:</p>
-<pre><code>    build nuget nugetkey=<span class="hljs-tag">&lt;<span class="hljs-title">key</span>&gt;</span>
+<pre><code>    <span class="hljs-keyword">build </span>nuget nugetkey=&lt;key&gt;
 </code></pre><p>or to run also unit tests before publishing:</p>
 <pre><code>   build <span class="hljs-literal">all</span> nugetkey=<span class="hljs-variable">&lt;key&gt;</span>
 </code></pre></div>

@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -199,7 +200,7 @@ Name the initial class <code>WindsorDependencyResolver</code>.</p>
 <span class="hljs-keyword">private</span> ConcurrentDictionary&lt;<span class="hljs-keyword">string</span>, Type&gt; _typeCache;
 <span class="hljs-keyword">private</span> ActorSystem _system;
 
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span>(<span class="hljs-params">IWindsorContainer container, ActorSystem system</span>)
 </span>{
     <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"system"</span>);
     <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"container"</span>);
@@ -220,7 +221,7 @@ Name the initial class <code>WindsorDependencyResolver</code>.</p>
 <p>First you need to implement <code>GetType</code>. This is a basic implementation and
 is just for demonstration purposes. Essentially this is used by the extension
 to get the type of the actor from it&#39;s type name.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">GetType</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> actorName</span>)
 </span>{
     _typeCache.
         TryAdd(actorName,
@@ -237,7 +238,7 @@ to get the type of the actor from it&#39;s type name.</p>
 <p>Secondly you need to implement the <code>CreateActorFactory</code> method which will be
 used by the extension to create the actor. This implementation will depend upon
 the API of the container.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(Type actorType)</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span>(<span class="hljs-params">Type actorType</span>)
 </span>{
     <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(actorType);
 }
@@ -252,7 +253,7 @@ This method will always be the same implementation.</p>
 </code></pre>
 <p>Lastly, you implement the Release method which in this instance is very simple.
 This method is used to remove the actor from the underlying container.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Release</span><span class="hljs-params">(ActorBase actor)</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Release</span>(<span class="hljs-params">ActorBase actor</span>)
 </span>{
     <span class="hljs-keyword">this</span>.container.Release(actor);
 }
@@ -266,7 +267,7 @@ the following blog <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framewor
     <span class="hljs-keyword">private</span> ConcurrentDictionary&lt;<span class="hljs-keyword">string</span>, Type&gt; typeCache;
     <span class="hljs-keyword">private</span> ActorSystem system;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span><span class="hljs-params">(IWindsorContainer container, ActorSystem system)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WindsorDependencyResolver</span>(<span class="hljs-params">IWindsorContainer container, ActorSystem system</span>)
     </span>{
         <span class="hljs-keyword">if</span> (system == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"system"</span>);
         <span class="hljs-keyword">if</span> (container == <span class="hljs-keyword">null</span>) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentNullException(<span class="hljs-string">"container"</span>);
@@ -276,7 +277,7 @@ the following blog <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framewor
         <span class="hljs-keyword">this</span>.system.AddDependencyResolver(<span class="hljs-keyword">this</span>);
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">GetType</span><span class="hljs-params">(<span class="hljs-keyword">string</span> actorName)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Type <span class="hljs-title">GetType</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> actorName</span>)
     </span>{
         typeCache.TryAdd(actorName, actorName.GetTypeValue() ??
             container.Kernel
@@ -288,7 +289,7 @@ the following blog <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framewor
         <span class="hljs-keyword">return</span> typeCache[actorName];
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span><span class="hljs-params">(Type actorType)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Func&lt;ActorBase&gt; <span class="hljs-title">CreateActorFactory</span>(<span class="hljs-params">Type actorType</span>)
     </span>{
         <span class="hljs-keyword">return</span> () =&gt; (ActorBase)container.Resolve(actorType);
     }
@@ -298,7 +299,7 @@ the following blog <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framewor
         <span class="hljs-keyword">return</span> system.GetExtension&lt;DIExt&gt;().Props(<span class="hljs-keyword">typeof</span>(TActor));
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Release</span><span class="hljs-params">(ActorBase actor)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Release</span>(<span class="hljs-params">ActorBase actor</span>)
     </span>{
         <span class="hljs-keyword">this</span>.container.Release(actor);
     }

@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -197,7 +198,7 @@
 <p>Example bellow illustrates, how a custom actor pipeline plugin can be created and registered in actor system:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">MyActorPlugin</span> : <span class="hljs-title">ActorProducerPluginBase</span>&lt;<span class="hljs-title">MyActor</span>&gt;
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AfterIncarnated</span><span class="hljs-params">(MyActor actor, IActorContext context)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AfterIncarnated</span>(<span class="hljs-params">MyActor actor, IActorContext context</span>)
     </span>{
         Console.WriteLine(<span class="hljs-string">"Plugged custom behavior to actor {0}"</span>, context.Self.Path);
     }

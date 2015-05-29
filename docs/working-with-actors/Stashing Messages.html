@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -218,7 +219,7 @@ As of Akka.NET 1.0, the Bounded Stash is not fully implemented, and it will beha
 {
     <span class="hljs-keyword">public</span> IStash Stash { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
 
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
     </span>{
         <span class="hljs-comment">// idle</span>
         <span class="hljs-keyword">if</span> (message.Equals(<span class="hljs-string">"open"</span>))
@@ -230,7 +231,7 @@ As of Akka.NET 1.0, the Bounded Stash is not fully implemented, and it will beha
                 {
                     <span class="hljs-comment">// do the writing</span>
                 }
-                <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(m.Equals(<span class="hljs-string">"close"</span>)</span>)
+                <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">m.Equals(<span class="hljs-string">"close"</span></span>))
                 </span>{
                     Stash.UnstashAll();
                     UnbecomeStacked();

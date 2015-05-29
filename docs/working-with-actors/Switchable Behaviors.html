@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -188,26 +189,26 @@
 <li><code>UnbecomeStacked</code> - Reverts to the previous message handler from the stack (only works with BecomeStacked);</li>
 </ul>
 <p>The example below shows how to switch behaviors using <code>Become</code>:</p>
-<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
 </span>{
     Log.Info(<span class="hljs-string">"Handled by Receive"</span>);
     Become(AlternativeReceive);
 }
 
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">AlternativeReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">AlternativeReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
 </span>{
     Log.Info(<span class="hljs-string">"Handled by AlternativeReceive"</span>);
     Become(Receive);
 }
 </code></pre>
 <p>The example below shows how to accomplish the same goal using <code>BecomeStacked/UnbecomeStacked</code>:</p>
-<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
 </span>{
     Log.Info(<span class="hljs-string">"Handled by Receive"</span>);
     BecomeStacked(AlternativeReceive);
 }
 
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">AlternativeReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">AlternativeReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
 </span>{
     Log.Info(<span class="hljs-string">"Handled by AlternativeReceive"</span>);
     UnbecomeStacked();
@@ -217,7 +218,7 @@
 <h2 id="understanding-behaviors">Understanding Behaviors</h2>
 <p>Actors always have a default behavior. This behavior is whatever logic you defined first in your actor. When actors switch behaviors, they are just switching the methods they use to handle messages by default.</p>
 <p>For example:</p>
-<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> m1)</span>
+<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> m1</span>)
 </span>{
     Console.WriteLine(<span class="hljs-string">"Ping "</span> + m1);
 

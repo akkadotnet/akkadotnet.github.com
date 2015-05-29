@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -288,7 +289,7 @@
 }
 </code></pre>
 <p>In order to use this dispatcher, you must create the actor from the syncrhonization context you want to run-it. For example:</p>
-<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Form1_Load</span><span class="hljs-params">(<span class="hljs-keyword">object</span> sender, System.EventArgs e)</span>
+<pre><code class="hljs lang-cs"><span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Form1_Load</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> sender, System.EventArgs e</span>)
 </span>{
     system.ActorOf(Props.Create&lt;UIWorker&gt;().WithDispatcher(<span class="hljs-string">"synchronized-dispatcher"</span>), <span class="hljs-string">"ui-worker"</span>);
 }

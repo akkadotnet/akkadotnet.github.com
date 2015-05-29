@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -196,7 +197,7 @@ system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-stri
 Dependency Injection you can use the Actor Content extension just like in
 the following example.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// For example in the PreStart...</span>
-<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
 </span>{
     myWorker = Context.DI().ActorOf&lt;TypedWorker&gt;(<span class="hljs-string">"childWorker"</span>);
 }

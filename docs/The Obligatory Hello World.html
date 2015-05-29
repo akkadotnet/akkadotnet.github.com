@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -178,7 +179,7 @@
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create an (immutable) message type that your actor will respond to</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greet</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span><span class="hljs-params">(<span class="hljs-keyword">string</span> who)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> who</span>)
     </span>{
         Who = who;
     }
@@ -189,7 +190,7 @@
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create the actor class</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GreetingActor</span> : <span class="hljs-title">ReceiveActor</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span>(<span class="hljs-params"></span>)
     </span>{
         Receive&lt;Greet&gt;(greet =&gt; Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>, greet.Who));
     }
@@ -198,7 +199,7 @@
 <h4 id="-or-using-the-typedactor-api">..or using the <code>TypedActor</code> API</h4>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GreetingActor</span> : <span class="hljs-title">TypedActor</span> , <span class="hljs-title">IHandle</span>&lt;<span class="hljs-title">Greet</span>&gt;
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Handle</span><span class="hljs-params">(Greet greet)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Handle</span>(<span class="hljs-params">Greet greet</span>)
     </span>{
         Console.WriteLine(<span class="hljs-string">"Hello {0}!"</span>, greet.Who);
     }

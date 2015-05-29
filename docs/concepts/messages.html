@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Messages<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Messages.md" > (Edit on Github)</a></li>
+							<li class="active">Messages<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/messages.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -182,7 +183,7 @@
 <h4 id="-c-"><code>C#</code></h4>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)
     </span>{
         Name = name;
     }
@@ -205,7 +206,7 @@
 <span class="hljs-comment">/* message definition */</span>
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyMessage</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span><span class="hljs-params">(<span class="hljs-keyword">string</span> name)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyMessage</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> name</span>)
     </span>{
         Name = name;
     }
@@ -220,7 +221,7 @@
 {
     <span class="hljs-keyword">string</span> lastActorName;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span>(<span class="hljs-params"></span>)
     </span>{
         Receive&lt;MyMessage&gt;(msg =&gt;
         {
@@ -232,7 +233,7 @@
 
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"></span>)
     </span>{
         <span class="hljs-keyword">var</span> mySystem = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
         <span class="hljs-keyword">var</span> myActor = mySystem.ActorOf(Props.Create&lt;MyActor&gt;());

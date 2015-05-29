@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Azure PaaS Worker Role Deployment Scenario<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Azure PaaS Worker Role Deployment Scenario.md" > (Edit on Github)</a></li>
+							<li class="active">Azure PaaS Worker Role Deployment Scenario<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Azure PaaS Worker Role.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -191,7 +192,7 @@ user-actor in the RunAsync() method, as follows:</p>
 
         <span class="hljs-keyword">private</span> ActorSystem _actorSystem;
 
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">OnStart</span><span class="hljs-params">()</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">OnStart</span>(<span class="hljs-params"></span>)
         </span>{
             <span class="hljs-comment">// Setup the Actor System</span>
             _actorSystem = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
@@ -199,7 +200,7 @@ user-actor in the RunAsync() method, as follows:</p>
             <span class="hljs-keyword">return</span> (<span class="hljs-keyword">base</span>.OnStart());
         }
 
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnStop</span><span class="hljs-params">()</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnStop</span>(<span class="hljs-params"></span>)
         </span>{
             <span class="hljs-keyword">this</span>.cancellationTokenSource.Cancel();
             <span class="hljs-keyword">this</span>.runCompleteEvent.WaitOne();
@@ -210,7 +211,7 @@ user-actor in the RunAsync() method, as follows:</p>
             <span class="hljs-keyword">base</span>.OnStop();
         }
 
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span><span class="hljs-params">()</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Run</span>(<span class="hljs-params"></span>)
         </span>{
             <span class="hljs-keyword">try</span>
             {
@@ -222,7 +223,7 @@ user-actor in the RunAsync() method, as follows:</p>
             }
         }
 
-        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">async</span> Task <span class="hljs-title">RunAsync</span><span class="hljs-params">(CancellationToken cancellationToken)</span>
+        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">async</span> Task <span class="hljs-title">RunAsync</span>(<span class="hljs-params">CancellationToken cancellationToken</span>)
         </span>{
             <span class="hljs-comment">// Create an instance to the top-level user Actor</span>
             <span class="hljs-keyword">var</span> workerRoleActor = _actorSystem.ActorOf&lt;WorkerRoleActor&gt;(<span class="hljs-string">"WorkerRole"</span>);

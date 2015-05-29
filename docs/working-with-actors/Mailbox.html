@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Mailboxes<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Mailboxes.md" > (Edit on Github)</a></li>
+							<li class="active">Mailboxes<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Mailbox.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -210,7 +211,7 @@
 <p>In order to use this mailbox, you need to extend the <code>UnboundedPriorityMailbox</code> class and provide an ordering logic. The value returned by the <code>PriorityGenerator</code> method will be used to order the message in the mailbox. Lower values will be delivered first. Messages ordered by the same number will remain in delivery order.</p>
 <pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">IssueTrackerMailbox</span> : <span class="hljs-title">UnboundedPriorityMailbox</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">PriorityGenerator</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">PriorityGenerator</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
     </span>{
         <span class="hljs-keyword">var</span> issue = message <span class="hljs-keyword">as</span> Issue;
 

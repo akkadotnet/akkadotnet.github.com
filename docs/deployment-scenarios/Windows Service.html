@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Windows Service deployment scenario<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Windows Service deployment scenario.md" > (Edit on Github)</a></li>
+							<li class="active">Windows Service deployment scenario<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Windows Service.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -183,7 +184,7 @@ Application. Which would look like this:</p>
 </code></pre>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
+    <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)
     </span>{
         HostFactory.Run(x =&gt;
         {
@@ -208,13 +209,13 @@ Application. Which would look like this:</p>
 {
     <span class="hljs-keyword">private</span> ActorSystem mySystem;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Start</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Start</span>(<span class="hljs-params"></span>)
     </span>{
         <span class="hljs-comment">//this is where you setup your actor system and other things</span>
         mySystem = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span>(<span class="hljs-params"></span>)
     </span>{
         <span class="hljs-comment">//this is where you stop your actor system</span>
         mySystem.Shutdown();

@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -193,7 +194,7 @@ Once we have our console application, we need to open up the Package Manager Con
 {
     <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
+        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)
         </span>{
         }
     }
@@ -215,7 +216,7 @@ Once we have our console application, we need to open up the Package Manager Con
     <span class="hljs-comment">// Create an (immutable) message type that your actor will respond to</span>
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greet</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span><span class="hljs-params">(<span class="hljs-keyword">string</span> who)</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> who</span>)
         </span>{
             Who = who;
         }
@@ -224,7 +225,7 @@ Once we have our console application, we need to open up the Package Manager Con
 
     <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
+        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)
         </span>{
         }
     }
@@ -244,7 +245,7 @@ Once we have our console application, we need to open up the Package Manager Con
 {
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greet</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span><span class="hljs-params">(<span class="hljs-keyword">string</span> who)</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> who</span>)
         </span>{
             Who = who;
         }
@@ -254,7 +255,7 @@ Once we have our console application, we need to open up the Package Manager Con
     <span class="hljs-comment">// Create the actor class</span>
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GreetingActor</span> : <span class="hljs-title">ReceiveActor</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span><span class="hljs-params">()</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span>(<span class="hljs-params"></span>)
         </span>{
             <span class="hljs-comment">// Tell the actor to respond</span>
             <span class="hljs-comment">// to the Greet message</span>
@@ -265,7 +266,7 @@ Once we have our console application, we need to open up the Package Manager Con
 
     <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
+        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)
         </span>{
         }
     }
@@ -285,7 +286,7 @@ Once we have our console application, we need to open up the Package Manager Con
 {
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greet</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span><span class="hljs-params">(<span class="hljs-keyword">string</span> who)</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greet</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> who</span>)
         </span>{
             Who = who;
         }
@@ -294,7 +295,7 @@ Once we have our console application, we need to open up the Package Manager Con
 
     <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">GreetingActor</span> : <span class="hljs-title">ReceiveActor</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span><span class="hljs-params">()</span>
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">GreetingActor</span>(<span class="hljs-params"></span>)
         </span>{
             Receive&lt;Greet&gt;(greet =&gt;
                Console.WriteLine(<span class="hljs-string">"Hello {0}"</span>, greet.Who));
@@ -303,7 +304,7 @@ Once we have our console application, we need to open up the Package Manager Con
 
     <span class="hljs-keyword">class</span> <span class="hljs-title">Program</span>
     {
-        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span><span class="hljs-params">(<span class="hljs-keyword">string</span>[] args)</span>
+        <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"><span class="hljs-keyword">string</span>[] args</span>)
         </span>{
             <span class="hljs-comment">// Create a new actor system (a container for your actors)</span>
             <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);

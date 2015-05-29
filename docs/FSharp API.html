@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -353,12 +354,12 @@ publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>)
 <h3 id="logging">Logging</h3>
 <p>The F# API supports two groups of logging functions - one that operates directly on strings and another (which may be recognized by <em>f</em> suffix in function names) that operates using F# string formatting features. The major difference is performance - the former is less powerful, but it&#39;s also faster than the latter.</p>
 <p>Both groups support logging on various levels (DEBUG, &lt;default&gt; INFO, WARNING and ERROR). Actor system&#39;s logging level may be managed through configuration, i.e.:</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
-    <span class="hljs-title">actor</span> {
-        <span class="hljs-comment"># collection of loggers used inside actor system, specified by fully-qualified type name</span>
-        <span class="hljs-title">loggers</span> = [ <span class="hljs-string">"Akka.Event.DefaultLogger, Akka"</span> ]
+<pre><code class="hljs lang-hocon">akka {
+    actor {
+        # collection <span class="hljs-keyword">of</span> loggers used <span class="hljs-keyword">inside</span> actor system, specified by fully-qualified type name
+        loggers = <span class="hljs-comment">[ "Akka.Event.DefaultLogger, Akka" ]</span>
 
-        <span class="hljs-comment"># Options: OFF, ERROR, WARNING, INFO, DEBUG</span>
+        # Options: OFF, ERROR, WARNING, INFO, DEBUG
         logLevel = <span class="hljs-string">"DEBUG"</span>
     }
 }

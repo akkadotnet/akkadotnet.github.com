@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -193,7 +194,7 @@
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="bytes"&gt;</span>The bytes.<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="type"&gt;</span>The type.<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;returns&gt;</span>System.Object.<span class="hljs-xmlDocTag">&lt;/returns&gt;</span></span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes, Type type)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span>(<span class="hljs-params"><span class="hljs-keyword">byte</span>[] bytes, Type type</span>)</span>;
 }
 </code></pre>
 <p><strong>GOOD</strong> clear succinct comment</p>
@@ -208,7 +209,7 @@
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="bytes"&gt;</span>The array containing the serialized object<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="type"&gt;</span>The type of object contained in the array<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;returns&gt;</span>The object contained in the array<span class="hljs-xmlDocTag">&lt;/returns&gt;</span></span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes, Type type)</span></span>;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span>(<span class="hljs-params"><span class="hljs-keyword">byte</span>[] bytes, Type type</span>)</span>;
 }
 </code></pre>
 <p>We&#39;ve all seen the bad examples at one time or another, but rarely do we see the good examples. A nice rule of thumb to remember is to write the comments you would want to see and readwhile perusing the API documentation.</p>

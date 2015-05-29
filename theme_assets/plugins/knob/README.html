@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -143,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active"><a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/.md" > (Edit on Github)</a></li>
+							<li class="active"><a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/README.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -182,7 +183,7 @@
 <pre><code><span class="hljs-tag">&lt;<span class="hljs-title">input</span> <span class="hljs-attribute">type</span>=<span class="hljs-value">"text"</span> <span class="hljs-attribute">value</span>=<span class="hljs-value">"75"</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"dial"</span>&gt;</span>
 
 <span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
-$(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+$(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
     $(<span class="hljs-string">".dial"</span>).knob();
 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
@@ -222,7 +223,7 @@ $(<span class="hljs-function"><span class="hljs-keyword">function</span><span cl
 <h2 id="hooks">Hooks</h2>
 <pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
 $(<span class="hljs-string">".dial"</span>).knob({
-                    <span class="hljs-string">'release'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(v)</span> </span>{ <span class="hljs-comment">/*make something*/</span> }
+                    <span class="hljs-string">'release'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>) </span>{ <span class="hljs-comment">/*make something*/</span> }
                 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><ul>
@@ -259,7 +260,7 @@ $(<span class="hljs-string">".dial"</span>).knob({
 
 <span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
 $(<span class="hljs-string">".dial"</span>).knob({
-                 <span class="hljs-string">'change'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(v)</span> </span>{ <span class="hljs-built_in">console</span>.log(v); }
+                 <span class="hljs-string">'change'</span> : <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>) </span>{ <span class="hljs-built_in">console</span>.log(v); }
                 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="dynamically-configure">Dynamically configure</h2>

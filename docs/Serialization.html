@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -300,7 +301,7 @@ like the following:</p>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> Determines whether the deserializer needs a type hint to deserialize</span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> an object.</span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">IncludeManifest</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">IncludeManifest</span>(<span class="hljs-params"></span>)
     </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
     }
@@ -309,7 +310,7 @@ like the following:</p>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> Completely unique value to identify this implementation of the</span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;see cref="Serializer"/&gt;</span> used to optimize network traffic</span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Identifier</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">Identifier</span>(<span class="hljs-params"></span>)
     </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-number">1234567</span>; <span class="hljs-comment">// 0 - 16 is reserved by Akka itself</span>
     }
@@ -332,7 +333,7 @@ like the following:</p>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="bytes"&gt;</span>The array containing the serialized object<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;param name="type"&gt;</span>The type hint of the object contained in the array<span class="hljs-xmlDocTag">&lt;/param&gt;</span></span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;returns&gt;</span>The object contained in the array<span class="hljs-xmlDocTag">&lt;/returns&gt;</span></span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span><span class="hljs-params">(<span class="hljs-keyword">byte</span>[] bytes, Type type)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">object</span> <span class="hljs-title">FromBinary</span>(<span class="hljs-params"><span class="hljs-keyword">byte</span>[] bytes, Type type</span>)
     </span>{
       <span class="hljs-comment">// Put your code that deserializes here</span>
       <span class="hljs-comment">// ... ...</span>

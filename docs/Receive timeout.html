@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -180,7 +181,7 @@ Please note that the receive timeout might fire and enqueue the ReceiveTimeout m
 <p>Once set, the receive timeout stays in effect (i.e. continues firing repeatedly after inactivity periods). Pass in <code>null</code> to <code>SetReceiveTimeout</code> to switch off this feature.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span> : <span class="hljs-title">ReceiveActor</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span>(<span class="hljs-params"></span>)
     </span>{
           <span class="hljs-comment">//trigger a receive timeout after 3 seconds of message silence.</span>
           SetReceiveTimeout(Timespan.FromSeconds(<span class="hljs-number">3</span>));

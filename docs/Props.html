@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -206,14 +207,14 @@ runtime check.</p>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> A Props for creating this actor, which can then be further configured</span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> (e.g. calling `.withDispatcher()` on it)</span>
     <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/returns&gt;</span></span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Props <span class="hljs-title">Props</span><span class="hljs-params">(<span class="hljs-keyword">int</span> magicNumber)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Props <span class="hljs-title">Props</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> magicNumber</span>)
     </span>{
         <span class="hljs-keyword">return</span> Props.Create(() =&gt; <span class="hljs-keyword">new</span> DemoActor(magicNumber));
     }
 
     <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> magicNumber;
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DemoActor</span><span class="hljs-params">(<span class="hljs-keyword">int</span> magicNumber)</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DemoActor</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> magicNumber</span>)
     </span>{
         <span class="hljs-keyword">this</span>.magicNumber = magicNumber;
         ...some receive declarations here

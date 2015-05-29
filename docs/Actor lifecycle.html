@@ -136,6 +136,7 @@
 </div>
 </div>
 			
+
 			<!-- PAGE TOP -->
 			<section class="page-title">
 				<div class="container">
@@ -182,7 +183,7 @@
 <p>Registering a monitor is easy (see fourth line, the rest is for demonstrating the whole functionality):</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WatchActor</span> : <span class="hljs-title">UntypedActor</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WatchActor</span><span class="hljs-params">()</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WatchActor</span>(<span class="hljs-params"></span>)
     </span>{
         Context.Watch(child);
     }
@@ -190,14 +191,14 @@
     ActorRef child = Context.ActorOf(Props.Empty, <span class="hljs-string">"child"</span>);
     ActorRef lastSender = Context.System.DeadLetters;
 
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span><span class="hljs-params">(<span class="hljs-keyword">object</span> message)</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
     </span>{
         <span class="hljs-keyword">if</span> (message.Equals(<span class="hljs-string">"kill"</span>))
         {
             Context.Stop(child);
             lastSender = Sender;
         }
-        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> <span class="hljs-params">(message <span class="hljs-keyword">is</span> Terminated)</span>
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">message <span class="hljs-keyword">is</span> Terminated</span>)
         </span>{
             <span class="hljs-keyword">var</span> t = (Terminated)message;
 
@@ -218,7 +219,7 @@
 <p>It is also possible to deregister from watching another actor’s liveliness using Context.Unwatch(target). This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no Terminated message for that actor will be processed anymore.</p>
 <h3 id="start-hook">Start Hook</h3>
 <p>Right after starting the actor, its PreStart method is invoked.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span><span class="hljs-params">()</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
 </span>{
     child = Context.ActorOf(Props.Empty);
 }
