@@ -185,7 +185,7 @@ the logger in the config when creating the system, for example like this:</p>
     .MinimumLevel.Information()
     .CreateLogger();
 Serilog.Log.Logger = logger;
-<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=['Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog']}"</span>);
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"my-test-system"</span>, <span class="hljs-string">"akka { logLevel=INFO,  loggers=[\"Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog\"]}"</span>);
 </code></pre>
 <h2 id="logging">Logging</h2>
 <p>To log inside an actor, using the normal <code>string.Format()</code> syntax, get the
