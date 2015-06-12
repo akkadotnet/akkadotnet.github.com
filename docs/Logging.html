@@ -206,6 +206,21 @@
     actor.debug.unhandled = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>
 }
 </code></pre>
+<h2 id="example-configuration">Example configuration</h2>
+<pre><code class="hljs lang-hocon">akka {  
+    stdout-loglevel = DEBUG
+    loglevel = DEBUG
+    <span class="hljs-command">log</span>-config-<span class="hljs-function_start"><span class="hljs-keyword">on</span></span>-start = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>        
+    actor {                
+        debug {  
+              receive = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span> 
+              autoreceive = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>
+              lifecycle = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>
+              event-stream = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>
+              unhandled = <span class="hljs-function_start"><span class="hljs-keyword">on</span></span>
+        }
+    }
+</code></pre>
 </div>
 
 								
