@@ -194,6 +194,13 @@
 <li><strong>Akka.Logger.NLog</strong>  which logs using <a href="http://nlog-project.org/">NLog</a></li>
 </ul>
 <p>Note that you need to modify the config as explained below.</p>
+<h3 id="nlog-configuration">NLog Configuration</h3>
+<p>Example NLog configuration inside your app.config or web.config:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
+    <span class="hljs-title">loggers</span> = [<span class="hljs-string">"Akka.Logger.NLog.NLogLogger, Akka.Logger.NLog"</span>]
+}
+</code></pre>
+<p>The above NLog components can be found on Nuget (<a href="https://www.nuget.org/packages/Akka.Logger.NLog/">https://www.nuget.org/packages/Akka.Logger.NLog/</a>)</p>
 <h2 id="configuring-custom-loggers">Configuring Custom Loggers</h2>
 <p>To configure a custom logger inside your Akka.Config, you need to use a fully qualified .NET class name like this:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
