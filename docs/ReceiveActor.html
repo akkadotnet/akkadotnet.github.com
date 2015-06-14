@@ -224,7 +224,7 @@ written on the console.</p>
 <p>Predicates can be specified <em>before</em> the action handler or <em>after</em>. These two
 declarations are equivalent:</p>
 <pre><code class="hljs lang-csharp">Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; s.Length &gt; <span class="hljs-number">5</span>, s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s));
-Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s, s =&gt; s.Length &gt; <span class="hljs-number">5</span>));
+Receive&lt;<span class="hljs-keyword">string</span>&gt;(s =&gt; Console.WriteLine(<span class="hljs-string">"Received string: "</span> + s), s =&gt; s.Length &gt; <span class="hljs-number">5</span>);
 </code></pre>
 <h2 id="receive-using-funcs">Receive using Funcs</h2>
 <p>More complex handlers can be specified using the <code>Receive&lt;T&gt;(Func&lt;T,bool&gt; handler)</code>
