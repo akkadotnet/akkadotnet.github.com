@@ -199,17 +199,16 @@ the following example.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// For example in the PreStart...</span>
 <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
 </span>{
-    myWorker = Context.DI().ActorOf&lt;TypedWorker&gt;(<span class="hljs-string">"childWorker"</span>);
+    <span class="hljs-keyword">var</span> diExt = Context.System.GetExtension&lt;DIExt&gt;();
+    <span class="hljs-comment">//which will give you access to the Props producer and thus the entire akka API for creating Actors.</span>
+    <span class="hljs-keyword">var</span> actorProps = diExt.Props(() =&gt; <span class="hljs-keyword">new</span> myActor()).WithRouter(<span class="hljs-comment">/* options here */</span>);
+
+    <span class="hljs-keyword">var</span> myActorRef = Context.ActorOf(actorProps, <span class="hljs-string">"myChildActor"</span>);
 }
 </code></pre>
-<p>The <code>DI().ActorOf&lt;T&gt;</code> is a convenience method that hides some of the more powerfull features of Akka for the sake of ease of use.
-If you want to use these features you need to use the plugin extension system directly. Like so:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> diExt = Context.System.GetExtension&lt;DIExt&gt;();
-<span class="hljs-comment">//which will give you access to the Props producer and thus the entire akka API for creating Actors.</span>
-<span class="hljs-keyword">var</span> actorProps = diExt.Props(() =&gt; <span class="hljs-keyword">new</span> myActor()).WithRouter(<span class="hljs-comment">/* options here */</span>);
-
-<span class="hljs-keyword">var</span> myActorRef = Context.ActorOf(actorProps, <span class="hljs-string">"myChildActor"</span>);
-</code></pre>
+<blockquote>
+<p><strong>Information</strong> There is currently still an extension method available for the actor Context. <code>Context.DI()</code>. However this has been officially <strong>deprecated</strong> and will be removed in future versions.</p>
+</blockquote>
 <h2 id="notes">Notes</h2>
 <div class="alert alert-warning">
 <p><strong>Warning</strong> You might be tempted at times to use an <code>IndirectActorProducer</code>
