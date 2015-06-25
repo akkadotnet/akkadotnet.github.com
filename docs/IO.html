@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>I/O | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">I/O<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/IO.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h2 id="akka-i-o">Akka I/O</h2>
+<p>The I/O extension provides an non-blocking, event driven API that matches the underlaying transports mechanism.</p>
+<p>Detail of the I/O extension&#39;s design can be found in the <a href="http://doc.akka.io/docs/akka/snapshot/dev/io-layer.html#io-layer">Akka JVM documentation</a>.</p>
+<h3 id="getting-started">Getting Started</h3>
+<p>Every I/O Driver has a special actor, called the <em>manager</em>, that serves as an entry point for the API.
+The <em>manager</em> for a particular driver is accessible through an extension method on <em>ActorSystem</em>. The following example shows how to get a reference to the TCP manager.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Actor;
+<span class="hljs-keyword">using</span> Akka.IO;
+
+...
+
+<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"example"</span>);
+<span class="hljs-keyword">var</span> manager = system.Tcp();
+</code></pre>
+<h4 id="tcp-driver">TCP Driver</h4>
+<h5 id="client-connection">Client Connection</h5>
+<p>To create a connection an actor sends a <em>Tcp.Connect</em> message to the TCP Manager.
+Once the connection is established the connection actor sends a <em>Tcp.Connected</em> message to the <em>commander</em>, which registers the <em>connection handler</em> by replying with a <em>Tcp.Register</em> message.</p>
+<p>Once this handshake is completed, the handler and connection communicate with <em>Tcp.WriteCommand</em> and <em>Tcp.Received</em> messages.</p>
+<p>The following diagram illustrate the actors involved in establishing and handling a connection.</p>
+<p><img class="img-responsive" src="images/io-tcp-client.png" alt="TCP Connection"></p>
+<p>The following example shows a simple Telnet client. The client send lines entered in the console to the TCP connection, and write data received from the network to the console.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">TelnetClient</span> : <span class="hljs-title">UntypedActor</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TelnetClient</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> host, <span class="hljs-keyword">int</span> port</span>)
+    </span>{
+        <span class="hljs-keyword">var</span> endpoint = <span class="hljs-keyword">new</span> DnsEndPoint(host, port);
+        Context.System.Tcp().Tell(<span class="hljs-keyword">new</span> Tcp.Connect(endpoint));
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">is</span> Tcp.Connected)
+        {
+            <span class="hljs-keyword">var</span> connected = message <span class="hljs-keyword">as</span> Tcp.Connected;
+            Console.WriteLine(<span class="hljs-string">"Connected to {0}"</span>, connected.RemoteAddress);
+
+            <span class="hljs-comment">// Register self as connection handler</span>
+            Sender.Tell(<span class="hljs-keyword">new</span> Tcp.Register(Self));  
+            ReadConsoleAsync();
+            Become(Connected(Sender));
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">message <span class="hljs-keyword">is</span> Tcp.CommandFailed</span>)
+        </span>{
+            Console.WriteLine(<span class="hljs-string">"Connection failed"</span>);
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">Unhandled</span>(<span class="hljs-params">message</span>)</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> UntypedReceive <span class="hljs-title">Connected</span>(<span class="hljs-params">IActorRef connection</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> message =&gt;
+        {
+            <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">is</span> Tcp.Received)  <span class="hljs-comment">// data received from network</span>
+            {
+                <span class="hljs-keyword">var</span> received = message <span class="hljs-keyword">as</span> Tcp.Received;
+                Console.WriteLine(Encoding.ASCII.GetString(received.Data.ToArray()));
+            }
+            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">message <span class="hljs-keyword">is</span> <span class="hljs-keyword">string</span></span>)   <span class="hljs-comment">// data received from console</span>
+            </span>{
+                connection.Tell(Tcp.Write.Create(ByteString.FromString((<span class="hljs-keyword">string</span>)message + <span class="hljs-string">"\n"</span>)));
+                ReadConsoleAsync();
+            }
+            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">message <span class="hljs-keyword">is</span> Tcp.PeerClosed</span>)
+            </span>{
+                Console.WriteLine(<span class="hljs-string">"Connection closed"</span>);
+            }
+            <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">Unhandled</span>(<span class="hljs-params">message</span>)</span>;
+        };
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ReadConsoleAsync</span>(<span class="hljs-params"></span>)
+    </span>{
+        Task.Factory.StartNew(self =&gt; Console.In.ReadLineAsync().PipeTo((ICanTell)self), Self);
+    }
+}
+</code></pre>
+<h5 id="server-connection">Server Connection</h5>
+<p>To accept connections, an actor sends an <em>Tcp.Bind</em> message to the TCP manager, passing the <em>bind handler</em> in the message.
+The <em>bind commander</em> will receive a <em>Tcp.Bound</em> message when the connection is listening.</p>
+<p>The <em>bind handler</em> will receive a <em>Tcp.Connected</em> message for each accepted connection, and needs to register the connection handler by replying with a <em>Tcp.Register</em> message. Thereafter it proceeds the same as a client connection.</p>
+<p>The following diagram illustrate the actor and messages.</p>
+<p><img class="img-responsive" src="images/io-tcp-server.png" alt="TCP Connection"></p>
+<p>The following code example shows a simple server that echo&#39;s data received from the network.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">EchoServer</span> : <span class="hljs-title">UntypedActor</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EchoServer</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> port</span>)
+    </span>{
+        Context.System.Tcp().Tell(<span class="hljs-keyword">new</span> Tcp.Bind(Self, <span class="hljs-keyword">new</span> IPEndPoint(IPAddress.Any, port)));
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">is</span> Tcp.Bound)
+        {
+            <span class="hljs-keyword">var</span> bound = message <span class="hljs-keyword">as</span> Tcp.Bound;
+            Console.WriteLine(<span class="hljs-string">"Listening on {0}"</span>, bound.LocalAddress);
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">message <span class="hljs-keyword">is</span> Tcp.Connected</span>)
+        </span>{
+            <span class="hljs-keyword">var</span> connection = Context.ActorOf(Props.Create(() =&gt; <span class="hljs-keyword">new</span> EchoConnection(Sender)));
+            Sender.Tell(<span class="hljs-keyword">new</span> Tcp.Register(connection));
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">Unhandled</span>(<span class="hljs-params">message</span>)</span>;
+    }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">EchoConnection</span> : <span class="hljs-title">UntypedActor</span>
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> IActorRef _connection;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EchoConnection</span>(<span class="hljs-params">IActorRef connection</span>)
+    </span>{
+        _connection = connection;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">if</span> (message <span class="hljs-keyword">is</span> Tcp.Received)
+        {
+            <span class="hljs-keyword">var</span> received = message <span class="hljs-keyword">as</span> Tcp.Received;
+            <span class="hljs-keyword">if</span> (received.Data.Head == <span class="hljs-string">'x'</span>)
+                Context.Stop(Self);
+            <span class="hljs-keyword">else</span>
+                _connection.Tell(Tcp.Write.Create(received.Data));
+        }
+        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">Unhandled</span>(<span class="hljs-params">message</span>)</span>;
+    }
+}
+</code></pre>
+<h3 id="akka-io-transport">Akka IO Transport</h3>
+<p>The AkkaIOTransport contrib project impliments an Akka Remote transport based on the I/O extension.
+The following shows how to configure Akka Remote to use the IO Transport.</p>
+<pre><code class="hljs lang-hocon">akka {
+    actor {
+        <span class="hljs-variable">provider =</span> <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
+    }
+
+    remote {
+        <span class="hljs-variable">enabled-transports =</span> [<span class="hljs-string">"akka.remote.akka-io"</span>]
+
+        akka-io {
+            <span class="hljs-variable">transport-class =</span> <span class="hljs-string">"Akka.Remote.AkkaIOTransport.AkkaIOTransport, Akka.Remote.AkkaIOTransport"</span>
+            <span class="hljs-variable">hostname =</span> <span class="hljs-string">"127.0.0.1"</span>
+            <span class="hljs-variable">port =</span> <span class="hljs-number">9098</span>
+        }
+    }
+}
+</code></pre>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
