@@ -262,7 +262,7 @@ container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-st
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
 <span class="hljs-keyword">var</span> container = <span class="hljs-keyword">new</span> Ninject.StandardKernel();
 container.Bind&lt;TypedWorker&gt;().To(<span class="hljs-keyword">typeof</span>(TypedWorker));
-container.Bind&lt;IWorkerService&gt;()To(<span class="hljs-keyword">typeof</span>)WorkerService));
+container.Bind&lt;IWorkerService&gt;().To(<span class="hljs-keyword">typeof</span>(WorkerService));
 
 <span class="hljs-comment">// Create the ActorSystem and Dependency Resolver</span>
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
