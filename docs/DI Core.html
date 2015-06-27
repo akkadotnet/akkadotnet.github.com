@@ -318,8 +318,8 @@ container.Register(Component.For&lt;TypedWorker&gt;().Named(<span class="hljs-st
     IDependencyResolver resolver = <span class="hljs-keyword">new</span> WindsorDependencyResolver(container, system);
 
     <span class="hljs-comment">// Register the actors with the system</span>
-    system.ActorOf(resolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
-    system.ActorOf(resolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
+    system.ActorOf(system.DI().Props&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
+    system.ActorOf(system.DI().Props&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
 
     <span class="hljs-comment">// Create the router</span>
     IActorRef router = system.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingGroup(config)));

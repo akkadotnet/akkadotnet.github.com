@@ -186,11 +186,12 @@ that can create <code>Props</code> using the DI container.</p>
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
 
 <span class="hljs-comment">// Create the dependency resolver for the actor system</span>
-IDependencyResolver propsResolver = <span class="hljs-keyword">new</span> XyzDependencyResolver(someContainer, system);
-
-<span class="hljs-comment">// Create the Props using the IDependencyResolver instance</span>
-system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
-system.ActorOf(propsResolver.Create&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
+IDependencyResolver resolver = <span class="hljs-keyword">new</span> XyzDependencyResolver(someContainer, system);
+</code></pre>
+<p>When creating actorRefs straight off your ActorSystem instance, you can use the DI() Extension.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create the Props using the DI extension on your ActorSystem instance</span>
+<span class="hljs-keyword">var</span> worker1Ref = system.ActorOf(system.DI().Props&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker1"</span>);
+<span class="hljs-keyword">var</span> worker2Ref = system.ActorOf(system.DI().Props&lt;TypedWorker&gt;(), <span class="hljs-string">"Worker2"</span>);
 </code></pre>
 <h2 id="creating-child-actors-using-di">Creating Child Actors using DI</h2>
 <p>When you want to create child actors from within your existing actors using
@@ -199,15 +200,14 @@ the following example.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// For example in the PreStart...</span>
 <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
 </span>{
-    <span class="hljs-keyword">var</span> diExt = Context.System.GetExtension&lt;DIExt&gt;();
-    <span class="hljs-comment">//which will give you access to the Props producer and thus the entire akka API for creating Actors.</span>
-    <span class="hljs-keyword">var</span> actorProps = diExt.Props(() =&gt; <span class="hljs-keyword">new</span> myActor()).WithRouter(<span class="hljs-comment">/* options here */</span>);
+    <span class="hljs-keyword">var</span> actorProps = Context.DI().Props(() =&gt; <span class="hljs-keyword">new</span> myActor())
+        .WithRouter(<span class="hljs-comment">/* options here */</span>);
 
     <span class="hljs-keyword">var</span> myActorRef = Context.ActorOf(actorProps, <span class="hljs-string">"myChildActor"</span>);
 }
 </code></pre>
 <blockquote>
-<p><strong>Information</strong> There is currently still an extension method available for the actor Context. <code>Context.DI()</code>. However this has been officially <strong>deprecated</strong> and will be removed in future versions.</p>
+<p><strong>Information</strong> There is currently still an extension method available for the actor Context. <code>Context.DI().ActorOf&lt;&gt;</code>. However this has been officially <strong>deprecated</strong> and will be removed in future versions.</p>
 </blockquote>
 <h2 id="notes">Notes</h2>
 <div class="alert alert-warning">
