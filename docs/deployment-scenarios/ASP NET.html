@@ -173,6 +173,7 @@
 							<div id="main_content">
 
 								<div><h1 id="asp-net">ASP.NET</h1>
+<h3 id="creating-the-akka-net-resources">Creating the Akka.NET resources</h3>
 <p>Hosting inside an ASP.NET application is easy. The Global.asax would be the designated place to start.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MvcApplication</span> : <span class="hljs-title">System</span>.<span class="hljs-title">Web</span>.<span class="hljs-title">HttpApplication</span>
 {
@@ -196,7 +197,8 @@
 <p><strong>Warning</strong><br>Although hosting inside an ASP.NET Application is easy. A <strong>word of caution</strong>: When you are hosting inside of <code>IIS</code> the applicationpool your app lives in could be stopped and started at the whim of <code>IIS</code>. This in turn means your <code>ActorSystem</code> could be stopped at any given time.</p>
 </div>
 <p>Typically you use a very lightweight <code>ActorSystem</code> inside ASP.NET applications, and offload heavy-duty work to a seperate Windows Service via Akka.Remote / Akka.Cluster</p>
-<p>Interaction between Controllers and Akka.NET, in this case an Web API Controller:</p>
+<h3 id="interaction-between-controllers-and-akka-net">Interaction between Controllers and Akka.NET</h3>
+<p>In the sample below, we use an Web API Controller:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SomeController</span>  : <span class="hljs-title">ApiController</span>
 {
       <span class="hljs-comment">//expose your endpoint as async</span>
