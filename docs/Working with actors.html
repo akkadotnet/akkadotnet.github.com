@@ -196,7 +196,7 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
       log.Info(<span class="hljs-string">"Received String message: {0}"</span>, message);
       Sender.Tell(message);
     });
-    Receive&lt;SomeMessage(message =&gt; {...});
+    Receive&lt;SomeMessage&gt;(message =&gt; {...});
   }
 }
 </code></pre>

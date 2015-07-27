@@ -173,13 +173,10 @@
 							<div id="main_content">
 
 								<div><h1 id="asp-net">ASP.NET</h1>
-<h3 id="creating-the-akka-net-resources">Creating the Akka.NET resources</h3>
 <p>Hosting inside an ASP.NET application is easy. The Global.asax would be the designated place to start.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MvcApplication</span> : <span class="hljs-title">System</span>.<span class="hljs-title">Web</span>.<span class="hljs-title">HttpApplication</span>
 {
     <span class="hljs-keyword">protected</span> <span class="hljs-keyword">static</span> ActorSystem ActorSystem;
-    <span class="hljs-comment">//here you would store your toplevel actor-refs</span>
-    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">static</span> IActorRef MyActor;
 
     <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Application_Start</span>(<span class="hljs-params"></span>)
     </span>{
@@ -188,7 +185,7 @@
 
         ActorSystem = ActorSystem.Create(<span class="hljs-string">"app"</span>);
         <span class="hljs-comment">//here you would register your toplevel actors</span>
-        MyActor = ActorSystem.Create&lt;MyActor&gt;();
+
     }
 }
 </code></pre>
@@ -197,20 +194,6 @@
 <p><strong>Warning</strong><br>Although hosting inside an ASP.NET Application is easy. A <strong>word of caution</strong>: When you are hosting inside of <code>IIS</code> the applicationpool your app lives in could be stopped and started at the whim of <code>IIS</code>. This in turn means your <code>ActorSystem</code> could be stopped at any given time.</p>
 </div>
 <p>Typically you use a very lightweight <code>ActorSystem</code> inside ASP.NET applications, and offload heavy-duty work to a seperate Windows Service via Akka.Remote / Akka.Cluster</p>
-<h3 id="interaction-between-controllers-and-akka-net">Interaction between Controllers and Akka.NET</h3>
-<p>In the sample below, we use an Web API Controller:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SomeController</span>  : <span class="hljs-title">ApiController</span>
-{
-      <span class="hljs-comment">//expose your endpoint as async</span>
-      <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> Task&lt;SomeResult&gt; <span class="hljs-title">Post</span>(<span class="hljs-params">SomeRequest someRequest</span>)
-      </span>{
-           <span class="hljs-comment">//send a message based on your incoming arguments to one of the actors you created earlier</span>
-           <span class="hljs-comment">//and await the result by sending the message to `Ask`</span>
-           <span class="hljs-keyword">var</span> result = <span class="hljs-keyword">await</span> MvcApplication.MyActor.Ask&lt;SomeResult&gt;(<span class="hljs-keyword">new</span> SomeMessage(someRequest.SomeArg1,someRequest.SomeArg2));
-           <span class="hljs-keyword">return</span> result;
-      }
-}
-</code></pre>
 </div>
 
 								
