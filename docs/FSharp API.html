@@ -278,13 +278,13 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
 <li><code>asyncReceive (i : Inbox) : Async&lt;&#39;Message option&gt;</code> - Awaits in async block for a next message sent to the inbox. Returns <code>None</code> if message is incompatible with expected response type.</li>
 </ul>
 <p>Inboxes may be configured to accept a limited number of incoming messages (default is 1000):</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-attribute">akka {
+<pre><code class="hljs lang-hocon">akka {
     actor {
         inbox {
-            inbox-size </span>=<span class="hljs-string"> 30
+            inbox-size = <span class="hljs-number">30</span>
         }
     }
-}</span>
+}
 </code></pre>
 <h3 id="monitoring">Monitoring</h3>
 <p>Actors and Inboxes may be used to monitor lifetime of other actors. This is done by <code>monitor</code>/<code>demonitor</code> functions:</p>

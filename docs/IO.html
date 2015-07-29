@@ -305,18 +305,18 @@ The <em>bind commander</em> will receive a <em>Tcp.Bound</em> message when the c
 <h3 id="akka-io-transport">Akka IO Transport</h3>
 <p>The AkkaIOTransport contrib project implements an Akka Remote transport based on the I/O extension.
 The following shows how to configure Akka Remote to use the IO Transport.</p>
-<pre><code class="hljs lang-hocon">akka {
+<pre><code class="hljs lang-hocon"><span class="hljs-name">akka</span> {
     actor {
-        <span class="hljs-variable">provider =</span> <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
+        <span class="hljs-literal">provider</span> = <span class="hljs-string">"Akka.Remote.RemoteActorRefProvider, Akka.Remote"</span>
     }
 
-    remote {
-        <span class="hljs-variable">enabled-transports =</span> [<span class="hljs-string">"akka.remote.akka-io"</span>]
+    <span class="hljs-name">remote</span> {
+        <span class="hljs-literal">enabled</span>-transports = [<span class="hljs-string">"akka.remote.akka-io"</span>]
 
         akka-io {
-            <span class="hljs-variable">transport-class =</span> <span class="hljs-string">"Akka.Remote.AkkaIOTransport.AkkaIOTransport, Akka.Remote.AkkaIOTransport"</span>
-            <span class="hljs-variable">hostname =</span> <span class="hljs-string">"127.0.0.1"</span>
-            <span class="hljs-variable">port =</span> <span class="hljs-number">9098</span>
+            transport-class = <span class="hljs-string">"Akka.Remote.AkkaIOTransport.AkkaIOTransport, Akka.Remote.AkkaIOTransport"</span>
+            <span class="hljs-built_in">hostname</span> = <span class="hljs-string">"127.0.0.1"</span>
+            port = <span class="hljs-number">9098</span>
         }
     }
 }

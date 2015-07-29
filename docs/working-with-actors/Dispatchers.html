@@ -203,10 +203,10 @@
 <h2 id="configuring-dispatchers">Configuring Dispatchers</h2>
 <p>You can define a custom dispatcher configuration using a HOCON configuration section.</p>
 <p>The example below creates a custom dispatcher called <code>my-dispatcher</code> that can be set in one or more actors during deployment:</p>
-<pre><code class="hljs lang-hocon">my-dispatcher {
-    <span class="hljs-variable">type =</span> Dispatcher
-    <span class="hljs-variable">throughput =</span> <span class="hljs-number">100</span>
-    <span class="hljs-variable">throughput-deadline-time =</span> <span class="hljs-number">0</span>ms
+<pre><code class="hljs lang-hocon"><span class="hljs-keyword">my</span>-dispatcher {
+    type = Dispatcher
+    throughput = <span class="hljs-number">100</span>
+    throughput-deadline-<span class="hljs-property">time</span> = <span class="hljs-number">0</span>ms
 }
 </code></pre>
 <p>You can then set actor&#39;s dispatcher using the deployment configuration:</p>
@@ -233,8 +233,8 @@
 <li><h3 id="threadpooldispatcher">ThreadPoolDispatcher</h3>
 <p>It schedules code to run in the <a href="https://msdn.microsoft.com/en-us/library/System.Threading.ThreadPool.aspx">.NET Thread Pool</a>, which is <strong><em>good enough</em> for most cases.</strong></p>
 <p>The <code>type</code> used in the HOCON configuration for this dispatcher is just <code>Dispatcher</code>.</p>
-<pre><code class="hljs lang-hocon">custom-dispatcher {
-  <span class="hljs-class"><span class="hljs-keyword">type</span> </span>= Dispatcher
+<pre><code class="hljs lang-hocon"><span class="hljs-title">custom</span>-dispatcher {
+  <span class="hljs-typedef"><span class="hljs-keyword">type</span> = <span class="hljs-type">Dispatcher</span></span>
   throughput = <span class="hljs-number">100</span>
 }
 </code></pre>
@@ -244,29 +244,29 @@
 </li>
 <li><h3 id="taskdispatcher">TaskDispatcher</h3>
 <p>The TaskDispatcher uses the <a href="https://msdn.microsoft.com/en-us/library/dd460717.aspx">TPL</a> infrastructure to schedule code execution. This dispatcher is very similar to the Thread PoolDispatcher, but may be used in some rare scenarios where the thread pool isn&#39;t available.</p>
-<pre><code class="hljs lang-hocon">custom-task-dispatcher {
-    <span class="hljs-class"><span class="hljs-keyword">type</span> </span>= TaskDispatcher
+<pre><code class="hljs lang-hocon"><span class="hljs-title">custom</span>-task-dispatcher {
+    <span class="hljs-typedef"><span class="hljs-keyword">type</span> = <span class="hljs-type">TaskDispatcher</span></span>
     throughput = <span class="hljs-number">100</span>
 }
 </code></pre>
 </li>
 <li><h3 id="pinneddispatcher">PinnedDispatcher</h3>
 <p>The <code>PinnedDispatcher</code> uses a single dedicated thread to schedule code executions. Ideally, this dispatcher should be using sparingly.</p>
-<pre><code class="hljs lang-hocon">custom-dedicated-dispatcher {
-    <span class="hljs-class"><span class="hljs-keyword">type</span> </span>= PinnedDispatcher
+<pre><code class="hljs lang-hocon"><span class="hljs-title">custom</span>-dedicated-dispatcher {
+    <span class="hljs-typedef"><span class="hljs-keyword">type</span> = <span class="hljs-type">PinnedDispatcher</span></span>
 }
 </code></pre>
 </li>
 <li><h3 id="forkjoindispatcher">ForkJoinDispatcher</h3>
 <p>The ForkJoinDispatcher uses a dedicated threadpool to schedule code execution. You can use this scheduler isolate some actors from the rest of the system. Each dispatcher configuration will have it&#39;s own thread pool.</p>
 <p>This is the configuration for the <a href="#built-in-dispatcher-configurations"><em>default-fork-join-dispatcher</em></a>.  You may use this as example for custom fork-join dispatchers.</p>
-<pre><code class="hljs lang-hocon">default-fork-join-dispatcher {
-    <span class="hljs-variable">type =</span> ForkJoinDispatcher
-    <span class="hljs-variable">throughput =</span> <span class="hljs-number">100</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-keyword">default</span>-fork-join-dispatcher {
+    type = ForkJoinDispatcher
+    throughput = <span class="hljs-number">100</span>
     dedicated-thread-pool {
-        <span class="hljs-variable">thread-count =</span> <span class="hljs-number">3</span>
-        <span class="hljs-variable">deadlock-timeout =</span> <span class="hljs-number">3</span>s
-        <span class="hljs-variable">threadtype =</span> background
+        thread-count = <span class="hljs-number">3</span>
+        deadlock-timeout = <span class="hljs-number">3</span>s
+        threadtype = background
     }
 }
 </code></pre>

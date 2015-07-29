@@ -255,23 +255,23 @@
     persistence {
         snapshot-store {
 
-            <span class="hljs-comment"># Path to the snapshot store plugin to be used</span>
-            <span class="hljs-variable">plugin =</span> <span class="hljs-string">"akka.persistence.snapshot-store.local"</span>
+            # Path to the snapshot store <span class="hljs-keyword">plugin</span> to be used
+            <span class="hljs-keyword">plugin</span> = <span class="hljs-string">"akka.persistence.snapshot-store.local"</span>
 
-            <span class="hljs-comment"># Local filesystem snapshot store plugin.</span>
-            local {
+            # <span class="hljs-keyword">Local</span> filesystem snapshot store <span class="hljs-keyword">plugin</span>.
+            <span class="hljs-keyword">local</span> {
 
-                <span class="hljs-comment"># Class name of the plugin.</span>
-                <span class="hljs-variable">class =</span> <span class="hljs-string">"Akka.Persistence.Snapshot.LocalSnapshotStore, Akka.Persistence"</span>
+                # <span class="hljs-keyword">Class</span> name of the <span class="hljs-keyword">plugin</span>.
+                <span class="hljs-keyword">class</span> = <span class="hljs-string">"Akka.Persistence.Snapshot.LocalSnapshotStore, Akka.Persistence"</span>
 
-                <span class="hljs-comment"># Dispatcher for the plugin actor.</span>
-                <span class="hljs-variable">plugin-dispatcher =</span> <span class="hljs-string">"akka.persistence.dispatchers.default-plugin-dispatcher"</span>
+                # Dispatcher <span class="hljs-keyword">for</span> the <span class="hljs-keyword">plugin</span> actor.
+                <span class="hljs-keyword">plugin</span>-dispatcher = <span class="hljs-string">"akka.persistence.dispatchers.default-plugin-dispatcher"</span>
 
-                <span class="hljs-comment"># Dispatcher for streaming snapshot IO.</span>
-                <span class="hljs-variable">stream-dispatcher =</span> <span class="hljs-string">"akka.persistence.dispatchers.default-stream-dispatcher"</span>
+                # Dispatcher <span class="hljs-keyword">for</span> streaming snapshot IO.
+                stream-dispatcher = <span class="hljs-string">"akka.persistence.dispatchers.default-stream-dispatcher"</span>
 
-                <span class="hljs-comment"># Storage location of snapshot files.</span>
-                <span class="hljs-variable">dir =</span> <span class="hljs-string">"snapshots"</span>
+                # Storage location of snapshot files.
+                <span class="hljs-keyword">dir</span> = <span class="hljs-string">"snapshots"</span>
             }
         }
     }

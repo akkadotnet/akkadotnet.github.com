@@ -205,16 +205,16 @@ implementations of the <code>Serializer</code> to use.</p>
 </code></pre>
 <p>The &quot;akka.actor.serialization-bindings&quot; section is where object types are
 associated to a <code>Serializer</code> by the names defined in the previous section.</p>
-<pre><code class="hljs lang-hocon">akka {
+<pre><code class="hljs lang-hocon"><span class="hljs-name">akka</span> {
   actor {
      serializers {
-        <span class="hljs-variable">json =</span> <span class="hljs-string">"Akka.Serialization.NewtonSoftJsonSerializer"</span>
-        <span class="hljs-variable">java =</span> <span class="hljs-string">"Akka.Serialization.JavaSerializer"</span> <span class="hljs-comment"># not used, reserves serializer identifier</span>
-        <span class="hljs-variable">bytes =</span> <span class="hljs-string">"Akka.Serialization.ByteArraySerializer"</span>
-        <span class="hljs-variable">myown =</span> <span class="hljs-string">"Acme.Inc.MySerializer, MyAssembly"</span>
+        json = <span class="hljs-string">"Akka.Serialization.NewtonSoftJsonSerializer"</span>
+        java = <span class="hljs-string">"Akka.Serialization.JavaSerializer"</span> <span class="hljs-comment"># not used, reserves serializer identifier</span>
+        bytes = <span class="hljs-string">"Akka.Serialization.ByteArraySerializer"</span>
+        myown = <span class="hljs-string">"Acme.Inc.MySerializer, MyAssembly"</span>
      }
 
-    serialization-bindings {
+    <span class="hljs-name">serialization</span>-<span class="hljs-name">bindings</span> {
       <span class="hljs-string">"System.Byte[]"</span> = bytes
       <span class="hljs-string">"System.Object"</span> = json
       <span class="hljs-string">"Acme.Inc.MyMessage, MyAssembly"</span> = myown

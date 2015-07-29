@@ -479,14 +479,14 @@ involved or not.</p>
 <span class="hljs-string">a :</span> { <span class="hljs-string">c :</span> <span class="hljs-number">2</span> }
 </code></pre>
 <p>Here are several ways to define <code>a</code> to the same array value:</p>
-<pre><code class="hljs lang-hocon">// <span class="hljs-constant">one</span> array
-<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
-// two arrays that are concatenated</span>
-<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]<span class="hljs-comment">
-// a later definition referring to an earlier</span><span class="hljs-comment">
-// (see "self-referential substitutions" below)</span>
-<span class="hljs-operator">a</span> : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
-<span class="hljs-operator">a</span> : ${<span class="hljs-operator">a</span>} [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
+<pre><code class="hljs lang-hocon"><span class="hljs-comment">// one array</span>
+a : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
+<span class="hljs-comment">// two arrays that are concatenated</span>
+a : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ] [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
+<span class="hljs-comment">// a later definition referring to an earlier</span>
+<span class="hljs-comment">// (see "self-referential substitutions" below)</span>
+a : [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span> ]
+a : ${a} [ <span class="hljs-number">3</span>, <span class="hljs-number">4</span> ]
 </code></pre>
 <p>A common use of object concatenation is &quot;inheritance&quot;:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-type">data</span>-center-<span class="hljs-keyword">generic</span> = { cluster-<span class="hljs-built_in">size</span> = <span class="hljs-number">6</span> }
@@ -590,7 +590,7 @@ have whitespace in keys:</p>
 <pre><code class="hljs lang-hocon"><span class="hljs-tag">a</span> <span class="hljs-tag">b</span> c : <span class="hljs-number">42</span>
 </code></pre>
 <p>is equivalent to:</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-comment">"a b c"</span> : <span class="hljs-number">42</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-string">"a b c"</span> : <span class="hljs-number">42</span>
 </code></pre>
 <p>Because path expressions are always converted to strings, even
 single values that would normally have another type become
@@ -679,8 +679,8 @@ substitutions that&#39;s a link in the cycle)</li>
 </ul>
 <p>The idea is to allow a new value for a field to be based on the
 older value:</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-built_in">path</span> : <span class="hljs-string">"a:b:c"</span>
-<span class="hljs-built_in">path</span> : $<span class="hljs-keyword">{</span><span class="hljs-built_in">path</span><span class="hljs-keyword">}</span><span class="hljs-string">":d"</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-string">path :</span> <span class="hljs-string">"a:b:c"</span>
+<span class="hljs-string">path :</span> ${path}<span class="hljs-string">":d"</span>
 </code></pre>
 <p>A <em>self-referential field</em> is one which:</p>
 <ul>

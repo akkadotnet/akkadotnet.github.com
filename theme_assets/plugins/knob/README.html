@@ -189,7 +189,7 @@ $(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span c
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="options">Options</h2>
 <p>Options are provided as attributes &#39;data-option&#39;:</p>
-<pre><code>&lt;input <span class="hljs-variable">type=</span><span class="hljs-string">"text"</span> <span class="hljs-variable">class=</span><span class="hljs-string">"dial"</span> <span class="hljs-variable">data-min=</span><span class="hljs-string">"-50"</span> <span class="hljs-variable">data-max=</span><span class="hljs-string">"50"</span>&gt;
+<pre><code>&lt;input <span class="hljs-class"><span class="hljs-keyword">type</span>=</span><span class="hljs-string">"text"</span> <span class="hljs-class"><span class="hljs-keyword">class</span>=</span><span class="hljs-string">"dial"</span> data-min=<span class="hljs-string">"-50"</span> data-max=<span class="hljs-string">"50"</span>&gt;
 </code></pre><p>... or in the &quot;knob()&quot; call :</p>
 <pre><code><span class="hljs-variable">$(</span><span class="hljs-string">".dial"</span>).knob({
                 <span class="hljs-string">'min'</span><span class="hljs-symbol">:-</span><span class="hljs-number">50</span>
@@ -264,22 +264,22 @@ $(<span class="hljs-string">".dial"</span>).knob({
                 });
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="dynamically-configure">Dynamically configure</h2>
-<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="elixir">
-<span class="hljs-variable">$(</span><span class="hljs-string">'.dial'</span>)
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-string">'.dial'</span>)
     .trigger(
         <span class="hljs-string">'configure'</span>,
         {
-        <span class="hljs-string">"min"</span><span class="hljs-symbol">:</span><span class="hljs-number">10</span>,
-        <span class="hljs-string">"max"</span><span class="hljs-symbol">:</span><span class="hljs-number">40</span>,
-        <span class="hljs-string">"fgColor"</span><span class="hljs-symbol">:<span class="hljs-string">"#FF0000"</span></span>,
-        <span class="hljs-string">"skin"</span><span class="hljs-symbol">:<span class="hljs-string">"tron"</span></span>,
-        <span class="hljs-string">"cursor"</span><span class="hljs-symbol">:true</span>
+        <span class="hljs-string">"min"</span>:<span class="hljs-number">10</span>,
+        <span class="hljs-string">"max"</span>:<span class="hljs-number">40</span>,
+        <span class="hljs-string">"fgColor"</span>:<span class="hljs-string">"#FF0000"</span>,
+        <span class="hljs-string">"skin"</span>:<span class="hljs-string">"tron"</span>,
+        <span class="hljs-string">"cursor"</span>:<span class="hljs-literal">true</span>
         }
     );
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
 </code></pre><h2 id="set-the-value">Set the value</h2>
-<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="elixir">
-<span class="hljs-variable">$(</span><span class="hljs-string">'.dial'</span>)
+<pre><code><span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+$(<span class="hljs-string">'.dial'</span>)
     .val(<span class="hljs-number">27</span>)
     .trigger(<span class="hljs-string">'change'</span>);
 </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
