@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Akka.Cluster Overview | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Akka.Cluster Overview<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/cluster-overview.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="akka-cluster-overview">Akka.Cluster Overview</h1>
+<h2 id="what-is-a-cluster-">What is a &quot;Cluster&quot;?</h2>
+<p>A cluster represents a fault-tolerant, elastic, decentralized peer-to-peer network of Akka.NET applications with no single point of failure or bottleneck. Akka.Cluster is the module that gives you the ability to create these applications.</p>
+<h2 id="what-does-akka-cluster-do-">What Does Akka.Cluster Do?</h2>
+<p>The best way to begin introducing Akka.Cluster is with brief overview of what it does. Akka.Cluster is the <a href="https://www.nuget.org/packages/Akka.Cluster/1.0.3.11-beta">package</a> that brings clustering support to Akka.NET, and it accomplishes this by adding the following capabilities to Akka.NET:</p>
+<ul>
+<li>Makes it easy to create peer-to-peer networks of Akka.NET applications</li>
+<li>Allows peers to automatically discover new nodes and removed dead ones automatically with no configuration changes</li>
+<li>Allows user-defined classes to subscribe to notifications about changes in the availability of nodes in the cluster</li>
+<li>Introduces the concept of &quot;roles&quot; to distinguish different Akka.NET applications within a cluster; and</li>
+<li>Allows you to create clustered routers, which are an extension of the built-in Akka.NET routers, except that clustered routers automatically adjust their routees list based on node availability.</li>
+</ul>
+<h2 id="benefits-of-akka-cluster">Benefits of Akka.Cluster</h2>
+<p>In short, these are the benefits of a properly designed cluster:</p>
+<ul>
+<li><strong>Fault-tolerant</strong>: clusters recover from failures (especially network partitions) elegantly.</li>
+<li><strong>Elastic</strong>: clusters are inherently elastic, and can scale up/down as needed.</li>
+<li><strong>Decentralized</strong>: it&#39;s possible to have multiple <strong>equal</strong> replicas of a given microservice or piece of application state running simultaneously throughout a cluster</li>
+<li><strong>Peer-to-peer</strong>: New nodes can contact existing peers, be notified about other peers, and fully integrate themselves into the network without any configuration changes.</li>
+<li><strong>No single point of failure/bottleneck</strong>: multiple nodes are able to service requests, increasing throughput and fault-tolerance.</li>
+</ul>
+<h2 id="how-is-clustering-different-from-remoting-">How is Clustering Different From Remoting?</h2>
+<p>Akka.Cluster is a layer of abstraction on top of Akka.Remote, that puts Remoting to use for a specific structure: clusters of applications. Under the hood, Akka.Remote powers Akka.Cluster, so anything you could do with Akka.Remote is also supported by Akka.Cluster.</p>
+<p>Generally, Akka.Remote serves as plumbing for Akka.Cluster and other &quot;high availability&quot; modules within Akka.NET. You would generally only use Akka.Remote by itself in scenarios that don&#39;t require the elasticity and fault-tolerance needs that Akka.Cluster provides.</p>
+<p>Essentially, Akka.Cluster extends Akka.Remote to provide the basis of scalable</p>
+<h2 id="use-cases">Use Cases</h2>
+<p>Akka.Cluster lends itself naturally to <a href="https://en.wikipedia.org/wiki/High_availability">high-availability</a> scenarios.</p>
+<p>To put it bluntly, you should use clustering in any scenario where you have some or all of the following conditions:</p>
+<ul>
+<li>A sizable traffic load</li>
+<li>Non-trivial to perform</li>
+<li>An expectation of fast response times</li>
+<li>The need for elastic scaling (e.g. bursty workloads)</li>
+<li>A microservices architecture</li>
+</ul>
+<p>Some of the use cases where Akka.Cluster emerges as a natural fit are in:</p>
+<ol>
+<li>Analytics</li>
+<li>Marketing Automation</li>
+<li>Multiplayer Games</li>
+<li>Devices Tracking / Internet of Things</li>
+<li>Alerting &amp; Monitoring Systems</li>
+<li>Recommendation Engines</li>
+<li>Dynamic Pricing</li>
+<li>...and many more!</li>
+</ol>
+<h2 id="key-terms">Key Terms</h2>
+<p>Akka.Cluster is concept-heavy, so let&#39;s clarify a few terms:</p>
+<ul>
+<li>Node: a logical member of a cluster.</li>
+<li>Cluster: a set of nodes joined through the membership service. Multiple Akka.NET applications can be a part of a single cluster.</li>
+<li>Gossip: underlying messages powering the cluster itself.</li>
+<li>Leader: single node within the cluster who adds/removes nodes from the cluster.</li>
+<li>Role: a named responsibility or application within the cluster. A cluster can have multiple Akka.NET applications in it, each with its own role. A node may exist in 0+ roles simultaneously.</li>
+<li>Convergence: when a quorum (simple majority) of gossip messages agree on a change in state of a cluster member.</li>
+</ul>
+<p>Now let&#39;s explore each of these and their role in Akka.Cluster.</p>
+<h2 id="cluster-gossip">Cluster Gossip</h2>
+<p><em>This is the most important concept within Akka.Cluster</em>. This is how nodes are able to join and leave clusters without any configuration changes.</p>
+<p>&quot;<a href="https://en.wikipedia.org/wiki/Gossip_protocol">Gossip</a>&quot; is the ongoing flow of messages that are passed between nodes in a cluster, updating cluster members of the state of each member of the cluster.</p>
+<p>When a node wants to join a cluster, it must first contact one of its configured seed nodes. Once the node has been able to connect to one seed node, it will begin receiving gossip messages containing information about other members of the cluster.</p>
+<p><img class="img-responsive" src="diagrams/akka-cluster-gossip.png" alt="Akka.Cluster gossip propagation"></p>
+<p>So in the example above:</p>
+<ol>
+<li><strong>B</strong> contacts its configured seed node <strong>A</strong> and requests to join the cluster.</li>
+<li><strong>A</strong> marks <strong>B</strong> as up and begins to share gossip information with <strong>B</strong> about other nodes in the cluster, but there aren&#39;t any other nodes connected at the moment.</li>
+<li><strong>C</strong> contacts <strong>A</strong> and requests to join the cluster.</li>
+<li><strong>A</strong> welcomes <strong>C</strong> to the cluster and begins sharing gossip information with node <strong>C</strong>.</li>
+<li><strong>B</strong> and <strong>C</strong> are both notified about each other by node <strong>A</strong>.</li>
+<li><strong>B</strong> and <strong>C</strong> connect to each other and establish communication.</li>
+</ol>
+<p>Gossip messages will occur regularly over time whenever there is any change in the status of a member of the cluster, such as when a node joins the cluster, leaves the cluster, becomes unreachable by other nodes, etc.</p>
+<p>Generally, you will not interact with gossip messages at the application level. But you do need to be aware of them and know that they power the cluster.</p>
+<h3 id="what-types-of-gossip-exist-">What Types of Gossip Exist?</h3>
+<p>Gossip events fall into three categories:</p>
+<ol>
+<li>Member events</li>
+<li>Reachability events</li>
+<li>Metrics events (not yet implemented)</li>
+</ol>
+<h4 id="member-events">Member events</h4>
+<p>Member events refer to nodes joining / leaving / being removed from the cluster. These events are used by <a href="clustering/cluster-routing">Akka.Cluster routers</a> to automatically adjust their routee lists.</p>
+<h4 id="reachability-events">Reachability events</h4>
+<p>Reachability events refer to connectivity between nodes.</p>
+<p>If node A can no longer reach node B, then B is considered to be &quot;unreachable&quot; to node A. If B becomes unreachable to a large number of nodes, the leader is going to mark the node as &quot;down&quot; and remove it from the cluster.</p>
+<p>However, if B is able to communicate with A again then A will begin gossiping that B is once again &quot;reachable.&quot;</p>
+<h4 id="metrics-events-not-yet-implemented-">Metrics events (not yet implemented)</h4>
+<p>These messages are part of a yet-to-be-released library called Akka.Cluster.Metrics. These events are used to report the CPU and memory utilization of specific nodes within the cluster. This information is then used to power a specific set of routers called <strong>weighted routers</strong>, who can route messages to nodes based on which ones have the most available memory or CPU capacity.</p>
+<h2 id="nodes">Nodes</h2>
+<p>A node is a logical member of a cluster. A node is defined by the address at which it is reachable (hostname:port tuple). Because of this, more than one node can exist simultaneously on a given machine.</p>
+<h3 id="seed-nodes">Seed Nodes</h3>
+<p>A seed node is a well-known contact point that a new node must contact in order to join the cluster. Seed nodes function as the service-discovery mechanism of Akka.Cluster.</p>
+<blockquote>
+<p><a href="https://github.com/petabridge/lighthouse">Lighthouse</a> is a pre-built, dedicated seed node tool that you can use. It&#39;s extremely lightweight and only needs to be upgraded when Akka.Cluster itself is upgraded. If you&#39;re hosted on a platform like Azure or AWS, you can also tap into the platform-specific APIs to accomplish the same effect.</p>
+</blockquote>
+<h2 id="how-a-cluster-forms">How a Cluster Forms</h2>
+<p>This is what the process of a node joining the cluster looks like:</p>
+<p>Clusters initially consist of two distinct parts:</p>
+<ol>
+<li><strong>Seed nodes</strong> - nodes that reside at well-known locations on the network and</li>
+<li><strong>Non-seed nodes</strong> - nodes whose initial locations are unknown, and these nodes contact seed nodes in order to form the cluster.</li>
+</ol>
+<p>We can picture the initial state of a 5-node Akka.NET cluster to look like this:</p>
+<p><img class="img-responsive" src="diagrams/akka-cluster-concept.png" alt="Initial state of a 5-node Akka.NET cluster"></p>
+<p><strong>A</strong> and <strong>B</strong> are both seed nodes, and listen on IP address / port combinations that are baked into the configurations of <strong>C, D,</strong> and <strong>E</strong>.</p>
+<p><strong>A</strong> and <strong>B</strong> also know <em>each other&#39;s locations</em>, so they can communicate with each other initially also.</p>
+<p><img class="img-responsive" src="diagrams/akka-cluster-joining.png" alt="Akka.Cluster nodes begin attempting to join each other, beginning with seed nodes"></p>
+<p>All nodes initially attempt to connect to a seed node - in this instance the nodes are configured in the following way:</p>
+<ul>
+<li><strong>E</strong> knows how to contact <strong>B</strong>;</li>
+<li><strong>C</strong> and <strong>D</strong> know how to contact <strong>A</strong>; and</li>
+<li><strong>A</strong> and <strong>B</strong> know how to contact each other.</li>
+</ul>
+<p><img class="img-responsive" src="diagrams/akka-cluster-leader.png" alt="Akka.Cluster elects a leader, who begins making decisions about which nodes are up"></p>
+<p>During the process of initial contact within the cluster, a leader will be elected. In this case node <strong>A</strong> is elected to be the leader of the cluster.</p>
+<p><strong>A</strong> will begin marking nodes as up, beginning with the nodes it knows about: <strong>A,B,C,</strong> and <strong>D</strong>. <strong>A</strong> does not know about node <strong>E</strong> yet, so it&#39;s not marked as up.</p>
+<p>Gossip information about the membership of the cluster will begin to spread to all nodes, and the nodes will all begin to connect to each other to form a mesh network.</p>
+<p><img class="img-responsive" src="diagrams/akka-cluster-ring.png" alt="Akka.Cluster forms a ring / mesh network with all nodes connected to all nodes"></p>
+<p>After the gossip has had a chance to propagate across all nodes and the leader has marked everyone as up, every node will be connected to every other node and the cluster will have formed. Every node can now participate in any user-defined cluster operations.</p>
+<h3 id="leader-election">Leader Election</h3>
+<p>The cluster leader is chosen by a leader election algorithm that randomly picks a leader from the available set of nodes when the cluster forms. Usually, the leader is one of the seed nodes.</p>
+<h4 id="cluster-vs-role-leader">Cluster vs. Role Leader</h4>
+<p>Each role within the cluster also has a leader, just for that role. Its primary responsibility is enforcing a minimum number of &quot;up&quot; members within the role (if specified in the <a href="clustering/cluster-configuration">cluster config</a>).</p>
+<h3 id="reachability">Reachability</h3>
+<p>Nodes send each other <a href="https://en.wikipedia.org/wiki/Heartbeat_(computing">heartbeats</a>) on an ongoing basis. If a node misses enough heartbeats, this will trigger <code>unreachable</code> gossip messages from its peers.</p>
+<p>If the gossip from a quorum of cluster nodes agree that the node is unreachable (&quot;convergence&quot;), the leader will mark it as down and begin removing the node from the cluster.</p>
+<h2 id="location-transparency">Location Transparency</h2>
+<p><a href="concepts/location-transparency">Location transparency</a> is the underlying principle powering all of Akka.Remote and Akka.Cluster. The key point is that in a cluster, it&#39;s entirely possible that the actors you interface with to do work can be living on any node in the cluster... and you don&#39;t have to worry about which one.</p>
+<h2 id="related-material">Related Material</h2>
+<ul>
+<li><a href="clustering/cluster-routing">Cluster Routing</a></li>
+<li><a href="clustering/cluster-extension">Cluster <code>ActorSystem</code> Extension</a></li>
+<li><a href="clustering/cluster-configuration">Cluster Configuration</a></li>
+</ul>
+<h3 id="references-further-info">References &amp; Further Info</h3>
+<ul>
+<li><a href="https://petabridge.com/blog/intro-to-akka-cluster/">How to Create Scalable Clustered Akka.NET Apps Using Akka.Cluster</a></li>
+<li><a href="https://www.youtube.com/watch?v=mUTKvGyxbOA">Video: Introduction to Akka.Cluster</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Gossip_protocol">Gossip Protocol</a></li>
+<li><a href="https://en.wikipedia.org/wiki/High_availability">High-availability scenarios</a></li>
+<li><a href="http://martinfowler.com/articles/microservices.html">Microservices</a></li>
+</ul>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
