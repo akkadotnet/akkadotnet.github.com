@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Transports | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Transports<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/transports.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="akka-remote-transports">Akka.Remote Transports</h1>
+<p>In the <a href="../remoting">Akka.Remote overview</a> we introduced the concept of &quot;transports&quot; for Akka.Remote.</p>
+<blockquote>
+<p> A&quot;transport&quot; refers to an actual network transport, such as TCP or UDP. By default Akka.Remote uses a <a href="http://helios-io.github.io/" title="Helios - Reactive socket middleware for .NET">Helios</a> TCP transport, but you could write your own transport and use that instead of you wish.</p>
+</blockquote>
+<p>In this section we&#39;ll expand a bit more on what transports are and how Akka.Remote can support multiple transports simultaneously.</p>
+<h2 id="what-are-transports-">What are Transports?</h2>
+<p>Transports in Akka.Remote are abstractions on top of actual network transports, such as TCP and UDP sockets, and in truth transports have pretty simple requirements.</p>
+<blockquote>
+<p>NOTE: most of the information below are things you, as an Akka.NET user, do not need to care about 99% of the time. Feel free to skip to the &quot;Akka.Remote&#39;s Built-in Transports&quot; section.</p>
+</blockquote>
+<p>Transports <strong>do not need to care</strong> about:</p>
+<ul>
+<li><strong>Serialization</strong> - that&#39;s handled by Akka.NET itself;</li>
+<li><strong>Connection-oriented behavior</strong> - the assocation process inside Akka.Remote ensures this, even over connectionless transports like UDP;</li>
+<li><strong>Reliable delivery</strong> - for system messages this is handled by Akka.Remote and for user-defined messages this is taken care of at the application level through something like the <a href="http://api.getakka.net/docs/stable/html/2FD30363.htm"><code>AtLeastOnceDeliveryActor</code> class</a>, part of Akka.Persistence;</li>
+<li><strong>Handling network failures</strong> - all a transport needs to do is forward that information back up to Akka.Remote.</li>
+</ul>
+<p>Transports <strong>do need to care</strong> about:</p>
+<ul>
+<li><strong>IP addressing and ports</strong> - all Akka.NET endpoints have to be resolved to a reachable IP address and port number;</li>
+<li><strong>Message delivery</strong> - getting bytes from point A to point B;</li>
+<li><strong>Message framing</strong> - distinguishing individual messages within a network stream;</li>
+<li><strong>Disconnect and error reporting</strong> - let Akka.Remote know when a disconnect or transport error occurred;</li>
+<li><strong>Preserving message order (optimal)</strong> - some transports like UDP make no such guarantees, but in general it&#39;s recommended that the underlying transport preserve the write-order of messages on the read-side;</li>
+<li><strong>DNS resolution (optional)</strong> - sockets don&#39;t use <a href="https://en.wikipedia.org/wiki/Domain_Name_System">DNS</a> out of the box, but in order to make lives of Akka.NET users easy it&#39;s recommended that transports support DNS resolution. All built-in Akka.NET transports support DNS resolution by default.</li>
+</ul>
+<p>Transports are just plumbing for Akka.Remote - they carry out their tasks and keep things simple and performant.</p>
+<h2 id="akka-remote-s-built-in-transports">Akka.Remote&#39;s Built-in Transports</h2>
+<p>Out of the box Akka.NET uses a socket-based transport built on top of the <a href="http://helios-io.github.io/">Helios socket library</a>.</p>
+<blockquote>
+<p>NOTE: Helios supports both TCP and UDP, but currently only TCP support is included within Akka.NET. TCP is what most Akka.Remote and Akka.Cluster users use.</p>
+</blockquote>
+<p>To enable the Helios TCP transport, we need to add a section for it inside our <code>remote</code> section in <a href="../concepts/configuration">HOCON configuration</a>:</p>
+<pre><code class="hljs lang-xml">akka {  
+    actor {
+        provider = &quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;
+    }
+    remote {
+        helios.tcp {
+            port = 8081 #bound to a specific port
+            hostname = localhost
+        }
+    }
+}
+</code></pre>
+<h2 id="using-custom-transports">Using Custom Transports</h2>
+<p>Akka.Remote supports the ability to load third-party-defined transports at startup time - this is accomplished through defining a transport-specific configuration section within the <code>akka.remote</code> section in HOCON.</p>
+<p>Let&#39;s say, for instance, you found a third party NuGet package that implemented <a href="http://blog.chromium.org/2013/06/experimenting-with-quic.html">Google&#39;s Quic protocol</a> and wanted to use that transport inside your Akka.Remote application. Here&#39;s how you&#39;d configure your application to use it.</p>
+<pre><code class="hljs lang-xml">akka{
+    remote {
+        enabled-transports = [&quot;akka.remote.google-quic&quot;]
+        google-quic {
+            transport-class = &quot;Google.Quic.QuicTransport, Akka.Remote.Quic&quot;
+            applied-adapters = []
+            transport-protocol = quic
+            port = 0
+            hostname = localhost 
+        }
+    }
+}
+</code></pre>
+<p>You&#39;d define a custom HOCON section (<code>akka.remote.google-quic</code>) and let Akka.Remote know that it should read that section for a transport definition inside <code>akka.remote.enabled-transports</code>.</p>
+<blockquote>
+<p>NOTE: To implement a custom transport yourself, you need to implement the <a href="http://api.getakka.net/docs/stable/html/F60EF1D2.htm"><code>Akka.Remote.Transport.Transport</code> abstract class</a>.</p>
+</blockquote>
+<p>One important thing to note is the <code>akka.remote.google-quic.transport-protocol</code> setting - this specifices the address scheme you will use to address remote actors via the Quic protocol.</p>
+<p>A remote address for an actor on this transport will look like:</p>
+<pre><code>akka<span class="hljs-class">.quic</span>:<span class="hljs-comment">//MySystem@localhost:9001/user/actor #quic</span>
+akka<span class="hljs-class">.tcp</span>:<span class="hljs-comment">//MySystem@localhost:9002/user/actor #helios.tcp</span>
+</code></pre><p>So the protocol you use in your remote <code>ActorSelection</code>s will need to use the string provided inside the <code>transport-protocol</code> block in your HOCON configuration.</p>
+<h2 id="running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</h2>
+<p>One of the most productive features of Akka.Remote is its ability to allow you to support multiple transports simultaneously within a single <code>ActorSystem</code>.</p>
+<p>Suppose we added UDP support for the built-in Helios transport - here&#39;s what running both a UDP and TCP transport at the same time would look like in HOCON configuration.</p>
+<pre><code class="hljs lang-xml">akka{
+    remote {
+        enabled-transports = [&quot;akka.remote.helios.tcp&quot;, &quot;akka.remote.helios.udp&quot;]
+        helios.tcp {
+            port = 8081
+            hostname = localhost
+        }
+        helios.udp {
+            port = 8082 # needs to be on a different port or IP than TCP
+            hostname = localhost
+        }
+    }
+}
+</code></pre>
+<p>Both TCP and UDP are enabled in this scenario. But how do I know which transport is being used when I send a message to a <code>RemoteActorRef</code>? That&#39;s indicated by the protocol scheme used in the <code>Address</code> of the remote actor:</p>
+<pre><code>akka<span class="hljs-class">.tcp</span>:<span class="hljs-comment">//MySystem@localhost:8081/user/actor #helios.tcp</span>
+akka<span class="hljs-class">.udp</span>:<span class="hljs-comment">//MySystem@localhost:8082/user/actor #helios.udp</span>
+</code></pre><p>So if you want to send a message to a remote actor over UDP, you&#39;d write something like this:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> <span class="hljs-keyword">as</span> = MyActorSystem.ActorSelection(<span class="hljs-string">"akka.udp://RemoteSystem@localhost:8082/user/actor"</span>);
+<span class="hljs-keyword">as</span>.Tell(<span class="hljs-string">"remote message!"</span>); <span class="hljs-comment">//delivers message to remote system, if they're also using this transport</span>
+</code></pre>
+<h2 id="transport-caveats-and-constraints">Transport Caveats and Constraints</h2>
+<p>There are a couple of important caveats to bear in mind with transports in Akka.Remote.</p>
+<ul>
+<li>Each transport must have its own distinct protocol scheme (<code>transport-protocol</code> in HOCON) - no two transports can share the same scheme.</li>
+<li>Only one instance of a given transport can be active at a time, for the reason above.</li>
+</ul>
+<h3 id="separating-physical-ip-address-from-logical-address">Separating Physical IP Address from Logical Address</h3>
+<p>One common DevOps issue that comes up often with Akka.Remote is something along the lines of the following:</p>
+<blockquote>
+<p>&quot;I want to be able to send a message to <code>machine1.foobar.com</code> as my <code>ActorSystem</code> inbound endpoint, but the socket can&#39;t bind to that domain name (it can only bind to an IP.) How do I make it so I can send messages from other remote systems to <code>machine1.foobar.com</code>?</p>
+</blockquote>
+<p>This can be solved through a built-in configuration property that is supported on every Akka.Remote transport, including third-party ones called the <code>public-hostname</code> property.</p>
+<p>For instance, we can bind a Helios TCP transport to listen on all addresses (<code>0.0.0.0</code>) so we can accept messages from multiple network interfaces (which is more common in server-side environments than you might think) but still register itself as listening on <code>machine1.foobar.com</code>:</p>
+<pre><code class="hljs lang-xml">akka{
+    remote {
+        enabled-transports = [&quot;akka.remote.helios.tcp&quot;, &quot;akka.remote.helios.udp&quot;]
+        helios.tcp {
+            port = 8081
+            hostname = 0.0.0.0 # listen on all interfaces
+            public-hostname = &quot;machine1.foobar.com&quot;
+        }
+    }
+}
+</code></pre>
+<p>This configuration allows the <code>ActorSystem</code>&#39;s Helios TCP transport to listen on all interfaces, but when it associates with a remote system it&#39;ll tell the remote system that it&#39;s address is actually <code>machine1.foobar.com</code>.</p>
+<p>Why is this distinction important? Why do we care about registering an publicly accessible hostname with our <code>ActorSystem</code>? Because in the event that other systems need to connect or reconnect to this process, <em>they need to have a reachable address.</em></p>
+<p>By default, Akka.Remote assumes that <code>hostname</code> is publicly accessible and will use that as the <code>public-hostname</code> value. But in the even that it&#39;s not AND some of your Akka.NET applications might need to contact this process then you need to set a publicly accessible hostname. </p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="http://blog.stephencleary.com/2009/04/message-framing.html">Message Framing</a> by Stephen Cleary</li>
+</ul>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

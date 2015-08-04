@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Akka.Remote Overview | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Akka.Remote Overview<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="akka-remote-overview">Akka.Remote Overview</h1>
+<p>Akka.NET uses the &quot;Home Depot&quot; extensibility model - the base <a href="https://www.nuget.org/packages/Akka/">Akka NuGet package</a> provides all of the capabilities you need to create actors, <code>IActorRef</code>s, and pass messages, but the Akka.NET project ships dozens of additional modules which take the capabilities of Akka.NET and extend them to do new things!</p>
+<p><strong><a href="http://www.nuget.org/packages/Akka.Remote/">Akka.Remote</a> is the most powerful of all of these additional packages</strong>, as it is what brings the capability to build an <code>ActorSystem</code> across multiple processes over a computer network.  </p>
+<h2 id="akka-remote-s-capabilities">Akka.Remote&#39;s Capabilities</h2>
+<p>Akka.Remote introduces the following capabilities to Akka.NET applications:</p>
+<ol>
+<li><strong>Location transparency with RemoteActorRef</strong> - write code that looks like it&#39;s communicating with local actors, but with just a few configuration settings your actors can begin communicating with actors hosted in remote processes in a way that&#39;s fully <a href="../concepts/location-transparency">location transparent</a> to your code.</li>
+<li><strong>Remote addressing</strong> - Akka.Remote extends the <code>Address</code> and <code>ActorPath</code> components of Akka.NET to also now include information about how to connect to remote processes via <code>ActorSelection</code>.</li>
+<li><strong>Remote messaging</strong> - send messages, <em>transparently</em>, to actors running in remote <code>ActorSystem</code>s elsewhere on the network.</li>
+<li><strong>Remote deployment</strong> - remotely deploy actors via the <code>ActorOf</code> method onto remote <code>ActorSystem</code> instances, anywhere on the network! The location of your actors on the network becomes a deployment detail in Akka.Remote.</li>
+<li><strong>Multiple network transports</strong> - out of the box Akka.Remote ships with support for TCP, but has the ability to plugin third party transports and active multiple of them at the same time.</li>
+</ol>
+<h3 id="use-cases">Use Cases</h3>
+<p>Akka.Remote is most commonly used in distributed applications that run across the network, some examples include:</p>
+<ol>
+<li>Client applications (WPF, Windows Forms) with duplex communication requirements with remote servers;</li>
+<li>Server-to-Server applications;</li>
+<li>Embedded Akka.NET applications; (like <a href="https://twitter.com/AkkaDotNET/status/584109606714093568">this RaspberryPi example</a>!)</li>
+<li>and any application that uses Akka.Cluster or any of its modules.</li>
+</ol>
+<blockquote>
+<p>NOTE: Akka.Remote largely serves as plumbing for Akka.Cluster and the other &quot;high availability&quot; modules within Akka.NET. The use cases for using Akka.Remote by itself are largely limited to scenarios that don&#39;t require the elasticity and fault-tolerance needs that Akka.Cluster fulfills.</p>
+</blockquote>
+<p>That being said, it&#39;s a good idea to understand how Akka.Remote works if you intend to use clustering. So keep reading!</p>
+<h2 id="enabling-akka-remote">Enabling Akka.Remote</h2>
+<p>Enabling Akka.Remote in your own applications is simple:</p>
+<p><img class="img-responsive" src="images/how-to-enable-akka-remote.png" alt="How to Enable Akka.Remote"></p>
+<p>First you need to install the Akka.Remote NuGet package, which you can do like this:</p>
+<pre><code>PS&gt; <span class="hljs-keyword">Install</span>-Package Akka.Remote
+</code></pre><p>Next, you&#39;ll need to enable the <code>RemoteActorRefProvider</code> inside <a href="../concepts/configuration">HOCON configuration</a> and bind your transport to an accessible IP address and port combination. Here&#39;s an example:</p>
+<pre><code class="hljs lang-xml">akka {
+    actor {
+        provider = &quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;
+    }
+
+    remote {
+        helios.tcp {
+            port = 8080
+            hostname = localhost
+        }
+    }
+}
+</code></pre>
+<h2 id="addresses-transports-endpoints-and-associations">Addresses, Transports, Endpoints, and Associations</h2>
+<p>In the above section we mentioned that you have to bind a <em>transport</em> to an IP address and port, we did in that in HOCON inside the <code>helios.tcp</code> section. Why did we have to do any of that?</p>
+<p>Well, let&#39;s take a step back to define some key terms you&#39;ll need to be familiar with in order to use Akka.Remote:</p>
+<ul>
+<li><strong>Transport</strong> - a &quot;transport&quot; refers to an actual network transport, such as TCP or UDP. By default Akka.Remote uses a <a href="http://helios-io.github.io/" title="Helios - Reactive socket middleware for .NET">Helios</a> TCP transport, but you could write your own transport and use that instead of you wish.</li>
+<li><strong>Address</strong> - this refers to an IP address and port combination, just like any other IP-enabled protocol. You can also use a hostname instead of an IP address, but the hostname must be resolved to an IP address first. </li>
+<li><strong>Endpoint</strong> - an &quot;endpoint&quot; is a specific address binding for a transport. If I open a TCP transport at <code>localhost:8080</code> then I&#39;ve created an <em>endpoint</em> for that transport at that address.</li>
+<li><strong>Association</strong> - an &quot;association&quot; is a connection between two endpoints, each belonging to a different <code>ActorSystem</code>. Must have a valid <em>outbound</em> endpoint and a valid <em>inbound</em> endpoint in order to create the association.</li>
+</ul>
+<blockquote>
+<p>NOTE: Learn more about <a href="../transports">Helios and the default Akka.Remote transports</a> here.</p>
+</blockquote>
+<p>These terms form the basis for all remote interaction between <code>ActorSystem</code> instances, so they&#39;re critically important to learn and distinguish.</p>
+<p>So in the case of our previous example, <code>localhost:8080</code> is the inbound (listening) endpoint for the Helios TCP transport of the <code>ActorSystem</code> we configured.</p>
+<h2 id="how-to-form-associations-between-remote-systems">How to Form Associations between Remote Systems</h2>
+<p>So imagine we have the following two actor systems configured to both use the <code>helios.tcp</code> Akka.Remote transport:</p>
+<p><strong>Client</strong></p>
+<pre><code class="hljs lang-xml">akka {  
+    actor {
+        provider = &quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;
+    }
+    remote {
+        helios.tcp {
+            port = 0 # bound to a dynamic port assigned by the OS
+            hostname = localhost
+        }
+    }
+}
+</code></pre>
+<p><strong>Server</strong></p>
+<pre><code class="hljs lang-xml">akka {  
+    actor {
+        provider = &quot;Akka.Remote.RemoteActorRefProvider, Akka.Remote&quot;
+    }
+    remote {
+        helios.tcp {
+            port = 8081 #bound to a specific port
+            hostname = localhost
+        }
+    }
+}
+</code></pre>
+<p>Here&#39;s what the initial state of those two systems would look like upon starting both <code>ActorSystem</code>s.</p>
+<p><img class="img-responsive" src="images/remoting-initial-state.png" alt="Initial state of Client and Server"></p>
+<p>Both <code>ActorSystem</code> instances start, open their transports and bind them to the configured addresses (which creates an <em>inbound</em> endpoint for each) and then waits for incoming association attempts from elsewhere.</p>
+<p>In order to actually form an association between the client and the server, <em>one of the nodes has to attempt contact with the other.</em> Remote associations are formed lazily!</p>
+<h3 id="addressing-a-remote-actorsystem-">Addressing a Remote <code>ActorSystem</code></h3>
+<p>In order to form an association with a remote <code>ActorSystem</code>, we have to have an <a href="http://api.getakka.net/docs/stable/html/58836154.htm"><code>Address</code></a> for that <code>ActorSystem</code>.</p>
+<p>All local Akka.NET actors have an <code>Address</code> too, as part of their <a href="http://api.getakka.net/docs/stable/html/6DC439AE.htm"><code>ActorPath</code></a>. </p>
+<p><strong>A local <code>ActorPath</code></strong> look like  this:</p>
+<p><img class="img-responsive" src="images/local-address-annotation.png" alt="Local Akka.NET address"></p>
+<p><strong>A remote <code>ActorPath</code></strong> looks like this:</p>
+<p><img class="img-responsive" src="images/remote-address-annotation.png" alt="Remote Akka.NET address"></p>
+<p>Each <code>ActorPath</code> consists of four parts:</p>
+<ol>
+<li><strong>Protocol</strong> - this defines the protocol used to communicate with this actor. Default local protocol is in-memory message passing.</li>
+<li><strong>ActorSystem</strong> - the name of the <code>ActorSystem</code> to which this actor belongs.</li>
+<li><strong>Address</strong> - refers to the inbound endpoint you can use to communicate with this actor via the protocol. There&#39;s a default address for local-only actors and it always get committed from local <code>ActorPaths</code>.</li>
+<li><strong>Path</strong> - refers to the path of this actor in the hierarchy.</li>
+</ol>
+<p>When you want to connect to a remote <code>ActorSystem</code>, two important changes occur to the address:</p>
+<ol>
+<li><strong>The protocol gets augmented with the protocol of the network transport</strong> - so in this case, since we&#39;re using the Helios TCP transport the protocol for communicating with all remote actors in our <code>ActorSystem</code> changes from <code>akka://</code> to <code>akka.tcp://</code>. When you deploy an actor remotely or send a message to a remote actor via <code>ActorSelection</code>, specifying this protocol is what tells your local <code>ActorSystem</code> how to deliver this message to the remote one!</li>
+<li><strong>The address gets populated with the inbound endpoint on the transport</strong> - <code>localhost:9001</code> in this case. This lets your local system know how to attempt to establish an <em>outbound endpoint</em> to the remote <code>ActorSystem</code>.</li>
+</ol>
+<blockquote>
+<p>NOTE: for more information about addressing in Akka.NET, see <a href="../concepts/addressing">Actor References, Paths and Addresses</a></p>
+</blockquote>
+<p>Here&#39;s how we actually use a remote <code>Address</code> to form an association between two remote <code>ActorSystem</code> instances.</p>
+<h3 id="the-association-process">The Association Process</h3>
+<p>This information exposes some of the Akka.Remote internals to you, but it&#39;s important to know because without this information it&#39;s very difficult to troubleshoot association problems in production - <em>which you should anticipate as a product of imperfect networks</em>.</p>
+<p><img class="img-responsive" src="images/how-associations-work.png" alt="The Association process"></p>
+<p>The association process begins when <strong>System 1</strong> has an actor who wants to send a message to an <a href="http://api.getakka.net/docs/stable/html/CC0731A6.htm"><code>ActorSelection</code></a> belonging to an actor who resides on <strong>System 2</strong>.</p>
+<p>The <code>RemoteActorRefProvider</code> built into System 1, upon seeing the remote address in the <code>ActorSelection</code>, will check to see if a remote connection to System 2 is already open. Since there isn&#39;t one, it will open a new outbound endpoint using its TCP transport (which, internally, will create a new TCP socket on a new port - but that&#39;s beyond the scope of this course) and send an &quot;handshake&quot; message to System 2.</p>
+<p>System 2 will receive the handshake, accept the inbound association, and reply with an &quot;Associate&quot; message which will complete the association process.</p>
+<p>System 1 will then finally deliver the message contained in the <code>ActorSelection</code> to the appropriate actor on System 2.</p>
+<p>That&#39;s how associations work in a nutshell!</p>
+<h4 id="recap-remote-deployments-and-remote-actorselections">Recap: Remote Deployments and Remote ActorSelections</h4>
+<h4 id="internals-how-akka-remote-associations-work">Internals: How Akka.Remote Associations Work</h4>
+<p>We have a video that illustrates how this process works - this video was really designed for Akka.NET contributors who work on Akka.Remote, but there&#39;s a lot of benefit in understanding it as an end-user of Akka.NET too!</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/6c1gVLyYcMM" frameborder="0" allowfullscreen></iframe>
+
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=6c1gVLyYcMM">Akka.NET Internals: How Akka.Remote Connections Work (Video)</a></li>
+<li><a href="https://github.com/akkadotnet/akka.net/tree/dev/src/examples/Chat">ChatClient Akka.Remote example (Code Sample)</a></li>
+</ul>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
