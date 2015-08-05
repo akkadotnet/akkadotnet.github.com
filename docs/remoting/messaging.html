@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Remote Messaging | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+							<li class="active">Remote Messaging<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/messaging.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,142 +172,78 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="sending-messages-to-remote-actors">Sending Messages to Remote Actors</h1>
+<p>Once you <a href="../remoting/#how-to-form-associations-between-remote-systems">form an association between two <code>ActorSystem</code>s</a>, you can now send messages transparently between actors regardless of where they are on the network.</p>
+<h2 id="serialization">Serialization</h2>
+<p><a href="../Serialization">Serialization of messages in Akka.NET is transparent</a>, but in order to achieve that transparency there are some practices you need to observe in how you design your project.</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li><strong>Akka.NET serialization is strongly typed</strong> - if you serialize a message of type <code>Foo.FooMessage.MyMessage, Foo.dll</code> (this is a <a href="https://msdn.microsoft.com/en-us/library/yfsftwz6.aspx">Fully Qualified Type Name (FQN)</a>) then Akka.NET will look for <em>that exact type</em> when it attempts to deserialize your message. If that type isn&#39;t found, deserialization fails.</li>
+<li><strong>Therefore, all of your network messages should be defined in shared assemblies</strong> that are referenced by all of the applications running Akka.NET <code>ActorSystem</code>s who will be communicating remotely.</li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li>Use-case and Deployment Scenarios<ul>
-<li><a href="deployment-scenarios/Console">Console</a></li>
-<li><a href="deployment-scenarios/ASP NET">ASP.NET</a></li>
-<li><a href="deployment-scenarios/Windows Service">Windows Service</a></li>
-<li><a href="deployment-scenarios/Azure PaaS Worker Role">Azure PaaS Worker Role</a></li>
-</ul>
-</li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="working-with-actors">Working with Actors</h3>
-<ul>
-<li><a href="working-with-actors/creating-actors">Creating your first Actor</a></li>
-<li><a href="working-with-actors/defining-an-actor">Defining an Actor class</a></li>
-<li><a href="working-with-actors/whats-in-an-actor">What&#39;s in an Actor</a></li>
-<li><a href="working-with-actors/actorrefs-and-actorselections">ActorRefs and ActorSelections</a></li>
-<li><a href="working-with-actors/creating-actors-with-props">Creating actors with Props</a></li>
-<li><a href="working-with-actors/handling-messages">Handling Messages</a></li>
-<li><a href="working-with-actors/sending-messages">Sending Messages</a></li>
-<li><a href="working-with-actors/Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="working-with-actors/Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="akka-remote">Akka.Remote</h3>
-<ul>
-<li><a href="remoting/">Akka.Remote Overview</a><ul>
-<li><a href="remoting/#use-cases">Use Cases</a></li>
-<li><a href="remoting/#enabling-akka-remote">Enabling Akka.Remote</a></li>
-<li><a href="remoting/#addresses-transports-endpoints-and-associations">Remote Addressing</a></li>
-<li><a href="remoting/#how-to-form-associations-between-remote-systems">Connecting Remote Systems</a></li>
-</ul>
-</li>
-<li><a href="remoting/transports">Transports</a><ul>
-<li><a href="remoting/transports#akka-remote-s-built-in-transports">Built-in Transports</a></li>
-<li><a href="remoting/transports#using-custom-transports">Custom Transports</a></li>
-<li><a href="remoting/transports#running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</a></li>
-</ul>
-</li>
-<li><a href="remoting/messaging">Remote Messaging</a><ul>
-<li><a href="remoting/messaging#serialization">Serialization</a></li>
-<li><a href="remoting/messaging#-remoteactorref-and-location-transparency">RemoteActorRefs</a></li>
-</ul>
-</li>
-<li><a href="remoting/deployment">Deploying Actors Remotely</a><ul>
-<li><a href="remoting/deployment#when-to-use-remote-deployment">When to Use Remote Deployment</a></li>
-</ul>
-</li>
-<li><a href="remoting/deathwatch">Detecting &amp; Handling Network Failures (DeathWatch)</a></li>
-<li><a href="remoting/security">Network Security</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Serialization">Serialization</a></li>
-<li><a href="IO">Akka I/O</a></li>
-<li>Akka.Cluster<ul>
-<li><a href="clustering/cluster-overview">Cluster Overview</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="testing">Testing</h3>
-<ul>
-<li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka">Building and Distributing Akka.NET</a></li>
-<li><a href="akka-developers/nightly-builds">Getting Access to Nightly Akka.NET Builds</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+<h2 id="initiating-remote-messaging-with-actorselection-s">Initiating Remote Messaging with <code>ActorSelection</code>s</h2>
+<p>When your <code>ActorSystem</code> boots, it won&#39;t have any associations to other remote systems - so you have to establish one by sending a message to a remote actor via <code>ActorSelection</code> initially which you can do by sending a message to an <a href="../remoting/#addressing-a-remote-actorsystem-">actor&#39;s remote <code>ActorPath</code></a>.</p>
+<blockquote>
+<p>NOTE: You can also establish an association by <a href="deployment">deploying actors onto a remote <code>ActorSystem</code></a>.</p>
+</blockquote>
+<p>Let&#39;s consider the following two actors and some message classes.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Written into a shared library</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Msg</span> {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Content {<span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>;}
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">StartRemoting</span>{}
+
+<span class="hljs-comment">// Initiates remote contact </span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SendActor</span> : <span class="hljs-title">ReceiveActor</span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">SendActor</span>(<span class="hljs-params"></span>)</span>{
+        Receive&lt;StartRemoting&gt;(s =&gt; {
+            Context.ActorSelection(<span class="hljs-string">"akka.tcp://RemoteSys@localhost:9000/user/Echo"</span>)
+            .Tell(<span class="hljs-keyword">new</span> Msg(<span class="hljs-string">"hi!"</span>));
+        });
+        Receive&lt;Msg&gt;(msg =&gt; {
+            Console.WriteLine(<span class="hljs-string">"Received {0} from {1}"</span>, msg.Content, Sender);
+        });
+    }    
+}
+
+<span class="hljs-comment">// Runs in a separate process from SendActor</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">EchoActor</span> : <span class="hljs-title">ReceiveActor</span>{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">EchoActor</span>(<span class="hljs-params"></span>)</span>{
+        Receive&lt;Msg&gt;(msg =&gt; {
+            <span class="hljs-comment">// echo message back to sender</span>
+            Sender.Tell(msg);
+        });
+    }
+}
+</code></pre>
+<blockquote>
+<p>NOTE: In a real project, all three of these classes would live in separate projects. See the <a href="https://github.com/akkadotnet/akka.net/tree/dev/src/examples/Chat">Chat example inside the Akka.NET core repository for a simple example</a>.</p>
+</blockquote>
+<p>After the <code>Msg</code> is delivered via <code>ActorSelection</code> is delivered to the <code>EchoActor</code>, the <code>EchoActor</code> can simply reply to the <code>Sender</code> field - <em>just like how you would with local actors</em>!</p>
+<p>What&#39;s really going on there?</p>
+<p><img class="img-responsive" src="images/remoteactorref-debug.png" alt="AkkaTime.Server.SessionListener Sender upon receiving HandshakeInfo from AkkaTime.Client.SessionHandshakeActor"></p>
+<blockquote>
+<p>NOTE: This screenshot is from a real Akka.NET project and not the canned example above, but the point is the same.</p>
+</blockquote>
+<p>The <code>Sender</code>, an <code>IActorRef</code>, is actually an <code>Akka.Remote.RemoteActorRef</code>! But the fact that this actor reference resides elsewhere on the network is a detail that&#39;s transparent to the actor code you wrote!</p>
+<p>In essence, minus the initial <code>ActorSelection</code> used to start remote communication between the two <code>ActorSystem</code>s, any actor in either <code>ActorSystem</code> could reply to eachother without knowing or caring that they exist elsewhere on the network. That&#39;s pretty cool! </p>
+<h2 id="-remoteactorref-and-location-transparency"><code>RemoteActorRef</code> and Location Transparency</h2>
+<p>What <code>RemoteActorRef</code> gives us is a magical property called <a href="../concepts/location-transparency">Location Transparency</a>.</p>
+<blockquote>
+<p>What location transparency means is that whenever you send a message to an actor, you don&#39;t need to know where they are within an actor system, which might span hundreds of computers. You just have to know that actors&#39; address.</p>
+</blockquote>
+<p>It&#39;s the job of the <code>RemoteActorRef</code> to make a remote actor running on in a different process look and feel exactly the same as an <code>IActorRef</code> running locally inside the same process as your code. This is what it means to &quot;have a transparent location.&quot; </p>
+<p>Regardless of where the actor actually resides, it doesn&#39;t affect your code one way or another.</p>
+<p><strong>So this has one profound implicat on your Akka.NET applications - all of your actor code <em>is already able to run on the network by default</em>. </strong></p>
+<p>Therefore, many of the code samples in <em>Akka.NET Remoting</em> won&#39;t look very &quot;networky.&quot; That&#39;s on purpose. That&#39;s Akka.NET taking care of the heavy lifting for us!</p>
+<h2 id="how-remoteactorref-actually-works">How <code>RemoteActorRef</code> Actually Works</h2>
+<p>So how does the <code>RemoteActorRef</code> class provide location transparency for us?</p>
+<p><img class="img-responsive" src="images/how-remoteactoref-works.png" alt="How RemoteActorRef actually works"></p>
+<p>A <code>RemoteActorRef</code> is actually a paper-thin <code>IActorRef</code> instance that maps back to an actor that actually exists somewhere else on the network. </p>
+<p>Every time you <code>Tell</code> a message to a <code>RemoteActorRef</code> you&#39;re actually writing a message to your local <code>EndpointWriter</code> for that transport, who will in turn deliver the message over the network to an <code>EndpointReader</code> on the other side of the association.</p>
+<p>The <code>EndpointReader</code> is able to tell, with some help from the <code>RemoteActorRefProvider</code>, which local actor this network message was intended for and will deliver that message to the correct local actor. </p>
+<p>And, as you might have guessed, it will also create a <code>RemoteActorRef</code> that the receiver of the network message can use the reply to the original sender!</p>
+<p>So that is the essence of how <code>RemoteActorRef</code>s work - they&#39;re a tool to provide location transparency and make it so all of your actor code that works for local actors can automatically work with remote actors without any code modifications.</p>
 </div>
 
 								
