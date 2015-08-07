@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Akka.Cluster Routing | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Akka.Cluster Routing<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/cluster-routing.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="akka-cluster-routing">Akka.Cluster Routing</h1>
+<p><a href="./cluster-overview">Akka.Cluster</a> extends the capabilities of both <a href="../working-with-actors/Routers#pools-vs-groups"><code>Pool</code> and <code>Group</code></a> routers to work across entire clusters of Akka.NET applications, and can automatically add or remove routees as new nodes join and exit the cluster.</p>
+<p><img class="img-responsive" src="images/cluster-routers.png" alt="Akka.Cluster clustered routers capabilities overview"></p>
+<h2 id="how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</h2>
+<p>How the gossip is used depends on the type of the router. Clustered <code>Pool</code> routers will automatically <a href="../remoting/deployment">remote-deploy</a> routees onto nodes they discover as a result of changes in cluster membership. <code>Group</code> routers will add new <code>ActorSelectionRoutee</code>s to their routees list instead.</p>
+<blockquote>
+<h4 id="note-this-section-refers-to-gossip-events-such-as-clusterevent-memberup-which-are-covered-here-cluster-extension-cluster-event-types-">Note: this section refers to gossip events, such as <code>ClusterEvent.MemberUp</code>, which are <a href="./cluster-extension#cluster-event-types">covered here</a>.</h4>
+</blockquote>
+<p>Clustered routers subscribe to gossip messages from the <code>Cluster</code> object (which <a href="./cluster-extension#subscribing-to-cluster-gossip">you can also do in a user-defined actor</a>), and they use the information they dynamically receive from the cluster to ad or remove routees on the fly.</p>
+<p>A <code>ClusterEvent.MemberUp</code> message will cause the cluster to add a new routee (although this depends on some of the router configuration options) and a <code>ClusterEvent.MemberRemoved</code> will cause the clustered router to remove any routees who were on the affected node.</p>
+<h2 id="cluster-routing-strategies">Cluster Routing Strategies</h2>
+<p><a href="../working-with-actors/Routers#routing-strategies">All of the routing strategies</a> that are available in Akka.NET core are also available in Akka.Cluster - <code>RoundRobin</code> and <code>ConsistentHash</code> work just as well across the network as they do locally.</p>
+<h2 id="types-of-clustered-routers">Types of Clustered Routers</h2>
+<h3 id="clustered-group-routers">Clustered <code>Group</code> Routers</h3>
+<p>The first type of router we&#39;re going to look at at clustered <code>Group</code> routers.</p>
+<p><img class="img-responsive" src="images/akka-cluster-routers.png" alt="Akka.Cluster group routers in action"></p>
+<p>So what&#39;s happening in the diagram above? In this setup, we have three distinct nodes:</p>
+<ol>
+<li>localhost:89, who&#39;s already <strong>Up</strong>, and is the node which has a clustered <code>Group</code> router running on it;</li>
+<li>localhost:90, who&#39;s <strong>not Up</strong> yet but will be routed to; and</li>
+<li>localhost:91, who&#39;s <strong>not Up</strong> yet and will also be routed to.</li>
+</ol>
+<p>We&#39;re going to route messages from localhost:89 to all of the actors who live at path <code>/user/foo</code> on each of the new nodes who join. So here&#39;s the sequence of events that occurs:</p>
+<ol>
+<li>localhost:90 joins the cluster and a <code>ClusterEvent.MemberUp</code> message gets generated on each member.</li>
+<li><code>Group</code> router on localhost:89 receives the <code>ClusterEvent.MemberUp</code> message;</li>
+<li><code>Group</code> router adds <code>akka.tcp://Sys@localhost:90/user/foo</code> as a routee and begins routing messages to it over the network;</li>
+<li>localhost:91 joins the cluster and a <code>ClusterEvent.MemberUp</code> message gets generated on each member.</li>
+<li><code>Group</code> router on localhost:89 receives the <code>ClusterEvent.MemberUp</code> message;</li>
+<li><code>Group</code> router adds <code>akka.tcp://Sys@localhost:91/user/foo</code> as a routee and begins routing messages to it over the network.</li>
+</ol>
+<p>If either localhost:90 or localhost:91 was removed from the cluster at some point in the future, their routee would be removed from the <code>Group</code> router running on localhost:89.</p>
+<h3 id="clustered-pool-routers">Clustered <code>Pool</code> Routers</h3>
+<p>Clustered <code>Pool</code> routers differ from <code>Group</code> routers in that they deploy their routees remotely onto their target nodes, versus routing messages to pre-defined actor paths that may or may not exist on the remote machines.</p>
+<p>Here&#39;s a <code>Pool</code> scenario equivalent to the <code>Group</code> one we showed earlier:</p>
+<p><img class="img-responsive" src="images/akka-cluster-pool-routers.png" alt="Akka.Cluster pool routers in action"></p>
+<p>This is a virtually identical setup as the <code>Group</code> router:</p>
+<ol>
+<li>localhost:89, who&#39;s already <strong>Up</strong>, and is the node which has a clustered <code>Pool</code> router running on it;</li>
+<li>localhost:90, who&#39;s <strong>not Up</strong> yet but will be deployed onto and routed to; and</li>
+<li>localhost:91, who&#39;s <strong>not Up</strong> yet and will also be deployed onto and routed to.</li>
+</ol>
+<p>localhost:89 is going to deploy routees onto localhost:90 and localhost:91 and subsequently route messages to them. Here&#39;s how that occurs:</p>
+<ol>
+<li>localhost:90 joins the cluster and a <code>ClusterEvent.MemberUp</code> message gets generated on each member.</li>
+<li><code>Pool</code> router on localhost:89 receives the <code>ClusterEvent.MemberUp</code> message;</li>
+<li><code>Pool</code> router REMOTE DEPLOYS <code>akka.tcp://Sys@localhost:90/remote/akka/tcp/localhost:89/$a</code> as a routee and begins routing messages to it over the network;</li>
+<li>localhost:91 joins the cluster and a <code>ClusterEvent.MemberUp</code> message gets generated on each member.</li>
+<li><code>Pool</code> router on localhost:89 receives the <code>ClusterEvent.MemberUp</code> message;</li>
+<li><code>Pool</code> router REMOTE DEPLOYS <code>akka.tcp://Sys@localhost:91/remote/akka/tcp/localhost:89/$b</code> as a routee and begins routing messages to it over the network.</li>
+</ol>
+<p>If either localhost:90 or localhost:91 dies following this setup the remote deployed routee will be killed and the <code>Pool</code> router will be notified via <code>Deathwatch</code>. If there&#39;s capacity available (we&#39;ll explain in a moment,) the <code>Pool</code> router will replace the dead routee by deploying a new routee onto another qualified node.</p>
+<h2 id="cluster-router-config">Cluster Router Config</h2>
+<p>Here are the essential options you will use to configure cluster-aware routers.</p>
+<h3 id="all-clustered-routers">All Clustered Routers</h3>
+<ul>
+<li><strong><code>enabled</code></strong>: this must be set to <code>on</code> in order for this to be a clustered router.</li>
+<li><strong><code>allow-local-routees</code></strong>: determines if routee actors are allowed to be located on the same node as router actor, or only on remote nodes. Setting this to <code>off</code> means that all the routees for this router will exist on different nodes in the cluster.</li>
+<li><code>nr-of-instances</code>: this is the maximum number of total routees that this router will route to.</li>
+<li><strong><code>use-role</code></strong>: depends on whether router is a <code>Pool</code> or <code>Group</code> router</li>
+</ul>
+<h3 id="clustered-group-router-config">Clustered <code>Group</code> Router Config</h3>
+<ul>
+<li><strong><code>nr-of-instances</code></strong>: this is the maximum number of total routees that this router will route to.</li>
+<li><strong><code>max-nr-of-instances-per-node</code></strong>: this does not apply to <code>Group</code> routers.</li>
+<li><strong><code>routees.paths</code></strong>: the comma-separated path(s) of the routees on each node in the cluster.<ul>
+<li>This setting can use what&#39;s called a <em>wildcard</em> path, meaning we don&#39;t care about the name of the actor in the <code>*</code> position. e.g. <a href="https://github.com/petabridge/akkadotnet-code-samples/blob/master/Cluster.WebCrawler/src/WebCrawler.Service/App.config#L38">in the Webcrawler sample,</a> as long as the actor being deployed is named <code>coordinators</code> and the grandparent is named <code>api</code>, then this deployment configuration can be safely reused. You can write <a href="../concepts/addressing#summary-actorof-vs-actorselection-"><code>ActorSelection</code>s</a> using wildcard paths also!</li>
+<li>You do <em>not</em> need to specify <code>/user</code> at the start of each path. It is implied.</li>
+</ul>
+</li>
+<li><strong><code>use-role</code></strong>: the <code>Group</code> router will only route to routees at the specified <code>paths</code> on nodes marked with the given role. Can only specify one role here.</li>
+</ul>
+<h4 id="hocon-for-clustered-group-routers">HOCON for Clustered <code>Group</code> Routers</h4>
+<p>Here&#39;s an example of what the HOCON for a clustered <code>Group</code> router looks like, <a href="https://github.com/petabridge/akkadotnet-code-samples/tree/master/Cluster.WebCrawler">taken from the WebCrawler sample</a>:</p>
+<pre><code class="hljs lang-xml">akka {
+   actor{
+      provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
+      deployment {
+        /api/myClusterGroupRouter {
+          router = broadcast-group # routing strategy
+          routees.paths = [&quot;/user/api&quot;] # path of routee on each node
+          nr-of-instances = 3 # max number of total routees
+          cluster {
+             enabled = on
+             allow-local-routees = on
+             use-role = crawler
+          }
+        }
+      }
+   }
+}
+</code></pre>
+<h3 id="clustered-pool-router-config">Clustered <code>Pool</code> Router Config</h3>
+<ul>
+<li><strong><code>nr-of-instances</code></strong>: this is the maximum number of total routees that this router will first deploy, and then route to.</li>
+<li><strong><code>max-nr-of-instances-per-node</code></strong>: the maximum number of routees that the <code>Pool</code> router will deploy onto a given cluster node.<ul>
+<li>Note that <code>nr-of-instances</code> defines total number of routees, but number of routees per node will not be exceeded, i.e. if you define <code>nr-of-instances = 50</code> and <code>max-nr-of-instances-per-node = 2</code>, the router will deploy 2 routees per new node in the cluster, up to 25 nodes.</li>
+</ul>
+</li>
+<li><strong><code>use-role</code></strong>: router will only deploy routees onto nodes in the cluster marked with the given role. Can only specify one role here.</li>
+</ul>
+<h4 id="hocon-for-clustered-pool-routers">HOCON for Clustered <code>Pool</code> Routers</h4>
+<p>Here&#39;s an example of what the HOCON for a clustered <code>Pool</code> router looks like:</p>
+<pre><code class="hljs lang-xml">akka {
+   actor{
+      provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
+      deployment {
+        /api/myClusterPoolRouter {
+          router = round-robin-pool # routing strategy
+          nr-of-instances = 10 # max number of total routees
+          cluster {
+             enabled = on
+             allow-local-routees = on
+             use-role = crawler
+             max-nr-of-instances-per-node = 1
+          }
+        }
+      }
+   }
+}
+</code></pre>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://github.com/petabridge/akkadotnet-code-samples/tree/master/Cluster.WebCrawler">Scalable WebCrawler Sample</a></li>
+<li><a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Cluster/Routing/ClusterRoutingConfig.cs">Cluster Routing Config</a></li>
+</ul>
+<h3 id="related-documentation">Related Documentation</h3>
+<ul>
+<li><a href="./cluster-overview">Akka.Cluster Overview</a><ul>
+<li><a href="./cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
+<li><a href="./cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
+<li><a href="./cluster-overview#use-cases">Use Cases</a></li>
+<li><a href="./cluster-overview#key-terms">Terminology</a></li>
+<li><a href="./cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
+<li><a href="./cluster-overview#cluster-gossip">Cluster Gossip</a></li>
+<li><a href="./cluster-overview#nodes">Nodes</a></li>
+<li><a href="./cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
+</ul>
+</li>
+<li><a href="./cluster-configuration">Cluster Configuration</a><ul>
+<li><a href="./cluster-configuration#critical-configuration-options">Critical Configuration Flags</a></li>
+<li><a href="./cluster-configuration#specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</a></li>
+</ul>
+</li>
+<li><a href="./cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
+<li><a href="./cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
+<li><a href="./cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
+<li><a href="./cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
+<li><a href="./cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

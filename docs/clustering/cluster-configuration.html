@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Network Security | Akka.NET</title>
+<title>Akka.Cluster Configuration | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Network Security<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/security.md" > (Edit on Github)</a></li>
+							<li class="active">Akka.Cluster Configuration<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/cluster-configuration.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,17 +172,103 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h1 id="akka-remote-security">Akka.Remote Security</h1>
-<p>This section is extremely brief - as of today there are no built-in secure transports in Akka.Remote. Security is a &quot;do it yourself&quot; exercise.</p>
-<p>That being said, however, <a href="http://helios-io.github.io/" title="Helios - Reactive socket middleware for .NET">Helios - the socket library that powers all of the transports in Akka.Remote</a>, is working on plans to introduce <a href="http://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a> and <a href="http://en.wikipedia.org/wiki/Datagram_Transport_Layer_Security">DTLS</a> inside Helios 2.0, which will bring asymmetric encryption and secure sockets to Akka.Remote.</p>
-<p>But in the meantime, we have to create our own security options around Akka.Remote.</p>
-<h3 id="secure-the-network-akka-remote-with-virtual-private-networks">Secure the Network: Akka.Remote with Virtual Private Networks</h3>
-<p>The absolute best practice for securing remote Akka.NET applications today is to make the network around the applications secure - don&#39;t use public, open networks! Instead, use a private network to restrict machines that can contact Akka.Remote processes to ones who have your VPN credentials.</p>
-<p>Some options for doing this:</p>
+								<div><h1 id="akka-cluster-configuration">Akka.Cluster Configuration</h1>
+<p>In this section, we&#39;ll review the most important and commonly used Cluster configuration options. To see the full list of options, check out the <a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Cluster/Configuration/Cluster.conf">full Cluster conf file here</a>.</p>
+<h2 id="critical-configuration-options">Critical Configuration Options</h2>
+<p>Here are the most common options for configuring a <a href="./cluster-overview#key-terms">node</a> in the cluster:</p>
 <ul>
-<li><a href="https://openvpn.net/">OpenVPN</a> - for &quot;do it yourself&quot; environments;</li>
-<li><a href="http://azure.microsoft.com/en-us/services/virtual-network/">Azure Virtual Networks</a> - for Windows Azure customers; and</li>
-<li><a href="http://aws.amazon.com/vpc/">Amazon Virtual Private Cloud (VPC)</a> - for Amazon Web Services customers.</li>
+<li><strong><code>min-nr-of-members</code></strong>: the minimum number of member nodes required to be present in the cluster before the leader marks nodes as <code>Up</code>.<ul>
+<li><strong><code>min size per role</code></strong>: the minimum number of member nodes for the given role required to be present in the cluster before the role leader marks nodes with the specified role as <code>Up</code>.</li>
+</ul>
+</li>
+<li><strong><code>seed-nodes</code></strong>: The addresses of the <a href="./cluster-overview#seed-nodes">seed nodes</a> to join automatically at startup. Comma-separated list of URI strings. A node may list itself as a seed node and &quot;self-join.&quot;</li>
+<li><strong><code>roles</code></strong>: the <a href="./cluster-overview#key-terms">roles</a> that this node is to fulfill in the cluster.  List of strings, e.g. <code>roles = [&quot;A&quot;, &quot;B&quot;]</code>.</li>
+</ul>
+<p>You can see all of these options being used in the following HOCON:</p>
+<pre><code class="hljs lang-xml">akka {
+   actor.provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
+    remote {
+        helios.tcp {
+            port = 8081
+            hostname = localhost
+        }
+    }
+    cluster {
+       seed-nodes = [&quot;akka.tcp//ClusterSystem@127.0.0.1:8081&quot;] # address of seed node
+       roles = [&quot;crawler&quot;, &quot;logger&quot;] # roles this member is in
+       crawler.min-nr-of-members = 3 # crawler role minimum node count
+    }
+}
+</code></pre>
+<h2 id="specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</h2>
+<p>One feature of Akka.Cluster that can be useful in a number of scenarios is the ability to specify a minimum cluster size, i.e. &quot;this cluster must have at least 3 nodes present before it can be considered &#39;up&#39;.&quot;</p>
+<p>Akka.Cluster supports this behavior at both a cluster-wide and a per-role level.</p>
+<h3 id="cluster-wide-minimum-size">Cluster-Wide Minimum Size</h3>
+<p>If you want to specify a cluster-wide minimum size, then we need to set the <code>cluster.min-nr-of-members</code> property inside our HOCON configuration, like this:</p>
+<pre><code class="hljs lang-xml">akka {
+   actor.provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
+    remote {
+        helios.tcp {
+            port = 8081
+            hostname = localhost
+        }
+    }
+    cluster {
+       seed-nodes = [&quot;akka.tcp//ClusterSystem@127.0.0.1:8081&quot;]
+       min-nr-of-members = 3
+    }
+}
+</code></pre>
+<p>In this case, the leader of the cluster will delay firing any <code>ClusterEvent.MemberUp</code> messages until 3 nodes have connected to the leader and have not become unreachable. So you can use this setting in combination with your own user-defined actors who subscribe to the <code>Cluster</code> for gossip messages (<code>MemberUp</code>, specifically) to know if your cluster has reached its minimum size or not.</p>
+<h3 id="per-role-minimum-size">Per-Role Minimum Size</h3>
+<p>If you want to delay nodes of a specific role from being marked as up until a certain minimum has been reached, you can accomplish that via HOCON too!</p>
+<pre><code class="hljs lang-xml">akka {
+   actor.provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
+    remote {
+        helios.tcp {
+            port = 8081
+            hostname = localhost
+        }
+    }
+    cluster {
+       seed-nodes = [&quot;akka.tcp//ClusterSystem@127.0.0.1:8081&quot;]
+       roles = [&quot;crawlerV1&quot;, &quot;crawlerV2&quot;]
+       crawlerV1.min-nr-of-members = 3
+    }
+}
+</code></pre>
+<p>This tells the role leader for <code>crawlerV1</code> to not mark any of those nodes as up until at least three nodes with role <code>crawlerV1</code> have joined the cluster.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Cluster/Configuration/Cluster.conf"><code>Cluster.conf</code></a>: the full set of configuration options</li>
+</ul>
+<h3 id="related-documentation">Related Documentation</h3>
+<ul>
+<li><a href="./cluster-overview">Akka.Cluster Overview</a><ul>
+<li><a href="./cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
+<li><a href="./cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
+<li><a href="./cluster-overview#use-cases">Use Cases</a></li>
+<li><a href="./cluster-overview#key-terms">Terminology</a></li>
+<li><a href="./cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
+<li><a href="./cluster-overview#cluster-gossip">Cluster Gossip</a></li>
+<li><a href="./cluster-overview#nodes">Nodes</a></li>
+<li><a href="./cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
+</ul>
+</li>
+<li><a href="./cluster-routing">Cluster Routing</a><ul>
+<li><a href="./cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
+<li><a href="./cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
+<li><a href="./cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
+<li><a href="./cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
+</ul>
+</li>
+<li><a href="./cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
+<li><a href="./cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
+<li><a href="./cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
+<li><a href="./cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
+<li><a href="./cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
+</ul>
+</li>
 </ul>
 </div>
 
