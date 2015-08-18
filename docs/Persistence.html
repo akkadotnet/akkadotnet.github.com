@@ -277,6 +277,29 @@
     }
 }
 </code></pre>
+<h3 id="event-adapters">Event adapters</h3>
+<p>Event adapters are an intermediate layer on top of your journal, that allows to produce different data model depending on stored/recovered event type. It&#39;s especially useful in situations like:</p>
+<ul>
+<li><strong>Event versioning</strong> - since events may change their structure over the course of time, you may specify custom event adapter that will deal with mapping obsolete data types accordingly to current business logic.</li>
+<li><strong>Separation of domain model from stored data</strong> in cases when such separation is necessary.</li>
+<li><strong>Utilization of persistent backend specific data types</strong> as they allow transition between data understood by actors and specialized format allowed by datastores. Examples of such may be: BSON in MongoDb or JSON data type in PostgreSQL.</li>
+</ul>
+<p>For custom event adapter simply create class implementing <code>IEventAdapter</code> interface. It&#39;s required, that it should either expose parameterless constructor or the one that has <code>ExtendedActorSystem</code> as it&#39;s only argument. Then in order to use it, you&#39;ll need to register it and bind to a particular type of events using HOCON configuration - type assignability rules applies here and the most specific types have precedence over the more general ones:</p>
+<pre><code><span class="hljs-label">akka.persistence.journal</span> {
+    &lt;journal_identifier&gt; {
+        event-adapters {
+            tagging = <span class="hljs-string">"&lt;fully qualified event adapter type name with assembly&gt;"</span>
+            <span class="hljs-literal">v1</span> = <span class="hljs-string">"&lt;fully qualified event adapter type name with assembly&gt;"</span>
+            <span class="hljs-literal">v2</span> = <span class="hljs-string">"&lt;fully qualified event adapter type name with assembly&gt;"</span>
+        }
+
+        event-adapter-<span class="hljs-keyword">bindings </span>{
+            <span class="hljs-string">"&lt;fully qualified event type name with assembly&gt;"</span> = <span class="hljs-literal">v1</span>
+            <span class="hljs-string">"&lt;fully qualified event type name with assembly&gt;"</span> = [<span class="hljs-literal">v2</span>, tagging]
+        }
+    }
+}
+</code></pre><p>Multiple event adapters may be applied to a single type (for recovery). If that is the case, their order will match order of the definition in <em>event-adapter-bindings</em> config section. For write side, each adapter may decide to return none, one or many adapted event for each single event provided as an input. In case of multiple adapters attached, each one of them may decide to return it&#39;s own set of adapted events. They all will be stored in the same order corresponding to adapters order.</p>
 <h3 id="contributing">Contributing</h3>
 <p>Akka persistence plugin gives a custom journal and snapshot store creator a built-in set of tests, which can be used to verify correctness of the implemented backend storage plugins. It&#39;s available through <code>Akka.Persistence.TestKit</code> package and uses <a href="http://xunit.github.io/">xUnit</a> as the default test framework.</p>
 </div>
