@@ -199,6 +199,14 @@ file.</p>
 <h3 id="running-tests">Running tests</h3>
 <p>To run unit tests from the command line, run the following command:</p>
 <pre><code>    <span class="hljs-keyword">build </span>test
+</code></pre><h3 id="running-multinodetests">Running MultiNodeTests</h3>
+<p>To run the multiple node specifications from the command line, run the following
+command:</p>
+<pre><code>    <span class="hljs-keyword">build </span><span class="hljs-keyword">multinodetests</span>
+</code></pre><p>To run the multinode specifications for a subset of akka, you can supply a filter:</p>
+<pre><code>    <span class="hljs-keyword">build </span><span class="hljs-keyword">multinodetests </span>spec-assembly=&lt;filter&gt;
+</code></pre><p>For example to run only the specifications for Akka.Remote the command would be:</p>
+<pre><code>    <span class="hljs-keyword">build </span><span class="hljs-keyword">multinodetests </span>spec-assembly<span class="hljs-label">=remote</span>
 </code></pre><h3 id="creating-nuget-distributions">Creating Nuget distributions</h3>
 <p>To create nuget packages locally, run the following command:</p>
 <pre><code>    <span class="hljs-keyword">build </span>nuget
@@ -206,6 +214,12 @@ file.</p>
 <pre><code>    <span class="hljs-keyword">build </span>nuget nugetkey=&lt;key&gt;
 </code></pre><p>or to run also unit tests before publishing:</p>
 <pre><code>   build <span class="hljs-literal">all</span> nugetkey=<span class="hljs-variable">&lt;key&gt;</span>
+</code></pre><h3 id="detailed-help-from-command-line">Detailed Help from command line</h3>
+<p>The command line supplies some detailed help on the usage of build.</p>
+<pre><code>    <span class="hljs-keyword">build </span>help
+    <span class="hljs-keyword">build </span>helpnuget
+    <span class="hljs-keyword">build </span>helpdocs
+    <span class="hljs-keyword">build </span>helpmultinodetests
 </code></pre></div>
 
 								
