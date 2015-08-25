@@ -196,7 +196,7 @@
 <h2 id="how-is-clustering-different-from-remoting-">How is Clustering Different From Remoting?</h2>
 <p>Akka.Cluster is a layer of abstraction on top of Akka.Remote, that puts Remoting to use for a specific structure: clusters of applications. Under the hood, Akka.Remote powers Akka.Cluster, so anything you could do with Akka.Remote is also supported by Akka.Cluster.</p>
 <p>Generally, Akka.Remote serves as plumbing for Akka.Cluster and other &quot;high availability&quot; modules within Akka.NET. You would generally only use Akka.Remote by itself in scenarios that don&#39;t require the elasticity and fault-tolerance needs that Akka.Cluster provides.</p>
-<p>Essentially, Akka.Cluster extends Akka.Remote to provide the basis of scalable</p>
+<p>Essentially, Akka.Cluster extends Akka.Remote to provide the basis of scalable applications.</p>
 <h2 id="use-cases">Use Cases</h2>
 <p>Akka.Cluster lends itself naturally to <a href="https://en.wikipedia.org/wiki/High_availability">high-availability</a> scenarios.</p>
 <p>To put it bluntly, you should use clustering in any scenario where you have some or all of the following conditions:</p>
