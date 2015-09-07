@@ -193,9 +193,9 @@
     spawn system <span class="hljs-string">"my-actor"</span>
         (<span class="hljs-keyword">fun</span> mailbox -&gt;
             <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> loop() = actor {
-                <span class="hljs-keyword">let</span>! message = mailbox.Receive()
+                <span class="hljs-keyword">let!</span> message = mailbox.Receive()
                 <span class="hljs-comment">// handle an incoming message</span>
-                <span class="hljs-keyword">return</span>! loop()
+                <span class="hljs-keyword">return!</span> loop()
             }
             loop())
 </code></pre>
@@ -232,8 +232,8 @@
     mailbox.Defer ((resource :&gt; IDisposable).Dispose)
     <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> loop () =
         actor {
-            <span class="hljs-keyword">let</span>! msg = mailbox.Receive()
-            <span class="hljs-keyword">return</span>! loop ()
+            <span class="hljs-keyword">let!</span> msg = mailbox.Receive()
+            <span class="hljs-keyword">return!</span> loop ()
         }
     loop()
 </code></pre>
@@ -256,7 +256,7 @@
 <p>While you may use traditional <code>IActorRef.Tell</code> and <code>IActorRef.Ask</code> methods, it&#39;s more convenient to use dedicated <code>&lt;!</code> and <code>&lt;?</code> operators to perform related operations.</p>
 <p>Example:</p>
 <pre><code class="hljs lang-fsharp">aref &lt;! message
-async { <span class="hljs-keyword">let</span>! response = aref &lt;? request }
+async { <span class="hljs-keyword">let!</span> response = aref &lt;? request }
 </code></pre>
 <h3 id="actor-selection">Actor selection</h3>
 <p>Actors may be referenced not only by <code>IActorRef</code>s, but also through actor path selection (see: <a href="Addressing">Addressing</a>). With the F# API you may select an actor with a known path using the <code>select</code> function:</p>
@@ -354,12 +354,12 @@ publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>)
 <h3 id="logging">Logging</h3>
 <p>The F# API supports two groups of logging functions - one that operates directly on strings and another (which may be recognized by <em>f</em> suffix in function names) that operates using F# string formatting features. The major difference is performance - the former is less powerful, but it&#39;s also faster than the latter.</p>
 <p>Both groups support logging on various levels (DEBUG, &lt;default&gt; INFO, WARNING and ERROR). Actor system&#39;s logging level may be managed through configuration, i.e.:</p>
-<pre><code class="hljs lang-hocon">akka {
-    actor {
-        # collection <span class="hljs-keyword">of</span> loggers used <span class="hljs-keyword">inside</span> actor system, specified by fully-qualified type name
-        loggers = <span class="hljs-comment">[ "Akka.Event.DefaultLogger, Akka" ]</span>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
+    <span class="hljs-title">actor</span> {
+        <span class="hljs-comment"># collection of loggers used inside actor system, specified by fully-qualified type name</span>
+        <span class="hljs-title">loggers</span> = [ <span class="hljs-string">"Akka.Event.DefaultLogger, Akka"</span> ]
 
-        # Options: OFF, ERROR, WARNING, INFO, DEBUG
+        <span class="hljs-comment"># Options: OFF, ERROR, WARNING, INFO, DEBUG</span>
         loglevel = <span class="hljs-string">"DEBUG"</span>
     }
 }

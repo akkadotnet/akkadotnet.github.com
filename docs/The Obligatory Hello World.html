@@ -236,10 +236,10 @@ Console.ReadLine();
 <span class="hljs-comment">// to create an actor message handler and return a reference</span>
 <span class="hljs-keyword">let</span> greeter = spawn system <span class="hljs-string">"greeter"</span> &lt;| <span class="hljs-keyword">fun</span> mailbox -&gt;
     <span class="hljs-keyword">let</span> <span class="hljs-keyword">rec</span> loop() = actor {
-        <span class="hljs-keyword">let</span>! msg = mailbox.Receive()
+        <span class="hljs-keyword">let!</span> msg = mailbox.Receive()
         <span class="hljs-keyword">match</span> msg <span class="hljs-keyword">with</span>
         | Greet who -&gt; printf <span class="hljs-string">"Hello, %s!\n"</span> who
-        <span class="hljs-keyword">return</span>! loop() }
+        <span class="hljs-keyword">return!</span> loop() }
     loop()
 
 greeter &lt;! Greet <span class="hljs-string">"World"</span>
