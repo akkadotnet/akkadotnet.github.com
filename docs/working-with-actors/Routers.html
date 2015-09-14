@@ -235,7 +235,7 @@ Most routing strategies listed below are available in both types. Some of them m
 <p>Routers are implemented as actors, so a router is supervised by it&#39;s parent, and they may supervise children.</p>
 <p><em>Group routers</em> use routees created somewhere else, it doesn&#39;t have children of its own. If a routee dies, a group router will have no knowledge of it.</p>
 <p><em>Pool routers</em> on the other hand create their own children. The router is therefore also the routee&#39;s supervisor.</p>
-<p>By default, routers use the <code>OneForOneStrategy</code>, so if a child dies, only that actor is restarted. If you want to change this behavior, the supervision strategy of the router actor can be configured with the <code>SupervisorStrategy</code> property of the Pool.</p>
+<p>By default, pool routers use a custom strategy that only returns <code>Escalate</code> for all exceptions, the router supervising the failing worker will then escalate to it&#39;s own parent, if the parent of the router decides to restart the router, all the pool workers will also be recreated as a result of this.</p>
 <h2 id="routing-strategies">Routing Strategies</h2>
 <p>These are the routing strategies provided by Akka.NET out of the box.</p>
 <h3 id="roundrobin">RoundRobin</h3>
