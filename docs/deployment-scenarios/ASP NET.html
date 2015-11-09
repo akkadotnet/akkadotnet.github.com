@@ -188,7 +188,7 @@
 
         ActorSystem = ActorSystem.Create(<span class="hljs-string">"app"</span>);
         <span class="hljs-comment">//here you would register your toplevel actors</span>
-        MyActor = ActorSystem.Create&lt;MyActor&gt;();
+        MyActor = ActorSystem.ActorOf&lt;MyActor&gt;();
     }
 }
 </code></pre>

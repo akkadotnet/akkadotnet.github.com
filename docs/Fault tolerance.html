@@ -282,6 +282,28 @@ different supervisor which overrides this behavior.</p>
 <p>With this parent, the child survives the escalated restart, as demonstrated in
 the last test:</p>
 <p>!!!TODO: Port sample code</p>
+<h2 id="backoffsupervisor">BackoffSupervisor</h2>
+<p>This actor can be used to supervise a child actor and start it again after a back-off duration if the child actor is stopped.
+This is useful in situations where the re-start of the child actor should be delayed e.g. in order to give an external resource time to recover before the child actor tries contacting it again (after being restarted).</p>
+<p>Specifically this pattern is useful for for persistent actors, which are stopped in case of persistence failures. Just restarting them immediately would probably fail again (since the data store is probably unavailable). It is better to try again after a delay.</p>
+<p>It supports exponential back-off between the given <code>minBackoff</code> and <code>maxBackoff</code> durations. For example, if <code>minBackoff</code> is 3 seconds and <code>maxBackoff</code> 30 seconds the start attempts will be delayed with 3, 6, 12, 24, 30, 30 seconds. The exponential back-off counter is reset if the actor is not terminated within the minBackoff duration.</p>
+<p>In addition to the calculated exponential back-off an additional random delay based the given <code>randomFactor</code> is added, e.g. 0.2 adds up to 20% delay. The reason for adding a random delay is to avoid that all failing actors hit the backend resource at the same time.</p>
+<p>You can retrieve the current child ActorRef by sending <code>BackoffSupervisor.GetCurrentChild.Instance</code> message to this actor and it will reply with <code>BackoffSupervisor.CurrentChild</code> containing the ActorRef of the current child, if any.</p>
+<p>The BackoffSupervisor forwards all other messages to the child, if it is currently running.</p>
+<p>The child can stop itself and send a PoisonPill to the parent supervisor if it wants to do an intentional stop.
+As long as the <code>BackoffSupervisor</code> is in the backoff state, it will deadletter any messages it would normally send to the child.</p>
+<h3 id="example">example</h3>
+<pre><code class="hljs lang-csharp"> <span class="hljs-keyword">var</span> childProps = Props.Create(() =&gt; <span class="hljs-keyword">new</span> MyChildActor());
+ <span class="hljs-keyword">var</span> superVisor = system.ActorOf(
+  Props.Create(() =&gt;
+    <span class="hljs-keyword">new</span> BackoffSupervisor(childProps, <span class="hljs-string">"child"</span>,
+     TimeSpan.FromSeconds(<span class="hljs-number">3</span>), <span class="hljs-comment">//minBackoff: once it fails, retry after 3 secs</span>
+     TimeSpan.FromSeconds(<span class="hljs-number">30</span>), <span class="hljs-comment">//maxBackoff: max time between retries is 30 secs</span>
+     <span class="hljs-number">0.1</span>), <span class="hljs-comment">//random factor that influences retry times </span>
+    <span class="hljs-keyword">new</span> OneForOneStrategy(_ =&gt; {
+        <span class="hljs-keyword">return</span> Directive.Stop; <span class="hljs-comment">//The BackoffSupervisor only works on the Stop Directive.</span>
+    })));
+</code></pre>
 </div>
 
 								

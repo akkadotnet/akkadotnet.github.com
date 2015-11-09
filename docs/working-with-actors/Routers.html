@@ -206,10 +206,10 @@ The above code can also be written as:</p>
 <span class="hljs-keyword">var</span> actor = system.ActorOf(props, <span class="hljs-string">"workers"</span>);
 </code></pre>
 <p>For router groups, the same idea applies with slightly different syntax:</p>
-<pre><code class="hljs lang-hocon">akka.actor.<span class="hljs-name">deployment</span> {
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
   /workers {
-    router = round-robin-<span class="hljs-literal">group</span>
-    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+    router = round-robin-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
   }
 }
 </code></pre>
@@ -256,10 +256,10 @@ Most routing strategies listed below are available in both types. Some of them m
 <pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> RoundRobinPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
 </code></pre>
 <p>RoundRobinGroup defined in configuration:</p>
-<pre><code class="hljs lang-hocon">akka.actor.<span class="hljs-name">deployment</span> {
-  /some-<span class="hljs-literal">group</span> {
-    router = round-robin-<span class="hljs-literal">group</span>
-    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
+    router</span> = round-robin-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
   }
 }
 </code></pre>
@@ -287,10 +287,10 @@ Most routing strategies listed below are available in both types. Some of them m
 <pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> BroadcastPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
 </code></pre>
 <p>BroadcastGroup defined in configuration:</p>
-<pre><code class="hljs lang-hocon">akka.actor.<span class="hljs-name">deployment</span> {
-  /some-<span class="hljs-literal">group</span> {
-    router = broadcast-<span class="hljs-literal">group</span>
-    routees.paths = [<span class="hljs-string">"/user/a1"</span>, <span class="hljs-string">"/user/a2"</span>, <span class="hljs-string">"/user/a3"</span>]
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
+    router</span> = broadcast-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/a1"</span>, <span class="hljs-string">"/user/a2"</span>, <span class="hljs-string">"/user/a3"</span>]
   }
 }
 </code></pre>
@@ -317,10 +317,10 @@ Most routing strategies listed below are available in both types. Some of them m
 <pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> RandomPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
 </code></pre>
 <p>RandomGroup defined in configuration:</p>
-<pre><code class="hljs lang-hocon">akka.actor.<span class="hljs-name">deployment</span> {
-  /some-<span class="hljs-literal">group</span> {
-    router = random-<span class="hljs-literal">group</span>
-    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
+    router</span> = random-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
   }
 }
 </code></pre>
@@ -387,11 +387,11 @@ Most routing strategies listed below are available in both types. Some of them m
 <pre><code class="hljs lang-cs"><span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> ConsistentHashingPool(<span class="hljs-number">5</span>)), <span class="hljs-string">"some-pool"</span>);
 </code></pre>
 <p>ConsistentHashingGroup defined in configuration:</p>
-<pre><code class="hljs lang-hocon">akka.actor.<span class="hljs-name">deployment</span> {
-  /some-<span class="hljs-literal">group</span> {
-    router = consistent-hashing-<span class="hljs-literal">group</span>
-    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
-    <span class="hljs-built_in">virtual</span>-nodes-factor = <span class="hljs-number">10</span>
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
+    router</span> = consistent-hashing-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+    virtual-nodes-factor = <span class="hljs-number">10</span>
   }
 }
 </code></pre>
@@ -432,11 +432,11 @@ Most routing strategies listed below are available in both types. Some of them m
 </code></pre>
 <p>TailChoppingGroup defined in configuration:</p>
 <pre><code class="hljs lang-hocon">akka.actor.deployment {
-  /some-group {
-    router = tail-chopping-group
-    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
-    <span class="hljs-operator">within</span> = <span class="hljs-number">10</span> <span class="hljs-built_in">seconds</span>
-    tail-chopping-router.interval = <span class="hljs-number">20</span> <span class="hljs-built_in">milliseconds</span>
+  /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
+    router</span> = tail-chopping-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+    within = <span class="hljs-number">10</span> seconds
+    tail-chopping-router.interval = <span class="hljs-number">20</span> milliseconds
   }
 }
 </code></pre>
@@ -476,10 +476,10 @@ Most routing strategies listed below are available in both types. Some of them m
 <span class="hljs-keyword">var</span> router = system.ActorOf(Props.Create&lt;Worker&gt;().WithRouter(<span class="hljs-keyword">new</span> ScatterGatherFirstCompletedPool(<span class="hljs-number">5</span>, within)), <span class="hljs-string">"some-pool"</span>);
 </code></pre>
 <p>ScatterGatherFirstCompletedPool defined in configuration:</p>
-<pre><code class="hljs lang-hocon">akka.actor.<span class="hljs-name">deployment</span> {
-  /some-<span class="hljs-literal">group</span> {
-    router = tail-chopping-<span class="hljs-literal">group</span>
-    routees.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
+<pre><code class="hljs lang-hocon">akka.actor.deployment {
+  /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
+    router</span> = tail-chopping-<span class="hljs-keyword">group</span>
+    <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
     within = <span class="hljs-number">10</span> seconds
   }
 }
