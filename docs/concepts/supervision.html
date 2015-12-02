@@ -249,7 +249,7 @@ Lifecycle Monitoring in Akka.NET is usually referred to as <code>DeathWatch</cod
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> OneForOneStrategy( <span class="hljs-comment">//or AllForOneStrategy</span>
             maxNumberOfRetries: <span class="hljs-number">10</span>,
             duration: TimeSpan.FromSeconds(<span class="hljs-number">30</span>),
-            decider: x =&gt;
+            decider: Decider.From(x =&gt;
             {
                 <span class="hljs-comment">//Maybe we consider ArithmeticException to not be application critical</span>
                 <span class="hljs-comment">//so we just ignore the error and keep going.</span>
@@ -260,7 +260,7 @@ Lifecycle Monitoring in Akka.NET is usually referred to as <code>DeathWatch</cod
 
                 <span class="hljs-comment">//In all other cases, just restart the failing actor</span>
                 <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> Directive.Restart;
-            });
+            }));
     }
 
     ...
