@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Akka cluster singleton | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+							<li class="active">Akka cluster singleton<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/cluster-singleton.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,175 +172,39 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="cluster-singleton-actors">Cluster singleton actors</h1>
+<p>This feature has been created for cases, when for some reason you need to guarantee that exactly one instance of an actor will be present running in the cluster. In order to use them, you&#39;ll need to use <code>ClusterSingletonManager</code>, which is able to manage actor singleton instance across either all cluster nodes or those having a specific role.</p>
+<p>Actor instance is always spawned on the oldest node, which is often one of seed nodes - reason behind this is that the oldest nodes are most likely not to be subject of cluster node churn caused by nodes joining/leaving under varying system usage pressure. In case when the oldest node will be removed from the cluster, <code>ClusterSingletonManager</code> will recreate an actor on another one from supplied <code>Props</code>. Be aware, that during during hand-over process no actor singleton may exist in the cluster.</p>
+<p>Example:</p>
+<pre><code class="hljs lang-csharp">system.ActorOf(ClusterSingletonManager.Props(
+    singletonProps: Props.Create&lt;MySingletonActor&gt;(),         <span class="hljs-comment">// Props used to create actor singleton</span>
+    terminationMessage: PoisonPill.Instance,                  <span class="hljs-comment">// message used to stop actor gracefully</span>
+    settings: ClusterSingletonManagerSettings.Create(system)),<span class="hljs-comment">// cluster singleton manager settings</span>
+    name: <span class="hljs-string">"manager"</span>);                                         <span class="hljs-comment">// singleton manager name</span>
+</code></pre>
+<p>Actor singleton manager settings by default are located under <code>akka.cluster.singleton</code> HOCON section, and contain followings options:</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li><code>singleton-name</code> - name of a singleton actor.</li>
+<li><code>role</code> - cluster role specified in case, when you want to limit actor&#39;s singleton context to a nodes having particular role.</li>
+<li><code>hand-over-retry-interval</code> - in case of graceful shutdown, new oldest node sends hand over request to a leaving node. This request is retried in specified interval until node confirms it or is removed from the cluster.</li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
+<p>You can communicate with cluster singleton actors by using <code>ClusterSingletonProxy</code>. It will automatically keep track of the actor&#39;s current location, update it if necessary and buffer all messages during the handover process. In case of overflow, buffer will start dropping oldest messages. It&#39;s size can be configured using <code>akka.cluster.singleton-proxy.buffer-size</code> key, and disabled by setting that value on 0. Other configuration options:</p>
 <ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li>Use-case and Deployment Scenarios<ul>
-<li><a href="deployment-scenarios/Console">Console</a></li>
-<li><a href="deployment-scenarios/ASP NET">ASP.NET</a></li>
-<li><a href="deployment-scenarios/Windows Service">Windows Service</a></li>
-<li><a href="deployment-scenarios/Azure PaaS Worker Role">Azure PaaS Worker Role</a></li>
+<li><code>singleton-name</code> - name of cluster singleton actor specified in <code>akka.cluster.singleton.singleton-name</code>.</li>
+<li><code>role</code> - serves similar purpose to <code>akka.cluster.singleton.role</code>.</li>
+<li><code>singleton-identification-interval</code> - interval at which proxy will try to resolve actor singleton ref.</li>
 </ul>
-</li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
+<p>Example:</p>
+<pre><code class="hljs lang-csharp">system.ActorOf(ClusterSingletonProxy.Props(
+    singletonManagerPath: <span class="hljs-string">"/user/manager"</span>,                  <span class="hljs-comment">// corresponding singleton manager name</span>
+    settings: ClusterSingletonProxySettings.Create(system)),<span class="hljs-comment">// singleton proxy settings</span>
+    name: <span class="hljs-string">"managerProxy"</span>);                                  <span class="hljs-comment">// name of proxy actor</span>
+</code></pre>
+<p>There are few remarks to take into account:</p>
 <ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="working-with-actors">Working with Actors</h3>
-<ul>
-<li><a href="working-with-actors/creating-actors">Creating your first Actor</a></li>
-<li><a href="working-with-actors/defining-an-actor">Defining an Actor class</a></li>
-<li><a href="working-with-actors/whats-in-an-actor">What&#39;s in an Actor</a></li>
-<li><a href="working-with-actors/creating-actors-with-props">Creating actors with Props</a></li>
-<li><a href="working-with-actors/handling-messages">Handling Messages</a></li>
-<li><a href="working-with-actors/sending-messages">Sending Messages</a></li>
-<li><a href="working-with-actors/Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="working-with-actors/Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/stopping-actors">Stopping Actors</a></li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="akka-remote">Akka.Remote</h3>
-<ul>
-<li><a href="remoting/">Akka.Remote Overview</a><ul>
-<li><a href="remoting/#use-cases">Use Cases</a></li>
-<li><a href="remoting/#enabling-akka-remote">Enabling Akka.Remote</a></li>
-<li><a href="remoting/#addresses-transports-endpoints-and-associations">Remote Addressing</a></li>
-<li><a href="remoting/#how-to-form-associations-between-remote-systems">Connecting Remote Systems</a></li>
-</ul>
-</li>
-<li><a href="remoting/transports">Transports</a><ul>
-<li><a href="remoting/transports#akka-remote-s-built-in-transports">Built-in Transports</a></li>
-<li><a href="remoting/transports#using-custom-transports">Custom Transports</a></li>
-<li><a href="remoting/transports#running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</a></li>
-</ul>
-</li>
-<li><a href="remoting/messaging">Remote Messaging</a><ul>
-<li><a href="remoting/messaging#serialization">Serialization</a></li>
-<li><a href="remoting/messaging#-remoteactorref-and-location-transparency">RemoteActorRefs</a></li>
-</ul>
-</li>
-<li><a href="remoting/deployment">Deploying Actors Remotely</a><ul>
-<li><a href="remoting/deployment#when-to-use-remote-deployment">When to Use Remote Deployment</a></li>
-</ul>
-</li>
-<li><a href="remoting/deathwatch">Detecting &amp; Handling Network Failures (DeathWatch)</a></li>
-<li><a href="remoting/security">Network Security</a></li>
-</ul>
-<h3 id="akka-cluster">Akka.Cluster</h3>
-<ul>
-<li><a href="clustering/cluster-overview">Akka.Cluster Overview</a><ul>
-<li><a href="clustering/cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
-<li><a href="clustering/cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
-<li><a href="clustering/cluster-overview#use-cases">Use Cases</a></li>
-<li><a href="clustering/cluster-overview#key-terms">Terminology</a></li>
-<li><a href="clustering/cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
-<li><a href="clustering/cluster-overview#cluster-gossip">Cluster Gossip</a></li>
-<li><a href="clustering/cluster-overview#nodes">Nodes</a></li>
-<li><a href="clustering/cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-routing">Cluster Routing</a><ul>
-<li><a href="clustering/cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
-<li><a href="clustering/cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
-<li><a href="clustering/cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
-<li><a href="clustering/cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-configuration">Cluster Configuration</a><ul>
-<li><a href="clustering/cluster-configuration#critical-configuration-options">Critical Configuration Flags</a></li>
-<li><a href="clustering/cluster-configuration#specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
-<li><a href="clustering/cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
-<li><a href="clustering/cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
-<li><a href="clustering/cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
-<li><a href="clustering/cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-tools">Akka.Cluster.Tools module</a><pre><code>  - [<span class="hljs-link_label">Creating cluster singleton actors</span>](<span class="hljs-link_url">clustering/cluster-singleton</span>)
-  - [<span class="hljs-link_label">Cluster distributed publish/subscribe</span>](<span class="hljs-link_url">clustering/distributed-publish-subscribe</span>)
-  - [<span class="hljs-link_label">Communication with cluster without joining to it</span>](<span class="hljs-link_url">clustering/cluster-client</span>)
-</code></pre></li>
-<li><a href="clustering/cluster-sharding">Akka.Cluster.Sharding module</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Serialization">Serialization</a></li>
-<li><a href="IO">Akka I/O</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="testing">Testing</h3>
-<ul>
-<li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka">Building and Distributing Akka.NET</a></li>
-<li><a href="akka-developers/nightly-builds">Getting Access to Nightly Akka.NET Builds</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
+<li>Singleton actors can become performance bottlenecks of your application.</li>
+<li>There may be a period of singleton inactivity during an actor handover process between nodes.</li>
+<li>In case of <strong>Split Brain</strong> scenarios, there is a potential risk, that partitioned cluster will spawn more than one actor instance due to network partition.</li>
 </ul>
 </div>
 

@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Akka.Cluster.Sharding module | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+							<li class="active">Akka.Cluster.Sharding module<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/cluster-sharding.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,176 +172,88 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="akka-cluster-sharding-module">Akka.Cluster.Sharding module</h1>
+<p>Cluster sharding is useful in cases when you want to contact with cluster actors using their logical id&#39;s, but don&#39;t want to care about their physical location inside the cluster or manage their creation. Moreover it&#39;s able to rebalance them, as nodes join/leave the cluster. It&#39;s often used to represent i.e. Aggregate Roots in Domain Driven Design terminology.</p>
+<blockquote>
+<p>Cluster sharding depends on Akka.Persistence module. In order to use it, you&#39;ll need to specify an event journal accessible by all of the participating nodes.</p>
+</blockquote>
+<p>Actors managed by cluster sharding are called <strong>entities</strong> and can be automatically distributed across multiple nodes inside the cluster. One entity instance may live only at one node at the time, and can be communicated with via <code>ShardRegion</code> without need to know, what it&#39;s exact node location is.</p>
+<p>Example:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// define envelope used to message routing</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Envelope</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">int</span> ShardId;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">int</span> EntityId;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">object</span> Message;
+
+    ...
+}
+
+<span class="hljs-comment">// define, how shard id, entity id and message itself should be resolved</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MessageExtractor</span> : <span class="hljs-title">IMessageExtractor</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> <span class="hljs-title">EntityId</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> (message <span class="hljs-keyword">as</span> Envelope)?.EntityId.ToString();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> <span class="hljs-title">ShardId</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> (message <span class="hljs-keyword">as</span> Envelope)?.ShardId.ToString();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">object</span> <span class="hljs-title">EntityMessage</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> (message <span class="hljs-keyword">as</span> Envelope)?.Message;
+    }
+}
+
+<span class="hljs-comment">// register actor type as a sharded entity</span>
+<span class="hljs-keyword">var</span> region = ClusterSharding.Get(system).Start(
+    typeName: <span class="hljs-string">"my-actor"</span>,
+    entityProps: Props.Create&lt;MyActor&gt;(),
+    settings: ClusterShardingSettings.Create(system),
+    messageExtractor: <span class="hljs-keyword">new</span> MessageExtractor());
+
+<span class="hljs-comment">// send message to entity through shard region</span>
+region.Tell(<span class="hljs-keyword">new</span> Envelope(shardId: <span class="hljs-number">1</span>, entityId: <span class="hljs-number">1</span>, message: <span class="hljs-string">"hello"</span>))
+</code></pre>
+<p>In this example, we first specify way to resolve our messages recipients in context of sharded entities. For this, specialized message type called <code>Envelope</code> and resolution strategy called <code>MessageExtractor</code> have been specified. That part can be customized, and shared among many different shard regions, but it needs to be uniform among all nodes.</p>
+<p>Second part of an example is registering custom actor type as sharded entity using <code>ClusterSharding.Start</code> or <code>ClusterSharding.StartAsync</code> methods. Result is the <code>IActorRef</code> to shard region used to communicate between current actor system and target entities. Shard region must be specified once per each type on each node, that is expected to participate in sharding entities of that type.</p>
+<p>In case when you want to send message to entities from specific node, but you don&#39;t what that node to participate in sharding itself, you can use <code>ShardRegionProxy</code> for that.</p>
+<p>Example:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> proxy = ClusterSharding.Get(system).StartProxy(
+    typeName: <span class="hljs-string">"my-actor"</span>,
+    role: <span class="hljs-keyword">null</span>,
+    messageExtractor: <span class="hljs-keyword">new</span> MessageExtractor());
+</code></pre>
+<h2 id="shards">Shards</h2>
+<p>Entities are located and managed automatically. They can also be recreated on the other nodes, as new nodes join the cluster or old ones are leaving it. This process is called rebalancing and for performance reasons it never works on a single entity. Instead all entities are organized and managed in so called shards.</p>
+<p>As you may have seen in the examples above shard resolution algorithm is one of the choices you have to make. Good uniform distribution is not an easy task - too small number shards may result in not even distribution of entities across all nodes, while too many of them may increase message routing latency and rebalancing overhead. As a rule of thumb, you may decide to have a number of shards ten times greater than expected maximum number of cluster nodes.</p>
+<p>By default rebalancing process always happens from nodes with the highest number of shards, to the ones with the smallest one. This can be configured into by specifying custom implementation of the <code>IShardAllocationStrategy</code> interface in <code>ClusterSharding.Start</code> parameters.</p>
+<h2 id="passivation">Passivation</h2>
+<p>To reduce memory consumption, you may decide to stop entities after some period of inactivity using <code>Context.SetReceiveTimeout(timeout)</code>. In order to make cluster sharding aware of stopping entities, <strong>DON&#39;T use <code>Context.Stop(Self)</code> on the entities</strong>, as this may result in losing messages. Instead you may send <code>Passivate</code> message message to current entity <code>Context.Parent</code> (which is shard itself in this case). This will trigger shard to stop forwarding messages to target entity, and buffer them instead until it&#39;s terminated. Once that happens, if there are still some messages buffered, entity will be reincarnated and messages flushed to it automatically.</p>
+<h2 id="retrieving-sharding-state">Retrieving sharding state</h2>
+<p>You can inspect current sharding stats by using following messages:</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li>On <code>GetShardRegionState</code> shard region will reply with <code>ShardRegionState</code> containing data about shards living in the current actor system and what entities are alive on each one of them.</li>
+<li>On <code>GetClusterShardingStats</code> shard region will reply with <code>ClusterShardingStats</code> having information about shards living in the whole cluster and how many entities alive in each one of them.</li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li>Use-case and Deployment Scenarios<ul>
-<li><a href="deployment-scenarios/Console">Console</a></li>
-<li><a href="deployment-scenarios/ASP NET">ASP.NET</a></li>
-<li><a href="deployment-scenarios/Windows Service">Windows Service</a></li>
-<li><a href="deployment-scenarios/Azure PaaS Worker Role">Azure PaaS Worker Role</a></li>
-</ul>
-</li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="working-with-actors">Working with Actors</h3>
-<ul>
-<li><a href="working-with-actors/creating-actors">Creating your first Actor</a></li>
-<li><a href="working-with-actors/defining-an-actor">Defining an Actor class</a></li>
-<li><a href="working-with-actors/whats-in-an-actor">What&#39;s in an Actor</a></li>
-<li><a href="working-with-actors/creating-actors-with-props">Creating actors with Props</a></li>
-<li><a href="working-with-actors/handling-messages">Handling Messages</a></li>
-<li><a href="working-with-actors/sending-messages">Sending Messages</a></li>
-<li><a href="working-with-actors/Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="working-with-actors/Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/stopping-actors">Stopping Actors</a></li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="akka-remote">Akka.Remote</h3>
-<ul>
-<li><a href="remoting/">Akka.Remote Overview</a><ul>
-<li><a href="remoting/#use-cases">Use Cases</a></li>
-<li><a href="remoting/#enabling-akka-remote">Enabling Akka.Remote</a></li>
-<li><a href="remoting/#addresses-transports-endpoints-and-associations">Remote Addressing</a></li>
-<li><a href="remoting/#how-to-form-associations-between-remote-systems">Connecting Remote Systems</a></li>
-</ul>
-</li>
-<li><a href="remoting/transports">Transports</a><ul>
-<li><a href="remoting/transports#akka-remote-s-built-in-transports">Built-in Transports</a></li>
-<li><a href="remoting/transports#using-custom-transports">Custom Transports</a></li>
-<li><a href="remoting/transports#running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</a></li>
-</ul>
-</li>
-<li><a href="remoting/messaging">Remote Messaging</a><ul>
-<li><a href="remoting/messaging#serialization">Serialization</a></li>
-<li><a href="remoting/messaging#-remoteactorref-and-location-transparency">RemoteActorRefs</a></li>
-</ul>
-</li>
-<li><a href="remoting/deployment">Deploying Actors Remotely</a><ul>
-<li><a href="remoting/deployment#when-to-use-remote-deployment">When to Use Remote Deployment</a></li>
-</ul>
-</li>
-<li><a href="remoting/deathwatch">Detecting &amp; Handling Network Failures (DeathWatch)</a></li>
-<li><a href="remoting/security">Network Security</a></li>
-</ul>
-<h3 id="akka-cluster">Akka.Cluster</h3>
-<ul>
-<li><a href="clustering/cluster-overview">Akka.Cluster Overview</a><ul>
-<li><a href="clustering/cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
-<li><a href="clustering/cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
-<li><a href="clustering/cluster-overview#use-cases">Use Cases</a></li>
-<li><a href="clustering/cluster-overview#key-terms">Terminology</a></li>
-<li><a href="clustering/cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
-<li><a href="clustering/cluster-overview#cluster-gossip">Cluster Gossip</a></li>
-<li><a href="clustering/cluster-overview#nodes">Nodes</a></li>
-<li><a href="clustering/cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-routing">Cluster Routing</a><ul>
-<li><a href="clustering/cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
-<li><a href="clustering/cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
-<li><a href="clustering/cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
-<li><a href="clustering/cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-configuration">Cluster Configuration</a><ul>
-<li><a href="clustering/cluster-configuration#critical-configuration-options">Critical Configuration Flags</a></li>
-<li><a href="clustering/cluster-configuration#specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
-<li><a href="clustering/cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
-<li><a href="clustering/cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
-<li><a href="clustering/cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
-<li><a href="clustering/cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-tools">Akka.Cluster.Tools module</a><pre><code>  - [<span class="hljs-link_label">Creating cluster singleton actors</span>](<span class="hljs-link_url">clustering/cluster-singleton</span>)
-  - [<span class="hljs-link_label">Cluster distributed publish/subscribe</span>](<span class="hljs-link_url">clustering/distributed-publish-subscribe</span>)
-  - [<span class="hljs-link_label">Communication with cluster without joining to it</span>](<span class="hljs-link_url">clustering/cluster-client</span>)
-</code></pre></li>
-<li><a href="clustering/cluster-sharding">Akka.Cluster.Sharding module</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Serialization">Serialization</a></li>
-<li><a href="IO">Akka I/O</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="testing">Testing</h3>
-<ul>
-<li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka">Building and Distributing Akka.NET</a></li>
-<li><a href="akka-developers/nightly-builds">Getting Access to Nightly Akka.NET Builds</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+<h2 id="integrating-cluster-sharding-with-persistent-actors">Integrating cluster sharding with persistent actors</h2>
+<p>One of the most common scenarios, where cluster sharding is used, is to combine them with eventsourced persistent actors from <a href="Persistence">Akka.Persistence</a> module. However as the entities are incarnated automatically based on provided props, specifying a dedicated, static unique <code>PersistenceId</code> for each entity may seem troublesome.</p>
+<p>This can be resolved by getting information about shard/entity ids directly from actor&#39;s path and constructing unique id from it. For each entity actor path will follow <em>/user/{typeName}/{shardId}/{entityId}</em> pattern, where <em>{typeName}</em> was the parameter provided to <code>ClusterSharding.Start</code> method, while <em>{shardId}</em> and <em>{entityId}</em> where strings returned by message extractor logic. Given these values we can build consistent, unique <code>PersistenceId</code>s on the fly like on the following example:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Aggregate</span> : <span class="hljs-title">PersistentActor</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Aggregate</span>(<span class="hljs-params"></span>)
+    </span>{
+        PersistenceId = Context.Parent.Path.Name + <span class="hljs-string">"-"</span> Self.Path.Name;
+    }
+
+    ...
+}
+</code></pre>
 </div>
 
 								
