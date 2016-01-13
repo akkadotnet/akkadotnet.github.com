@@ -242,6 +242,7 @@ The consequence of these decisions is that it is not possible to safely create p
     }
 }
 </code></pre>
+<p>See <a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Remote/Configuration/Remote.conf">Akka Remote Reference Config File</a> for additional information on HOCON settings available in akka remote.</p>
 <h2 id="addresses-transports-endpoints-and-associations">Addresses, Transports, Endpoints, and Associations</h2>
 <p>In the above section we mentioned that you have to bind a <em>transport</em> to an IP address and port, we did in that in HOCON inside the <code>helios.tcp</code> section. Why did we have to do any of that?</p>
 <p>Well, let&#39;s take a step back to define some key terms you&#39;ll need to be familiar with in order to use Akka.Remote:</p>
