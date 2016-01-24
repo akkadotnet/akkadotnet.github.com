@@ -330,7 +330,7 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
 <pre><code class="hljs lang-fsharp"><span class="hljs-class"><span class="hljs-keyword">type</span> <span class="hljs-title">Message</span> </span>=
     | Subscribe
     | Unsubscribe
-    | Msg <span class="hljs-keyword">of</span> ActorRef * string
+    | Msg <span class="hljs-keyword">of</span> IActorRef * string
 
 <span class="hljs-keyword">let</span> subscriber =
     spawn system <span class="hljs-string">"subscriber"</span>
@@ -347,9 +347,13 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
             publish msg mailbox.Context.System.EventStream))
 
 subscriber &lt;! Subscribe
-publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello"</span>)
+<span class="hljs-comment">// Wait 50 milliseconds for subscribe to complete (race condition between subscription and message to subscriber)</span>
+Async.Sleep <span class="hljs-number">50</span> |&gt; Async.RunSynchronously
+publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello"</span>) <span class="hljs-comment">// console output: "*publisher Path* says hello"</span>
 subscriber &lt;! Unsubscribe
-publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>)
+<span class="hljs-comment">// Again wait 50 milliseconds for unsubscribe to complete</span>
+Async.Sleep <span class="hljs-number">50</span> |&gt; Async.RunSynchronously
+publisher  &lt;! Msg (publisher, <span class="hljs-string">"hello again"</span>) <span class="hljs-comment">// no output, subscriber is not subscribed to stream</span>
 </code></pre>
 <h3 id="logging">Logging</h3>
 <p>The F# API supports two groups of logging functions - one that operates directly on strings and another (which may be recognized by <em>f</em> suffix in function names) that operates using F# string formatting features. The major difference is performance - the former is less powerful, but it&#39;s also faster than the latter.</p>
