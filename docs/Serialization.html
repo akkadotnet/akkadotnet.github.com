@@ -466,7 +466,21 @@ public class DefaultAddress extends
 }
 ```
 -->
-<h3 id="deep-serialization-of-actors">Deep serialization of Actors</h3>
+<h3 id="how-to-setup-wire-as-default-serializer">How to setup Wire as default serializer</h3>
+<p>Starting from Akka.NET v1.5, default Newtonsoft.Json serializer will be replaced in the favor of Wire. At the present moment, wire is required by some of the newer plugins (like <code>Akka.Cluster.Tools</code>). This change may break compatibility with older actors still using json serializer for remoting or persistence. If it&#39;s possible, it&#39;s advised to migrate to it already. To do so, first you need to reference wire serializer as NuGet package inside your project:</p>
+<pre><code>Install-Package Akka<span class="hljs-class">.Serialization</span><span class="hljs-class">.Wire</span>
+</code></pre><p>Then bind wire serializer using following HOCON configuration in your actor system settings:</p>
+<pre><code>akka {
+  actor {
+    serializers {
+      wire = <span class="hljs-string">"Akka.Serialization.WireSerializer, Akka.Serialization.Wire"</span>
+    }
+    serialization-bindings {
+      <span class="hljs-string">"System.Object"</span> = wire
+    }
+  }
+}
+</code></pre><h3 id="deep-serialization-of-actors">Deep serialization of Actors</h3>
 <p>The recommended approach to do deep serialization of internal actor state is
 to use <a href="Persistence">Akka Persistence</a>.</p>
 </div>
