@@ -173,7 +173,7 @@
 							<div id="main_content">
 
 								<div><h2 id="persistence">Persistence</h2>
-<p>Akka.Persistence plugin enables the creation of stateful actors whose internal state may be stored inside persistent data storage and used for recovery in case of restart, migration or VM crash. The core concept behind Akka persistence lays in storing not only the actor&#39;s state directly (in the form of snapshots) but also history of all of the changes of that actor&#39;s state. This is quite  useful solution common in patterns such as eventsourcing. Changes are immutable by nature, as they describe facts already reported in the history, and can be stored inside event journal in append-only mode. While recovering, the actor restores it&#39;s state from the latests snapshot available - which can reduce recovery time - and then recreates it further by replaying events stored inside the journal. Among other features provided by the persistence plugin is support for command query segregation model and point-to-point communication with <a href="concepts/message-delivery-reliability#discussion-what-does-at-most-once-mean-">at-least-once</a> delivery semantics.</p>
+<p>Akka.Persistence plugin enables the creation of stateful actors whose internal state may be stored inside persistent data storage and used for recovery in case of restart, migration or VM crash. The core concept behind Akka persistence lays in storing not only the actor&#39;s state directly (in the form of snapshots) but also history of all of the changes of that actor&#39;s state. This is quite  useful solution common in patterns such as eventsourcing. Changes are immutable by nature, as they describe facts already reported in the history, and can be stored inside event journal in append-only mode. While recovering, the actor restores its state from the latests snapshot available - which can reduce recovery time - and then recreates it further by replaying events stored inside the journal. Among other features provided by the persistence plugin is support for command query segregation model and point-to-point communication with <a href="concepts/message-delivery-reliability#discussion-what-does-at-most-once-mean-">at-least-once</a> delivery semantics.</p>
 <h3 id="architecture">Architecture</h3>
 <p>Akka.Persistence features are available through new set of actor base classes:</p>
 <ul>
@@ -184,9 +184,9 @@
 <li><code>Snapshot store</code> is used to persist snapshots of either persistent actor&#39;s or view&#39;s internal state. They can be used to reduce recovery times in case when a lot of events needs to be replayed for specific persistent actor. Storage backend of the snapshot store is pluggable. By default it uses local file system.</li>
 </ul>
 <h3 id="persistent-actors">Persistent actors</h3>
-<p>Unlike the default <code>ActorBase</code> class, <code>PersistentActor</code> and it&#39;s derivatives requires the setup of a few more additional members:</p>
+<p>Unlike the default <code>ActorBase</code> class, <code>PersistentActor</code> and its derivatives requires the setup of a few more additional members:</p>
 <ul>
-<li><code>PersistenceId</code> is a persistent actor&#39;s identifier that doesn&#39;t change across different actor incarnations. It&#39;s used to retrieve an event stream required by the persistent actor to recover it&#39;s internal state.</li>
+<li><code>PersistenceId</code> is a persistent actor&#39;s identifier that doesn&#39;t change across different actor incarnations. It&#39;s used to retrieve an event stream required by the persistent actor to recover its internal state.</li>
 <li><code>ReceiveRecover</code> is a method invoked during an actor&#39;s recovery cycle. Incoming objects may be user-defined events as well as system messages, for example <code>SnapshotOffer</code> which is used to deliver latest actor state saved in the snapshot store.</li>
 <li><code>ReceiveCommand</code> is an equivalent of the basic <code>Receive</code> method of default Akka.NET actors.</li>
 </ul>
@@ -194,7 +194,7 @@
 <ul>
 <li><code>Persist</code> and <code>PersistAsync</code> methods can be used to send events to the event journal in order to store them inside. The second argument is a callback invoked when the journal confirms that events have been stored successfully.</li>
 <li><code>Defer</code> and <code>DeferAsync</code> are used to perform various operations <em>after</em> events will be persisted and their callback handlers will be invoked. Unlike the persist methods, defer won&#39;t store an event in persistent storage. Defer methods may NOT be invoked in case when the actor is restarted even though the journal will successfully persist events sent.</li>
-<li><code>DeleteMessages</code> will order attached journal to remove part of it&#39;s events. It can be either logical deletion - messages are marked as deleted, but are not removed physically from the backend storage - or a physical one, when the messages are removed physically from the journal.</li>
+<li><code>DeleteMessages</code> will order attached journal to remove part of its events. It can be either logical deletion - messages are marked as deleted, but are not removed physically from the backend storage - or a physical one, when the messages are removed physically from the journal.</li>
 <li><code>LoadSnapshot</code> will send a request to the snapshot store to resend the current actor&#39;s snapshot.</li>
 <li><code>SaveSnapshot</code> will send the current actor&#39;s internal state as a snapshot to be saved by the configured snapshot store.</li>
 <li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from the snapshot store in cases where they are no longer needed.</li>
@@ -284,7 +284,7 @@
 <li><strong>Separation of domain model from stored data</strong> in cases when such separation is necessary.</li>
 <li><strong>Utilization of persistent backend specific data types</strong> as they allow transition between data understood by actors and specialized format allowed by datastores. Examples of such may be: BSON in MongoDb or JSON data type in PostgreSQL.</li>
 </ul>
-<p>For custom event adapter simply create class implementing <code>IEventAdapter</code> interface. It&#39;s required, that it should either expose parameterless constructor or the one that has <code>ExtendedActorSystem</code> as it&#39;s only argument. Then in order to use it, you&#39;ll need to register it and bind to a particular type of events using HOCON configuration - type assignability rules applies here and the most specific types have precedence over the more general ones:</p>
+<p>For custom event adapter simply create class implementing <code>IEventAdapter</code> interface. It&#39;s required, that it should either expose parameterless constructor or the one that has <code>ExtendedActorSystem</code> as its only argument. Then in order to use it, you&#39;ll need to register it and bind to a particular type of events using HOCON configuration - type assignability rules applies here and the most specific types have precedence over the more general ones:</p>
 <pre><code><span class="hljs-label">akka.persistence.journal</span> {
     &lt;journal_identifier&gt; {
         event-adapters {
@@ -299,7 +299,7 @@
         }
     }
 }
-</code></pre><p>Multiple event adapters may be applied to a single type (for recovery). If that is the case, their order will match order of the definition in <em>event-adapter-bindings</em> config section. For write side, each adapter may decide to return none, one or many adapted event for each single event provided as an input. In case of multiple adapters attached, each one of them may decide to return it&#39;s own set of adapted events. They all will be stored in the same order corresponding to adapters order.</p>
+</code></pre><p>Multiple event adapters may be applied to a single type (for recovery). If that is the case, their order will match order of the definition in <em>event-adapter-bindings</em> config section. For write side, each adapter may decide to return none, one or many adapted event for each single event provided as an input. In case of multiple adapters attached, each one of them may decide to return its own set of adapted events. They all will be stored in the same order corresponding to adapters order.</p>
 <h3 id="contributing">Contributing</h3>
 <p>Akka persistence plugin gives a custom journal and snapshot store creator a built-in set of tests, which can be used to verify correctness of the implemented backend storage plugins. It&#39;s available through <code>Akka.Persistence.TestKit</code> package and uses <a href="http://xunit.github.io/">xUnit</a> as the default test framework.</p>
 </div>
