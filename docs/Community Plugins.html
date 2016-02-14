@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Community Plugins | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+							<li class="active">Community Plugins<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Community Plugins.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,181 +172,25 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="community-plugins">Community plugins</h1>
+<p>Here you may see list of plugins developed independently by Akka.NET community developers. Some of them have their own discussion threads and chat rooms, when you can get help if necessary. We encourage you to help us improve this page by editing it with new discovered extensions and also updates related to the ones already listed in here.</p>
+<h5 id="-akka-monitoring-https-github-com-aaronontheweb-akka-monitoring-"><a href="https://github.com/Aaronontheweb/akka-monitoring">Akka.Monitoring</a></h5>
+<p>Monitoring system instrumentation for Akka.NET actors. It exposes pluggable layer for reporting performance metrics. At the moment it can be integrated with external monitoring systems like:</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li><a href="https://github.com/etsy/statsd">StatsD</a></li>
+<li><a href="https://www.visualstudio.com/features/application-insights-vs">Microsoft AppInsights</a></li>
+<li><a href="https://msdn.microsoft.com/pl-pl/library/windows/desktop/aa373083%28v=vs.85%29.aspx">Windows Performance Counters</a></li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li>Use-case and Deployment Scenarios<ul>
-<li><a href="deployment-scenarios/Console">Console</a></li>
-<li><a href="deployment-scenarios/ASP NET">ASP.NET</a></li>
-<li><a href="deployment-scenarios/Windows Service">Windows Service</a></li>
-<li><a href="deployment-scenarios/Azure PaaS Worker Role">Azure PaaS Worker Role</a></li>
-</ul>
-</li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="working-with-actors">Working with Actors</h3>
-<ul>
-<li><a href="working-with-actors/creating-actors">Creating your first Actor</a></li>
-<li><a href="working-with-actors/defining-an-actor">Defining an Actor class</a></li>
-<li><a href="working-with-actors/whats-in-an-actor">What&#39;s in an Actor</a></li>
-<li><a href="working-with-actors/creating-actors-with-props">Creating actors with Props</a></li>
-<li><a href="working-with-actors/handling-messages">Handling Messages</a></li>
-<li><a href="working-with-actors/sending-messages">Sending Messages</a></li>
-<li><a href="working-with-actors/Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="working-with-actors/Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/stopping-actors">Stopping Actors</a></li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="akka-remote">Akka.Remote</h3>
-<ul>
-<li><a href="remoting/">Akka.Remote Overview</a><ul>
-<li><a href="remoting/#use-cases">Use Cases</a></li>
-<li><a href="remoting/#enabling-akka-remote">Enabling Akka.Remote</a></li>
-<li><a href="remoting/#addresses-transports-endpoints-and-associations">Remote Addressing</a></li>
-<li><a href="remoting/#how-to-form-associations-between-remote-systems">Connecting Remote Systems</a></li>
-</ul>
-</li>
-<li><a href="remoting/transports">Transports</a><ul>
-<li><a href="remoting/transports#akka-remote-s-built-in-transports">Built-in Transports</a></li>
-<li><a href="remoting/transports#using-custom-transports">Custom Transports</a></li>
-<li><a href="remoting/transports#running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</a></li>
-</ul>
-</li>
-<li><a href="remoting/messaging">Remote Messaging</a><ul>
-<li><a href="remoting/messaging#serialization">Serialization</a></li>
-<li><a href="remoting/messaging#-remoteactorref-and-location-transparency">RemoteActorRefs</a></li>
-</ul>
-</li>
-<li><a href="remoting/deployment">Deploying Actors Remotely</a><ul>
-<li><a href="remoting/deployment#when-to-use-remote-deployment">When to Use Remote Deployment</a></li>
-</ul>
-</li>
-<li><a href="remoting/deathwatch">Detecting &amp; Handling Network Failures (DeathWatch)</a></li>
-<li><a href="remoting/security">Network Security</a></li>
-</ul>
-<h3 id="akka-cluster">Akka.Cluster</h3>
-<ul>
-<li><a href="clustering/cluster-overview">Akka.Cluster Overview</a><ul>
-<li><a href="clustering/cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
-<li><a href="clustering/cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
-<li><a href="clustering/cluster-overview#use-cases">Use Cases</a></li>
-<li><a href="clustering/cluster-overview#key-terms">Terminology</a></li>
-<li><a href="clustering/cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
-<li><a href="clustering/cluster-overview#cluster-gossip">Cluster Gossip</a></li>
-<li><a href="clustering/cluster-overview#nodes">Nodes</a></li>
-<li><a href="clustering/cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-routing">Cluster Routing</a><ul>
-<li><a href="clustering/cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
-<li><a href="clustering/cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
-<li><a href="clustering/cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
-<li><a href="clustering/cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-configuration">Cluster Configuration</a><ul>
-<li><a href="clustering/cluster-configuration#critical-configuration-options">Critical Configuration Flags</a></li>
-<li><a href="clustering/cluster-configuration#specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
-<li><a href="clustering/cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
-<li><a href="clustering/cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
-<li><a href="clustering/cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
-<li><a href="clustering/cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-tools">Akka.Cluster.Tools module</a><ul>
-<li><a href="clustering/cluster-singleton">Creating cluster singleton actors</a></li>
-<li><a href="clustering/distributed-publish-subscribe">Cluster distributed publish/subscribe</a></li>
-<li><a href="clustering/cluster-client">Communication with cluster without joining to it</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-sharding">Akka.Cluster.Sharding module</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Serialization">Serialization</a></li>
-<li><a href="IO">Akka I/O</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="testing">Testing</h3>
-<ul>
-<li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka">Building and Distributing Akka.NET</a></li>
-<li><a href="akka-developers/nightly-builds">Getting Access to Nightly Akka.NET Builds</a></li>
-<li><a href="akka-developers/public-api-changes">Approving Public API Changes</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Extension Ideas">Contribution ideas</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Community Plugins">Community plugins</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+<h5 id="-even-https-github-com-evendotnet-even-"><a href="https://github.com/evendotnet/Even">Even</a></h5>
+<p>Alternative approach to Akka.NET actor eventsourcing with support to any SQL database backend.</p>
+<h5 id="-akka-interfaced-https-github-com-saladbowlcreative-akka-interfaced-"><a href="https://github.com/SaladbowlCreative/Akka.Interfaced">Akka.Interfaced</a></h5>
+<p>Extension providing interfaced way for actor messaging.</p>
+<h5 id="-akkling-https-github-com-horusiath-akkling-"><a href="https://github.com/Horusiath/Akkling">Akkling</a></h5>
+<p>Alternative Akka.NET F# API, with support to statically typed message passing and actor definitions.</p>
+<h5 id="-akka-persistence-azure-https-github-com-4deeptech-akka-persistence-azure-"><a href="https://github.com/4deeptech/Akka.Persistence.Azure">Akka.Persistence.Azure</a></h5>
+<p>Azure Table and Blob Storage backend for Akka.NET persistent actors.</p>
+<h5 id="-akka-persistence-oraclemanaged-https-github-com-damianreeves-akka-persistence-oraclemanaged-"><a href="https://github.com/DamianReeves/Akka.Persistence.OracleManaged">Akka.Persistence.OracleManaged</a></h5>
+<p>Oracle database backend for Akka.NET persistent actors.</p>
 </div>
 
 								
