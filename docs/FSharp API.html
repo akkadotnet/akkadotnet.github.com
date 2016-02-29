@@ -309,7 +309,7 @@ aref2 &lt;! <span class="hljs-string">"two"</span>
         [ SpawnOption.SupervisorStrategy (Strategy.OneForOne (<span class="hljs-keyword">fun</span> error -&gt;
             <span class="hljs-keyword">match</span> error <span class="hljs-keyword">with</span>
             | :? ArithmeticException -&gt; Directive.Escalate
-            | _ -&gt; SupervisorStrategy.DefaultDecider error )) ]
+            | _ -&gt; SupervisorStrategy.DefaultDecider.Decide error )) ]
 
 <span class="hljs-keyword">let</span> remoteRef =
     spawne system <span class="hljs-string">"remote-actor"</span> &lt;@ actorOf myFunc @&gt;
