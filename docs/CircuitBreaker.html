@@ -174,44 +174,23 @@
 
 								<div><h1 id="circuit-breaker">Circuit Breaker</h1>
 <h2 id="why-are-they-used-">Why are they used?</h2>
-<p>A circuit breaker is used to provide stability and prevent cascading failures
-in distributed systems. These should be used in conjunction with judicious
-timeouts at the interfaces between remote systems to prevent the failure of a
-single component from bringing down all components.</p>
-<p>As an example, we have a web application interacting with a remote third party
-web service. Let&#39;s say the third party has oversold their capacity and their
-database melts down under load. Assume that the database fails in such a way
-that it takes a very long time to hand back an error to the third party web
-service. This in turn makes calls fail after a long period of time. Back to our
-web application, the users have noticed that their form submissions take much
-longer seeming to hang. Well the users do what they know to do which is use the
-refresh button, adding more requests to their already running requests. This
-eventually causes the failure of the web application due to resource exhaustion.
-This will affect all users, even those who are not using functionality dependent
-on this third party web service.</p>
-<p>Introducing circuit breakers on the web service call would cause the requests to
-begin to fail-fast, letting the user know that something is wrong and that they
-need not refresh their request. This also confines the failure behavior to only
-those users that are using functionality dependent on the third party, other
-users are no longer affected as there is no resource exhaustion. Circuit
-breakers can also allow savvy developers to mark portions of the site that use
-the functionality unavailable, or perhaps show some cached content as
-appropriate while the breaker is open.</p>
-<p>The Akka library provides an implementation of a circuit breaker called
-<code>Akka.Pattern.CircuitBreaker</code> which has the behavior described below.</p>
+<p>A circuit breaker is used to provide stability and prevent cascading failures in distributed systems. These should be used in conjunction with judicious timeouts at the interfaces between remote systems to prevent the failure of a single component from bringing down all components.</p>
+<p>As an example, we have a web application interacting with a remote third party web service. Let&#39;s say the third party has oversold their capacity and their database melts down under load. Assume that the database fails in such a way that it takes a very long time to hand back an error to the third party web service. This in turn makes calls fail after a long period of time. Back to our web application, the users have noticed that their form submissions take much longer seeming to hang. Well the users do what they know to do which is use the refresh button, adding more requests to their already running requests. This eventually causes the failure of the web application due to resource exhaustion. This will affect all users, even those who are not using functionality dependent on this third party web service.</p>
+<p>Introducing circuit breakers on the web service call would cause the requests to begin to fail-fast, letting the user know that something is wrong and that they need not refresh their request. This also confines the failure behavior to only those users that are using functionality dependent on the third party, other users are no longer affected as there is no resource exhaustion. Circuit breakers can also allow savvy developers to mark portions of the site that use the functionality unavailable, or perhaps show some cached content as appropriate while the breaker is open.</p>
+<p>The Akka library provides an implementation of a circuit breaker called <code>Akka.Pattern.CircuitBreaker</code> which has the behavior described below.</p>
 <h2 id="what-do-they-do-">What do they do?</h2>
 <ul>
 <li>During normal operation, a circuit breaker is in the <code>Closed</code> state:<ul>
-<li>Exceptions or calls exceeding the configured <code>callTimeout</code> increment a
+<li>Exceptions or calls exceeding the configured <code>СallTimeout</code> increment a
 failure counter</li>
 <li>Successes reset the failure count to zero</li>
-<li>When the failure counter reaches a <code>maxFailures</code> count, the breaker is
+<li>When the failure counter reaches a <code>MaxFailures</code> count, the breaker is
 tripped into <code>Open</code> state</li>
 </ul>
 </li>
 <li>While in <code>Open</code> state:<ul>
-<li>All calls fail-fast with a :class:<code>CircuitBreakerOpenException</code></li>
-<li>After the configured <code>resetTimeout</code>, the circuit breaker enters a
+<li>All calls fail-fast with a <code>CircuitBreakerOpenException</code></li>
+<li>After the configured <code>ResetTimeout</code>, the circuit breaker enters a
 <code>Half-Open</code> state</li>
 </ul>
 </li>
@@ -220,47 +199,73 @@ tripped into <code>Open</code> state</li>
 <li>All other calls fail-fast with an exception just as in <code>Open</code> state</li>
 <li>If the first call succeeds, the breaker is reset back to <code>Closed</code> state</li>
 <li>If the first call fails, the breaker is tripped again into the <code>Open</code> state
-for another full <code>resetTimeout</code></li>
+for another full <code>ResetTimeout</code></li>
 </ul>
 </li>
 <li>State transition listeners:<ul>
-<li>Callbacks can be provided for every state entry via <code>onOpen</code>, <code>onClose</code>,
-and <code>onHalfOpen</code></li>
-<li>These are executed in the :class:<code>ExecutionContext</code> provided.</li>
+<li>Callbacks can be provided for every state entry via <code>OnOpen</code>, <code>OnClose</code>,
+and <code>OnHalfOpen</code></li>
+<li>These are executed in the <code>ExecutionContext</code> provided.</li>
 </ul>
 </li>
 </ul>
 <p><img class="img-responsive" src="images/circuit-breaker-states.png" alt="Circuit breaker states"></p>
 <h2 id="examples">Examples</h2>
 <h3 id="initialization">Initialization</h3>
-<p>Here&#39;s how a :class:<code>CircuitBreaker</code> would be configured for:</p>
+<p>Here&#39;s how a <code>CircuitBreaker</code> would be configured for:</p>
 <ul>
 <li>5 maximum failures</li>
 <li>a call timeout of 10 seconds</li>
 <li>a reset timeout of 1 minute</li>
 </ul>
-<h4 id="f-api">F# Api</h4>
-<p>.. includecode:: code/docs/circuitbreaker/CircuitBreakerDocSpec.cs
-   :include: imports1,circuit-breaker-initialization</p>
-<h4 id="c-api">C# Api</h4>
-<p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.fs
-   :include: imports1,circuit-breaker-initialization</p>
+<h4 id="-c-"><code>C#</code></h4>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> DangerousActor : ReceiveActor
+{
+    <span class="hljs-keyword">private</span> readonly CircuitBreaker _breaker;
+    <span class="hljs-keyword">private</span> readonly ILoggingAdapter _log = Context.GetLogger();
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DangerousActor</span><span class="hljs-params">()</span>
+    </span>{
+        _breaker = <span class="hljs-keyword">new</span> CircuitBreaker(<span class="hljs-number">5</span>, TimeSpan.FromSeconds(<span class="hljs-number">10</span>), TimeSpan.FromMinutes(<span class="hljs-number">1</span>))
+                .OnOpen(() =&gt; _log.Warning(<span class="hljs-string">"My CircuitBreaker is now open, and will not close for one minute"</span>))
+                .OnHalfOpen(() =&gt; _log.Warning(<span class="hljs-string">"My CircuitBreaker is now half-open"</span>))
+                .OnClose(() =&gt; _log.Warning(<span class="hljs-string">"My CircuitBreaker is now closed"</span>));
+    }
+}
+</code></pre>
 <h3 id="call-protection">Call Protection</h3>
-<p>Here&#39;s how the :class:<code>CircuitBreaker</code> would be used to protect an asynchronous
+<p>Here&#39;s how the <code>CircuitBreaker</code> would be used to protect an asynchronous
 call as well as a synchronous one:</p>
-<h4 id="f-api">F# Api</h4>
-<p>.. includecode:: code/docs/circuitbreaker/CircuitBreakerDocSpec.scala
-   :include: circuit-breaker-usage</p>
-<h4 id="c-api">C# Api</h4>
-<p>.. includecode:: code/docs/circuitbreaker/DangerousJavaActor.java
-   :include: circuit-breaker-usage</p>
-<div class="alert alert-default">
-<p><strong>Note</strong><br/>
-Using the :class:<code>CircuitBreaker</code> companion object&#39;s <code>apply</code> or <code>create</code> methods
-will return a :class:<code>CircuitBreaker</code> where callbacks are executed in the
-caller&#39;s thread. This can be useful if the asynchronous :class:<code>Future</code> behavior
-is unnecessary, for example invoking a synchronous-only API.</p>
-</div>
+<h4 id="-c-"><code>C#</code></h4>
+<pre><code class="hljs lang-C#">Receive&lt;string&gt;<span class="hljs-list">(<span class="hljs-keyword">str</span> =&gt; str.Equals<span class="hljs-list">(<span class="hljs-string">"is my middle name"</span>)</span>, cmd =&gt;
+{
+    _breaker.WithCircuitBreaker<span class="hljs-list">(
+        <span class="hljs-list">()</span> =&gt; Task.FromResult<span class="hljs-list">(<span class="hljs-string">"This really isn't that dangerous of a call after all"</span>)</span>)</span>.PipeTo<span class="hljs-list">(<span class="hljs-keyword">Sender</span>)</span><span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+
+Receive&lt;string&gt;<span class="hljs-list">(<span class="hljs-keyword">str</span> =&gt; str.Equals<span class="hljs-list">(<span class="hljs-string">"block for me"</span>)</span>, cmd =&gt;
+{
+    Sender.Tell<span class="hljs-list">(<span class="hljs-keyword">_breaker</span>.WithCircuitBreaker<span class="hljs-list">(
+        <span class="hljs-list">()</span> =&gt; Task.FromException<span class="hljs-list">(<span class="hljs-keyword">new</span> ArgumentNullException<span class="hljs-list">()</span>)</span>)</span>)</span><span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+</code></pre>
+<pre><code class="hljs lang-C#">dangerousActor.Tell(<span class="hljs-string">"is my middle name"</span>);
+// This really isn<span class="hljs-attribute">'t</span> that dangerous <span class="hljs-keyword">of</span> a call <span class="hljs-keyword">after</span> <span class="hljs-keyword">all</span>
+
+dangerousActor.Tell(<span class="hljs-string">"block for me"</span>);
+dangerousActor.Tell(<span class="hljs-string">"block for me"</span>);
+dangerousActor.Tell(<span class="hljs-string">"block for me"</span>);
+dangerousActor.Tell(<span class="hljs-string">"block for me"</span>);
+dangerousActor.Tell(<span class="hljs-string">"block for me"</span>);
+
+// My CircuitBreaker <span class="hljs-keyword">is</span> now <span class="hljs-keyword">open</span>, <span class="hljs-keyword">and</span> will <span class="hljs-keyword">not</span> close <span class="hljs-keyword">for</span> one minute
+
+// My CircuitBreaker <span class="hljs-keyword">is</span> now half-<span class="hljs-keyword">open</span>
+
+dangerousActor.Tell(<span class="hljs-string">"is my middle name"</span>);
+// My CircuitBreaker <span class="hljs-keyword">is</span> now closed
+// This really isn<span class="hljs-attribute">'t</span> that dangerous <span class="hljs-keyword">of</span> a call <span class="hljs-keyword">after</span> <span class="hljs-keyword">all</span>
+</code></pre>
 </div>
 
 								
