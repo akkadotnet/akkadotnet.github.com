@@ -419,7 +419,7 @@
 <p>Here&#39;s the set of arguments that the MultiNodeTestRunner takes:</p>
 <pre><code>Akka.MultiNodeTestRunner.<span class="hljs-keyword">exe</span> path-<span class="hljs-keyword">to</span>-dll # path <span class="hljs-keyword">to</span> DLL containing tests
 [-Dmultinode.enable-filesink=(<span class="hljs-keyword">on</span>|off)] # writes test output <span class="hljs-keyword">to</span> disk 
-[-Dmultinode.test-spec=(<span class="hljs-string">"fully qualified spec method name)] # execute a specific test method
+[-Dmultinode.spec=(<span class="hljs-string">"fully qualified spec method name)] # execute a specific test method
 </span>                                                            # instead of <span class="hljs-keyword">all</span> of them
 </code></pre><p>Here&#39;s an example of what invoking the test runner might look like if all of our multinodetests were packaged into Akka.MultiNodeTests.dll.</p>
 <pre><code>C:\&gt; Akka<span class="hljs-class">.MultiNodeTestRunner</span><span class="hljs-class">.exe</span> <span class="hljs-string">"Akka.MultiNodetests.dll"</span> -Dmultinode.enable-filesink=on
