@@ -463,7 +463,7 @@ Most routing strategies listed below are available in both types. Some of them m
 <p>ScatterGatherFirstCompletedPool defined in configuration:</p>
 <pre><code class="hljs lang-hocon">akka.actor.deployment {
   /some-pool {
-    router = tail-chopping-pool
+    router = scatter-gather-pool
     nr-<span class="hljs-operator">of</span>-instances = <span class="hljs-number">5</span>
     <span class="hljs-operator">within</span> = <span class="hljs-number">10</span> <span class="hljs-built_in">seconds</span>
   }
@@ -478,7 +478,7 @@ Most routing strategies listed below are available in both types. Some of them m
 <p>ScatterGatherFirstCompletedPool defined in configuration:</p>
 <pre><code class="hljs lang-hocon">akka.actor.deployment {
   /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
-    router</span> = tail-chopping-<span class="hljs-keyword">group</span>
+    router</span> = scatter-gather-<span class="hljs-keyword">group</span>
     <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
     within = <span class="hljs-number">10</span> seconds
   }
