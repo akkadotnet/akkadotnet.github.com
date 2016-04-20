@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Persistence Actors | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Persistence Actors<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/persistent-actors.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="persistent-actors">Persistent Actors</h1>
+<p>Unlike the default <code>ActorBase</code> class, <code>PersistentActor</code> and its derivatives requires the setup of a few more additional members:</p>
+<ul>
+<li><code>PersistenceId</code> is a persistent actor&#39;s identifier that doesn&#39;t change across different actor incarnations. It&#39;s used to retrieve an event stream required by the persistent actor to recover its internal state.</li>
+<li><code>ReceiveRecover</code> is a method invoked during an actor&#39;s recovery cycle. Incoming objects may be user-defined events as well as system messages, for example <code>SnapshotOffer</code> which is used to deliver latest actor state saved in the snapshot store.</li>
+<li><code>ReceiveCommand</code> is an equivalent of the basic <code>Receive</code> method of default Akka.NET actors.</li>
+</ul>
+<p>Persistent actors also offer a set of specialized members:</p>
+<ul>
+<li><code>Persist</code> and <code>PersistAsync</code> methods can be used to send events to the event journal in order to store them inside. The second argument is a callback invoked when the journal confirms that events have been stored successfully.</li>
+<li><code>Defer</code> and <code>DeferAsync</code> are used to perform various operations <em>after</em> events will be persisted and their callback handlers will be invoked. Unlike the persist methods, defer won&#39;t store an event in persistent storage. Defer methods may NOT be invoked in case when the actor is restarted even though the journal will successfully persist events sent.</li>
+<li><code>DeleteMessages</code> will order attached journal to remove part of its events. It can be either logical deletion - messages are marked as deleted, but are not removed physically from the backend storage - or a physical one, when the messages are removed physically from the journal.</li>
+<li><code>LoadSnapshot</code> will send a request to the snapshot store to resend the current actor&#39;s snapshot.</li>
+<li><code>SaveSnapshot</code> will send the current actor&#39;s internal state as a snapshot to be saved by the configured snapshot store.</li>
+<li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from the snapshot store in cases where they are no longer needed.</li>
+<li><code>OnReplaySuccess</code> is a virtual method which will be called when the recovery cycle ends successfully.</li>
+<li><code>OnReplayFailure</code> is a virtual method which will be called when the recovery cycle fails unexpectedly from some reason.</li>
+<li><code>IsRecovering</code> property determines if the current actor is performing a recovery cycle at the moment.</li>
+<li><code>SnapshotSequenceNr</code> property may be used to determine the sequence number used for marking persisted events. This value changes in a monotonically increasing manner.</li>
+</ul>
+<p>In case a manual recovery cycle initialization is necessary, it may be invoked by sending a <code>Recover</code> message to a persistent actor.</p>
+<p>A persistent actor receives a (non-persistent) command which is first validated if it can be applied to the current state. Here validation can mean anything from simple inspection of a command message&#39;s fields up to a conversation with several external services, for example. If validation succeeds, events are generated from the command, representing the effect of the command. These events are then persisted and, after successful persistence, used to change the actor&#39;s state. When the persistent actor needs to be recovered, only the persisted events are replayed of which we know that they can be successfully applied. In other words, events cannot fail when being replayed to a persistent actor, in contrast to commands. Event sourced actors may of course also process commands that do not change application state such as query commands for example.</p>
+<p>Akka persistence supports event sourcing with the <code>ReceivePersistentActor</code> abstract class. An actor that extends this class uses the persist method to persist and handle events. The behavior of an <code>ReceivePersistentActor</code> is defined by implementing <code>Recover</code> and <code>Receive</code> methods. This is demonstrated in the following example.</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Cmd</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Cmd</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> data</span>)
+    </span>{
+        Data = data;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Data { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Evt</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Evt</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> data</span>)
+    </span>{
+        Data = data;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Data { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ExampleState</span>
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> List&lt;<span class="hljs-keyword">string</span>&gt; _events;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ExampleState</span>(<span class="hljs-params">List&lt;<span class="hljs-keyword">string</span>&gt; events</span>)
+    </span>{
+        _events = events;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ExampleState</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new List&lt;<span class="hljs-keyword">string</span>&gt;(</span>))
+    </span>{
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Update</span>(<span class="hljs-params">Evt evt</span>)
+    </span>{
+        _events.Add(evt.Data);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> ExampleState <span class="hljs-title">Copy</span>(<span class="hljs-params"></span>)
+    </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ExampleState(_events);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Size =&gt; _events.Count;
+}
+
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ExamplePersistentActor</span> : <span class="hljs-title">ReceivePersistentActor</span>
+{
+    <span class="hljs-keyword">private</span> ExampleState _state = <span class="hljs-keyword">new</span> ExampleState();
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ExamplePersistentActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Recover&lt;Evt&gt;(evt =&gt;
+        {
+            _state.Update(evt);
+        });
+
+        Recover&lt;SnapshotOffer&gt;(snapshot =&gt;
+        {
+            _state = (ExampleState)snapshot.Snapshot;
+        });
+
+        Command&lt;Cmd&gt;(message =&gt;
+        {
+            <span class="hljs-keyword">string</span> data = message.Data;
+            Evt evt1 = <span class="hljs-keyword">new</span> Evt($<span class="hljs-string">"{data}-{_state.Size}"</span>);
+            Evt evt2 = <span class="hljs-keyword">new</span> Evt($<span class="hljs-string">"{data}-{_state.Size + 1}"</span>);
+
+            <span class="hljs-keyword">var</span> events = <span class="hljs-keyword">new</span> List&lt;Evt&gt; { evt1, evt2 };
+
+            PersistAll(events, evt =&gt;
+            {
+                _state.Update(evt);
+                <span class="hljs-keyword">if</span> (evt == evt2)
+                {
+                    Context.System.EventStream.Publish(evt);
+                }
+            });
+        });
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(msg =&gt; msg == <span class="hljs-string">"snap"</span>, message =&gt;
+        {
+            SaveSnapshot(_state.Copy());
+        });
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(msg =&gt; msg == <span class="hljs-string">"print"</span>, message =&gt;
+        {
+            Console.WriteLine(_state);
+        });
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId { <span class="hljs-keyword">get</span>; } = <span class="hljs-string">"sample-id-1"</span>;
+}
+</code></pre>
+<p>The example defines two data types, Cmd and Evt to represent commands and events, respectively. The state of the <code>ExamplePersistentActor</code> is a list of persisted event data contained in <code>ExampleState</code>.</p>
+<p>The persistent actor&#39;s <code>OnReceiveRecover</code> method defines how state is updated during recovery by handling <code>Evt</code> and <code>SnapshotOffer</code> messages. The persistent actor&#39;s <code>OnReceiveCommand</code> method is a command handler. In this example, a command is handled by generating two events which are then persisted and handled. Events are persisted by calling <code>Persist</code> with an event (or a sequence of events) as first argument and an event handler as second argument.</p>
+<p>The persist method persists events asynchronously and the event handler is executed for successfully persisted events. Successfully persisted events are internally sent back to the persistent actor as individual messages that trigger event handler executions. An event handler may close over persistent actor state and mutate it. The sender of a persisted event is the sender of the corresponding command. This allows event handlers to reply to the sender of a command (not shown).</p>
+<p>The main responsibility of an event handler is changing persistent actor state using event data and notifying others about successful state changes by publishing events.</p>
+<p>When persisting events with persist it is guaranteed that the persistent actor will not receive further commands between the persist call and the execution(s) of the associated event handler. This also holds for multiple persist calls in context of a single command. Incoming messages are stashed until the persist is completed.</p>
+<p>If persistence of an event fails, <code>OnPersistFailure</code> will be invoked (logging the error by default), and the actor will unconditionally be stopped. If persistence of an event is rejected before it is stored, e.g. due to serialization error, <code>OnPersistRejected</code> will be invoked (logging a warning by default), and the actor continues with the next message.</p>
+<blockquote>
+<p>NOTE: It&#39;s also possible to switch between different command handlers during normal processing and recovery with <code>Context.Become</code> and <code>Context.Unbecome</code>. To get the actor into the same state after recovery you need to take special care to perform the same state transitions with become and unbecome in the <code>ReceiveRecover</code> method as you would have done in the command handler. Note that when using become from <code>ReceiveRecover</code> it will still only use the <code>ReceiveRecover</code> behavior when replaying the events. When replay is completed it will use the new behavior.</p>
+</blockquote>
+<h2 id="identifiers">Identifiers</h2>
+<p>A persistent actor must have an identifier that doesn&#39;t change across different actor incarnations. The identifier must be defined with the <code>PersistenceId</code> method.</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId { <span class="hljs-keyword">get</span>; } = <span class="hljs-string">"my-stable-persistence-id"</span>;
+</code></pre>
+<h2 id="recovery">Recovery</h2>
+<p>By default, a persistent actor is automatically recovered on start and on restart by replaying journaled messages. New messages sent to a persistent actor during recovery do not interfere with replayed messages. They are cached and received by a persistent actor after recovery phase completes.</p>
+<blockquote>
+<p>NOTE: Accessing the <code>Sender</code> for replayed messages will always result in a deadLetters reference, as the original sender is presumed to be long gone. If you indeed have to notify an actor during recovery in the future, store its <code>ActorPath</code> explicitly in your persisted events.</p>
+</blockquote>
+<h3 id="recovery-customization">Recovery customization</h3>
+<p>Applications may also customise how recovery is performed by returning a customised <code>Recovery</code> object in the recovery method of a <code>ReceivePersistentActor</code>, for example setting an upper bound to the replay which allows the actor to be replayed to a certain point &quot;in the past&quot; instead to its most up to date state:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> Recovery Recovery
+{
+    <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Recovery(<span class="hljs-keyword">new</span> SnapshotSelectionCriteria(<span class="hljs-number">457</span>)); }
+}
+</code></pre>
+<p>Recovery can be disabled by returning <code>SnapshotSelectionCriteria.None</code> in the recovery property of a PersistentActor:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> Recovery Recovery
+{
+    <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Recovery(SnapshotSelectionCriteria.None); }
+}
+</code></pre>
+<h3 id="recovery-status">Recovery status</h3>
+<p>A persistent actor can query its own recovery status via the methods</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> IsRecovering { <span class="hljs-keyword">get</span>; }
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> IsRecoveryFinished { <span class="hljs-keyword">get</span>; }
+</code></pre>
+<p>Sometimes there is a need for performing additional initialization when the recovery has completed before processing any other message sent to the persistent actor. The persistent actor will receive a special <code>RecoveryCompleted</code> message right after recovery and before any other received messages.</p>
+<pre><code class="hljs lang-C#">Recover&lt;RecoveryCompleted&gt;<span class="hljs-list">(<span class="hljs-keyword">message</span> =&gt;
+{
+    // perform init after recovery, before any other messages
+})</span><span class="hljs-comment">;</span>
+
+Command&lt;string&gt;<span class="hljs-list">(<span class="hljs-keyword">message</span> =&gt;
+{
+
+})</span><span class="hljs-comment">;</span>
+</code></pre>
+<p>If there is a problem with recovering the state of the actor from the journal, <code>OnRecoveryFailure</code> is called (logging the error by default) and the actor will be stopped.</p>
+<h2 id="internal-stash">Internal stash</h2>
+<p>The persistent actor has a private stash for internally caching incoming messages during <code>Recovery</code> or the <code>Persist</code> \ <code>PersistAll</code> method persisting events. However You can use inherited stash or create one or more stashes if needed. The internal stash doesn&#39;t interfere with these stashes apart from user inherited <code>UnstashAll</code> method, which prepends all messages in the inherited stash to the internal stash instead of mailbox. Hence, If the message in the inherited stash need to be handled after the messages in the internal stash, you should call inherited unstash method.</p>
+<p>You should be careful to not send more messages to a persistent actor than it can keep up with, otherwise the number of stashed messages will grow. It can be wise to protect against <code>OutOfMemoryException</code> by defining a maximum stash capacity in the mailbox configuration:</p>
+<pre><code class="hljs lang-hocon">akka<span class="hljs-class">.actor</span><span class="hljs-class">.default-mailbox</span><span class="hljs-class">.stash-capacity</span> = <span class="hljs-number">10000</span>
+</code></pre>
+<p>Note that the stash capacity is per actor. If you have many persistent actors, e.g. when using cluster sharding, you may need to define a small stash capacity to ensure that the total number of stashed messages in the system don&#39;t consume too much memory. Additionally, The persistent actor defines three strategies to handle failure when the internal stash capacity is exceeded. The default overflow strategy is the <code>ThrowOverflowExceptionStrategy</code>, which discards the current received message and throws a <code>StashOverflowException</code>, causing actor restart if default supervision strategy is used. you can override the <code>InternalStashOverflowStrategy</code> property to return <code>DiscardToDeadLetterStrategy</code> or <code>ReplyToStrategy</code> for any &quot;individual&quot; persistent actor, or define the &quot;default&quot; for all persistent actors by providing FQCN, which must be a subclass of <code>StashOverflowStrategyConfigurator</code>, in the persistence configuration:</p>
+<pre><code class="hljs lang-hocon">akka<span class="hljs-class">.persistence</span><span class="hljs-class">.internal-stash-overflow-strategy</span> = <span class="hljs-string">"akka.persistence.ThrowExceptionConfigurator"</span>
+</code></pre>
+<p>The <code>DiscardToDeadLetterStrategy</code> strategy also has a pre-packaged companion configurator <code>DiscardConfigurator</code>.</p>
+<p>You can also query default strategy via the Akka persistence extension singleton:</p>
+<pre><code class="hljs lang-C#">Context<span class="hljs-class">.System</span><span class="hljs-class">.DefaultInternalStashOverflowStrategy</span>
+</code></pre>
+<blockquote>
+<p>NOTE: The bounded mailbox should be avoid in the persistent actor, because it may be discarding the messages come from Storage backends. You can use bounded stash instead of bounded mailbox.</p>
+</blockquote>
+<h2 id="relaxed-local-consistency-requirements-and-high-throughput-use-cases">Relaxed local consistency requirements and high throughput use-cases</h2>
+<p>If faced with relaxed local consistency requirements and high throughput demands sometimes <code>PersistentActor</code> and its persist may not be enough in terms of consuming incoming Commands at a high rate, because it has to wait until all Events related to a given Command are processed in order to start processing the next Command. While this abstraction is very useful for most cases, sometimes you may be faced with relaxed requirements about consistency – for example you may want to process commands as fast as you can, assuming that the Event will eventually be persisted and handled properly in the background, retroactively reacting to persistence failures if needed.</p>
+<p>The <code>PersistAsync</code> method provides a tool for implementing high-throughput persistent actors. It will not stash incoming Commands while the Journal is still working on persisting and/or user code is executing event callbacks.</p>
+<p>In the below example, the event callbacks may be called &quot;at any time&quot;, even after the next Command has been processed. The ordering between events is still guaranteed (&quot;evt-b-1&quot; will be sent after &quot;evt-a-2&quot;, which will be sent after &quot;evt-a-1&quot; etc.).</p>
+<blockquote>
+<p>NOTE: In order to implement the pattern known as &quot;command sourcing&quot; simply <code>PersistAsync</code> all incoming messages right away and handle them in the callback.</p>
+</blockquote>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyPersistentActor</span> : <span class="hljs-title">ReceivePersistentActor</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId =&gt; <span class="hljs-string">"HardCoded"</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyPersistentActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Action&lt;<span class="hljs-keyword">string</span>&gt; replyToSender = message =&gt;
+        {
+            Sender.Tell(message, Self);
+        };
+
+        Recover&lt;<span class="hljs-keyword">string</span>&gt;(message =&gt;
+        {
+            <span class="hljs-comment">// handle recovery here</span>
+        });
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(message =&gt;
+        {
+            Sender.Tell(message, Self);
+
+            PersistAsync($<span class="hljs-string">"evt-{message}-1"</span>, replyToSender);
+            PersistAsync($<span class="hljs-string">"evt-{message}-2"</span>, replyToSender);
+        });
+    }
+}
+</code></pre>
+<div class="alert alert-warning">
+<p><strong>WARNING:</strong> The callback will not be invoked if the actor is restarted (or stopped) in between the call to <code>PersistAsync</code> and the journal has confirmed the write.</p>
+</div>
+<h2 id="deferring-actions-until-preceding-persist-handlers-have-executed">Deferring actions until preceding persist handlers have executed</h2>
+<p>Sometimes when working with <code>PersistAsync</code> you may find that it would be nice to define some actions in terms of happens-after the previous <code>PersistAsync</code> handlers have been invoked. <code>PersistentActor</code> provides an utility method called <code>DeferAsync</code>, which works similarly to <code>PersistAsync</code> yet does not persist the passed in event. It is recommended to use it for read operations, and actions which do not have corresponding events in your domain model.</p>
+<p>Using this method is very similar to the persist family of methods, yet it does not persist the passed in event. It will be kept in memory and used when invoking the handler.</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyPersistentActor</span> : <span class="hljs-title">ReceivePersistentActor</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId =&gt; <span class="hljs-string">"HardCoded"</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyPersistentActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Action&lt;<span class="hljs-keyword">string</span>&gt; replyToSender = message =&gt;
+        {
+            Sender.Tell(message, Self);
+        };
+
+        Recover&lt;<span class="hljs-keyword">string</span>&gt;(message =&gt;
+        {
+            <span class="hljs-comment">// handle recovery here</span>
+        });
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(message =&gt;
+        {
+            PersistAsync($<span class="hljs-string">"evt-{message}-1"</span>, replyToSender);
+            PersistAsync($<span class="hljs-string">"evt-{message}-2"</span>, replyToSender);
+            DeferAsync($<span class="hljs-string">"evt-{message}-3"</span>, replyToSender);
+        });
+    }
+}
+</code></pre>
+<p>Notice that the <code>Sender</code> is safe to access in the handler callback, and will be pointing to the original sender of the command for which this <code>DeferAsync</code> handler was called.</p>
+<pre><code class="hljs lang-C#">persistentActor.tell(<span class="hljs-string">"a"</span>);
+persistentActor.tell(<span class="hljs-string">"b"</span>);
+
+<span class="hljs-comment">// order of received messages:</span>
+<span class="hljs-comment">// a</span>
+<span class="hljs-comment">// b</span>
+<span class="hljs-comment">// evt-a-1</span>
+<span class="hljs-comment">// evt-a-2</span>
+<span class="hljs-comment">// evt-a-3</span>
+<span class="hljs-comment">// evt-b-1</span>
+<span class="hljs-comment">// evt-b-2</span>
+<span class="hljs-comment">// evt-b-3</span>
+</code></pre>
+<div class="alert alert-warning">
+<p><strong>WARNING:</strong> The callback will not be invoked if the actor is restarted (or stopped) in between the call to <code>DeferAsync</code> and the journal has processed and confirmed all preceding writes..</p>
+</div>
+<h2 id="nested-persist-calls">Nested persist calls</h2>
+<p>It is possible to call <code>Persist</code> and <code>PersistAsync</code> inside their respective callback blocks and they will properly retain both the thread safety (including the right value of <code>Sender</code>) as well as stashing guarantees.</p>
+<p>In general it is encouraged to create command handlers which do not need to resort to nested event persisting, however there are situations where it may be useful. It is important to understand the ordering of callback execution in those situations, as well as their implication on the stashing behaviour (that persist enforces). In the following example two persist calls are issued, and each of them issues another persist inside its callback:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyPersistentActor</span> : <span class="hljs-title">ReceivePersistentActor</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId =&gt; <span class="hljs-string">"HardCoded"</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyPersistentActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Action&lt;<span class="hljs-keyword">string</span>&gt; replyToSender = (message) =&gt;
+        {
+            Sender.Tell(message, Self);
+        };
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(message =&gt;
+        {
+            Persist($<span class="hljs-string">"{message}-outer-1"</span>, innerMessage =&gt;
+            {
+                Sender.Tell(innerMessage, Self);
+                Persist($<span class="hljs-string">"{innerMessage}-inner-1"</span>, replyToSender);
+            });
+
+            Persist($<span class="hljs-string">"{message}-outer-2"</span>, innerMessage =&gt;
+            {
+                Sender.Tell(innerMessage, Self);
+                Persist($<span class="hljs-string">"{innerMessage}-inner-2"</span>, replyToSender);
+            });
+        });
+    }
+}
+</code></pre>
+<p>When sending two commands to this <code>PersistentActor</code>, the persist handlers will be executed in the following order:</p>
+<pre><code class="hljs lang-C#">persistentActor.tell(<span class="hljs-string">"a"</span>);
+persistentActor.tell(<span class="hljs-string">"b"</span>);
+
+<span class="hljs-comment">// order of received messages:</span>
+<span class="hljs-comment">// a</span>
+<span class="hljs-comment">// a-outer-1</span>
+<span class="hljs-comment">// a-outer-2</span>
+<span class="hljs-comment">// a-inner-1</span>
+<span class="hljs-comment">// a-inner-2</span>
+<span class="hljs-comment">// and only then process "b"</span>
+<span class="hljs-comment">// b</span>
+<span class="hljs-comment">// b-outer-1</span>
+<span class="hljs-comment">// b-outer-2</span>
+<span class="hljs-comment">// b-inner-1</span>
+<span class="hljs-comment">// b-inner-2</span>
+</code></pre>
+<p>First the &quot;outer layer&quot; of persist calls is issued and their callbacks are applied. After these have successfully completed, the inner callbacks will be invoked (once the events they are persisting have been confirmed to be persisted by the journal). Only after all these handlers have been successfully invoked will the next command be delivered to the persistent Actor. In other words, the stashing of incoming commands that is guaranteed by initially calling <code>Persist</code> on the outer layer is extended until all nested persist callbacks have been handled.</p>
+<p>It is also possible to nest <code>PersistAsync</code> calls, using the same pattern:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyPersistentActor</span> : <span class="hljs-title">ReceivePersistentActor</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId =&gt; <span class="hljs-string">"HardCoded"</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyPersistentActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Action&lt;<span class="hljs-keyword">string</span>&gt; replyToSender = (message) =&gt;
+        {
+            Sender.Tell(message, Self);
+        };
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(message =&gt;
+        {
+            PersistAsync($<span class="hljs-string">"{message}-outer-1"</span>, innerMessage =&gt;
+            {
+                Sender.Tell(innerMessage, Self);
+                PersistAsync($<span class="hljs-string">"{innerMessage}-inner-1"</span>, replyToSender);
+            });
+
+            PersistAsync($<span class="hljs-string">"{message}-outer-2"</span>, innerMessage =&gt;
+            {
+                Sender.Tell(innerMessage, Self);
+                PersistAsync($<span class="hljs-string">"{innerMessage}-inner-2"</span>, replyToSender);
+            });
+        });
+    }
+}
+</code></pre>
+<p>In this case no stashing is happening, yet events are still persisted and callbacks are executed in the expected order:</p>
+<pre><code class="hljs lang-C#">persistentActor.tell(<span class="hljs-string">"a"</span>);
+persistentActor.tell(<span class="hljs-string">"b"</span>);
+
+<span class="hljs-comment">// order of received messages:</span>
+<span class="hljs-comment">// a</span>
+<span class="hljs-comment">// b</span>
+<span class="hljs-comment">// a-outer-1</span>
+<span class="hljs-comment">// a-outer-2</span>
+<span class="hljs-comment">// b-outer-1</span>
+<span class="hljs-comment">// b-outer-2</span>
+<span class="hljs-comment">// a-inner-1</span>
+<span class="hljs-comment">// a-inner-2</span>
+<span class="hljs-comment">// b-inner-1</span>
+<span class="hljs-comment">// b-inner-2</span>
+
+<span class="hljs-comment">// which can be seen as the following causal relationship:</span>
+<span class="hljs-comment">// a -&gt; a-outer-1 -&gt; a-outer-2 -&gt; a-inner-1 -&gt; a-inner-2</span>
+<span class="hljs-comment">// b -&gt; b-outer-1 -&gt; b-outer-2 -&gt; b-inner-1 -&gt; b-inner-2</span>
+</code></pre>
+<p>While it is possible to nest mixed persist and <code>PersistAsync</code> with keeping their respective semantics it is not a recommended practice, as it may lead to overly complex nesting.</p>
+<h2 id="failures">Failures</h2>
+<p>If persistence of an event fails, <code>OnPersistFailure</code> will be invoked (logging the error by default), and the actor will unconditionally be stopped.</p>
+<p>The reason that it cannot resume when persist fails is that it is unknown if the event was actually persisted or not, and therefore it is in an inconsistent state. Restarting on persistent failures will most likely fail anyway since the journal is probably unavailable. It is better to stop the actor and after a back-off timeout start it again. The <code>BackoffSupervisor</code> actor is provided to support such restarts.</p>
+<pre><code class="hljs lang-C#"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
+</span>{
+    <span class="hljs-keyword">var</span> childProps = Props.Create&lt;DocumentPersistentActor&gt;();
+    <span class="hljs-keyword">var</span> actor = <span class="hljs-keyword">new</span> BackoffSupervisor(
+        childProps,
+        <span class="hljs-string">"myActor"</span>,
+        TimeSpan.FromSeconds(<span class="hljs-number">3</span>),
+        TimeSpan.FromSeconds(<span class="hljs-number">30</span>),
+        <span class="hljs-number">0.2</span>);
+    <span class="hljs-keyword">base</span>.PreStart();
+}
+</code></pre>
+<p>If persistence of an event is rejected before it is stored, e.g. due to serialization error, <code>OnPersistRejected</code> will be invoked (logging a warning by default), and the actor continues with next message.</p>
+<p>If there is a problem with recovering the state of the actor from the journal when the actor is started, <code>OnRecoveryFailure</code> is called (logging the error by default), and the actor will be stopped.</p>
+<h2 id="atomic-writes">Atomic writes</h2>
+<p>Each event is of course stored atomically, but it is also possible to store several events atomically by using the <code>PersistAll</code> or <code>PersistAllAsync</code> method. That means that all events passed to that method are stored or none of them are stored if there is an error.</p>
+<p>The recovery of a persistent actor will therefore never be done partially with only a subset of events persisted by <code>PersistAll</code>.</p>
+<p>Some journals may not support atomic writes of several events and they will then reject the <code>PersistAll</code> command, i.e. <code>OnPersistRejected</code> is called with an exception (typically <code>NotSupportedException</code>).</p>
+<h2 id="batch-writes">Batch writes</h2>
+<p>In order to optimize throughput when using <code>PersistAsync</code>, a persistent actor internally batches events to be stored under high load before writing them to the journal (as a single batch). The batch size is dynamically determined by how many events are emitted during the time of a journal round-trip: after sending a batch to the journal no further batch can be sent before confirmation has been received that the previous batch has been written. Batch writes are never timer-based which keeps latencies at a minimum.</p>
+<h2 id="message-deletion">Message deletion</h2>
+<p>It is possible to delete all messages (journaled by a single persistent actor) up to a specified sequence number; Persistent actors may call the <code>DeleteMessages</code> method to this end.</p>
+<p>Deleting messages in event sourcing based applications is typically either not used at all, or used in conjunction with snapshotting, i.e. after a snapshot has been successfully stored, a <code>DeleteMessages</code> (<code>ToSequenceNr</code>) up until the sequence number of the data held by that snapshot can be issued to safely delete the previous events while still having access to the accumulated state during replays - by loading the snapshot.</p>
+<p>The result of the <code>DeleteMessages</code> request is signaled to the persistent actor with a <code>DeleteMessagesSuccess</code> message if the delete was successful or a <code>DeleteMessagesFailure</code> message if it failed.</p>
+<p>Message deletion doesn&#39;t affect the highest sequence number of the journal, even if all messages were deleted from it after <code>DeleteMessages</code> invocation.</p>
+<h2 id="persistence-status-handling">Persistence status handling</h2>
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Method</th>
+<th>Success</th>
+<th>Failure / Rejection</th>
+<th>After failure handler invoked</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Persist / PersistAsync</td>
+<td>persist handler invoked</td>
+<td>OnPersistFailure</td>
+<td>Actor is stopped.</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>OnPersistRejected</td>
+<td>No automatic actions.</td>
+</tr>
+<tr>
+<td>Recovery</td>
+<td>RecoverySuccess</td>
+<td>OnRecoveryFailure</td>
+<td>Actor is stopped.</td>
+</tr>
+<tr>
+<td>DeleteMessages</td>
+<td>DeleteMessagesSuccess</td>
+<td>DeleteMessagesFailure</td>
+<td>No automatic actions.</td>
+</tr>
+</tbody>
+</table>
+<p>The most important operations (Persist and Recovery) have failure handlers modelled as explicit callbacks which the user can override in the <code>PersistentActor</code>. The default implementations of these handlers emit a log message (error for persist/recovery failures, and warning for others), logging the failure cause and information about which message caused the failure.</p>
+<p>For critical failures such as recovery or persisting events failing the persistent actor will be stopped after the failure handler is invoked. This is because if the underlying journal implementation is signalling persistence failures it is most likely either failing completely or overloaded and restarting right-away and trying to persist the event again will most likely not help the journal recover – as it would likely cause a Thundering herd problem, as many persistent actors would restart and try to persist their events again. Instead, using a <code>BackoffSupervisor</code> (as described in Failures) which implements an exponential-backoff strategy which allows for more breathing room for the journal to recover between restarts of the persistent actor.</p>
+<blockquote>
+<p>NOTE: Journal implementations may choose to implement a retry mechanism, e.g. such that only after a write fails N number of times a persistence failure is signalled back to the user. In other words, once a journal returns a failure, it is considered fatal by Akka Persistence, and the persistent actor which caused the failure will be stopped. Check the documentation of the journal implementation you are using for details if/how it is using this technique.</p>
+</blockquote>
+<h2 id="safely-shutting-down-persistent-actors">Safely shutting down persistent actors</h2>
+<p>Special care should be given when shutting down persistent actors from the outside. With normal Actors it is often acceptable to use the special <code>PoisonPill</code> message to signal to an Actor that it should stop itself once it receives this message – in fact this message is handled automatically by Akka, leaving the target actor no way to refuse stopping itself when given a poison pill.</p>
+<p>This can be dangerous when used with PersistentActor due to the fact that incoming commands are stashed while the persistent actor is awaiting confirmation from the Journal that events have been written when <code>Persist</code> was used. Since the incoming commands will be drained from the Actor&#39;s mailbox and put into its internal stash while awaiting the confirmation (thus, before calling the persist handlers) the Actor may receive and (auto)handle the <code>PoisonPill</code> before it processes the other messages which have been put into its stash, causing a pre-mature shutdown of the Actor.</p>
+<div class="alert alert-warning">
+<p><strong>WARNING:</strong> Consider using explicit shut-down messages instead of <code>PoisonPill</code> when working with persistent actors.</p>
+</div>
+<p>The example below highlights how messages arrive in the Actor&#39;s mailbox and how they interact with its internal stashing mechanism when <code>Persist()</code> is used. Notice the early stop behaviour that occurs when <code>PoisonPill</code> is used:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Shutdown</span>
+{
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ShutdownPersistentActor</span> : <span class="hljs-title">ReceivePersistentActor</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ShutdownPersistentActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Recover&lt;<span class="hljs-keyword">string</span>&gt;(rec =&gt;
+        {
+            <span class="hljs-comment">// handle recovery...</span>
+        });
+
+        Command&lt;<span class="hljs-keyword">string</span>&gt;(msg =&gt;
+        {
+            Persist(msg, param =&gt;
+            {
+                Console.WriteLine(param);
+            });
+        });
+
+        Command&lt;Shutdown&gt;(msg =&gt;
+        {
+            Context.Stop(Self);
+        });
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">string</span> PersistenceId
+    {
+        <span class="hljs-keyword">get</span>
+        {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"some-persistence-id"</span>;
+        }
+    }
+}
+</code></pre>
+<pre><code class="hljs lang-C#"><span class="hljs-comment">// UN-SAFE, due to PersistentActor's command stashing:</span>
+persistentActor.Tell(<span class="hljs-string">"a"</span>);
+persistentActor.Tell(<span class="hljs-string">"b"</span>);
+persistentActor.Tell(PoisonPill.Instance);
+<span class="hljs-comment">// order of received messages:</span>
+<span class="hljs-comment">// a</span>
+<span class="hljs-comment">//   # b arrives at mailbox, stashing;        internal-stash = [b]</span>
+<span class="hljs-comment">//   # PoisonPill arrives at mailbox, stashing; internal-stash = [b, Shutdown]</span>
+<span class="hljs-comment">// PoisonPill is an AutoReceivedMessage, is handled automatically</span>
+<span class="hljs-comment">// !! stop !!</span>
+<span class="hljs-comment">// Actor is stopped without handling `b` nor the `a` handler!</span>
+</code></pre>
+<pre><code class="hljs lang-C#"><span class="hljs-comment">// SAFE:</span>
+persistentActor.Tell(<span class="hljs-string">"a"</span>);
+persistentActor.Tell(<span class="hljs-string">"b"</span>);
+persistentActor.Tell(<span class="hljs-keyword">new</span> Shutdown());
+<span class="hljs-comment">// order of received messages:</span>
+<span class="hljs-comment">// a</span>
+<span class="hljs-comment">//   # b arrives at mailbox, stashing;        internal-stash = [b]</span>
+<span class="hljs-comment">//   # Shutdown arrives at mailbox, stashing; internal-stash = [b, Shutdown]</span>
+<span class="hljs-comment">// handle-a</span>
+<span class="hljs-comment">//   # unstashing;                            internal-stash = [Shutdown]</span>
+<span class="hljs-comment">// b</span>
+<span class="hljs-comment">// handle-b</span>
+<span class="hljs-comment">//   # unstashing;                            internal-stash = []</span>
+<span class="hljs-comment">// Shutdown</span>
+<span class="hljs-comment">// -- stop --</span>
+</code></pre>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

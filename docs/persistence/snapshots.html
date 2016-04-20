@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Snapshots | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+							<li class="active">Snapshots<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/snapshots.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,194 +172,98 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
-<ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
-</ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li>Use-case and Deployment Scenarios<ul>
-<li><a href="deployment-scenarios/Console">Console</a></li>
-<li><a href="deployment-scenarios/ASP NET">ASP.NET</a></li>
-<li><a href="deployment-scenarios/Windows Service">Windows Service</a></li>
-<li><a href="deployment-scenarios/Azure PaaS Worker Role">Azure PaaS Worker Role</a></li>
-</ul>
-</li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="working-with-actors">Working with Actors</h3>
-<ul>
-<li><a href="working-with-actors/creating-actors">Creating your first Actor</a></li>
-<li><a href="working-with-actors/defining-an-actor">Defining an Actor class</a></li>
-<li><a href="working-with-actors/whats-in-an-actor">What&#39;s in an Actor</a></li>
-<li><a href="working-with-actors/creating-actors-with-props">Creating actors with Props</a></li>
-<li><a href="working-with-actors/handling-messages">Handling Messages</a></li>
-<li><a href="working-with-actors/sending-messages">Sending Messages</a></li>
-<li><a href="working-with-actors/Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="working-with-actors/Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/stopping-actors">Stopping Actors</a></li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="akka-persistence">Akka.Persistence</h3>
-<ul>
-<li>[Architecture] (persistence/architecture)</li>
-<li>[Persistence Actors] (persistence/persistent-actors)</li>
-<li>[Persistence Views] (persistence/persistent-views)</li>
-<li>[Snapshots] (persistence/snapshots)</li>
-<li>[At-Least-Once Delivery] (persistence/at-least-once-delivery)</li>
-<li>[Event Adapters] (persistence/event-adapters)</li>
-<li>[Persistent FSM] (persistence/persistent-fsm)</li>
-<li>[Storage plugins] (persistence/storage-plugins)</li>
-<li>[Custom serialization] (persistence/custom-serialization)</li>
-<li>[Contributing] (persistence/contributing)</li>
-</ul>
-<h3 id="akka-remote">Akka.Remote</h3>
-<ul>
-<li><a href="remoting/">Akka.Remote Overview</a><ul>
-<li><a href="remoting/#use-cases">Use Cases</a></li>
-<li><a href="remoting/#enabling-akka-remote">Enabling Akka.Remote</a></li>
-<li><a href="remoting/#addresses-transports-endpoints-and-associations">Remote Addressing</a></li>
-<li><a href="remoting/#how-to-form-associations-between-remote-systems">Connecting Remote Systems</a></li>
-</ul>
-</li>
-<li><a href="remoting/transports">Transports</a><ul>
-<li><a href="remoting/transports#akka-remote-s-built-in-transports">Built-in Transports</a></li>
-<li><a href="remoting/transports#using-custom-transports">Custom Transports</a></li>
-<li><a href="remoting/transports#running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</a></li>
-</ul>
-</li>
-<li><a href="remoting/messaging">Remote Messaging</a><ul>
-<li><a href="remoting/messaging#serialization">Serialization</a></li>
-<li><a href="remoting/messaging#-remoteactorref-and-location-transparency">RemoteActorRefs</a></li>
-</ul>
-</li>
-<li><a href="remoting/deployment">Deploying Actors Remotely</a><ul>
-<li><a href="remoting/deployment#when-to-use-remote-deployment">When to Use Remote Deployment</a></li>
-</ul>
-</li>
-<li><a href="remoting/deathwatch">Detecting &amp; Handling Network Failures (DeathWatch)</a></li>
-<li><a href="remoting/security">Network Security</a></li>
-</ul>
-<h3 id="akka-cluster">Akka.Cluster</h3>
-<ul>
-<li><a href="clustering/cluster-overview">Akka.Cluster Overview</a><ul>
-<li><a href="clustering/cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
-<li><a href="clustering/cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
-<li><a href="clustering/cluster-overview#use-cases">Use Cases</a></li>
-<li><a href="clustering/cluster-overview#key-terms">Terminology</a></li>
-<li><a href="clustering/cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
-<li><a href="clustering/cluster-overview#cluster-gossip">Cluster Gossip</a></li>
-<li><a href="clustering/cluster-overview#nodes">Nodes</a></li>
-<li><a href="clustering/cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-routing">Cluster Routing</a><ul>
-<li><a href="clustering/cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
-<li><a href="clustering/cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
-<li><a href="clustering/cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
-<li><a href="clustering/cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-configuration">Cluster Configuration</a><ul>
-<li><a href="clustering/cluster-configuration#critical-configuration-options">Critical Configuration Flags</a></li>
-<li><a href="clustering/cluster-configuration#specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
-<li><a href="clustering/cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
-<li><a href="clustering/cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
-<li><a href="clustering/cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
-<li><a href="clustering/cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-tools">Akka.Cluster.Tools module</a><ul>
-<li><a href="clustering/cluster-singleton">Creating cluster singleton actors</a></li>
-<li><a href="clustering/distributed-publish-subscribe">Cluster distributed publish/subscribe</a></li>
-<li><a href="clustering/cluster-client">Communication with cluster without joining to it</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-sharding">Akka.Cluster.Sharding module</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Serialization">Serialization</a></li>
-<li><a href="IO">Akka I/O</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="testing">Testing</h3>
-<ul>
-<li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka">Building and Distributing Akka.NET</a></li>
-<li><a href="akka-developers/nightly-builds">Getting Access to Nightly Akka.NET Builds</a></li>
-<li><a href="akka-developers/public-api-changes">Approving Public API Changes</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Extension Ideas">Contribution ideas</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Community Plugins">Community plugins</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+								<div><h1 id="snapshots">Snapshots</h1>
+<p>Snapshots can dramatically reduce recovery times of persistent actors and views. The following discusses snapshots in context of persistent actors but this is also applicable to persistent views.</p>
+<p>Persistent actors can save snapshots of internal state by calling the <code>SaveSnapshot</code> method. If saving of a snapshot succeeds, the persistent actor receives a <code>SaveSnapshotSuccess</code> message, otherwise a <code>SaveSnapshotFailure</code> message.</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> DocumentPersistentSnapshotActor : ReceivePersistentActor
+{
+    <span class="hljs-keyword">private</span> List&lt;<span class="hljs-built_in">string</span>&gt; _messages = <span class="hljs-keyword">new</span> List&lt;<span class="hljs-built_in">string</span>&gt;();
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _pagesSinceLastSnapshot = <span class="hljs-number">0</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DocumentPersistentSnapshotActor</span><span class="hljs-params">()</span>
+    </span>{
+        <span class="hljs-comment">//...</span>
+
+        Command&lt;<span class="hljs-built_in">string</span>&gt;(message =&gt;
+        {
+            Persist(message, page =&gt;
+            {
+                _messages.Add(page);
+                <span class="hljs-keyword">if</span> (++_pagesSinceLastSnapshot % <span class="hljs-number">5</span> == <span class="hljs-number">0</span>)
+                {
+                    SaveSnapshot(_messages);
+                }
+            });
+        });
+
+        Command&lt;SaveSnapshotSuccess&gt;(success =&gt; {
+            <span class="hljs-comment">// handle snapshot save success...</span>
+            DeleteMessages(success.Metadata.SequenceNr);
+        });
+
+        Command&lt;SaveSnapshotFailure&gt;(failure =&gt; {
+            <span class="hljs-comment">// handle snapshot save failure...</span>
+        });
+    }
+
+    <span class="hljs-keyword">public</span> override <span class="hljs-built_in">string</span> PersistenceId { get; } = <span class="hljs-string">"HardCoded"</span>;
+}
+</code></pre>
+<p>During recovery, the persistent actor is offered a previously saved snapshot via a <code>SnapshotOffer</code> message from which it can initialize internal state.</p>
+<pre><code class="hljs lang-C#">Recover&lt;string&gt;<span class="hljs-list">(<span class="hljs-keyword">page</span> =&gt;
+{
+    _messages.Add<span class="hljs-list">(<span class="hljs-keyword">page</span>)</span><span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+
+Recover&lt;SnapshotOffer&gt;<span class="hljs-list">(<span class="hljs-keyword">offer</span> =&gt; {
+    var msgs = offer.Snapshot as List&lt;string&gt;<span class="hljs-comment">;</span>
+    if <span class="hljs-list">(<span class="hljs-keyword">msgs</span> != null)</span>
+        _messages = _messages.Concat<span class="hljs-list">(<span class="hljs-keyword">msgs</span>)</span>.ToList<span class="hljs-list">()</span><span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+</code></pre>
+<p>The replayed messages that follow the <code>SnapshotOffer</code> message, if any, are younger than the offered snapshot. They finally recover the persistent actor to its current (i.e. latest) state.</p>
+<p>In general, a persistent actor is only offered a snapshot if that persistent actor has previously saved one or more snapshots and at least one of these snapshots matches the <code>SnapshotSelectionCriteria</code> that can be specified for recovery.</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> Recovery Recovery
+{
+    <span class="hljs-keyword">get</span>
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Recovery(<span class="hljs-keyword">new</span> SnapshotSelectionCriteria(<span class="hljs-number">150</span>, DateTime.UtcNow));
+    }
+}
+</code></pre>
+<p>If not specified, they default to <code>SnapshotSelectionCriteria.Latest</code> which selects the latest (= youngest) snapshot. To disable snapshot-based recovery, applications should use <code>SnapshotSelectionCriteria.None</code>. A recovery where no saved snapshot matches the specified <code>SnapshotSelectionCriteria</code> will replay all journaled messages.</p>
+<h2 id="snapshot-deletion">Snapshot deletion</h2>
+<p>A persistent actor can delete individual snapshots by calling the <code>DeleteSnapshot</code> method with the sequence number of when the snapshot was taken.</p>
+<p>To bulk-delete a range of snapshots matching <code>SnapshotSelectionCriteria</code>, persistent actors should use the <code>DeleteSnapshots</code> method.</p>
+<h2 id="snapshot-status-handling">Snapshot status handling</h2>
+<p>Saving or deleting snapshots can either succeed or fail – this information is reported back to the persistent actor via status messages as illustrated in the following table.</p>
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Method</th>
+<th>Success</th>
+<th>Failure message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SaveSnapshot</td>
+<td>SaveSnapshotSuccess</td>
+<td>SaveSnapshotFailure</td>
+</tr>
+<tr>
+<td>DeleteSnapshot</td>
+<td>DeleteSnapshotSuccess</td>
+<td>DeleteSnapshotFailure</td>
+</tr>
+<tr>
+<td>DeleteSnapshots</td>
+<td>DeleteSnapshotsSuccess</td>
+<td>DeleteSnapshotsFailure</td>
+</tr>
+</tbody>
+</table>
+<p>If failure messages are left unhandled by the actor, a default warning log message will be logged for each incoming failure message. No default action is performed on the success messages, however you&#39;re free to handle them e.g. in order to delete an in memory representation of the snapshot, or in the case of failure to attempt save the snapshot again.</p>
 </div>
 
 								

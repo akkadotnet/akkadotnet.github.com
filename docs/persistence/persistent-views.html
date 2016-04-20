@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.NET Documentation | Akka.NET</title>
+<title>Persistence Views | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.NET Documentation<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/index.md" > (Edit on Github)</a></li>
+							<li class="active">Persistence Views<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/persistent-views.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,194 +172,41 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="akka-net-api-docs">Akka.NET API Docs</h2>
+								<div><h1 id="persistent-views">Persistent Views</h1>
+<div class="alert alert-warning">
+<p><strong>WARNING:</strong> <code>PersistentView</code> is deprecated. Use <code>PersistenceQuery</code> when it will be ported.</p>
+</div>
+<p>While a persistent actor may be used to produce and persist events, views are used only to read internal state based on them. Like the persistent actor, a view has a <code>PersistenceId</code> to specify a  collection of events to be resent to current view. This value should however be correlated with the  <code>PersistentId</code> of an actor who is the producer of the events.</p>
+<p>Other members:</p>
 <ul>
-<li><a href="http://api.getakka.net/docs/stable/index.html">1.0 Stable API</a></li>
+<li><code>ViewId</code> property is a view unique identifier that doesn&#39;t change across different actor incarnations. It&#39;s useful in cases where there are multiple different views associated with a single persistent actor, but showing its state from a different perspectives.</li>
+<li><code>IsAutoUpdate</code> property determines if the view will try to automatically update its state in specified time intervals. Without it, the view won&#39;t update its state until it receives an explicit <code>Update</code> message. This value can be set through configuration with <em>akka.persistence.view.auto-update</em> set to either <em>on</em> (by default) or <em>off</em>.</li>
+<li><code>AutoUpdateInterval</code> specifies a time interval in which the view will be updating itself - only in cases where the <em>IsAutoUpdate</em> flag is on. This value can be set through configuration with <em>akka.persistence.view.auto-update-interval</em> key (5 seconds by default).</li>
+<li><code>AutoUpdateReplayMax</code> property determines the maximum number of events to be replayed during a single <em>Update</em> cycle. This value can be set through configuration with <em>akka.persistence.view.auto-update-replay-max</em> key (by default it&#39;s -1 - no limit).</li>
+<li><code>LoadSnapshot</code> will send a request to the snapshot store to resend a current view&#39;s snapshot.</li>
+<li><code>SaveSnapshot</code> will send the current view&#39;s internal state as a snapshot to be saved by the  configured snapshot store.</li>
+<li><code>DeleteSnapshot</code> and <code>DeleteSnapshots</code> methods may be used to specify snapshots to be removed from the snapshot store in cases where they are no longer needed.</li>
 </ul>
-<h2 id="akka-net-framework">Akka.NET Framework</h2>
-<h3 id="introduction">Introduction</h3>
-<ul>
-<li><a href="What is Akka">What is Akka?</a></li>
-<li><a href="Why Akka">Why Akka?</a></li>
-<li><a href="Getting started">Getting Started</a></li>
-<li><a href="The Obligatory Hello World">The Obligatory Hello World</a></li>
-<li>Use-case and Deployment Scenarios<ul>
-<li><a href="deployment-scenarios/Console">Console</a></li>
-<li><a href="deployment-scenarios/ASP NET">ASP.NET</a></li>
-<li><a href="deployment-scenarios/Windows Service">Windows Service</a></li>
-<li><a href="deployment-scenarios/Azure PaaS Worker Role">Azure PaaS Worker Role</a></li>
-</ul>
-</li>
-<li><a href="Examples of use cases for Akka">Examples of use-cases for Akka</a></li>
-</ul>
-<h2 id="akka-net-concepts">Akka.NET Concepts</h2>
-<ul>
-<li><a href="concepts/terminology">Terminology, Concepts</a></li>
-<li><a href="concepts/actorsystem">Actor Systems</a></li>
-<li><a href="concepts/actors">What is an Actor?</a></li>
-<li><a href="concepts/messages">What is a Message?</a><ul>
-<li><a href="concepts/messages#messages-are-immutable">Immutability</a></li>
-</ul>
-</li>
-<li><a href="concepts/supervision">Supervision and Monitoring</a></li>
-<li><a href="concepts/addressing">Actor References, Paths and Addresses</a></li>
-<li><a href="concepts/location-transparency">Location Transparency</a></li>
-<li><a href="concepts/message-delivery-reliability">Message Delivery Reliability</a></li>
-<li><a href="concepts/configuration">Configuration</a><ul>
-<li><a href="concepts/hocon">HOCON</a></li>
-</ul>
-</li>
-</ul>
-<h3 id="working-with-actors">Working with Actors</h3>
-<ul>
-<li><a href="working-with-actors/creating-actors">Creating your first Actor</a></li>
-<li><a href="working-with-actors/defining-an-actor">Defining an Actor class</a></li>
-<li><a href="working-with-actors/whats-in-an-actor">What&#39;s in an Actor</a></li>
-<li><a href="working-with-actors/creating-actors-with-props">Creating actors with Props</a></li>
-<li><a href="working-with-actors/handling-messages">Handling Messages</a></li>
-<li><a href="working-with-actors/sending-messages">Sending Messages</a></li>
-<li><a href="working-with-actors/Actor lifecycle">Actor lifecycle</a></li>
-<li><a href="working-with-actors/Dispatchers">Dispatchers</a></li>
-<li><a href="working-with-actors/Mailbox">Mailboxes</a></li>
-<li><a href="working-with-actors/Switchable Behaviors">Switchable Behaviors</a></li>
-<li><a href="working-with-actors/Stashing Messages">Stashing Messages</a></li>
-<li><a href="working-with-actors/stopping-actors">Stopping Actors</a></li>
-</ul>
-<h3 id="actors">Actors</h3>
-<ul>
-<li><a href="Working with actors">Working with actors</a></li>
-<li><a href="FSharp API">F# API</a></li>
-<li><a href="ReceiveActor">ReceiveActors</a></li>
-<li><a href="FSM">Finite State Machines</a></li>
-<li><a href="Persistence">Persistence</a></li>
-<li><a href="Fault tolerance">Fault Tolerance</a></li>
-<li><a href="Props">Props</a></li>
-<li><a href="Receive timeout">Receive timeout</a></li>
-<li><a href="Dependency injection">Dependency injection</a></li>
-<li><a href="working-with-actors/Routers">Routers</a></li>
-</ul>
-<h3 id="akka-persistence">Akka.Persistence</h3>
-<ul>
-<li>[Architecture] (persistence/architecture)</li>
-<li>[Persistence Actors] (persistence/persistent-actors)</li>
-<li>[Persistence Views] (persistence/persistent-views)</li>
-<li>[Snapshots] (persistence/snapshots)</li>
-<li>[At-Least-Once Delivery] (persistence/at-least-once-delivery)</li>
-<li>[Event Adapters] (persistence/event-adapters)</li>
-<li>[Persistent FSM] (persistence/persistent-fsm)</li>
-<li>[Storage plugins] (persistence/storage-plugins)</li>
-<li>[Custom serialization] (persistence/custom-serialization)</li>
-<li>[Contributing] (persistence/contributing)</li>
-</ul>
-<h3 id="akka-remote">Akka.Remote</h3>
-<ul>
-<li><a href="remoting/">Akka.Remote Overview</a><ul>
-<li><a href="remoting/#use-cases">Use Cases</a></li>
-<li><a href="remoting/#enabling-akka-remote">Enabling Akka.Remote</a></li>
-<li><a href="remoting/#addresses-transports-endpoints-and-associations">Remote Addressing</a></li>
-<li><a href="remoting/#how-to-form-associations-between-remote-systems">Connecting Remote Systems</a></li>
-</ul>
-</li>
-<li><a href="remoting/transports">Transports</a><ul>
-<li><a href="remoting/transports#akka-remote-s-built-in-transports">Built-in Transports</a></li>
-<li><a href="remoting/transports#using-custom-transports">Custom Transports</a></li>
-<li><a href="remoting/transports#running-multiple-transports-simultaneously">Running Multiple Transports Simultaneously</a></li>
-</ul>
-</li>
-<li><a href="remoting/messaging">Remote Messaging</a><ul>
-<li><a href="remoting/messaging#serialization">Serialization</a></li>
-<li><a href="remoting/messaging#-remoteactorref-and-location-transparency">RemoteActorRefs</a></li>
-</ul>
-</li>
-<li><a href="remoting/deployment">Deploying Actors Remotely</a><ul>
-<li><a href="remoting/deployment#when-to-use-remote-deployment">When to Use Remote Deployment</a></li>
-</ul>
-</li>
-<li><a href="remoting/deathwatch">Detecting &amp; Handling Network Failures (DeathWatch)</a></li>
-<li><a href="remoting/security">Network Security</a></li>
-</ul>
-<h3 id="akka-cluster">Akka.Cluster</h3>
-<ul>
-<li><a href="clustering/cluster-overview">Akka.Cluster Overview</a><ul>
-<li><a href="clustering/cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
-<li><a href="clustering/cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
-<li><a href="clustering/cluster-overview#use-cases">Use Cases</a></li>
-<li><a href="clustering/cluster-overview#key-terms">Terminology</a></li>
-<li><a href="clustering/cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
-<li><a href="clustering/cluster-overview#cluster-gossip">Cluster Gossip</a></li>
-<li><a href="clustering/cluster-overview#nodes">Nodes</a></li>
-<li><a href="clustering/cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-routing">Cluster Routing</a><ul>
-<li><a href="clustering/cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
-<li><a href="clustering/cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
-<li><a href="clustering/cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
-<li><a href="clustering/cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-configuration">Cluster Configuration</a><ul>
-<li><a href="clustering/cluster-configuration#critical-configuration-options">Critical Configuration Flags</a></li>
-<li><a href="clustering/cluster-configuration#specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
-<li><a href="clustering/cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
-<li><a href="clustering/cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
-<li><a href="clustering/cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
-<li><a href="clustering/cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-tools">Akka.Cluster.Tools module</a><ul>
-<li><a href="clustering/cluster-singleton">Creating cluster singleton actors</a></li>
-<li><a href="clustering/distributed-publish-subscribe">Cluster distributed publish/subscribe</a></li>
-<li><a href="clustering/cluster-client">Communication with cluster without joining to it</a></li>
-</ul>
-</li>
-<li><a href="clustering/cluster-sharding">Akka.Cluster.Sharding module</a></li>
-</ul>
-<h3 id="networking">Networking</h3>
-<ul>
-<li><a href="Serialization">Serialization</a></li>
-<li><a href="IO">Akka I/O</a></li>
-</ul>
-<h3 id="utilities">Utilities</h3>
-<ul>
-<li><a href="EventBus">EventBus</a></li>
-<li><a href="Logging">Logging</a><ul>
-<li><a href="Serilog">Using Serilog</a></li>
-</ul>
-</li>
-<li><a href="Scheduler">Scheduler</a></li>
-<li><a href="CircuitBreaker">Circuit Breaker</a></li>
-</ul>
-<h3 id="testing">Testing</h3>
-<ul>
-<li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
-</ul>
-<h3 id="information-for-akka-developers">Information for Akka Developers</h3>
-<ul>
-<li><a href="Building and Distributing Akka">Building and Distributing Akka.NET</a></li>
-<li><a href="akka-developers/nightly-builds">Getting Access to Nightly Akka.NET Builds</a></li>
-<li><a href="akka-developers/public-api-changes">Approving Public API Changes</a></li>
-<li><a href="Contributor guidelines">Contributor guidelines</a></li>
-<li><a href="Extension Ideas">Contribution ideas</a></li>
-<li><a href="Documentation guidelines">Documentation Guidelines</a></li>
-<li><a href="Team">Team</a></li>
-</ul>
-<h3 id="project-information">Project Information</h3>
-<ul>
-<li><a href="Licenses">Licenses</a></li>
-<li><a href="Sponsors">Sponsors</a></li>
-<li><a href="Project">Project</a></li>
-</ul>
-<h3 id="additional-information">Additional Information</h3>
-<ul>
-<li><a href="FAQ">Frequently Asked Questions</a></li>
-<li><a href="Community Plugins">Community plugins</a></li>
-<li><a href="Resources">Online resources</a></li>
-<li><a href="Books">Books</a></li>
-</ul>
+<p>The <code>PersistenceId</code> identifies the persistent actor from which the view receives journaled messages. It is not necessary that the referenced persistent actor is actually running. Views read messages from a persistent actor&#39;s journal directly. When a persistent actor is started later and begins to write new messages, by default the corresponding view is updated automatically.</p>
+<p>It is possible to determine if a message was sent from the Journal or from another actor in user-land by calling the <code>IsPersistent</code> property. Having that said, very often you don&#39;t need this information at all and can simply apply the same logic to both cases (skip the if <code>IsPersistent</code> check).</p>
+<h2 id="updates">Updates</h2>
+<p>The default update interval of all persistent views of an actor system is configurable:</p>
+<pre><code class="hljs lang-hocon">akka<span class="hljs-class">.persistence</span><span class="hljs-class">.view</span><span class="hljs-class">.auto-update-interval</span> = <span class="hljs-number">5s</span>
+</code></pre>
+<p><code>PersistentView</code> implementation classes may also override the <code>AutoUpdateInterval</code> method to return a custom update interval for a specific view class or view instance. Applications may also trigger additional updates at any time by sending a view an Update message.</p>
+<pre><code class="hljs lang-C#">IActorRef <span class="hljs-keyword">view</span> = <span class="hljs-built_in">system</span>.ActorOf&lt;ViewActor&gt;();
+<span class="hljs-keyword">view</span>.Tell(<span class="hljs-keyword">new</span> Update(true));
+</code></pre>
+<p>If the await parameter is set to true, messages that follow the <code>Update</code> request are processed when the incremental message replay, triggered by that update request, completed. If set to false (default), messages following the update request may interleave with the replayed message stream. </p>
+<p>Automated updates of all persistent views of an actor system can be turned off by configuration:</p>
+<pre><code class="hljs lang-hocon">akka<span class="hljs-class">.persistence</span><span class="hljs-class">.view</span><span class="hljs-class">.auto-update</span> = off
+</code></pre>
+<p>Implementation classes may override the configured default value by overriding the autoUpdate method. To limit the number of replayed messages per update request, applications can configure a custom <em>akka.persistence.view.auto-update-replay-max</em> value or override the <code>AutoUpdateReplayMax</code> property. The number of replayed messages for manual updates can be limited with the replayMax parameter of the Update message.</p>
+<h2 id="recovery">Recovery</h2>
+<p>Initial recovery of persistent views works the very same way as for persistent actors (i.e. by sending a <code>Recover</code> message to self). The maximum number of replayed messages during initial recovery is determined by <code>AutoUpdateReplayMax</code>. Further possibilities to customize initial recovery are explained in section Recovery.</p>
+<h2 id="identifiers">Identifiers</h2>
+<p>A persistent view must have an identifier that doesn&#39;t change across different actor incarnations. The identifier must be defined with the <code>ViewId</code> method.</p>
+<p>The <code>ViewId</code> must differ from the referenced <code>PersistenceId</code>, unless Snapshots of a view and its persistent actor should be shared (which is what applications usually do not want).</p>
 </div>
 
 								

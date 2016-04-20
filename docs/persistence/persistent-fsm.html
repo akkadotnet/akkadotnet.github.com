@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Persistence FSM | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" smoothscroll">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Persistence FSM<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/persistent-fsm.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="persistence-fsm">Persistence FSM</h1>
+<p><code>PersistentFSM</code> handles the incoming messages in an FSM like fashion. Its internal state is persisted as a sequence of changes, later referred to as domain events. Relationship between incoming messages, FSM&#39;s states and transitions, persistence of domain events is defined by a DSL.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong> PersistentFSM is marked as “experimental”.</p>
+</div>
+<p>To demonstrate the features of the <code>PersistentFSM</code> class, consider an actor which represents a Web store customer. The contract of our &quot;<code>WebStoreCustomerFSMActor</code>&quot; is that it accepts the following commands:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> interface ICommand
+{
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AddItem</span> : <span class="hljs-typename">ICommand</span></span>
+{
+    <span class="hljs-keyword">public</span> AddItem(Item item)
+    {
+        Item = item;
+    }
+
+    <span class="hljs-keyword">public</span> Item Item { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Buy</span> : <span class="hljs-typename">ICommand</span></span>
+{
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Leave</span> : <span class="hljs-typename">ICommand</span></span>
+{
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">GetCurrentCart</span> : <span class="hljs-typename">ICommand</span></span>
+{
+}
+</code></pre>
+<p><code>AddItem</code> sent when the customer adds an item to a shopping cart <code>Buy</code> - when the customer finishes the purchase <code>Leave</code> - when the customer leaves the store without purchasing anything <code>GetCurrentCart</code> allows to query the current state of customer&#39;s shopping cart</p>
+<p>The customer can be in one of the following states:</p>
+<pre><code class="hljs lang-C#">public <span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">UserState</span></span>
+{
+    <span class="hljs-constant">Shopping</span>,
+    <span class="hljs-constant">Inactive</span>,
+    <span class="hljs-constant">Paid</span>,
+    <span class="hljs-constant">LookingAround</span>
+}
+</code></pre>
+<p><code>LookingAround</code> customer is browsing the site, but hasn&#39;t added anything to the shopping cart <code>Shopping</code> customer has recently added items to the shopping cart <code>Inactive</code> customer has items in the shopping cart, but hasn&#39;t added anything recently <code>Paid</code> customer has purchased the items</p>
+<p>Customer&#39;s actions are &quot;recorded&quot; as a sequence of &quot;domain events&quot; which are persisted. Those events are replayed on an actor&#39;s start in order to restore the latest customer&#39;s state:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IDomainEvent</span>
+{
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ItemAdded</span> : <span class="hljs-title">IDomainEvent</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ItemAdded</span>(<span class="hljs-params">Item item</span>)
+    </span>{
+        Item = item;
+    }
+
+    <span class="hljs-keyword">public</span> Item Item { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">OrderExecuted</span> : <span class="hljs-title">IDomainEvent</span>
+{
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">OrderDiscarded</span> : <span class="hljs-title">IDomainEvent</span>
+{
+}
+</code></pre>
+<p>Customer state data represents the items in a customer&#39;s shopping cart:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Item</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Item</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> id, <span class="hljs-keyword">string</span> name, <span class="hljs-keyword">double</span> price</span>)
+    </span>{
+        Id = id;
+        Name = name;
+        Price = price;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Id { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Name { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">double</span> Price { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IShoppingCart</span>
+{
+    ICollection&lt;Item&gt; Items { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-function">IShoppingCart <span class="hljs-title">AddItem</span>(<span class="hljs-params">Item item</span>)</span>;
+
+    <span class="hljs-function">IShoppingCart <span class="hljs-title">Empty</span>(<span class="hljs-params"></span>)</span>;
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">EmptyShoppingCart</span> : <span class="hljs-title">IShoppingCart</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IShoppingCart <span class="hljs-title">AddItem</span>(<span class="hljs-params">Item item</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> NonEmptyShoppingCart(item);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IShoppingCart <span class="hljs-title">Empty</span>(<span class="hljs-params"></span>)
+    </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    }
+
+    <span class="hljs-keyword">public</span> ICollection&lt;Item&gt; Items { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">NonEmptyShoppingCart</span> : <span class="hljs-title">IShoppingCart</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">NonEmptyShoppingCart</span>(<span class="hljs-params">Item item</span>)
+    </span>{
+        Items = <span class="hljs-keyword">new</span> List&lt;Item&gt;();
+        Items.Add(item);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IShoppingCart <span class="hljs-title">AddItem</span>(<span class="hljs-params">Item item</span>)
+    </span>{
+        Items.Add(item);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IShoppingCart <span class="hljs-title">Empty</span>(<span class="hljs-params"></span>)
+    </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> EmptyShoppingCart();
+    }
+
+    <span class="hljs-keyword">public</span> ICollection&lt;Item&gt; Items { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</code></pre>
+<p>Side-effects:</p>
+<pre><code class="hljs lang-C#"><span class="hljs-keyword">internal</span> <span class="hljs-class"><span class="hljs-keyword">interface</span> <span class="hljs-title">IReportEvent</span>
+</span>{
+}
+
+<span class="hljs-keyword">internal</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">PurchaseWasMade</span> : <span class="hljs-title">IReportEvent</span>
+</span>{
+}
+
+<span class="hljs-keyword">internal</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ShoppingCardDiscarded</span> : <span class="hljs-title">IReportEvent</span>
+</span>{
+}
+</code></pre>
+<p>Here is how everything is wired together:</p>
+<pre><code class="hljs lang-C#">StartWith<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.LookingAround, new EmptyShoppingCart<span class="hljs-list">()</span>)</span><span class="hljs-comment">;</span>
+
+When<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.LookingAround, <span class="hljs-list">(<span class="hljs-keyword">e</span>, state)</span> =&gt;
+{
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is AddItem)</span>
+    {
+        var addItem = <span class="hljs-list">(<span class="hljs-keyword">AddItem</span>)</span>e.FsmEvent<span class="hljs-comment">;</span>
+        return
+            GoTo<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Shopping)</span>
+                .Applying<span class="hljs-list">(<span class="hljs-keyword">new</span> ItemAdded<span class="hljs-list">(<span class="hljs-keyword">addItem</span>.Item)</span>)</span>
+                .ForMax<span class="hljs-list">(<span class="hljs-keyword">TimeSpan</span>.FromSeconds<span class="hljs-list">(<span class="hljs-number">1</span>)</span>)</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is GetCurrentCart)</span>
+    {
+        return Stay<span class="hljs-list">()</span>.Replying<span class="hljs-list">(<span class="hljs-keyword">e</span>.StateData)</span><span class="hljs-comment">;</span>
+    }
+
+    return state<span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+
+When<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Shopping, <span class="hljs-list">(<span class="hljs-keyword">e</span>, state)</span> =&gt;
+{
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is AddItem)</span>
+    {
+        var addItem = <span class="hljs-list">(<span class="hljs-keyword">AddItem</span>)</span>e.FsmEvent<span class="hljs-comment">;</span>
+        return Stay<span class="hljs-list">()</span>.Applying<span class="hljs-list">(<span class="hljs-keyword">new</span> ItemAdded<span class="hljs-list">(<span class="hljs-keyword">addItem</span>.Item)</span>)</span>.ForMax<span class="hljs-list">(<span class="hljs-keyword">TimeSpan</span>.FromSeconds<span class="hljs-list">(<span class="hljs-number">1</span>)</span>)</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is Buy)</span>
+    {
+        return
+            GoTo<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Paid)</span>
+                .Applying<span class="hljs-list">(<span class="hljs-keyword">new</span> OrderExecuted<span class="hljs-list">()</span>)</span>
+                .AndThen<span class="hljs-list">(<span class="hljs-keyword">cart</span> =&gt;
+                {
+                    if <span class="hljs-list">(<span class="hljs-keyword">cart</span> is NonEmptyShoppingCart)</span>
+                    {
+                        _reportActor.Tell<span class="hljs-list">(<span class="hljs-keyword">new</span> PurchaseWasMade<span class="hljs-list">()</span>)</span><span class="hljs-comment">;</span>
+                    }
+                })</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is Leave)</span>
+    {
+        return
+            Stop<span class="hljs-list">()</span>
+                .Applying<span class="hljs-list">(<span class="hljs-keyword">new</span> OrderDiscarded<span class="hljs-list">()</span>)</span>
+                .AndThen<span class="hljs-list">(<span class="hljs-keyword">cart</span> =&gt; _reportActor.Tell<span class="hljs-list">(<span class="hljs-keyword">new</span> ShoppingCardDiscarded<span class="hljs-list">()</span>)</span>)</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is GetCurrentCart)</span>
+    {
+        return Stay<span class="hljs-list">()</span>.Replying<span class="hljs-list">(<span class="hljs-keyword">e</span>.StateData)</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is StateTimeout)</span>
+    {
+        return GoTo<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Inactive)</span>.ForMax<span class="hljs-list">(<span class="hljs-keyword">TimeSpan</span>.FromSeconds<span class="hljs-list">(<span class="hljs-number">2</span>)</span>)</span><span class="hljs-comment">;</span>
+    }
+
+    return state<span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+
+When<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Inactive, <span class="hljs-list">(<span class="hljs-keyword">e</span>, state)</span> =&gt;
+{
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is AddItem)</span>
+    {
+        var addItem = <span class="hljs-list">(<span class="hljs-keyword">AddItem</span>)</span>e.FsmEvent<span class="hljs-comment">;</span>
+        return
+            GoTo<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Shopping)</span>
+                .Applying<span class="hljs-list">(<span class="hljs-keyword">new</span> ItemAdded<span class="hljs-list">(<span class="hljs-keyword">addItem</span>.Item)</span>)</span>
+                .ForMax<span class="hljs-list">(<span class="hljs-keyword">TimeSpan</span>.FromSeconds<span class="hljs-list">(<span class="hljs-number">1</span>)</span>)</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is GetCurrentCart)</span>
+    {
+        return
+            Stop<span class="hljs-list">()</span>
+                .Applying<span class="hljs-list">(<span class="hljs-keyword">new</span> OrderDiscarded<span class="hljs-list">()</span>)</span>
+                .AndThen<span class="hljs-list">(<span class="hljs-keyword">cart</span> =&gt; _reportActor.Tell<span class="hljs-list">(<span class="hljs-keyword">new</span> ShoppingCardDiscarded<span class="hljs-list">()</span>)</span>)</span><span class="hljs-comment">;</span>
+    }
+
+    return state<span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+
+When<span class="hljs-list">(<span class="hljs-keyword">UserState</span>.Paid, <span class="hljs-list">(<span class="hljs-keyword">e</span>, state)</span> =&gt;
+{
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is Leave)</span>
+    {
+        return Stop<span class="hljs-list">()</span><span class="hljs-comment">;</span>
+    }
+
+    if <span class="hljs-list">(<span class="hljs-keyword">e</span>.FsmEvent is GetCurrentCart)</span>
+    {
+        return Stay<span class="hljs-list">()</span>.Replying<span class="hljs-list">(<span class="hljs-keyword">e</span>.StateData)</span><span class="hljs-comment">;</span>
+    }
+
+    return state<span class="hljs-comment">;</span>
+})</span><span class="hljs-comment">;</span>
+</code></pre>
+<blockquote>
+<p>Note: State data can only be modified directly on initialization. Later it&#39;s modified only as a result of applying domain events. Override the <code>ApplyEvent</code> method to define how state data is affected by domain events, see the example below</p>
+</blockquote>
+<pre><code class="hljs lang-C#"><span class="hljs-title">protected</span> override <span class="hljs-type">IShoppingCart</span> <span class="hljs-type">ApplyEvent</span>(<span class="hljs-type">IDomainEvent</span> e, <span class="hljs-type">IShoppingCart</span> <span class="hljs-typedef"><span class="hljs-keyword">data</span>)</span>
+{
+    <span class="hljs-keyword">if</span> (e is <span class="hljs-type">ItemAdded</span>)
+    {
+        var itemAdded = (<span class="hljs-type">ItemAdded</span>)e;
+        return <span class="hljs-typedef"><span class="hljs-keyword">data</span>.<span class="hljs-type">AddItem</span><span class="hljs-container">(<span class="hljs-title">itemAdded</span>.<span class="hljs-type">Item</span>)</span>;</span>
+    }
+
+    <span class="hljs-keyword">if</span> (e is <span class="hljs-type">OrderExecuted</span>)
+    {
+        return <span class="hljs-typedef"><span class="hljs-keyword">data</span>;</span>
+    }
+
+    <span class="hljs-keyword">if</span> (e is <span class="hljs-type">OrderDiscarded</span>)
+    {
+        return <span class="hljs-typedef"><span class="hljs-keyword">data</span>.<span class="hljs-type">Empty</span><span class="hljs-container">()</span>;</span>
+    }
+
+    return <span class="hljs-typedef"><span class="hljs-keyword">data</span>;</span>
+}
+</code></pre>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
