@@ -333,6 +333,125 @@
 <li><a href="Scheduler">Scheduler</a></li>
 <li><a href="CircuitBreaker">Circuit Breaker</a></li>
 </ul>
+<h3 id="akka-streams-work-in-progress-">Akka Streams (work in progress)</h3>
+<p><em>we are currently in the progress of porting the streams documentation for Akka.Net. As such not all sections will be available</em></p>
+<ul>
+<li><a href="streams/introduction">Introduction</a><ul>
+<li><a href="streams/introduction#motivation">Motivation</a></li>
+<li><a href="streams/introduction#how-to-read-these-docs">How to read these docs</a></li>
+</ul>
+</li>
+<li><a href="streams/quickstart">Quick Start Guide</a><ul>
+<li><a href="streams/quickstart#reusable-pieces">Reusable Piece</a></li>
+<li><a href="streams/quickstart#time-based-processing">Time-Based Processing</a></li>
+</ul>
+</li>
+<li><a href="streams/reactivetweets">Reactive Tweets</a><ul>
+<li><a href="streams/reactivetweets#transforming-and-consuming-simple-streams">Transforming and consuming simple streams</a></li>
+<li><a href="streams/reactivetweets#flattening-sequences-in-streams">Flattening sequences in streams</a></li>
+<li><a href="streams/reactivetweets#broadcasting-a-stream">Broadcasting a stream</a></li>
+<li><a href="streams/reactivetweets#back-pressure-in-action">Back-pressure in action</a></li>
+<li><a href="streams/reactivetweets#materialized-values">Materialized values</a></li>
+</ul>
+</li>
+<li><a href="streams/designprinciples">Design Principles behind Akka Streams</a><ul>
+<li><a href="streams/designprinciples#what-shall-users-of-akka-streams-expect">What shall users of Akka Streams expect?</a></li>
+<li><a href="streams/designprinciples#what-shall-users-of-streaming-libraries-expect">What shall users of streaming libraries expect?</a></li>
+<li><a href="streams/designprinciples#the-difference-between-Error-and-Failure">The difference between Error and Failure</a></li>
+</ul>
+</li>
+<li><a href="streams/basics">Basics and working with Flows</a><ul>
+<li><a href="streams/basics#core-concepts">Core concepts</a></li>
+<li><a href="streams/basics#defining-and-running-streams">Defining and running streams</a></li>
+<li><a href="streams/basics#back-pressure-explained">Back-pressure explained</a></li>
+<li><a href="streams/basics#stream-materialization">Stream Materialization</a></li>
+<li><a href="streams/basics#stream-ordering">Stream ordering</a></li>
+</ul>
+</li>
+<li><a href="streams/workingwithgraphs">Working with Graphs</a><ul>
+<li><a href="streams/workingwithgraphs#constructing-graphs">Constructing Graphs</a></li>
+<li><a href="streams/workingwithgraphs#constructing-and-combining-partial-graphs">Constructing and combining Partial Graphs</a></li>
+<li><a href="streams/workingwithgraphs#constructing-sources-sinks-and-flows-from-partial-graphs">Constructing Sources, Sinks and Flows from Partial Graphs</a></li>
+<li><a href="streams/workingwithgraphs#combining-sources-and-sinks-with-simplefied-api">Combining sources and Sinks with simplified API</a></li>
+<li><a href="streams/workingwithgraphs#building-reusable-graph-components">Building reusable Graph components</a></li>
+<li><a href="streams/workingwithgraphs#predefined-shapes">Predefined shapes</a></li>
+<li><a href="streams/workingwithgraphs#bidirectional-flows">Bidirectional Flows</a></li>
+<li><a href="streams/workingwithgraphs#accessing-the-materialized-value-inside-the-graph">Accessing the materialized value inside the graph</a></li>
+<li><a href="streams/workingwithgraphs#graph-cycles-liveness-and-deadlocks">Graph cycles, liveness and deadlocks</a></li>
+</ul>
+</li>
+<li><a href="streams/modularitycomposition">Modularity, Composition and Hierarchy</a><ul>
+<li><a href="streams/modularitycomposition#basics-of-composition-and-modularity">Basics of composition and modularity</a></li>
+<li><a href="streams/modularitycomposition#composing-complex-systems">Composing complex systems</a></li>
+<li><a href="streams/modularitycomposition#materialized-values">Materialized values</a></li>
+<li><a href="streams/modularitycomposition#attributes">Attributes</a></li>
+</ul>
+</li>
+<li><a href="streams/buffersandworkingwithrate">Buffers and working with rate</a><ul>
+<li><a href="streams/buffersandworkingwithrate#buffers-for-asynchronous-stages">Buffers for asynchronous stages</a></li>
+<li><a href="streams/buffersandworkingwithrate#buffers-in-akka-streams">Buffers in Akka Streams</a></li>
+<li><a href="streams/buffersandworkingwithrate#rate-transformation">Rate transformation</a></li>
+</ul>
+</li>
+<li><a href="streams/customstreamprocessing">Custom stream processing</a><ul>
+<li><a href="streams/customstreamprocessing#custom-processing-with-graphstage">Custom processing with GraphStage</a></li>
+<li><a href="streams/customstreamprocessing#thread-safety-of-custom-processing-stages">Thread safety of custom processing stages</a></li>
+<li><a href="streams/customstreamprocessing#extending-flow-combinators-with-custom-operators">Extended Flow Combinators with Custom Operators</a></li>
+</ul>
+</li>
+<li><a href="streams/integration">Integration</a><ul>
+<li><a href="streams/integration#integrating-with-actors">Integrating with Actors</a></li>
+<li><a href="streams/integration#integrating-with-external-services">Integrating with External Services</a></li>
+<li><a href="streams/integration#integrating-with-reactive-streams">Integrating with Reactive Streams</a></li>
+</ul>
+</li>
+<li><a href="streams/error-handling">Error Handling</a>    <ul>
+<li><a href="streams/error-handling#supervision-strategies">Supervision Strategies</a></li>
+<li><a href="streams/error-handling#errors-from-selectasync">Errors from SelectAsync</a></li>
+</ul>
+</li>
+<li><a href="streams/workingwithstreamingio">Working with streaming IO</a><ul>
+<li><a href="streams/workingwithstreamingio#streaming-file-io">Streaming File IO</a> </li>
+</ul>
+</li>
+<li><a href="streams/pipeliningandparallelism">Pipelining and Parallelism</a><ul>
+<li><a href="streams/pipeliningandparallelism#pipelining">Pipelining</a></li>
+<li><a href="streams/pipeliningandparallelism#parallel-processing">Parallel processing</a></li>
+<li><a href="streams/pipeliningandparallelism#combining-pipelining-and-parallel-processing">Combining pipelining and parallel processing</a></li>
+</ul>
+</li>
+<li><a href="streams/testingstreams">Testing streams</a><ul>
+<li><a href="streams/testingstreams#built-in-sources-sinks-and-combinators">Built in sources, sinks and combinators</a></li>
+<li><a href="streams/testingstreams#testkit">TestKit</a></li>
+<li><a href="streams/testingstreams#streams-testkit">Streams TestKit</a></li>
+<li><a href="streams/testingstreams#fuzzing-mode">Fuzzing Mode</a></li>
+</ul>
+</li>
+<li><a href="streams/builtinstages">Overview of built-in stages and their semantics</a><ul>
+<li><a href="streams/builtinstages#source-stages">Source stages</a></li>
+<li><a href="streams/builtinstages#sink-stages">Sink stages</a></li>
+<li><a href="streams/builtinstages#additional-sink-and-source-converters">Additional Sink and Source converters</a></li>
+<li><a href="streams/builtinstages#file-io-sinks-and-sources">File IO Sinks and Sources</a></li>
+<li><a href="streams/builtinstages#flow-stages">Flow stages</a></li>
+<li><a href="streams/builtinstages#simple-processing-stages">Simple processing stages</a></li>
+<li><a href="streams/builtinstages#asynchronous-processing-stages">Asynchronous processing stages</a></li>
+<li><a href="streams/builtinstages#timer-driven-stages">Timer driven stages</a></li>
+<li><a href="streams/builtinstages#backpressure-aware-stages">Backpressure aware stages</a></li>
+<li><a href="streams/builtinstages#nesting-and-flattening-stages">Nesting and flattening stages</a></li>
+<li><a href="streams/builtinstages#fan-in-stages">Fan-in stages</a></li>
+<li><a href="streams/builtinstages#fan-out-stages">Fan-out stages</a></li>
+<li><a href="streams/builtinstages#watching-status-stages">Watching status stages</a></li>
+</ul>
+</li>
+<li><a href="streams/cookbook">Streams Cookbook</a><ul>
+<li><a href="streams/cookbook#introduction">Introduction</a></li>
+<li><a href="streams/cookbook#working-with-flows">Working with Flows</a></li>
+<li><a href="streams/cookbook#working-with-graphs">Working with Graphs</a></li>
+<li><a href="streams/cookbook#working-with-rate">Working with Rate</a></li>
+</ul>
+</li>
+<li><a href="streams/configuration">Configuration</a></li>
+</ul>
 <h3 id="testing">Testing</h3>
 <ul>
 <li><a href="testing/multinode-testkit">Using the MultiNode Testkit for Testing Distributed ActorSystems</a></li>
