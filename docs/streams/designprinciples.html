@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Quickstart | Akka.NET</title>
+<title>Design Principles behind Akka Streams | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Quickstart<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/quickstart.md" > (Edit on Github)</a></li>
+							<li class="active">Design Principles behind Akka Streams<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/designprinciples.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,54 +172,65 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h1 id="quick-start-guide">Quick Start Guide</h1>
-<p>A stream usually begins at a source, so this is also how we start an Akka Stream. Before we create one, we import the full complement of streaming tools:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Streams;
-<span class="hljs-keyword">using</span> Akka.Streams.Dsl;
-</code></pre>
-<p>Now we will start with a rather simple source, emitting the integers 1 to 100;</p>
-<pre><code class="hljs lang-csharp">Source&lt;T, NotUsed&gt; source = Source.From(Enumerable.Range(<span class="hljs-number">1</span>,<span class="hljs-number">100</span>))
-</code></pre>
-<p>The <code>Source</code> type is parametrized with two types: the first one is the type of element that this source emits and the second one may signal that running the source produces some auxiliary value (e.g. a network source may provide information about the bound port or the peer&#39;s address). Where no auxiliary information is produced, the type <code>NotUsed</code> is used -- and a simple range of integers surely falls into this category.</p>
-<p>Having created this source means that we have a description of how to emit the first 100 natural numbers, but this source is not yet active. In order to get those numbers out we have to run it:</p>
-<pre><code class="hljs lang-csharp">source.RunForeach(i =&gt; Console.WriteLine(i.ToString()), materializer)
-</code></pre>
-<p>This line will complement the source with a consumer function--in this example we simply print out the numbers to the console--and pass this little stream setup to an Actor that runs it. This activation is signaled by having &quot;run&quot; be part of the method name; there are other methods that run Akka Streams, and they all follow this pattern.</p>
-<p>You may wonder where the Actor gets created that runs the stream, and you are probably also asking yourself what this materializer means. In order to get this value we first need to create an Actor system:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"system"</span>))
-<span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> materializer = system.Materializer())
-</code></pre>
-<p>There are other ways to create a materializer, e.g. from an <code>ActorContext</code> when using streams from within Actors. The <code>Materializer</code> is a factory for stream execution engines, it is the thing that makes streams run --you don&#39;t need to worry about any of the details just now apart from that you need one for calling any of the run methods on a <code>Source</code>. </p>
-<p>The nice thing about Akka Streams is that the <code>Source</code> is just a description of what you want to run, and like an architect�s blueprint it can be reused, incorporated into a larger design. We may choose to transform the source of integers and write it to a file instead:</p>
-<pre><code class="hljs lang-csharp">  <span class="hljs-keyword">var</span> factorials = source.Scan(<span class="hljs-keyword">new</span> BigInteger(<span class="hljs-number">1</span>), (acc, next) =&gt; acc * next);
-  <span class="hljs-keyword">var</span> result =
-      factorials
-          .Select(num =&gt; ByteString.FromString(<span class="hljs-string">"{num}\n"</span>))
-          .RunWith(FileIO.ToFile(<span class="hljs-keyword">new</span> FileInfo(<span class="hljs-string">"factorials.txt"</span>)), materializer);
-</code></pre>
-<p>First we use the <code>scan</code> combinator to run a computation over the whole stream: starting with the number 1 <code>(BigInteger(1))</code> we multiple by each of the incoming numbers, one after the other; the <code>scan</code> operation emits the initial value and then every calculation result. This yields the series of factorial numbers which we stash away as a Source for later reuse --it is important to keep in mind that nothing is actually computed yet, this is just a description of what we want to have computed once we run the stream. Then we convert the resulting series of numbers into a stream of <code>ByteString</code> objects describing lines in a text file. This stream is then run by attaching a file as the receiver of the data. In the terminology of Akka Streams this is called a <code>Sink. IOResult</code> is a type that IO operations return in Akka Streams in order to tell you how many bytes or elements were consumed and whether the stream terminated normally or exceptionally.</p>
-<h2 id="reusable-pieces">Reusable Pieces</h2>
-<p>One of the nice parts of Akka Stream --and something that other stream libraries do noet offer-- is that not only sources can be reused like blueprints, all other elements can be as well. We can take the file-writing <code>Sink</code>, prepend the processing steps necessary to get the <code>ByteString</code> elements from incoming string and package that up as a reusable piece as well. Since the language for writing these streams always flows from left to right (just like plain English), we need a starting point that is like a source but with an &quot;open&quot; input. In Akka Streams this is called a <code>Flow</code>:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Sink&lt;<span class="hljs-keyword">string</span>, Task&lt;IOResult&gt;&gt; LineSink(<span class="hljs-keyword">string</span> filename) {
- <span class="hljs-keyword">return</span> Flow.Create&lt;<span class="hljs-keyword">string</span>&gt;()
-   .Select(s =&gt; ByteString.FromString($<span class="hljs-string">"{s}\n"</span>))
-   .ToMaterialized(FileIO.ToFile(<span class="hljs-keyword">new</span> FileInfo(filename)), Keep.Right);
-}
-</code></pre>
-<p>Starting from a flow of strings we convert each to <code>ByteString</code> and then feed to the already known file-writing <code>Sink</code>. The resulting blueprint is a <code>Sink&lt;string, Task&lt;IOResult&gt;&gt;</code>, which means that it accepts strings as its input and when materialized it will create auxiliary information of type <code>Task&lt;IOResult&gt;</code> (when chaining operations on a <code>Source</code> or <code>Flow</code> the type of the auxiliary information --called the &quot;materialized value&quot;-- is given by the leftmost starting point; since we want to retain what the <code>FileIO.ToFile</code> sink has to offer, we need to say <code>Keep.Right</code>).</p>
-<p>We can use the new and shiny Sink we just created by attaching it to our factorials source --after a small adaptation to turn the numbers into strings:</p>
-<pre><code class="hljs lang-csharp">factorials.Select(_ =&gt; _.ToString()).RunWith(LineSink(<span class="hljs-string">"factorial2.txt"</span>), materializer);
-</code></pre>
-<h2 id="time-based-processing">Time-Based Processing</h2>
-<p>Before we start looking at a more involved example we explore the streaming nature of what Akka Streams can do. Starting from the <code>factorials</code> source we transform the stream by zipping it together with another stream, represented by a <code>Source</code> that emits the number 0 to 100: the first number emitted by the <code>factorials</code> source is the factorial of zero, the second is the factorial of one, and so on. We combine these two by forming strings like &quot;3! = 6&quot;.</p>
-<pre><code class="hljs lang-csharp"> <span class="hljs-keyword">await</span> factorials
-     .ZipWith(Source.From(Enumerable.Range(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>)), (num, idx) =&gt; $<span class="hljs-string">"{idx}! = {num}"</span>)
-     .Throttle(<span class="hljs-number">1</span>, TimeSpan.FromSeconds(<span class="hljs-number">1</span>), <span class="hljs-number">1</span>, ThrottleMode.Shaping)
-     .RunForeach(Console.WriteLine, materializer);
-</code></pre>
-<p>All operations so far have been time-independent and could have been performed in the same fashion on strict collections of elements. The next line demonstrates that we are in fact dealing with streams that can flow at a certain speed: we use the <code>throttle</code> combinator to slow down the stream to 1 element per second (the second 1 in the argument list is the maximum size of a burst that we want to allow--passing 1 means that the first element gets through immediately and the second then has to wait for one second and so on).</p>
-<p>If you run this program you will see one line printed per second. One aspect that is not immediately visible deserves mention, though: if you try and set the streams to produce a billion numbers each then you will notice that your environment does not crash with an OutOfMemoryError, even though you will also notice that running the streams happens in the background, asynchronously (this is the reason for the auxiliary information to be provided as a <code>Task</code>). The secret that makes this work is that Akka Streams implicitly implement pervasive flow control, all combinators respect back-pressure. This allows the throttle combinator to signal to all its upstream sources of data that it can only accept elements at a certain rate--when the incoming rate is higher than one per second the throttle combinator will assert back-pressure upstream.</p>
-<p>This is basically all there is to Akka Streams in a nutshell--glossing over the fact that there are dozens of sources and sinks and many more stream transformation combinators to choose from, see also <a href="builtinstages">Overview of built-in stages and their semantics</a>.</p>
+								<div><h1 id="design-principles-behind-akka-streams">Design Principles behind Akka Streams</h1>
+<p>It took quite a while until we were reasonably happy with the look and feel of the API and the architecture of the implementation, and while being guided by intuition the design phase was very much exploratory research. This section details the findings and codifies them into a set of principles that have emerged during the process.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong> <br>As detailed in the introduction keep in mind that the Akka Streams API is completely decoupled from the Reactive Streams interfaces which are just an implementation detail for how to pass stream data between individual processing stages.</p>
+</div>
+<h2 id="what-shall-users-of-akka-streams-expect-">What shall users of Akka Streams expect?</h2>
+<p>Akka is built upon a conscious decision to offer APIs that are minimal and consistent --as opposed to easy or intuitive. The credo is that we favour explicitness over magic, and if we provide a feature then it must work always, no exceptions. Another way to say this is that we minimize the number of rules a user has to learn instead of trying to keep the rules close to what we think users might expect.</p>
+<p>From this follows that the principles implemented by Akka Streams are:</p>
+<ul>
+<li>all features are explicit in the API, no magic</li>
+<li>supreme compositionality: combined pieces retain the function of each part</li>
+<li>exhaustive model of the domain of distributed bounded stream processing</li>
+</ul>
+<p>This means that we provide all the tools necessary to express any stream processing topology, that we model all the essential aspects of this domain (back-pressure, buffering, transformations, failure recovery, etc.) and that whatever the user builds is reusable in a larger context.</p>
+<h3 id="akka-streams-does-not-send-dropped-stream-elements-to-the-dead-letter-office">Akka Streams does not send dropped stream elements to the dead letter office</h3>
+<p>One important consequence of offering only features that can be relied upon is the restriction that Akka Streams cannot ensure that all objects sent through a processing topology will be processed. Elements can be dropped for a number of reason:</p>
+<ul>
+<li>plan user code can consume on element in a Select(...) stage and produce an entirely different one as its result</li>
+<li>Common stream operators drop elements intentionally, e.g., take/drop/where/conflate/buffer</li>
+<li>stream failure will tear down the stream without waiting for processing to finish, all elements that are in flight will be discarded</li>
+<li>stream cancellation will propagate upstream (e.g. from a take operator) leading to upstream processing steps being terminated without having processed all of their inputs</li>
+</ul>
+<p>This means that sending CLR objects into a stream that needs to be cleaned up will require the user to ensure that this happens outside of the Akka Streams facilities (e.g. by cleaning them up after a time-out or when their results are observed on the stream output, or by other means like finalizers etc.)</p>
+<h3 id="resulting-implementation-constraints">Resulting implementation Constraints</h3>
+<p>Compositionality entails re-usability of partial stream topologies, which led us to the lifted approach of describing data flows as (partial) graphs that can act as composite sources, flows (a.k.a. pipes) and sinks of data. These building blocks shall then be freely shareable, with the ability to combine them freely to form larger graphs. The representation of these pieces must therefore be an immutable blueprint that is materialized in an explicit step in order to start the stream processing. The resulting stream processing engine is then also immutable in the sense of having a fixed topology that is prescribed by the blueprint. Dynamic networks need to be modelled by explicitly using the Reactive Streams interfaces for plugging different engines together.</p>
+<p>The process of materialization will often create specific objects that are useful to interact with the processing engine once it is running, for example for shutting it down or for extracting metrics. This means that the materialization function produces a result termed the <em>materialized value of a graph</em>.</p>
+<h2 id="what-shall-users-of-streaming-libraries-expect-">What shall users of streaming libraries expect?</h2>
+<p>We expect libraries to be built on top of Akka Streams, in fact on the JVM&quot; Akka HTTP is one such example that lives within the Akka project itself. In order to allow users to profit from the principles that are described for Akka Streams above, the following rules are established:</p>
+<ul>
+<li>libraries shall provide their users with reusable pieces, i.e expose factories that return graphs, allowing full compositionality</li>
+<li>libraries may optionally and additionally provide facilities that consume and materialize graphs</li>
+</ul>
+<p>The reasoning behind the first rule is that compositionality would be destroyed if different libraries only accepted graphs and expected to materialize them: using two of these together would be impossible because materialization can only happen once. As a consequence, the functionality of a library must be expressed such that materialization can be done by the user, outside of the library�s control.
+The second rule allows a library to additionally provide nice sugar for the common case.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong> <br>One important consequence of this is that a reusable flow description cannot be bound to �live� resources, any connection to or allocation of such resources must be deferred until materialization time. Examples of &quot;live&quot; resources are already existing TCP connections, a multicast Publisher, etc.; a TickSource does not fall into this category if its timer is created only upon materialization (as is the case for our implementation). <br>Exceptions from this need to be well-justified and carefully documented.</p>
+</div>
+<h3 id="resulting-implementation-constraints">Resulting Implementation Constraints</h3>
+<p>Akka Streams must enable a library to express any stream processing utility in terms of immutable blueprints. The most common building blocks are</p>
+<ul>
+<li>Source: something with exactly one output stream</li>
+<li>Sink: something with exactly one input stream</li>
+<li>Flow: something with exactly one input and one output stream</li>
+<li>BidiFlow: something with exactly two input streams and two output streams that conceptually behave like two Flows of opposite direction</li>
+<li>Graph: a packaged stream processing topology that exposes a certain set of input and output ports, characterized by an object of type <code>Shape</code>.</li>
+</ul>
+<div class="alert alert-default">
+<p><strong>Note</strong> <br>A source that emits a stream of streams is still just a normal Source, the kind of elements that are produced does not play a role in the static stream topology that is being expressed.</p>
+</div>
+<h2 id="the-difference-between-error-and-failure">The difference between Error and Failure</h2>
+<p>The starting point for this discussion is the definition given by the <a href="http://www.reactivemanifesto.org/glossary#Failure">Reactive Manifesto</a>. Translated to streams this means that an error is accessible within the stream as a normal data element, while a failure means that the stream itself has failed and is collapsing. In concrete terms, on the Reactive Streams interface level data elements (including errors) are signalled via <code>onNext</code> while failures raise the <code>onError</code> signal.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong> <br>Unfortunately the method name for signalling <em>failure</em> to a Subscriber is called <code>onError</code> for historical reasons. Always keep in mind that the Reactive Streams interfaces (Publisher/Subscription/Subscriber) are modeling the low-level infrastructure for passing streams between execution units, and errors on this level are precisely the failures that we are talking about on the higher level that is modelled by Akka Streams.</p>
+</div>
+<p>There is only limited support for treating <code>onError</code> in Akka Streams compared to the operators that are available for the transformation of data elements, which is intentional in the spirit of the previous paragraph. Since <code>onError</code> signals that the stream is collapsing, its ordering semantics are not the same as for stream completion: transformation stages of any kind will just collapse with the stream, possibly still holding elements in implicit or explicit buffers. This means that data elements emitted before a failure can still be lost if the <code>onError</code> overtakes them.</p>
+<p>The ability for failures to propagate faster than data elements is essential for tearing down streams that are back-pressured --especially since back-pressure can be the failure mode (e.g. by tripping upstream buffers which then abort because they cannot do anything else; or if a dead-lock occurred).</p>
+<h2 id="the-semantics-of-stream-recovery">The semantics of stream recovery</h2>
+<p>A recovery element (i.e. any transformation that absorbs an <code>onError</code> signal and turns that into possibly more data elements followed normal stream completion) acts as a bulkhead that confines a stream collapse to a given region of the stream topology. Within the collapsed region buffered elements may be lost, but the outside is not affected by the failure.</p>
+<p>This works in the same fashion as a <code>try�catch</code> expression: it marks a region in which exceptions are caught, but the exact amount of code that was skipped within this region in case of a failure might not be known precisely�the placement of statements matters.</p>
 </div>
 
 								
