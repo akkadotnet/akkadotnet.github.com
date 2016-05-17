@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Basics and working with Flows | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" ">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Basics and working with Flows<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/basics.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="core-concepts">Core concepts</h1>
+<p>Akka Streams is a library to process and transfer a sequence of elements using bounded buffer space. 
+This latter property is what we refer to as <em>boundedness</em> and it is the defining feature of Akka Streams. 
+Translated to everyday terms it is possible to express a chain (or as we see later, graphs) 
+of processing entities, each executing independently (and possibly concurrently) from the others while only buffering a limited number of elements at any given time. 
+This property of bounded buffers is one of the differences from the actor model, where each actor usually has an unbounded, or a bounded, but dropping mailbox. 
+Akka Stream processing entities have bounded &quot;mailboxes&quot; that do not drop.</p>
+<p>Before we move on, let&#39;s define some basic terminology which will be used throughout the entire documentation:   </p>
+<p><strong>Stream</strong><br>An active process that involves moving and transforming data.</p>
+<p><strong>Element</strong><br>An element is the processing unit of streams. All operations transform and transfer elements from upstream to downstream. 
+Buffer sizes are always expressed as number of elements independently form the actual size of the elements.</p>
+<p><strong>Back-pressure</strong><br>A means of flow-control, a way for consumers of data to notify a producer about their current availability, effectively slowing down the upstream producer to match their consumption speeds. 
+In the context of Akka Streams back-pressure is always understood as <em>non-blocking</em> and <em>asynchronous</em>.</p>
+<p><strong>Non-Blocking</strong><br>Means that a certain operation does not hinder the progress of the calling thread, 
+even if it takes long time to finish the requested operation.   </p>
+<p><strong>Graph</strong><br>A description of a stream processing topology, defining the pathways through which elements shall flow when the stream is running.   </p>
+<p><strong>Processing Stage</strong><br>The common name for all building blocks that build up a <code>Graph</code>. 
+Examples of a processing stage would be operations like <code>Select()</code>, <code>Where()</code>, custom <code>GraphStage&#39;s</code> and graph junctions like <code>Merge</code> or <code>Broadcast</code>. 
+For the full list of built-in processing stages see <a href="builtinstages">Overview of built-in stages and their semantics</a>   </p>
+<p>When we talk about <em>asynchronous, non-blocking backpressure</em> we mean that the processing stages available in Akka Streams 
+will not use blocking calls but asynchronous message passing to exchange messages between each other, 
+and they will use asynchronous means to slow down a fast producer, without blocking its thread. 
+This is a thread-pool friendly design, since entities that need to wait (a fast producer waiting on a slow consumer) 
+will not block the thread but can hand it back for further use to an underlying thread-pool.  </p>
+<h1 id="defining-and-running-streams">Defining and running streams</h1>
+<p>Linear processing pipelines can be expressed in Akka Streams using the following core abstractions:  </p>
+<p><strong>Source</strong><br>A processing stage with <em>exactly one output</em>, emitting data elements whenever downstream processing stages are ready to receive them.</p>
+<p><strong>Sink</strong><br>A processing stage with <em>exactly one input</em>, requesting and accepting data elements possibly slowing down the upstream producer of elements</p>
+<p><strong>Flow</strong><br>A processing stage which has <em>exactly one input and output</em>, which connects its up- and downstreams by transforming the data elements flowing through it.</p>
+<p><strong>RunnableGraph</strong><br>A Flow that has both ends &quot;attached&quot; to a <code>Source</code> and <code>Sink</code> respectively, and is ready to be <code>run()</code>.</p>
+<p>It is possible to attach a <code>Flow</code> to a <code>Source</code> resulting in a composite source, and it is also possible to prepend
+a <code>Flow</code> to a <code>Sink</code> to get a new sink. After a stream is properly terminated by having both a source and a sink,
+it will be represented by the <code>RunnableGraph</code> type, indicating that it is ready to be executed.</p>
+<p>It is important to remember that even after constructing the <code>RunnableGraph</code> by connecting all the source, sink and
+different processing stages, no data will flow through it until it is materialized. Materialization is the process of
+allocating all resources needed to run the computation described by a Graph (in Akka Streams this will often involve
+starting up Actors). Thanks to Flows being simply a description of the processing pipeline they are <em>immutable,
+thread-safe, and freely shareable</em>, which means that it is for example safe to share and send them between actors, to have
+one actor prepare the work, and then have it be materialized at some completely different place in the code.   </p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>));
+<span class="hljs-keyword">var</span> sink = Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (agg, i) =&gt; agg + i);
+
+<span class="hljs-comment">// connect the Source to the Sink, obtaining a RunnableGraph</span>
+<span class="hljs-keyword">var</span> runnable = source.ToMaterialized(sink, Keep.Right);
+
+<span class="hljs-comment">// materialize the flow and get the value of the AggregateSink</span>
+Task&lt;<span class="hljs-keyword">int</span>&gt; sum = runnable.Run(materializer);
+</code></pre>
+<p>After running (materializing) the <code>RunnableGraph[T]</code> we get back the materialized value of type T. Every stream processing
+stage can produce a materialized value, and it is the responsibility of the user to combine them to a new type.
+In the above example we used <code>ToMaterialized</code> to indicate that we want to transform the materialized value of the source and
+sink, and we used the convenience function <code>Keep.Right</code> to say that we are only interested in the materialized value
+of the sink.
+In our example the <code>AggregateSink</code> materializes a value of type <code>Task&lt;int&gt;</code> which will represent the result
+of the aggregating process over the stream.  In general, a stream can expose multiple materialized values,
+but it is quite common to be interested in only the value of the Source or the Sink in the stream. For this reason
+there is a convenience method called <code>RunWith()</code> available for <code>Sink</code>, <code>Source</code> or <code>Flow</code> requiring, respectively,
+a supplied <code>Source</code> (in order to run a <code>Sink</code>), a <code>Sink</code> (in order to run a <code>Source</code>) or
+both a <code>Source</code> and a <code>Sink</code> (in order to run a <code>Flow</code>, since it has neither attached yet).  </p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>));
+<span class="hljs-keyword">var</span> sink = Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (agg, i) =&gt; agg + i);
+
+<span class="hljs-comment">// materialize the flow, getting the Sinks materialized value</span>
+Task&lt;<span class="hljs-keyword">int</span>&gt; sum = source.RunWith(sink, materializer);
+</code></pre>
+<p>It is worth pointing out that since processing stages are <em>immutable</em>, connecting them returns a new processing stage,
+instead of modifying the existing instance, so while constructing long flows, remember to assign the new value to a variable or run it:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>));
+source.Select(_ =&gt; <span class="hljs-number">0</span>); <span class="hljs-comment">// has no effect on source, since it's immutable</span>
+source.RunWith(Sink.Aggregate&lt;<span class="hljs-keyword">int</span>,<span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (agg, i) =&gt; agg + i), materializer); <span class="hljs-comment">// 55</span>
+
+<span class="hljs-keyword">var</span> zeroes = source.Select(_ =&gt; <span class="hljs-number">0</span>); <span class="hljs-comment">// returns new Source&lt;Int&gt;, with Select() appended</span>
+zeroes.RunWith(Sink.Aggregate&lt;<span class="hljs-keyword">int</span>,<span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (agg, i) =&gt; agg + i), materializer); <span class="hljs-comment">// 0</span>
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+By default Akka Streams elements support <strong>exactly one</strong> downstream processing stage.
+Making fan-out (supporting multiple downstream processing stages) an explicit opt-in feature allows default stream elementsto be less complex and more efficient.
+Also it allows for greater flexibility on <em>how exactly</em> to handle the multicast scenarios, 
+by providing named fan-out elements such as broadcast (signals all down-stream elements) or balance (signals one of available down-stream elements).  </p>
+</div>
+<p>In the above example we used the <code>runWith</code> method, which both materializes the stream and returns the materialized value
+of the given sink or source.</p>
+<p>Since a stream can be materialized multiple times, the materialized value will also be calculated new for each such
+materialization, usually leading to different values being returned each time.
+In the example below we create two running materialized instance of the stream that we described in the <code>runnable</code>
+variable, and both materializations give us a different <code>Task</code> from the map even though we used the same <code>sink</code>
+to refer to the task:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// connect the Source to the Sink, obtaining a RunnableGraph</span>
+<span class="hljs-keyword">var</span> sink = Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (sum, i) =&gt; sum + i);
+<span class="hljs-keyword">var</span> runnable = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>))
+    .ToMaterialized(sink, Keep.Right);
+
+<span class="hljs-comment">// get the materialized value of the AggregateSink</span>
+<span class="hljs-keyword">var</span> sum1 = runnable.Run(materializer);
+<span class="hljs-keyword">var</span> sum2 = runnable.Run(materializer);
+
+<span class="hljs-comment">// sum1 and sum2 are different Tasks!</span>
+</code></pre>
+<h1 id="defining-sources-sinks-and-flows">Defining sources, sinks and flows</h1>
+<p>The objects <code>Source</code> and <code>Sink</code> define various ways to create sources and sinks of elements. The following
+examples show some of the most useful constructs (refer to the API documentation for more details):</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create a source from an Iterable</span>
+Source.From(<span class="hljs-keyword">new</span> List&lt;<span class="hljs-keyword">int</span>&gt; {<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>});
+
+<span class="hljs-comment">// Create a source from a Task</span>
+Source.FromTask(Task.FromResult(<span class="hljs-string">"Hello Streams!"</span>));
+
+<span class="hljs-comment">// Create a source from a single element</span>
+Source.Single(<span class="hljs-string">"only one element"</span>)
+
+<span class="hljs-comment">// an empty source</span>
+Source.Empty&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-comment">// Sink that aggregates over the stream and returns a Task</span>
+<span class="hljs-comment">// of the final result as its materialized value</span>
+Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (sum, i) =&gt; sum + i);
+
+<span class="hljs-comment">// Sink that returns a Task as its materialized value,</span>
+<span class="hljs-comment">// containing the first element of the stream</span>
+Sink.First&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-comment">// A Sink that consumes a stream without doing anything with the elements</span>
+Sink.Ignore&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-comment">// A Sink that executes a side-effecting call for every element of the stream</span>
+Sink.ForEach&lt;<span class="hljs-keyword">string</span>&gt;(Console.WriteLine);
+</code></pre>
+<p>There are various ways to wire up different parts of a stream, the following examples show some of the available options:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// Explicitly creating and wiring up a Source, Sink and Flow</span>
+Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">6</span>))
+    .Via(Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;().Select(x =&gt; x*<span class="hljs-number">2</span>))
+    .To(Sink.ForEach&lt;<span class="hljs-keyword">int</span>&gt;(x =&gt; Console.WriteLine(x.ToString())));
+
+<span class="hljs-comment">// Starting from a Source</span>
+<span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">6</span>)).Select(x =&gt; x * <span class="hljs-number">2</span>);
+    source.To(Sink.ForEach&lt;<span class="hljs-keyword">int</span>&gt;(x =&gt; Console.WriteLine(x.ToString())));
+
+<span class="hljs-comment">// Starting from a Sink</span>
+<span class="hljs-keyword">var</span> sink = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;()
+    .Select(x =&gt; x*<span class="hljs-number">2</span>)
+    .To(Sink.ForEach&lt;<span class="hljs-keyword">int</span>&gt;(x =&gt; Console.WriteLine(x.ToString())));
+Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">6</span>)).To(sink);
+
+<span class="hljs-comment">// Broadcast to a sink inline</span>
+<span class="hljs-keyword">var</span> sink = Sink.ForEach&lt;<span class="hljs-keyword">int</span>&gt;(x =&gt; Console.WriteLine(x.ToString()))
+    .MapMaterializedValue(_ =&gt; NotUsed.Instance);
+<span class="hljs-keyword">var</span> otherSink = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;().AlsoTo(sink).To(Sink.Ignore&lt;<span class="hljs-keyword">int</span>&gt;());
+Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-number">6</span>)).To(otherSink);
+</code></pre>
+<h4 id="illegal-stream-elements">Illegal stream elements</h4>
+<p>In accordance to the Reactive Streams specification ([Rule 2.13] (<a href="https://github.com/reactive-streams/reactive-streams-jvm#2.13&gt;">https://github.com/reactive-streams/reactive-streams-jvm#2.13&gt;</a>))
+Akka Streams do not allow <code>null</code> to be passed through the stream as an element. In case you want to model the concept
+of absence of a value we recommend using <code>Akka.Streams.Util.Option&lt;T&gt;</code> or <code>Akka.Util.Either&lt;TA,TB&gt;</code>.  </p>
+<h1 id="back-pressure-explained">Back-pressure explained</h1>
+<p>Akka Streams implement an asynchronous non-blocking back-pressure protocol standardised by the <a href="http://reactive-streams.org/">Reactive Streams</a>
+specification, which Akka is a founding member of.</p>
+<p>The user of the library does not have to write any explicit back-pressure handling code — it is built in
+and dealt with automatically by all of the provided Akka Streams processing stages. It is possible however to add
+explicit buffer stages with overflow strategies that can influence the behaviour of the stream. This is especially important
+in complex processing graphs which may even contain loops (which <em>must</em> be treated with very special
+care, as explained in <a href="workingwithgraphs#graph-cycles-liveness-and-deadlocks">Graph cycles, liveness and deadlocks</a>).</p>
+<p>The back pressure protocol is defined in terms of the number of elements a downstream <code>Subscriber</code> is able to receive
+and buffer, referred to as <code>demand</code>.
+The source of data, referred to as <code>Publisher</code> in Reactive Streams terminology and implemented as <code>Source</code> in Akka
+Streams, guarantees that it will never emit more elements than the received total demand for any given <code>Subscriber</code>.  </p>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+The Reactive Streams specification defines its protocol in terms of <code>Publisher</code> and <code>Subscriber</code>.
+These types are <strong>not</strong> meant to be user facing API, instead they serve as the low level building blocks for different Reactive Streams implementations.
+Akka Streams implements these concepts as <code>Source</code>, <code>Flow</code> (referred to as <code>Processor</code> in Reactive Streams)
+and <code>Sink</code> without exposing the Reactive Streams interfaces directly.
+If you need to integrate with other Reactive Stream libraries read <a href="integration#integrating-with-reactive-streams">Integrating with Reactive Streams</a>.</p>
+</div>
+<p>The mode in which Reactive Streams back-pressure works can be colloquially described as &quot;dynamic push / pull mode&quot;,
+since it will switch between push and pull based back-pressure models depending on the downstream being able to cope
+with the upstream production rate or not.</p>
+<p>To illustrate this further let us consider both problem situations and how the back-pressure protocol handles them:</p>
+<h4 id="slow-publisher-fast-subscriber">Slow Publisher, fast Subscriber</h4>
+<p>This is the happy case of course – we do not need to slow down the Publisher in this case. However signalling rates are
+rarely constant and could change at any point in time, suddenly ending up in a situation where the Subscriber is now
+slower than the Publisher. In order to safeguard from these situations, the back-pressure protocol must still be enabled
+during such situations, however we do not want to pay a high penalty for this safety net being enabled.</p>
+<p>The Reactive Streams protocol solves this by asynchronously signalling from the Subscriber to the Publisher
+<code>Request(int n)</code> signals. The protocol guarantees that the Publisher will never signal <em>more</em> elements than the
+signalled demand. Since the Subscriber however is currently faster, it will be signalling these Request messages at a higher
+rate (and possibly also batching together the demand - requesting multiple elements in one Request signal). This means
+that the Publisher should not ever have to wait (be back-pressured) with publishing its incoming elements.</p>
+<p>As we can see, in this scenario we effectively operate in so called push-mode since the Publisher can continue producing
+elements as fast as it can, since the pending demand will be recovered just-in-time while it is emitting elements.</p>
+<h4 id="fast-publisher-slow-subscriber">Fast Publisher, slow Subscriber</h4>
+<p>This is the case when back-pressuring the <code>Publisher</code> is required, because the <code>Subscriber</code> is not able to cope with
+the rate at which its upstream would like to emit data elements.</p>
+<p>Since the <code>Publisher</code> is not allowed to signal more elements than the pending demand signalled by the <code>Subscriber</code>,
+it will have to abide to this back-pressure by applying one of the below strategies:</p>
+<ul>
+<li>not generate elements, if it is able to control their production rate,</li>
+<li>try buffering the elements in a <em>bounded</em> manner until more demand is signalled,</li>
+<li>drop elements until more demand is signalled,</li>
+<li>tear down the stream if unable to apply any of the above strategies.</li>
+</ul>
+<p>As we can see, this scenario effectively means that the <code>Subscriber</code> will <em>pull</em> the elements from the Publisher –
+this mode of operation is referred to as pull-based back-pressure.</p>
+<h1 id="stream-materialization">Stream Materialization</h1>
+<p>When constructing flows and graphs in Akka Streams think of them as preparing a blueprint, an execution plan.
+Stream materialization is the process of taking a stream description (the graph) and allocating all the necessary resources
+it needs in order to run. In the case of Akka Streams this often means starting up Actors which power the processing,
+but is not restricted to that—it could also mean opening files or socket connections etc.—depending on what the stream needs.</p>
+<p>Materialization is triggered at so called &quot;terminal operations&quot;. Most notably this includes the various forms of the <code>Run()</code>
+and <code>RunWith()</code> methods defined on <code>Source</code> and <code>Flow</code> elements as well as a small number of special syntactic sugars for running with
+well-known sinks, such as <code>RunForeach(el =&gt; ...)</code> (being an alias to <code>RunWith(Sink.Foreach(el =&gt; ...))</code>.</p>
+<p>Materialization is currently performed synchronously on the materializing thread.
+The actual stream processing is handled by actors started up during the streams materialization,
+which will be running on the thread pools they have been configured to run on - which defaults to the dispatcher set in
+<code>MaterializationSettings</code> while constructing the <code>ActorMaterializer</code>.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+Reusing <em>instances</em> of linear computation stages (Source, Sink, Flow) inside composite Graphs is legal, yet will materialize that stage multiple times.  </p>
+</div>
+<h4 id="operator-fusion">Operator Fusion</h4>
+<p>Akka Streams contains an initial version of stream operator fusion support. This means that
+the processing steps of a flow or stream graph can be executed within the same Actor and has three
+consequences:</p>
+<ul>
+<li>starting up a stream may take longer than before due to executing the fusion algorithm</li>
+<li>passing elements from one processing stage to the next is a lot faster between fused stages due to avoiding the asynchronous messaging overhead</li>
+<li>fused stream processing stages do no longer run in parallel to each other, meaning that only up to one CPU core is used for each fused part</li>
+</ul>
+<p>The first point can be countered by pre-fusing and then reusing a stream blueprint as sketched below:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> flow = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;().Select(x =&gt; x*<span class="hljs-number">2</span>).Where(x =&gt; x &gt; <span class="hljs-number">500</span>);
+<span class="hljs-keyword">var</span> fused = Fusing.Aggressive(flow);
+
+Source.From(Enumerable.Range(<span class="hljs-number">0</span>, <span class="hljs-keyword">int</span>.MaxValue))
+    .Via(fused)
+    .Take(<span class="hljs-number">1000</span>);
+</code></pre>
+<p>In order to balance the effects of the second and third bullet points you will have to insert asynchronous
+boundaries manually into your flows and graphs by way of adding <code>Attributes.AsyncBoundary</code> using the method
+<code>Async</code> on <code>Source</code>, <code>Sink</code> and <code>Flow</code> to pieces that shall communicate with the rest of the graph in an
+asynchronous fashion.  </p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> asyncGraph = Source.From(<span class="hljs-keyword">new</span>[] {<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>})
+    .Select(x =&gt; x + <span class="hljs-number">1</span>).Async();
+Source.FromGraph(asyncGraph)
+    .Select(x =&gt; x*<span class="hljs-number">2</span>)
+    .To(Sink.Ignore&lt;<span class="hljs-keyword">int</span>&gt;());
+</code></pre>
+<p>In this example we create two regions within the flow which will be executed in one Actor each—assuming that adding
+and multiplying integers is an extremely costly operation this will lead to a performance gain since two CPUs can
+work on the tasks in parallel. It is important to note that asynchronous boundaries are not singular places within a
+flow where elements are passed asynchronously (as in other streaming libraries), but instead attributes always work
+by adding information to the flow graph that has been constructed up to this point:</p>
+<p><img class="img-responsive" src="../../images/asyncBoundary.png" alt="AsyncBoundary">  </p>
+<p>This means that everything that is inside the red bubble will be executed by one actor and everything outside of it
+by another. This scheme can be applied successively, always having one such boundary enclose the previous ones plus all
+processing stages that have been added since them.  </p>
+<p>The new fusing behavior can be disabled by setting the configuration parameter <code>akka.stream.materializer.auto-fusing=off</code>.
+In that case you can still manually fuse those graphs which shall run on less Actors. With the exception of the
+<code>SslTlsStage</code> and the <code>GroupBy</code> operator all built-in processing stages can be fused.</p>
+<h4 id="combining-materialized-values">Combining materialized values</h4>
+<p>Since every processing stage in Akka Streams can provide a materialized value after being materialized, it is necessary
+to somehow express how these values should be composed to a final value when we plug these stages together. For this,
+many combinator methods have variants that take an additional argument, a function, that will be used to combine the
+resulting values. Some examples of using these combiners are illustrated in the example below.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// An source that can be signalled explicitly from the outside</span>
+Source&lt;<span class="hljs-keyword">int</span>, TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;&gt; source = Source.Maybe&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-comment">// A flow that internally throttles elements to 1 / second, and returns a Cancellable</span>
+<span class="hljs-comment">// which can be used to shut down the stream</span>
+Flow&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>, ICancelable&gt; flow = throttler;
+
+<span class="hljs-comment">// A sink that returns the first element of a stream in the returned Task</span>
+Sink&lt;<span class="hljs-keyword">int</span>, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt; sink = Sink.First&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-comment">// By default, the materialized value of the leftmost stage is preserved</span>
+IRunnableGraph&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;&gt; r1 = source.Via(flow).To(sink);
+
+<span class="hljs-comment">// Simple selection of materialized values by using Keep.right</span>
+IRunnableGraph&lt;ICancelable&gt; r2 = source.ViaMaterialized(flow, Keep.Right).To(sink);
+IRunnableGraph&lt;Task&lt;<span class="hljs-keyword">int</span>&gt;&gt; r3 = source.Via(flow).ToMaterialized(sink, Keep.Right);
+
+<span class="hljs-comment">//Using runWith will always give the materialized values of the stages added</span>
+<span class="hljs-comment">//by RunWith() itself</span>
+Task&lt;<span class="hljs-keyword">int</span>&gt; r4 = source.Via(flow).RunWith(sink, materializer);
+TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt; r5 = flow.To(sink).RunWith(source, materializer);
+Tuple&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt; r6 = flow.RunWith(source, sink, materializer);
+
+<span class="hljs-comment">//using more complex combinations</span>
+IRunnableGraph&lt;Tuple&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;, ICancelable&gt;&gt; r7 =
+    source.ViaMaterialized(flow, Keep.Both).To(sink);
+
+IRunnableGraph&lt;Tuple&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt;&gt; r8 = 
+    source.Via(flow).ToMaterialized(sink, Keep.Both);
+
+IRunnableGraph&lt;Tuple&lt;Tuple&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;, ICancelable&gt;, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt;&gt; r9 =
+    source.ViaMaterialized(flow, Keep.Both).ToMaterialized(sink, Keep.Both);
+
+IRunnableGraph&lt;Tuple&lt;ICancelable, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt;&gt; r10 =
+    source.ViaMaterialized(flow, Keep.Right).ToMaterialized(sink, Keep.Both);
+
+<span class="hljs-comment">// It is also possible to map over the materialized values. In r9 we had a</span>
+<span class="hljs-comment">// doubly nested pair, but we want to flatten it out</span>
+IRunnableGraph&lt;Tuple&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;, ICancelable, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt;&gt; r11 =
+    r9.MapMaterializedValue(t =&gt; Tuple.Create(t.Item1.Item1, t.Item1.Item2, t.Item2));
+
+<span class="hljs-comment">// Now we can get the resulting materialized values</span>
+<span class="hljs-keyword">var</span> tuple = r11.Run(materializer);
+<span class="hljs-keyword">var</span> completion = tuple.Item1;
+<span class="hljs-keyword">var</span> cancellable = tuple.Item2;
+<span class="hljs-keyword">var</span> task = tuple.Item3;
+
+<span class="hljs-comment">// Type inference works as expected</span>
+completion.SetResult(<span class="hljs-number">1</span>);
+cancellable.Cancel();
+<span class="hljs-keyword">int</span> plus3 = task.Result + <span class="hljs-number">3</span>;
+
+<span class="hljs-comment">// The result of r11 can be also achieved by using the Graph API</span>
+RunnableGraph&lt;Tuple&lt;TaskCompletionSource&lt;<span class="hljs-keyword">int</span>&gt;, ICancelable, Task&lt;<span class="hljs-keyword">int</span>&gt;&gt;&gt; r12 =
+    RunnableGraph.FromGraph(GraphDsl.Create(source, flow, sink,
+        Tuple.Create,
+        (builder, src, f, dst) =&gt;
+        {
+            builder.From(src).Via(f).To(dst);
+            <span class="hljs-keyword">return</span> ClosedShape.Instance;
+        }));
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+In Graphs it is possible to access the materialized value from inside the stream processing graph.
+For details see <a href="workingwithgraphs#accessing-the-materialized-value-inside-the-graph">Accessing the materialized value inside the Graph</a>.</p>
+</div>
+<h1 id="stream-ordering">Stream ordering</h1>
+<p>In Akka Streams almost all computation stages <em>preserve input order</em> of elements. This means that if inputs <code>{IA1,IA2,...,IAn}</code>
+&quot;cause&quot; outputs <code>{OA1,OA2,...,OAk}</code> and inputs <code>{IB1,IB2,...,IBm}</code> &quot;cause&quot; outputs <code>{OB1,OB2,...,OBl}</code> and all of
+<code>IAi</code> happened before all <code>IBi</code> then <code>OAi</code> happens before <code>OBi</code>.</p>
+<p>This property is even uphold by async operations such as <code>SelectAsync</code>, however an unordered version exists
+called <code>SelectAsyncUnordered</code> which does not preserve this ordering.</p>
+<p>However, in the case of Junctions which handle multiple input streams (e.g. <code>Merge</code>) the output order is,
+in general, <em>not defined</em> for elements arriving on different input ports. That is a merge-like operation may emit <code>Ai</code>
+before emitting <code>Bi</code>, and it is up to its internal logic to decide the order of emitted elements. Specialized elements
+such as <code>Zip</code> however <em>do guarantee</em> their outputs order, as each output element depends on all upstream elements having
+been signalled already – thus the ordering in the case of zipping is defined by this property.</p>
+<p>If you find yourself in need of fine grained control over order of emitted elements in fan-in
+scenarios consider using <code>MergePreferred</code> or <code>GraphStage</code> – which gives you full control over how the
+merge is performed.</p>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
