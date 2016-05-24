@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Overview of built-in stages and their semantics | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" ">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Overview of built-in stages and their semantics<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/builtinstages.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="source-stages">Source stages</h1>
+<p>These built-in sources are available from <code>akka.stream.scaladsl.Source</code>:</p>
+<h4 id="fromenumerator">FromEnumerator</h4>
+<p>Stream the values from an <code>Enumerator</code>, requesting the next value when there is demand. The enumerator will be created anew
+for each materialization, which is the reason the method takes a function rather than an enumerator directly.</p>
+<p>If the enumerator perform blocking operations, make sure to run it on a separate dispatcher.</p>
+<p><strong>emits</strong> the next value returned from the enumerator</p>
+<p><strong>completes</strong> when the enumerator reaches its end</p>
+<h4 id="from">From</h4>
+<p>Stream the values of an <code>IEnumerable&lt;T&gt;</code>.</p>
+<p><strong>emits</strong> the next value of the enumerable</p>
+<p><strong>completes</strong> when the last element of the enumerable has been emitted</p>
+<h4 id="single">Single</h4>
+<p>Stream a single object</p>
+<p><strong>emits</strong> the value once</p>
+<p><strong>completes</strong> when the single value has been emitted</p>
+<h4 id="repeat">Repeat</h4>
+<p>Stream a single object repeatedly</p>
+<p><strong>emits</strong> the same value repeatedly when there is demand</p>
+<p><strong>completes</strong> never</p>
+<h4 id="tick">Tick</h4>
+<p>A periodical repetition of an arbitrary object. Delay of first tick is specified
+separately from interval of the following ticks.</p>
+<p><strong>emits</strong> periodically, if there is downstream backpressure ticks are skipped</p>
+<p><strong>completes</strong> never</p>
+<h4 id="fromtask">FromTask</h4>
+<p>Send the single value of the <code>Task</code> when it completes and there is demand.
+If the task fails the stream is failed with that exception.</p>
+<p><strong>emits</strong> the task completes</p>
+<p><strong>completes</strong> after the task has completed</p>
+<h4 id="unfold">Unfold</h4>
+<p>Stream the result of a function as long as it returns not <code>null</code>, the value inside the option
+consists of a tuple where the first value is a state passed back into the next call to the function allowing
+to pass a state. The first invocation of the provided fold function will receive the <code>zero</code> state.</p>
+<p>Can be used to implement many stateful sources without having to touch the more low level <code>GraphStage</code> API.</p>
+<p><strong>emits</strong> when there is demand and the unfold function over the previous state returns non null value</p>
+<p><strong>completes</strong> when the unfold function returns an null value</p>
+<h4 id="unfoldasync">UnfoldAsync</h4>
+<p>Just like <code>Unfold</code> but the fold function returns a <code>Task</code> which will cause the source to
+complete or emit when it completes.</p>
+<p>Can be used to implement many stateful sources without having to touch the more low level <code>GraphStage</code> API.</p>
+<p><strong>emits</strong> when there is demand and unfold state returned task completes with not null value</p>
+<p><strong>completes</strong> when the task returned by the unfold function completes with an null value</p>
+<h4 id="empty">Empty</h4>
+<p>Complete right away without ever emitting any elements. Useful when you have to provide a source to
+an API but there are no elements to emit.</p>
+<p><strong>emits</strong> never</p>
+<p><strong>completes</strong> directly</p>
+<h4 id="maybe">Maybe</h4>
+<p>Materialize a <code>TaskCompletionSource&lt;T&gt;</code> that if completed with a <code>T</code> will emit that <code>T</code> and then complete
+the stream, or if completed with <code>null</code> complete the stream right away.</p>
+<p><strong>emits</strong> when the returned promise is completed with not null value</p>
+<p><strong>completes</strong> after emitting not null value, or directly if the promise is completed with null value</p>
+<h4 id="failed">Failed</h4>
+<p>Fail directly with a user specified exception.</p>
+<p><strong>emits</strong> never</p>
+<p><strong>completes</strong> fails the stream directly with the given exception</p>
+<h4 id="actorpublisher">ActorPublisher</h4>
+<p>Wrap an actor extending <code>ActorPublisher</code> as a source.</p>
+<p><strong>emits</strong> depends on the actor implementation</p>
+<p><strong>completes</strong> when the actor stops</p>
+<h4 id="actorref">ActorRef</h4>
+<p>Materialize an <code>IActorRef</code>, sending messages to it will emit them on the stream. The actor contain
+a buffer but since communication is one way, there is no back pressure. Handling overflow is done by either dropping
+elements or failing the stream, the strategy is chosen by the user.</p>
+<p><strong>emits</strong> when there is demand and there are messages in the buffer or a message is sent to the actorref</p>
+<p><strong>completes</strong> when the actorref is sent <code>Akka.Actor.Status.Success</code> or <code>PoisonPill</code></p>
+<h4 id="combine">Combine</h4>
+<p>Combine several sources, using a given strategy such as merge or concat, into one source.</p>
+<p><strong>emits</strong> when there is demand, but depending on the strategy</p>
+<p><strong>completes</strong> when all sources has completed</p>
+<h4 id="queue">Queue</h4>
+<p>Materialize a <code>SourceQueue</code> onto which elements can be pushed for emitting from the source. The queue contains
+a buffer, if elements are pushed onto the queue faster than the source is consumed the overflow will be handled with
+a strategy specified by the user. Functionality for tracking when an element has been emitted is available through
+<code>SourceQueue.Offer</code>.</p>
+<p><strong>emits</strong> when there is demand and the queue contains elements</p>
+<p><strong>completes</strong> when downstream completes</p>
+<h4 id="assubscriber">AsSubscriber</h4>
+<p>Integration with Reactive Streams, materializes into a <code>Reactive.Streams.ISubscriber</code>.</p>
+<h4 id="frompublisher">FromPublisher</h4>
+<p>Integration with Reactive Streams, subscribes to a <code>Reactive.Streams.IPublisher</code>.</p>
+<h1 id="sink-stages">Sink stages</h1>
+<p>These built-in sinks are available from <code>Akka.Stream.DSL.Sink</code>:</p>
+<h4 id="first">First</h4>
+<p>Materializes into a <code>Task</code> which completes with the first value arriving,
+after this the stream is canceled. If no element is emitted, the task is be failed.</p>
+<p><strong>cancels</strong> after receiving one element</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="firstordefault">FirstOrDefault</h4>
+<p>Materializes into a <code>Task&lt;T&gt;</code> which completes with the first value arriving,
+or a <code>default(T)</code> if the stream completes without any elements emitted.</p>
+<p><strong>cancels</strong> after receiving one element</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="last">Last</h4>
+<p>Materializes into a <code>Task</code> which will complete with the last value emitted when the stream
+completes. If the stream completes with no elements the task is failed.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="lasrordefault">LasrOrDefault</h4>
+<p>Materialize a <code>Task&lt;T&gt;</code> which completes with the last value
+emitted when the stream completes. if the stream completes with no elements the task is
+completed with default(T).</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="ignore">Ignore</h4>
+<p>Consume all elements but discards them. Useful when a stream has to be consumed but there is no use to actually
+do anything with the elements.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="cancelled">Cancelled</h4>
+<p>Immediately cancel the stream</p>
+<p><strong>cancels</strong> immediately</p>
+<h4 id="seq">Seq</h4>
+<p>Collect values emitted from the stream into a collection, the collection is available through a <code>Task</code> or
+which completes when the stream completes. Note that the collection is bounded to <code>int.MaxValue</code>,
+if more element are emitted the sink will cancel the stream</p>
+<p><strong>cancels</strong> If too many values are collected</p>
+<h4 id="foreach">Foreach</h4>
+<p>Invoke a given procedure for each element received. Note that it is not safe to mutate shared state from the procedure.</p>
+<p>The sink materializes into a  <code>Task</code> which completes when the
+stream completes, or fails if the stream fails.</p>
+<p>Note that it is not safe to mutate state from the procedure.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> when the previous procedure invocation has not yet completed</p>
+<h4 id="foreachparallel">ForeachParallel</h4>
+<p>Like <code>Foreach</code> but allows up to <code>parallellism</code> procedure calls to happen in parallel.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> when the previous parallel procedure invocations has not yet completed</p>
+<h4 id="oncomplete">OnComplete</h4>
+<p>Invoke a callback when the stream has completed or failed.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="aggregate">Aggregate</h4>
+<p>Fold over emitted element with a function, where each invocation will get the new element and the result from the
+previous fold invocation. The first invocation will be provided the <code>zero</code> value.</p>
+<p>Materializes into a task that will complete with the last state when the stream has completed.</p>
+<p>This stage allows combining values into a result without a global mutable state by instead passing the state along
+between invocations.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> when the previous fold function invocation has not yet completed</p>
+<h4 id="sum">Sum</h4>
+<p>Apply a reduction function on the incoming elements and pass the result to the next invocation. The first invocation
+receives the two first elements of the flow.</p>
+<p>Materializes into a task that will be completed by the last result of the reduction function.</p>
+<p><strong>cancels</strong> never</p>
+<p><strong>backpressures</strong> when the previous reduction function invocation has not yet completed</p>
+<h4 id="combine">Combine</h4>
+<p>Combine several sinks into one using a user specified strategy</p>
+<p><strong>cancels</strong> depends on the strategy</p>
+<p><strong>backpressures</strong> depends on the strategy</p>
+<h4 id="actorref">ActorRef</h4>
+<p>Send the elements from the stream to an <code>IActorRef</code>. No backpressure so care must be taken to not overflow the inbox.</p>
+<p><strong>cancels</strong> when the actor terminates</p>
+<p><strong>backpressures</strong> never</p>
+<h4 id="actorrefwithack">ActorRefWithAck</h4>
+<p>Send the elements from the stream to an <code>IActorRef</code> which must then acknowledge reception after completing a message,
+to provide back pressure onto the sink.</p>
+<p><strong>cancels</strong> when the actor terminates</p>
+<p><strong>backpressures</strong> when the actor acknowledgement has not arrived</p>
+<h4 id="actorsubscriber">ActorSubscriber</h4>
+<p>Create an actor from a <code>Props</code> upon materialization, where the actor implements <code>ActorSubscriber</code>, which will
+receive the elements from the stream.</p>
+<p>Materializes into an <code>IActorRef</code> to the created actor.</p>
+<p><strong>cancels</strong> when the actor terminates</p>
+<p><strong>backpressures</strong> depends on the actor implementation</p>
+<h4 id="aspublisher">AsPublisher</h4>
+<p>Integration with Reactive Streams, materializes into a <code>Reactive.Streams.IPublisher</code>.</p>
+<h4 id="fromsubscriber">FromSubscriber</h4>
+<p>Integration with Reactive Streams, wraps a <code>Reactive.Streams.ISubscriber</code> as a sink</p>
+<h1 id="additional-sink-and-source-converters">Additional Sink and Source converters</h1>
+<p>Sources and sinks for integrating with <code>System.IO.Stream</code> can be found on
+<code>StreamConverters</code>. As they are blocking APIs the implementations of these stages are run on a separate
+dispatcher configured through the <code>akka.stream.blocking-io-dispatcher</code>.</p>
+<h4 id="fromoutputstream">FromOutputStream</h4>
+<p>Create a sink that wraps an <code>Stream</code>. Takes a function that produces an <code>Stream</code>, when the sink is
+materialized the function will be called and bytes sent to the sink will be written to the returned <code>Stream</code>.</p>
+<p>Materializes into a <code>Task</code> which will complete with a <code>IOResult</code> when the stream
+completes.</p>
+<p>Note that a flow can be materialized multiple times, so the function producing the <code>Stream</code> must be able
+to handle multiple invocations.</p>
+<p>The <code>Stream</code> will be closed when the stream that flows into the <code>Sink</code> is completed, and the <code>Sink</code>
+will cancel its inflow when the <code>Stream</code> is no longer writable.</p>
+<h4 id="asinputstream">AsInputStream</h4>
+<p>Create a sink which materializes into an <code>Stream</code> that can be read to trigger demand through the sink.
+Bytes emitted through the stream will be available for reading through the <code>Stream</code></p>
+<p>The <code>Stream</code> will be ended when the stream flowing into this <code>Sink</code> completes, and the closing the
+<code>Stream</code> will cancel the inflow of this <code>Sink</code>.</p>
+<h4 id="frominputstream">FromInputStream</h4>
+<p>Create a source that wraps an <code>Stream</code>. Takes a function that produces an <code>Stream</code>, when the source is
+materialized the function will be called and bytes from the <code>Stream</code> will be emitted into the stream.</p>
+<p>Materializes into a <code>Task</code> which will complete with a <code>IOResult</code> when the stream
+completes.</p>
+<p>Note that a flow can be materialized multiple times, so the function producing the <code>Stream</code> must be able
+to handle multiple invocations.</p>
+<p>The <code>Stream</code> will be closed when the <code>Source</code> is canceled from its downstream, and reaching the end of the
+<code>Stream</code> will complete the <code>Source</code>.</p>
+<h4 id="asoutputstream">AsOutputStream</h4>
+<p>Create a source that materializes into an <code>Stream</code>. When bytes are written to the <code>Stream</code> they
+are emitted from the source</p>
+<p>The <code>Stream</code> will no longer be writable when the <code>Source</code> has been canceled from its downstream, and
+closing the <code>Stream</code> will complete the <code>Source</code>.</p>
+<h2 id="file-io-sinks-and-sources">File IO Sinks and Sources</h2>
+<p>Sources and sinks for reading and writing files can be found on <code>FileIO</code>.</p>
+<h4 id="fromfile">FromFile</h4>
+<p>Emit the contents of a file, as <code>ByteString</code> s, materializes into a <code>Task</code> which will be completed with
+a <code>IOResult</code> upon reaching the end of the file or if there is a failure.</p>
+<h4 id="tofile">ToFile</h4>
+<p>Create a sink which will write incoming <code>ByteString</code> s to a given file.</p>
+<h2 id="flow-stages">Flow stages</h2>
+<p>All flows by default backpressure if the computation they encapsulate is not fast enough to keep up with the rate of
+incoming elements from the preceding stage. There are differences though how the different stages handle when some of
+their downstream stages backpressure them.</p>
+<p>Most stages stop and propagate the failure downstream as soon as any of their upstreams emit a failure.
+This happens to ensure reliable teardown of streams and cleanup when failures happen. Failures are meant to
+be to model unrecoverable conditions, therefore they are always eagerly propagated.
+For in-band error handling of normal errors (dropping elements if a map fails for example) you should use the
+supervision support, or explicitly wrap your element types in a proper container that can express error or success
+states (for example <code>try</code> in C#).</p>
+<h2 id="simple-processing-stages">Simple processing stages</h2>
+<p>These stages can transform the rate of incoming elements since there are stages that emit multiple elements for a
+single input (e.g. <code>ConcatMany</code>) or consume multiple elements before emitting one output (e.g. <code>Where</code>).
+However, these rate transformations are data-driven, i.e. it is the incoming elements that define how the
+rate is affected. This is in contrast with <a href="#backpressure-aware-stages">Backpressure aware stages</a> which can change their processing behavior
+depending on being backpressured by downstream or not.</p>
+<h4 id="select">Select</h4>
+<p>Transform each element in the stream by calling a mapping function with it and passing the returned value downstream.</p>
+<p><strong>emits</strong> when the mapping function returns an element</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="selectmany">SelectMany</h4>
+<p>Transform each element into zero or more elements that are individually passed downstream.</p>
+<p><strong>emits</strong> when the mapping function returns an element or there are still remaining elements from the previously calculated collection</p>
+<p><strong>backpressures</strong> when downstream backpressures or there are still available elements from the previously calculated collection</p>
+<p><strong>completes</strong> when upstream completes and all remaining elements has been emitted</p>
+<h4 id="statefulselectmany">StatefulSelectMany</h4>
+<p>Transform each element into zero or more elements that are individually passed downstream. The difference to <code>SelectMany</code> is that
+the transformation function is created from a factory for every materialization of the flow.</p>
+<p><strong>emits</strong> when the mapping function returns an element or there are still remaining elements from the previously calculated collection</p>
+<p><strong>backpressures</strong> when downstream backpressures or there are still available elements from the previously calculated collection</p>
+<p><strong>completes</strong> when upstream completes and all remaining elements has been emitted</p>
+<h4 id="where">Where</h4>
+<p>Filter the incoming elements using a predicate. If the predicate returns true the element is passed downstream, if
+it returns false the element is discarded.</p>
+<p><strong>emits</strong> when the given predicate returns true for the element</p>
+<p><strong>backpressures</strong> when the given predicate returns true for the element and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="collect">Collect</h4>
+<p>Apply a partial function to each incoming element, if the partial function is defined for a value the returned
+value is passed downstream. Can often replace <code>Where</code> followed by <code>Select</code> to achieve the same in one single stage.</p>
+<p><strong>emits</strong> when the provided partial function is defined for the element</p>
+<p><strong>backpressures</strong> the partial function is defined for the element and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="grouped">Grouped</h4>
+<p>Accumulate incoming events until the specified number of elements have been accumulated and then pass the collection of
+elements downstream.</p>
+<p><strong>emits</strong> when the specified number of elements has been accumulated or upstream completed</p>
+<p><strong>backpressures</strong> when a group has been assembled and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="sliding">Sliding</h4>
+<p>Provide a sliding window over the incoming stream and pass the windows as groups of elements downstream.</p>
+<p>Note: the last window might be smaller than the requested size due to end of stream.</p>
+<p><strong>emits</strong> the specified number of elements has been accumulated or upstream completed</p>
+<p><strong>backpressures</strong> when a group has been assembled and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="scan">Scan</h4>
+<p>Emit its current value which starts at <code>zero</code> and then applies the current and next value to the given function
+emitting the next current value.</p>
+<p>Note that this means that scan emits one element downstream before and upstream elements will not be requested until
+the second element is required from downstream.</p>
+<p><strong>emits</strong> when the function scanning the element returns a new element</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="aggregate">Aggregate</h4>
+<p>Start with current value <code>zero</code> and then apply the current and next value to the given function, when upstream
+complete the current value is emitted downstream.</p>
+<p><strong>emits</strong> when upstream completes</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="skip">Skip</h4>
+<p>Skip <code>n</code> elements and then pass any subsequent element downstream.</p>
+<p><strong>emits</strong> when the specified number of elements has been skipped already</p>
+<p><strong>backpressures</strong> when the specified number of elements has been skipped and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="take">Take</h4>
+<p>Pass <code>n</code> incoming elements downstream and then complete</p>
+<p><strong>emits</strong> while the specified number of elements to take has not yet been reached</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when the defined number of elements has been taken or upstream completes</p>
+<h4 id="takewhile">TakeWhile</h4>
+<p>Pass elements downstream as long as a predicate function return true for the element include the element
+when the predicate first return false and then complete.</p>
+<p><strong>emits</strong> while the predicate is true and until the first false result</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when predicate returned false or upstream completes</p>
+<h4 id="skipwhile">SkipWhile</h4>
+<p>Skip elements as long as a predicate function return true for the element</p>
+<p><strong>emits</strong> when the predicate returned false and for all following stream elements</p>
+<p><strong>backpressures</strong> predicate returned false and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="recover">Recover</h4>
+<p>Allow sending of one last element downstream when a failure has happened upstream.</p>
+<p><strong>emits</strong> when the element is available from the upstream or upstream is failed and pf returns an element</p>
+<p><strong>backpressures</strong> when downstream backpressures, not when failure happened</p>
+<p><strong>completes</strong> when upstream completes or upstream failed with exception pf can handle</p>
+<h4 id="recoverwith">RecoverWith</h4>
+<p>Allow switching to alternative Source when a failure has happened upstream.</p>
+<p><strong>emits</strong> the element is available from the upstream or upstream is failed and pf returns alternative Source</p>
+<p><strong>backpressures</strong> downstream backpressures, after failure happened it backprssures to alternative Source</p>
+<p><strong>completes</strong> upstream completes or upstream failed with exception pf can handle</p>
+<h4 id="detach">Detach</h4>
+<p>Detach upstream demand from downstream demand without detaching the stream rates.</p>
+<p><strong>emits</strong> when the upstream stage has emitted and there is demand</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="throttle">Throttle</h4>
+<p>Limit the throughput to a specific number of elements per time unit, or a specific total cost per time unit, where
+a function has to be provided to calculate the individual cost of each element.</p>
+<p><strong>emits</strong> when upstream emits an element and configured time per each element elapsed</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h1 id="asynchronous-processing-stages">Asynchronous processing stages</h1>
+<p>These stages encapsulate an asynchronous computation, properly handling backpressure while taking care of the asynchronous
+operation at the same time (usually handling the completion of a Task).</p>
+<h4 id="selectasync">SelectAsync</h4>
+<p>Pass incoming elements to a function that return a <code>Task</code> result. When the task arrives the result is passed
+downstream. Up to <code>n</code> elements can be processed concurrently, but regardless of their completion time the incoming
+order will be kept when results complete. For use cases where order does not mather <code>SelectAsyncUnordered</code> can be used.</p>
+<p>If a Task fails, the stream also fails (unless a different supervision strategy is applied)</p>
+<p><strong>emits</strong> when the Task returned by the provided function finishes for the next element in sequence</p>
+<p><strong>backpressures</strong> when the number of tasks reaches the configured parallelism and the downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes and all tasks has been completed and all elements has been emitted</p>
+<h4 id="selectasyncunordered">SelectAsyncUnordered</h4>
+<p>Like <code>SelectAsync</code> but <code>Task</code> results are passed downstream as they arrive regardless of the order of the elements
+that triggered them.</p>
+<p>If a Task fails, the stream also fails (unless a different supervision strategy is applied)</p>
+<p><strong>emits</strong> any of the tasks returned by the provided function complete</p>
+<p><strong>backpressures</strong> when the number of tasks reaches the configured parallelism and the downstream backpressures</p>
+<p><strong>completes</strong> upstream completes and all tasks has been completed  and all elements has been emitted</p>
+<h1 id="timer-driven-stages">Timer driven stages</h1>
+<p>These stages process elements using timers, delaying, dropping or grouping elements for certain time durations.</p>
+<h4 id="takewithin">TakeWithin</h4>
+<p>Pass elements downstream within a timeout and then complete.</p>
+<p><strong>emits</strong> when an upstream element arrives</p>
+<p><strong>backpressures</strong> downstream backpressures</p>
+<p><strong>completes</strong> upstream completes or timer fires</p>
+<h4 id="skipwithin">SkipWithin</h4>
+<p>Skip elements until a timeout has fired</p>
+<p><strong>emits</strong> after the timer fired and a new upstream element arrives</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> upstream completes</p>
+<h4 id="groupedwithin">GroupedWithin</h4>
+<p>Chunk up the stream into groups of elements received within a time window, or limited by the given number of elements,
+whichever happens first.</p>
+<p><strong>emits</strong> when the configured time elapses since the last group has been emitted</p>
+<p><strong>backpressures</strong> when the group has been assembled (the duration elapsed) and downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="initialdelay">InitialDelay</h4>
+<p>Delay the initial element by a user specified duration from stream materialization.</p>
+<p><strong>emits</strong> upstream emits an element if the initial delay already elapsed</p>
+<p><strong>backpressures</strong> downstream backpressures or initial delay not yet elapsed</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="delay">Delay</h4>
+<p>Delay every element passed through with a specific duration.</p>
+<p><strong>emits</strong> there is a pending element in the buffer and configured time for this element elapsed</p>
+<p><strong>backpressures</strong> differs, depends on <code>OverflowStrategy</code> set</p>
+<p><strong>completes</strong> when upstream completes and buffered elements has been drained</p>
+<h1 id="backpressure-aware-stages">Backpressure aware stages</h1>
+<p>These stages are aware of the backpressure provided by their downstreams and able to adapt their behavior to that signal.</p>
+<h4 id="conflate">Conflate</h4>
+<p>Allow for a slower downstream by passing incoming elements and a summary into an aggregate function as long as
+there is backpressure. The summary value must be of the same type as the incoming elements, for example the sum or
+average of incoming numbers, if aggregation should lead to a different type <code>ConflateWithSeed</code> can be used:</p>
+<p><strong>emits</strong> when downstream stops backpressuring and there is a conflated element available</p>
+<p><strong>backpressures</strong> when the aggregate function cannot keep up with incoming elements</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="conflatewithseed">ConflateWithSeed</h4>
+<p>Allow for a slower downstream by passing incoming elements and a summary into an aggregate function as long as there
+is backpressure. When backpressure starts or there is no backpressure element is passed into a <code>seed</code> function to
+transform it to the summary type.</p>
+<p><strong>emits</strong> when downstream stops backpressuring and there is a conflated element available</p>
+<p><strong>backpressures</strong> when the aggregate or seed functions cannot keep up with incoming elements</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="batch">Batch</h4>
+<p>Allow for a slower downstream by passing incoming elements and a summary into an aggregate function as long as there
+is backpressure and a maximum number of batched elements is not yet reached. When the maximum number is reached and
+downstream still backpressures batch will also backpressure.</p>
+<p>When backpressure starts or there is no backpressure element is passed into a <code>seed</code> function to transform it
+to the summary type.</p>
+<p>Will eagerly pull elements, this behavior may result in a single pending (i.e. buffered) element which cannot be
+aggregated to the batched value.</p>
+<p><strong>emits</strong> when downstream stops backpressuring and there is a batched element available</p>
+<p><strong>backpressures</strong> when batched elements reached the max limit of allowed batched elements &amp; downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes and a &quot;possibly pending&quot; element was drained</p>
+<h4 id="batchweighted">BatchWeighted</h4>
+<p>Allow for a slower downstream by passing incoming elements and a summary into an aggregate function as long as there
+is backpressure and a maximum weight batched elements is not yet reached. The weight of each element is determined by
+applying <code>costFunction</code>. When the maximum total weight is reached and downstream still backpressures batch will also
+backpressure.</p>
+<p>Will eagerly pull elements, this behavior may result in a single pending (i.e. buffered) element which cannot be
+aggregated to the batched value.</p>
+<p><strong>emits</strong> downstream stops backpressuring and there is a batched element available</p>
+<p><strong>backpressures</strong> batched elements reached the max weight limit of allowed batched elements &amp; downstream backpressures</p>
+<p><strong>completes</strong> upstream completes and a &quot;possibly pending&quot; element was drained</p>
+<h4 id="expand">Expand</h4>
+<p>Allow for a faster downstream by expanding the last incoming element to an <code>Enumerator</code></p>
+<p><strong>emits</strong> when downstream stops backpressuring</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="buffer-backpressure-">Buffer (Backpressure)</h4>
+<p>Allow for a temporarily faster upstream events by buffering <code>size</code> elements. When the buffer is full backpressure
+is applied.</p>
+<p><strong>emits</strong> when downstream stops backpressuring and there is a pending element in the buffer</p>
+<p><strong>backpressures</strong> when buffer is full</p>
+<p><strong>completes</strong> when upstream completes and buffered elements has been drained</p>
+<h4 id="buffer-drop-">Buffer (Drop)</h4>
+<p>Allow for a temporarily faster upstream events by buffering <code>size</code> elements. When the buffer is full elements are
+dropped according to the specified <code>OverflowStrategy</code>:</p>
+<ul>
+<li><code>dropHead</code> drops the oldest element in the buffer to make space for the new element</li>
+<li><code>dropTail</code> drops the youngest element in the buffer to make space for the new element</li>
+<li><code>dropBuffer</code> drops the entire buffer and buffers the new element</li>
+<li><code>dropNew</code> drops the new element</li>
+</ul>
+<p><strong>emits</strong> when downstream stops backpressuring and there is a pending element in the buffer</p>
+<p><strong>backpressures</strong> never (when dropping cannot keep up with incoming elements)</p>
+<p><strong>completes</strong> upstream completes and buffered elements has been drained</p>
+<h4 id="buffer-fail-">Buffer (Fail)</h4>
+<p>Allow for a temporarily faster upstream events by buffering <code>size</code> elements. When the buffer is full the stage fails
+the flow with a <code>BufferOverflowException</code>.</p>
+<p><strong>emits</strong> when downstream stops backpressuring and there is a pending element in the buffer</p>
+<p><strong>backpressures</strong> never, fails the stream instead of backpressuring when buffer is full</p>
+<p><strong>completes</strong> when upstream completes and buffered elements has been drained</p>
+<h1 id="nesting-and-flattening-stages">Nesting and flattening stages</h1>
+<p>These stages either take a stream and turn it into a stream of streams (nesting) or they take a stream that contains
+nested streams and turn them into a stream of elements instead (flattening).</p>
+<h1 id="prefixandtail">PrefixAndTail</h1>
+<p>Take up to <code>n</code> elements from the stream (less than <code>n</code> only if the upstream completes before emitting <code>n</code> elements)
+and returns a pair containing a strict sequence of the taken element and a stream representing the remaining elements.</p>
+<p><strong>emits</strong> when the configured number of prefix elements are available. Emits this prefix, and the rest as a substream</p>
+<p><strong>backpressures</strong> when downstream backpressures or substream backpressures</p>
+<p><strong>completes</strong> when prefix elements has been consumed and substream has been consumed</p>
+<h4 id="groupby">GroupBy</h4>
+<p>Demultiplex the incoming stream into separate output streams.</p>
+<p><strong>emits</strong> an element for which the grouping function returns a group that has not yet been created. Emits the new group
+there is an element pending for a group whose substream backpressures</p>
+<p><strong>completes</strong> when upstream completes (Until the end of stream it is not possible to know whether new substreams will be needed or not)</p>
+<h4 id="splitwhen">SplitWhen</h4>
+<p>Split off elements into a new substream whenever a predicate function return <code>true</code>.</p>
+<p><strong>emits</strong> an element for which the provided predicate is true, opening and emitting a new substream for subsequent elements</p>
+<p><strong>backpressures</strong> when there is an element pending for the next substream, but the previous is not fully consumed yet, or the substream backpressures</p>
+<p><strong>completes</strong> when upstream completes (Until the end of stream it is not possible to know whether new substreams will be needed or not)</p>
+<h4 id="splitafter">SplitAfter</h4>
+<p>End the current substream whenever a predicate returns <code>true</code>, starting a new substream for the next element.</p>
+<p><strong>emits</strong> when an element passes through. When the provided predicate is true it emits the element * and opens a new substream for subsequent element</p>
+<p><strong>backpressures</strong> when there is an element pending for the next substream, but the previous is not fully consumed yet, or the substream backpressures</p>
+<p><strong>completes</strong> when upstream completes (Until the end of stream it is not possible to know whether new substreams will be needed or not)</p>
+<h4 id="concatmany">ConcatMany</h4>
+<p>Transform each input element into a <code>Source</code> whose elements are then flattened into the output stream through
+concatenation. This means each source is fully consumed before consumption of the next source starts.</p>
+<p><strong>emits</strong> when the current consumed substream has an element available</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes and all consumed substreams complete</p>
+<h4 id="mergemany">MergeMany</h4>
+<p>Transform each input element into a <code>Source</code> whose elements are then flattened into the output stream through
+merging. The maximum number of merged sources has to be specified.</p>
+<p><strong>emits</strong> when one of the currently consumed substreams has an element available</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when upstream completes and all consumed substreams complete</p>
+<h1 id="fan-in-stages">Fan-in stages</h1>
+<p>These stages take multiple streams as their input and provide a single output combining the elements from all of
+the inputs in different ways.</p>
+<h4 id="merge">Merge</h4>
+<p>Merge multiple sources. Picks elements randomly if all sources has elements ready.</p>
+<p><strong>emits</strong> when one of the inputs has an element available</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when all upstreams complete (This behavior is changeable to completing when any upstream completes by setting <code>eagerComplete=true</code>.)</p>
+<h4 id="mergesorted">MergeSorted</h4>
+<p>Merge multiple sources. Waits for one element to be ready from each input stream and emits the
+smallest element.</p>
+<p><strong>emits</strong> when all of the inputs have an element available</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when all upstreams complete</p>
+<h4 id="zip">Zip</h4>
+<p>Combines elements from each of multiple sources into tuples and passes the tuples downstream.</p>
+<p><strong>emits</strong> when all of the inputs have an element available</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when any upstream completes</p>
+<h4 id="zipwith">ZipWith</h4>
+<p>Combines elements from multiple sources through a <code>combine</code> function and passes the
+returned value downstream.</p>
+<p><strong>emits</strong> when all of the inputs have an element available</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when any upstream completes</p>
+<h4 id="concat">Concat</h4>
+<p>After completion of the original upstream the elements of the given source will be emitted.</p>
+<p><strong>emits</strong> when the current stream has an element available; if the current input completes, it tries the next one</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when all upstreams complete</p>
+<h4 id="prepend">Prepend</h4>
+<p>Prepends the given source to the flow, consuming it until completion before the original source is consumed.</p>
+<p>If materialized values needs to be collected <code>prependMat</code> is available.</p>
+<p><strong>emits</strong> when the given stream has an element available; if the given input completes, it tries the current one</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when all upstreams complete</p>
+<h4 id="interleave">Interleave</h4>
+<p>Emits a specifiable number of elements from the original source, then from the provided source and repeats. If one
+source completes the rest of the other stream will be emitted.</p>
+<p><strong>emits</strong> when element is available from the currently consumed upstream</p>
+<p><strong>backpressures</strong> when upstream backpressures</p>
+<p><strong>completes</strong> when both upstreams have completed</p>
+<h1 id="fan-out-stages">Fan-out stages</h1>
+<p>These have one input and multiple outputs. They might route the elements between different outputs, or emit elements on
+multiple outputs at the same time.</p>
+<h4 id="unzip">Unzip</h4>
+<p>Takes a stream of two element tuples and unzips the two elements ino two different downstreams.</p>
+<p><strong>emits</strong> when all of the outputs stops backpressuring and there is an input element available</p>
+<p><strong>backpressures</strong> when any of the outputs backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="unzipwith">UnzipWith</h4>
+<p>Splits each element of input into multiple downstreams using a function</p>
+<p><strong>emits</strong> when all of the outputs stops backpressuring and there is an input element available</p>
+<p><strong>backpressures</strong> when any of the outputs backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="broadcast">broadcast</h4>
+<p>Emit each incoming element each of <code>n</code> outputs.</p>
+<p><strong>emits</strong> when all of the outputs stops backpressuring and there is an input element available</p>
+<p><strong>backpressures</strong> when any of the outputs backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h4 id="balance">Balance</h4>
+<p>Fan-out the stream to several streams. Each upstream element is emitted to the first available downstream consumer.</p>
+<p><strong>emits</strong> when any of the outputs stops backpressuring; emits the element to the first available output</p>
+<p><strong>backpressures</strong> when all of the outputs backpressure</p>
+<p><strong>completes</strong> when upstream completes</p>
+<h1 id="watching-status-stages">Watching status stages</h1>
+<h4 id="watchtermination">WatchTermination</h4>
+<p>Materializes to a <code>Task</code> that will be completed with Done or failed depending whether the upstream of the stage has been completed or failed.
+The stage otherwise passes through elements unchanged.</p>
+<p><strong>emits</strong> when input has an element available</p>
+<p><strong>backpressures</strong> when output backpressures</p>
+<p><strong>completes</strong> when upstream completes</p>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

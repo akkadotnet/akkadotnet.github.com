@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Integration | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" ">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Integration<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/integration.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="integrating-with-actors">Integrating with Actors</h1>
+<p>For piping the elements of a stream as messages to an ordinary actor you can use the
+<code>Sink.ActorRef</code>. Messages can be sent to a stream via the <code>IActorRef</code> that is
+materialized by <code>Source.ActorRef</code>.</p>
+<p>For more advanced use cases the <code>IActorPublisher</code> and <code>IActorSubscriber</code> interfaces are
+provided to support implementing Reactive Streams <code>IPublisher</code> and <code>ISubscriber</code> with an <code>Actor</code>.</p>
+<p>These can be consumed by other Reactive Stream libraries or used as a Akka Streams <code>Source</code> or <code>Sink</code>.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br/>
+<code>IActorPublisher</code> and <code>IActorSubscriber</code> cannot be used with remote actors, because if signals of the 
+Reactive Streams protocol (e.g. <code>request</code>) are lost the stream may deadlock.</p>
+</div>
+<h4 id="source-actorref">Source.ActorRef</h4>
+<p>Messages sent to the actor that is materialized by <code>Source.ActorRef</code> will be emitted to the
+stream if there is demand from downstream, otherwise they will be buffered until request for
+demand is received.</p>
+<p>Depending on the defined <code>OverflowStrategy</code> it might drop elements if there is no space
+available in the buffer. The strategy <code>OverflowStrategy.Backpressure</code> is not supported
+for this Source type, you should consider using <code>IActorPublisher</code> if you want a backpressured
+actor interface.</p>
+<p>The stream can be completed successfully by sending <code>Akka.Actor.PoisonPill</code> or
+<code>Akka.Actor.Status.Success</code> to the actor reference.</p>
+<p>The stream can be completed with failure by sending <code>Akka.Actor.Status.Failure</code> to the
+actor reference.</p>
+<p>The actor will be stopped when the stream is completed, failed or cancelled from downstream,
+i.e. you can watch it to get notified when that happens.</p>
+<h4 id="sink-actorref">Sink.ActorRef</h4>
+<p>The sink sends the elements of the stream to the given <code>IActorRef</code>. If the target actor terminates
+the stream will be cancelled. When the stream is completed successfully the given <code>OnCompleteMessage</code>
+will be sent to the destination actor. When the stream is completed with failure a <code>Akka.Actor.Status.Failure</code>
+message will be sent to the destination actor.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br/>
+There is no back-pressure signal from the destination actor, i.e. if the actor is not consuming the messages fast enough 
+the mailbox of the actor will grow. For potentially slow consumer actors it is recommended to use a bounded mailbox 
+with zero <code>mailbox-push-timeout-time</code> or use a rate limiting stage in front of this stage.</p>
+</div>
+<h4 id="actorpublisher">ActorPublisher</h4>
+<p>Extend/mixin <code>Akka.Streams.Actor.ActorPublisher</code> in your <code>Actor</code> to make it a
+stream publisher that keeps track of the subscription life cycle and requested elements.</p>
+<p>Here is an example of such an actor. It dispatches incoming jobs to the attached subscriber:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Job</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Job</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> payload</span>)
+    </span>{
+        Payload = payload;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Payload { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobAccepted</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> JobAccepted Instance { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> JobAccepted();
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">JobAccepted</span>(<span class="hljs-params"></span>) </span>{ }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobDenied</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> JobDenied Instance { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> JobDenied();
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-title">JobDenied</span>(<span class="hljs-params"></span>) </span>{ }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JobManager</span> : <span class="hljs-title">Actors</span>.<span class="hljs-title">ActorPublisher</span>&lt;<span class="hljs-title">Job</span>&gt;
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Props Props { <span class="hljs-keyword">get</span>; } = Props.Create&lt;JobManager&gt;();
+
+    <span class="hljs-keyword">private</span> List&lt;Job&gt; _buffer;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> MaxBufferSize = <span class="hljs-number">100</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JobManager</span>(<span class="hljs-params"></span>)
+    </span>{
+        _buffer = <span class="hljs-keyword">new</span> List&lt;Job&gt;();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> message.Match()
+            .With&lt;Job&gt;(job =&gt;
+            {
+                <span class="hljs-keyword">if</span> (_buffer.Count == MaxBufferSize)
+                    Sender.Tell(JobDenied.Instance);
+                <span class="hljs-keyword">else</span>
+                {
+                    Sender.Tell(JobAccepted.Instance);
+                    <span class="hljs-keyword">if</span> (_buffer.Count == <span class="hljs-number">0</span> &amp;&amp; TotalDemand &gt; <span class="hljs-number">0</span>)
+                        OnNext(job);
+                    <span class="hljs-keyword">else</span>
+                    {
+                        _buffer.Add(job);
+                        DeliverBuffer();
+                    }
+                }
+            })
+            .With&lt;Request&gt;(DeliverBuffer)
+            .With&lt;Cancel&gt;(() =&gt; Context.Stop(Self))
+            .WasHandled;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">DeliverBuffer</span>(<span class="hljs-params"></span>)
+    </span>{
+        <span class="hljs-keyword">if</span> (TotalDemand &gt; <span class="hljs-number">0</span>)
+        {
+            <span class="hljs-comment">// totalDemand is a Long and could be larger than</span>
+            <span class="hljs-comment">// what _buffer.Take and Skip can accept</span>
+            <span class="hljs-keyword">if</span> (TotalDemand &lt; <span class="hljs-keyword">int</span>.MaxValue)
+            {
+                <span class="hljs-keyword">var</span> use = _buffer.Take((<span class="hljs-keyword">int</span>) TotalDemand).ToList();
+                _buffer = _buffer.Skip((<span class="hljs-keyword">int</span>) TotalDemand).ToList();
+                use.ForEach(OnNext);
+            }
+            <span class="hljs-keyword">else</span>
+            {
+                <span class="hljs-keyword">var</span> use = _buffer.Take(<span class="hljs-keyword">int</span>.MaxValue).ToList();
+                _buffer = _buffer.Skip(<span class="hljs-keyword">int</span>.MaxValue).ToList();
+                use.ForEach(OnNext);
+                DeliverBuffer();
+            }
+        }
+    }
+}
+</code></pre>
+<p>You send elements to the stream by calling <code>OnNext</code>. You are allowed to send as many
+elements as have been requested by the stream subscriber. This amount can be inquired with
+<code>TotalDemand</code>. It is only allowed to use <code>OnNext</code> when <code>IsActive</code> and <code>TotalDemand &gt; 0</code>,
+otherwise <code>OnNext</code> will throw <code>IllegalStateException</code>.</p>
+<p>When the stream subscriber requests more elements the <code>ActorPublisherMessage.Request</code> message
+is delivered to this actor, and you can act on that event. The <code>TotalDemand</code>
+is updated automatically.</p>
+<p>When the stream subscriber cancels the subscription the <code>ActorPublisherMessage.Cancel</code> message
+is delivered to this actor. After that subsequent calls to <code>OnNext</code> will be ignored.</p>
+<p>You can complete the stream by calling <code>OnComplete</code>. After that you are not allowed to
+call <code>OnNext</code>, <code>OnError</code> and <code>OnComplete</code>.</p>
+<p>You can terminate the stream with failure by calling <code>OnError</code>. After that you are not allowed to
+call <code>OnNext</code>, <code>OnError</code> and <code>OnComplete</code>.</p>
+<p>If you suspect that this <code>ActorPublisher</code> may never get subscribed to, you can set the <code>SubscriptionTimeout</code>
+property to provide a timeout after which this Publisher should be considered canceled. The actor will be notified when
+the timeout triggers via an <code>ActorPublisherMessage.SubscriptionTimeoutExceeded</code> message and MUST then perform
+cleanup and stop itself.</p>
+<p>If the actor is stopped the stream will be completed, unless it was not already terminated with
+failure, completed or canceled.</p>
+<p>More detailed information can be found in the API documentation.</p>
+<p>This is how it can be used as input <code>Source</code> to a <code>Flow</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> jobManagerSource = Source.ActorPublisher&lt;Job&gt;(JobManager.Props);
+<span class="hljs-keyword">var</span> actorRef = Flow.Create&lt;Job&gt;()
+    .Select(x =&gt; x.Payload.ToUpper())
+    .Select(x =&gt;
+    {
+        Console.WriteLine(x);
+        <span class="hljs-keyword">return</span> x;
+    })
+    .To(Sink.Ignore&lt;<span class="hljs-keyword">string</span>&gt;())
+    .RunWith(jobManagerSource, materializer);
+
+actorRef.Tell(<span class="hljs-keyword">new</span> Job(<span class="hljs-string">"a"</span>));
+actorRef.Tell(<span class="hljs-keyword">new</span> Job(<span class="hljs-string">"b"</span>));
+actorRef.Tell(<span class="hljs-keyword">new</span> Job(<span class="hljs-string">"c"</span>));
+</code></pre>
+<p>A publisher that is created with <code>Sink.AsPublisher</code> supports a specified number of subscribers. Additional
+subscription attempts will be rejected with an <code>IllegalStateException</code>.</p>
+<h4 id="actorsubscriber">ActorSubscriber</h4>
+<p>Extend/mixin <code>Akka.Stream.Actor.ActorSubscriber</code> in your <code>Actor</code> to make it a
+stream subscriber with full control of stream back pressure. It will receive
+<code>ActorSubscriberMessage.OnNext</code>, <code>ActorSubscriberMessage.OnComplete</code> and <code>ActorSubscriberMessage.OnError</code>
+messages from the stream. It can also receive other, non-stream messages, in the same way as any actor.</p>
+<p>Here is an example of such an actor. It dispatches incoming jobs to child worker actors:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Message</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-keyword">public</span> IActorRef ReplyTo { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Message</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id, IActorRef replyTo</span>)
+    </span>{
+        Id = id;
+        ReplyTo = replyTo;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Work</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Work</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)
+    </span>{
+        Id = id;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Reply</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Reply</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)
+    </span>{
+        Id = id;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Done</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Done</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> id</span>)
+    </span>{
+        Id = id;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> Id { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WorkerPool</span> : <span class="hljs-title">Actors</span>.<span class="hljs-title">ActorSubscriber</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Props Props { <span class="hljs-keyword">get</span>; } = Props.Create&lt;WorkerPool&gt;();
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Strategy</span> : <span class="hljs-title">MaxInFlightRequestStrategy</span>
+    {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Dictionary&lt;<span class="hljs-keyword">int</span>, IActorRef&gt; _queue;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Strategy</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> max, Dictionary&lt;<span class="hljs-keyword">int</span>, IActorRef&gt; queue</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">max</span>)
+        </span>{
+            _queue = queue;
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> InFlight =&gt; _queue.Count;
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> MaxQueueSize = <span class="hljs-number">10</span>;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Dictionary&lt;<span class="hljs-keyword">int</span>, IActorRef&gt; _queue;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Router _router;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WorkerPool</span>(<span class="hljs-params"></span>)
+    </span>{
+        _queue = <span class="hljs-keyword">new</span> Dictionary&lt;<span class="hljs-keyword">int</span>, IActorRef&gt;();
+        <span class="hljs-keyword">var</span> routees = <span class="hljs-keyword">new</span> Routee[]
+        {
+            <span class="hljs-keyword">new</span> ActorRefRoutee(Context.ActorOf&lt;Worker&gt;()),
+            <span class="hljs-keyword">new</span> ActorRefRoutee(Context.ActorOf&lt;Worker&gt;()),
+            <span class="hljs-keyword">new</span> ActorRefRoutee(Context.ActorOf&lt;Worker&gt;())
+        };
+        _router = <span class="hljs-keyword">new</span> Router(<span class="hljs-keyword">new</span> RoundRobinRoutingLogic(), routees);
+        RequestStrategy = <span class="hljs-keyword">new</span> Strategy(MaxQueueSize, _queue);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> IRequestStrategy RequestStrategy { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> message.Match()
+            .With&lt;OnNext&gt;(next =&gt;
+            {
+                <span class="hljs-keyword">var</span> msg = next.Element <span class="hljs-keyword">as</span> Message;
+                <span class="hljs-keyword">if</span> (msg != <span class="hljs-keyword">null</span>)
+                {
+                    _queue.Add(msg.Id, msg.ReplyTo);
+                    <span class="hljs-keyword">if</span> (_queue.Count &lt;= MaxQueueSize)
+                        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException($<span class="hljs-string">"Queued too many : {_queue.Count}"</span>);
+                    _router.Route(<span class="hljs-keyword">new</span> Work(msg.Id), Self);
+                }
+            })
+            .With&lt;Reply&gt;(reply =&gt;
+            {
+                _queue[reply.Id].Tell(<span class="hljs-keyword">new</span> Done(reply.Id));
+                _queue.Remove(reply.Id);
+            })
+            .WasHandled;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span> : <span class="hljs-title">ReceiveActor</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Worker</span>(<span class="hljs-params"></span>)
+    </span>{
+        Receive&lt;Work&gt;(work =&gt;
+        {
+            <span class="hljs-comment">//...</span>
+            Sender.Tell(<span class="hljs-keyword">new</span> Reply(work.Id));
+        });
+    }
+}
+</code></pre>
+<p>Subclass must define the <code>RequestStrategy</code> to control stream back pressure.
+After each incoming message the <code>ActorSubscriber</code> will automatically invoke
+the <code>RequestStrategy.RequestDemand</code> and propagate the returned demand to the stream.</p>
+<ul>
+<li>The provided <code>WatermarkRequestStrategy</code> is a good strategy if the actor performs work itself.</li>
+<li>The provided <code>MaxInFlightRequestStrategy</code> is useful if messages are queued internally or
+delegated to other actors.</li>
+<li>You can also implement a custom <code>RequestStrategy</code> or call <code>Request</code> manually together with
+<code>ZeroRequestStrategy</code> or some other strategy. In that case
+you must also call <code>Request</code> when the actor is started or when it is ready, otherwise
+it will not receive any elements.</li>
+</ul>
+<p>More detailed information can be found in the API documentation.</p>
+<p>This is how it can be used as output <code>Sink</code> to a <code>Flow</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> n = <span class="hljs-number">118</span>;
+Source.From(Enumerable.Range(<span class="hljs-number">1</span>, n))
+    .Select(x =&gt; <span class="hljs-keyword">new</span> Message(x, replyTo))
+    .RunWith(Sink.ActorSubscriber&lt;Message&gt;(WorkerPool.Props), materializer);
+</code></pre>
+<h1 id="integrating-with-external-services">Integrating with External Services</h1>
+<p>Stream transformations and side effects involving external non-stream based services can be
+performed with <code>SelectAsync</code> or <code>SelectAsyncUnordered</code>.</p>
+<p>For example, sending emails to the authors of selected tweets using an external
+email service:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function">Task&lt;<span class="hljs-keyword">int</span>&gt; <span class="hljs-title">Send</span>(<span class="hljs-params">Email mail</span>)</span>
+</code></pre>
+<p>We start with the tweet stream of authors:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> authors = tweets
+    .Where(t =&gt; t.HashTags.Contains(<span class="hljs-string">"Akka.Net"</span>))
+    .Select(t =&gt; t.Author);
+</code></pre>
+<p>Assume that we can lookup their email address using:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function">Task&lt;<span class="hljs-keyword">string</span>&gt; <span class="hljs-title">LookupEmail</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> handle</span>)</span>
+</code></pre>
+<p>Transforming the stream of authors to a stream of email addresses by using the <code>LookupEmail</code>
+service can be done with <code>SelectAsync</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> emailAddresses = authors
+    .SelectAsync(<span class="hljs-number">4</span>, author =&gt; AddressSystem.LookupEmail(author.Handle))
+    .Collect(s =&gt; <span class="hljs-keyword">string</span>.IsNullOrWhiteSpace(s) ? <span class="hljs-keyword">null</span> : s);
+</code></pre>
+<p>Finally, sending the emails:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> sendEmails = emailAddresses.SelectAsync(<span class="hljs-number">4</span>, address =&gt;
+    EmailServer.Send(
+        <span class="hljs-keyword">new</span> Email(to: address, title: <span class="hljs-string">"Akka.Net"</span>, body: <span class="hljs-string">"I like your tweet"</span>))
+    )
+    .To(Sink.Ignore&lt;<span class="hljs-keyword">int</span>&gt;());
+
+sendEmails.Run(materializer);
+</code></pre>
+<p><code>SelectAsync</code> is applying the given function that is calling out to the external service to
+each of the elements as they pass through this processing step. The function returns a <code>Task</code>
+and the value of that task will be emitted downstreams. The number of Tasks
+that shall run in parallel is given as the first argument to <code>SelectAsync</code>.
+These Tasks may complete in any order, but the elements that are emitted
+downstream are in the same order as received from upstream.</p>
+<p>That means that back-pressure works as expected. For example if the <code>EmailServer.Send</code>
+is the bottleneck it will limit the rate at which incoming tweets are retrieved and
+email addresses looked up.</p>
+<p>The final piece of this pipeline is to generate the demand that pulls the tweet
+authors information through the emailing pipeline: we attach a <code>Sink.Ignore</code>
+which makes it all run. If our email process would return some interesting data
+for further transformation then we would of course not ignore it but send that
+result stream onwards for further processing or storage.</p>
+<p>Note that <code>SelectAsync</code> preserves the order of the stream elements. In this example the order
+is not important and then we can use the more efficient <code>SelectAsyncUnordered</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> authors = tweets
+    .Where(t =&gt; t.HashTags.Contains(<span class="hljs-string">"Akka.Net"</span>))
+    .Select(t =&gt; t.Author);
+
+<span class="hljs-keyword">var</span> emailAddresses = authors
+    .SelectAsyncUnordered(<span class="hljs-number">4</span>, author =&gt; AddressSystem.LookupEmail(author.Handle))
+    .Collect(s =&gt; <span class="hljs-keyword">string</span>.IsNullOrWhiteSpace(s) ? <span class="hljs-keyword">null</span> : s);
+
+<span class="hljs-keyword">var</span> sendEmails = emailAddresses.SelectAsyncUnordered(<span class="hljs-number">4</span>, address =&gt;
+    EmailServer.Send(
+        <span class="hljs-keyword">new</span> Email(to: address, title: <span class="hljs-string">"Akka.Net"</span>, body: <span class="hljs-string">"I like your tweet"</span>))
+    )
+    .To(Sink.Ignore&lt;<span class="hljs-keyword">int</span>&gt;());
+
+sendEmails.Run(materializer);
+</code></pre>
+<p>In the above example the services conveniently returned a <code>Task</code> of the result.
+If that is not the case you need to wrap the call in a <code>Task</code>. </p>
+<p>For a service that is exposed as an actor, or if an actor is used as a gateway in front of an
+external service, you can use <code>Ask</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> akkaTweets = tweets.Where(t =&gt; t.HashTags.Contains(<span class="hljs-string">"Akka.Net"</span>));
+
+<span class="hljs-keyword">var</span> saveTweets = akkaTweets
+    .SelectAsync(<span class="hljs-number">4</span>, tweet =&gt; database.Ask&lt;DbResult&gt;(<span class="hljs-keyword">new</span> Save(tweet), TimeSpan.FromSeconds(<span class="hljs-number">3</span>)))
+    .To(Sink.Ignore&lt;DbResult&gt;());
+</code></pre>
+<p>Note that if the <code>Ask</code> is not completed within the given timeout the stream is completed with failure.
+If that is not desired outcome you can use <code>Recover</code> on the <code>Ask</code> <code>Task</code>.</p>
+<h4 id="illustrating-ordering-and-parallelism">Illustrating ordering and parallelism</h4>
+<p>Let us look at another example to get a better understanding of the ordering
+and parallelism characteristics of <code>SelectAsync</code> and <code>SelectAsyncUnordered</code>.</p>
+<p>Several <code>SelectAsync</code> and <code>SelectAsyncUnordered</code> tasks may run concurrently.
+The number of concurrent tasks are limited by the downstream demand.
+For example, if 5 elements have been requested by downstream there will be at most 5
+tasks in progress.</p>
+<p><code>SelectAsync</code> emits the task results in the same order as the input elements
+were received. That means that completed results are only emitted downstream
+when earlier results have been completed and emitted. One slow call will thereby
+delay the results of all successive calls, even though they are completed before
+the slow call.</p>
+<p><code>SelectAsyncUnordered</code> emits the task results as soon as they are completed, i.e.
+it is possible that the elements are not emitted downstream in the same order as
+received from upstream. One slow call will thereby not delay the results of faster
+successive calls as long as there is downstream demand of several elements.</p>
+<p>Here is a fictive service that we can use to illustrate these aspects.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">SometimesSlowService</span>
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> AtomicCounter runningCount = <span class="hljs-keyword">new</span> AtomicCounter();
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Task&lt;<span class="hljs-keyword">string</span>&gt; <span class="hljs-title">Convert</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> s</span>)
+    </span>{
+        Console.WriteLine($<span class="hljs-string">"running {s} {runningCount.IncrementAndGet()}"</span>);
+
+        <span class="hljs-keyword">return</span> Task.Run(() =&gt;
+        {
+            <span class="hljs-keyword">if</span>(s != <span class="hljs-string">""</span> &amp;&amp; <span class="hljs-keyword">char</span>.IsLower(s[<span class="hljs-number">0</span>]))
+                Thread.Sleep(<span class="hljs-number">500</span>);
+            <span class="hljs-keyword">else</span>
+                Thread.Sleep(<span class="hljs-number">20</span>);
+            Console.WriteLine($<span class="hljs-string">"completed {s} {runningCount.GetAndDecrement()}"</span>);
+
+            <span class="hljs-keyword">return</span> s.ToUpper();
+        });
+    }
+}
+</code></pre>
+<p>Elements starting with a lower case character are simulated to take longer time to process.</p>
+<p>Here is how we can use it with <code>SelectAsync</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> service = <span class="hljs-keyword">new</span> SometimesSlowService();
+<span class="hljs-keyword">var</span> settings = ActorMaterializerSettings.Create(sys).WithInputBuffer(<span class="hljs-number">4</span>, <span class="hljs-number">4</span>);
+<span class="hljs-keyword">var</span> materializer = sys.Materializer(settings);
+
+Source.From(<span class="hljs-keyword">new</span>[] {<span class="hljs-string">"a"</span>, <span class="hljs-string">"B"</span>, <span class="hljs-string">"C"</span>, <span class="hljs-string">"D"</span>, <span class="hljs-string">"e"</span>, <span class="hljs-string">"F"</span>, <span class="hljs-string">"g"</span>, <span class="hljs-string">"H"</span>, <span class="hljs-string">"i"</span>, <span class="hljs-string">"J"</span>})
+    .Select(x =&gt;
+    {
+        Console.WriteLine($<span class="hljs-string">"before {x}"</span>);
+        <span class="hljs-keyword">return</span> x;
+    })
+    .SelectAsync(<span class="hljs-number">4</span>, service.Convert)
+    .RunForeach(x =&gt; Console.WriteLine($<span class="hljs-string">"after: {x}"</span>), materializer);
+</code></pre>
+<p>The output may look like this:</p>
+<pre><code><span class="hljs-attribute">before</span>: <span class="hljs-string">a</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">B</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">C</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">D</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">a (1)</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">B (2)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">e</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">C (3)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">F</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">D (4)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">g</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">H</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">C (3)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">B (2)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">D (1)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">a (0)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">A</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">B</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">e (1)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">C</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">D</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">F (2)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">i</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">J</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">g (3)</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">H (4)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">H (2)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">F (3)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">e (1)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">g (0)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">E</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">F</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">i (1)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">G</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">H</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">J (2)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">J (1)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">i (0)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">I</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">J</span>
+</code></pre><p>Note that <code>after</code> lines are in the same order as the <code>before</code> lines even
+though elements are <code>completed</code> in a different order. For example <code>H</code>
+is <code>completed</code> before <code>g</code>, but still emitted afterwards.</p>
+<p>The numbers in parenthesis illustrates how many calls that are in progress at
+the same time. Here the downstream demand and thereby the number of concurrent
+calls are limited by the buffer size (4) of the <code>ActorMaterializerSettings</code>.</p>
+<p>Here is how we can use the same service with <code>SelectAsyncUnordered</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> service = <span class="hljs-keyword">new</span> SometimesSlowService(_output);
+<span class="hljs-keyword">var</span> settings = ActorMaterializerSettings.Create(sys).WithInputBuffer(<span class="hljs-number">4</span>, <span class="hljs-number">4</span>);
+<span class="hljs-keyword">var</span> materializer = sys.Materializer(settings);
+
+<span class="hljs-keyword">var</span> result = Source.From(<span class="hljs-keyword">new</span>[] {<span class="hljs-string">"a"</span>, <span class="hljs-string">"B"</span>, <span class="hljs-string">"C"</span>, <span class="hljs-string">"D"</span>, <span class="hljs-string">"e"</span>, <span class="hljs-string">"F"</span>, <span class="hljs-string">"g"</span>, <span class="hljs-string">"H"</span>, <span class="hljs-string">"i"</span>, <span class="hljs-string">"J"</span>})
+    .Select(x =&gt;
+    {
+        Console.WriteLine($<span class="hljs-string">"before {x}"</span>);
+        <span class="hljs-keyword">return</span> x;
+    })
+    .SelectAsync(<span class="hljs-number">4</span>, service.Convert)
+    .RunForeach(x =&gt; Console.WriteLine($<span class="hljs-string">"after: {x}"</span>), materializer);
+</code></pre>
+<p>The output may look like this:</p>
+<pre><code><span class="hljs-attribute">before</span>: <span class="hljs-string">a</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">B</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">C</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">D</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">a (1)</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">B (2)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">e</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">C (3)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">F</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">D (4)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">g</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">H</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">B (3)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">C (1)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">D (2)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">B</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">D</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">e (2)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">C</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">F (3)</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">i</span>
+<span class="hljs-attribute">before</span>: <span class="hljs-string">J</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">F (2)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">F</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">g (3)</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">H (4)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">H (3)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">H</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">a (2)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">A</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">i (3)</span>
+<span class="hljs-attribute">running</span>: <span class="hljs-string">J (4)</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">J (3)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">J</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">e (2)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">E</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">g (1)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">G</span>
+<span class="hljs-attribute">completed</span>: <span class="hljs-string">i (0)</span>
+<span class="hljs-attribute">after</span>: <span class="hljs-string">I</span>
+</code></pre><p>Note that <code>after</code> lines are not in the same order as the <code>before</code> lines. For example <code>H</code> overtakes the slow <code>G</code>.</p>
+<p>The numbers in parenthesis illustrates how many calls that are in progress at
+the same time. Here the downstream demand and thereby the number of concurrent
+calls are limited by the buffer size (4) of the <code>ActorMaterializerSettings</code>.</p>
+<h4 id="integrating-with-reactive-streams">Integrating with Reactive Streams</h4>
+<p><code>Reactive Streams</code> defines a standard for asynchronous stream processing with non-blocking
+back pressure. It makes it possible to plug together stream libraries that adhere to the standard.
+Akka Streams is one such library.</p>
+<ul>
+<li>Reactive Streams: <a href="http://reactive-streams.org/">http://reactive-streams.org/</a></li>
+</ul>
+<p>The two most important interfaces in Reactive Streams are the <code>IPublisher</code> and <code>ISubscriber</code>.</p>
+<pre><code class="hljs lang-csharp">Reactive.Streams.IPublisher
+Reactive.Streams.ISubscriber
+</code></pre>
+<p>Let us assume that a library provides a publisher of tweets:</p>
+<pre><code class="hljs lang-csharp">IPublisher&lt;Tweet&gt; Tweets
+</code></pre>
+<p>and another library knows how to store author handles in a database:</p>
+<pre><code class="hljs lang-csharp">ISubscriber&lt;Author&gt; Storage
+</code></pre>
+<p>Using an Akka Streams Flow we can transform the stream and connect those:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> authors = Flow.Create&lt;Tweet&gt;()
+    .Where(t =&gt; t.HashTags.Contains(<span class="hljs-string">"Akka.net"</span>))
+    .Select(t =&gt; t.Author);
+
+Source.FromPublisher(tweets)
+    .Via(authors)
+    .To(Sink.FromSubscriber(storage))
+    .Run(materializer);
+</code></pre>
+<p>The <code>Publisher</code> is used as an input <code>Source</code> to the flow and the
+<code>Subscriber</code> is used as an output <code>Sink</code>.</p>
+<p>A <code>Flow</code> can also be also converted to a <code>RunnableGraph&lt;IProcessor&lt;In, Out&gt;&gt;</code> which
+materializes to a <code>IProcessor</code> when <code>Run()</code> is called. <code>Run()</code> itself can be called multiple
+times, resulting in a new <code>Processor</code> instance each time.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> processor = authors.ToProcessor().Run(materializer);
+tweets.Subscribe(processor);
+processor.Subscribe(storage);
+</code></pre>
+<p>A publisher can be connected to a subscriber with the <code>Subscribe</code> method.</p>
+<p>It is also possible to expose a <code>Source</code> as a <code>Publisher</code>
+by using the Publisher-<code>Sink</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> authorPublisher = Source.FromPublisher(tweets)
+    .Via(authors)
+    .RunWith(Sink.AsPublisher&lt;Author&gt;(fanout: <span class="hljs-keyword">false</span>), materializer);
+
+authorPublisher.Subscribe(storage);
+</code></pre>
+<p>A publisher that is created with <code>Sink.AsPublisher(fanout = false)</code> supports only a single subscription.
+Additional subscription attempts will be rejected with an <code>IllegalStateException</code>.</p>
+<p>A publisher that supports multiple subscribers using fan-out/broadcasting is created as follows:</p>
+<pre><code class="hljs lang-csharp">ISubscriber&lt;Author&gt; Storage
+ISubscriber&lt;Author&gt; Alert
+</code></pre>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> authorPublisher = Source.FromPublisher(tweets)
+    .Via(authors)
+    .RunWith(Sink.AsPublisher&lt;Author&gt;(fanout: <span class="hljs-keyword">true</span>), materializer);
+
+authorPublisher.Subscribe(storage);
+authorPublisher.Subscribe(alert);
+</code></pre>
+<p>The input buffer size of the stage controls how far apart the slowest subscriber can be from the fastest subscriber
+before slowing down the stream.</p>
+<p>To make the picture complete, it is also possible to expose a <code>Sink</code> as a <code>Subscriber</code>
+by using the Subscriber-<code>Source</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> tweetSubscriber = authors.To(Sink.FromSubscriber(storage))
+    .RunWith(Source.AsSubscriber&lt;Tweet&gt;(), materializer);
+
+tweets.Subscribe(tweetSubscriber);
+</code></pre>
+<p>It is also possible to use re-wrap <code>Processor</code> instances as a <code>Flow</code> by
+passing a factory function that will create the <code>Processor</code> instances:</p>
+<pre><code class="hljs lang-csharp">Func&lt;IMaterializer, IProcessor&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;&gt; createProcessor = 
+    mat =&gt; Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;().ToProcessor().Run(mat);
+
+<span class="hljs-keyword">var</span> flow = Flow.FromProcessor(()=&gt; createProcessor(materializer));
+</code></pre>
+<p>Please note that a factory is necessary to achieve reusability of the resulting <code>Flow</code>.</p>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Akka.Cluster Configuration | Akka.NET</title>
+<title>Error Handling | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Akka.Cluster Configuration<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/cluster-configuration.md" > (Edit on Github)</a></li>
+							<li class="active">Error Handling<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/error-handling.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,104 +172,106 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h1 id="akka-cluster-configuration">Akka.Cluster Configuration</h1>
-<p>In this section, we&#39;ll review the most important and commonly used Cluster configuration options. To see the full list of options, check out the <a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Cluster/Configuration/Cluster.conf">full Cluster conf file here</a>.</p>
-<h2 id="critical-configuration-options">Critical Configuration Options</h2>
-<p>Here are the most common options for configuring a <a href="./cluster-overview#key-terms">node</a> in the cluster:</p>
+								<div><p>Strategies for how to handle exceptions from processing stream elements can be defined when
+materializing the stream. The error handling strategies are inspired by actor supervision
+strategies, but the semantics have been adapted to the domain of stream processing.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br/>
+<em>ZipWith</em>, <em>GraphStage</em> junction, <em>ActorPublisher</em> source and <em>ActorSubscriber</em> sink 
+components do not honour the supervision strategy attribute yet.</p>
+</div>
+<h1 id="supervision-strategies">Supervision Strategies</h1>
+<p>There are three ways to handle exceptions from application code:</p>
 <ul>
-<li><strong><code>min-nr-of-members</code></strong>: the minimum number of member nodes required to be present in the cluster before the leader marks nodes as <code>Up</code>.<ul>
-<li><strong><code>min size per role</code></strong>: the minimum number of member nodes for the given role required to be present in the cluster before the role leader marks nodes with the specified role as <code>Up</code>.</li>
+<li><code>Stop</code> - The stream is completed with failure.</li>
+<li><code>Resume</code> - The element is dropped and the stream continues.</li>
+<li><code>Restart</code> - The element is dropped and the stream continues after restarting the stage.
+Restarting a stage means that any accumulated state is cleared. This is typically
+performed by creating a new instance of the stage.</li>
 </ul>
-</li>
-<li><strong><code>seed-nodes</code></strong>: The addresses of the <a href="./cluster-overview#seed-nodes">seed nodes</a> to join automatically at startup. Comma-separated list of URI strings. A node may list itself as a seed node and &quot;self-join.&quot;</li>
-<li><strong><code>roles</code></strong>: the <a href="./cluster-overview#key-terms">roles</a> that this node is to fulfill in the cluster.  List of strings, e.g. <code>roles = [&quot;A&quot;, &quot;B&quot;]</code>.</li>
-</ul>
-<p>You can see all of these options being used in the following HOCON:</p>
-<pre><code class="hljs lang-xml">akka {
-   actor.provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
-    remote {
-        helios.tcp {
-            port = 8081
-            hostname = localhost
-        }
-    }
-    cluster {
-       seed-nodes = [&quot;akka.tcp://ClusterSystem@127.0.0.1:8081&quot;] # address of seed node
-       roles = [&quot;crawler&quot;, &quot;logger&quot;] # roles this member is in
-       crawler.min-nr-of-members = 3 # crawler role minimum node count
-    }
-}
+<p>By default the stopping strategy is used for all exceptions, i.e. the stream will be completed with
+failure when an exception is thrown.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)).Select(x =&gt; <span class="hljs-number">100</span>/x);
+<span class="hljs-keyword">var</span> result = source.RunWith(Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (sum, i) =&gt; sum + i), materializer);
+<span class="hljs-comment">// division by zero will fail the stream and the</span>
+<span class="hljs-comment">// result here will be a Task completed with Failure(DivideByZeroException)</span>
 </code></pre>
-<h2 id="specifying-minimum-cluster-sizes">Specifying Minimum Cluster Sizes</h2>
-<p>One feature of Akka.Cluster that can be useful in a number of scenarios is the ability to specify a minimum cluster size, i.e. &quot;this cluster must have at least 3 nodes present before it can be considered &#39;up&#39;.&quot;</p>
-<p>Akka.Cluster supports this behavior at both a cluster-wide and a per-role level.</p>
-<h3 id="cluster-wide-minimum-size">Cluster-Wide Minimum Size</h3>
-<p>If you want to specify a cluster-wide minimum size, then we need to set the <code>cluster.min-nr-of-members</code> property inside our HOCON configuration, like this:</p>
-<pre><code class="hljs lang-xml">akka {
-   actor.provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
-    remote {
-        helios.tcp {
-            port = 8081
-            hostname = localhost
-        }
-    }
-    cluster {
-       seed-nodes = [&quot;akka.tcp://ClusterSystem@127.0.0.1:8081&quot;]
-       min-nr-of-members = 3
-    }
-}
+<p>The default supervision strategy for a stream can be defined on the settings of the materializer.</p>
+<pre><code class="hljs lang-csharp">Decider decider = cause =&gt; cause <span class="hljs-keyword">is</span> DivideByZeroException
+    ? Directive.Resume
+    : Directive.Stop;
+<span class="hljs-keyword">var</span> settings = ActorMaterializerSettings.Create(system).WithSupervisionStrategy(decider);
+<span class="hljs-keyword">var</span> materializer = system.Materializer(settings);
+
+<span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)).Select(x =&gt; <span class="hljs-number">100</span>/x);
+<span class="hljs-keyword">var</span> result = source.RunWith(Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (sum, i) =&gt; sum + i), materializer);
+<span class="hljs-comment">// the element causing division by zero will be dropped</span>
+<span class="hljs-comment">// result here will be a Task completed with Success(228)</span>
 </code></pre>
-<p>In this case, the leader of the cluster will delay firing any <code>ClusterEvent.MemberUp</code> messages until 3 nodes have connected to the leader and have not become unreachable. So you can use this setting in combination with your own user-defined actors who subscribe to the <code>Cluster</code> for gossip messages (<code>MemberUp</code>, specifically) to know if your cluster has reached its minimum size or not.</p>
-<h3 id="per-role-minimum-size">Per-Role Minimum Size</h3>
-<p>If you want to delay nodes of a specific role from being marked as up until a certain minimum has been reached, you can accomplish that via HOCON too!</p>
-<pre><code class="hljs lang-xml">akka {
-   actor.provider = &quot;Akka.Cluster.ClusterActorRefProvider, Akka.Cluster&quot;
-    remote {
-        helios.tcp {
-            port = 8081
-            hostname = localhost
-        }
-    }
-    cluster {
-       seed-nodes = [&quot;akka.tcp://ClusterSystem@127.0.0.1:8081&quot;]
-       roles = [&quot;crawlerV1&quot;, &quot;crawlerV2&quot;]
-       crawlerV1.min-nr-of-members = 3
-    }
-}
+<p>Here you can see that all <code>DivideByZeroException</code> will resume the processing, i.e. the
+elements that cause the division by zero are effectively dropped.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+Be aware that dropping elements may result in deadlocks in graphs with 
+cycles, as explained in <a href="workingwithgraphs#graph-cycles-liveness-and-deadlocks">Graph cycles, liveness and deadlocks</a>.</p>
+</div>
+<p>The supervision strategy can also be defined for all operators of a flow.</p>
+<pre><code class="hljs lang-csharp">Decider decider = cause =&gt; cause <span class="hljs-keyword">is</span> DivideByZeroException
+    ? Directive.Resume
+    : Directive.Stop;
+
+<span class="hljs-keyword">var</span> flow = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;()
+    .Where(x =&gt; <span class="hljs-number">100</span>/x &lt; <span class="hljs-number">50</span>)
+    .Select(x =&gt; <span class="hljs-number">100</span>/(<span class="hljs-number">5</span> - x))
+    .WithAttributes(ActorAttributes.CreateSupervisionStrategy(decider));
+<span class="hljs-keyword">var</span> source = Source.From(Enumerable.Range(<span class="hljs-number">0</span>, <span class="hljs-number">6</span>)).Via(flow);
+<span class="hljs-keyword">var</span> result = source.RunWith(Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (sum, i) =&gt; sum + i), materializer);
+<span class="hljs-comment">// the elements causing division by zero will be dropped</span>
+<span class="hljs-comment">// result here will be a Future completed with Success(150)</span>
 </code></pre>
-<p>This tells the role leader for <code>crawlerV1</code> to not mark any of those nodes as up until at least three nodes with role <code>crawlerV1</code> have joined the cluster.</p>
-<h2 id="additional-resources">Additional Resources</h2>
-<ul>
-<li><a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Cluster/Configuration/Cluster.conf"><code>Cluster.conf</code></a>: the full set of configuration options</li>
-</ul>
-<h3 id="related-documentation">Related Documentation</h3>
-<ul>
-<li><a href="./cluster-overview">Akka.Cluster Overview</a><ul>
-<li><a href="./cluster-overview#what-is-a-cluster-">What is a Cluster?</a></li>
-<li><a href="./cluster-overview#benefits-of-akka-cluster">Benefits</a></li>
-<li><a href="./cluster-overview#use-cases">Use Cases</a></li>
-<li><a href="./cluster-overview#key-terms">Terminology</a></li>
-<li><a href="./cluster-overview#enabling-akka-cluster">Enabling Akka.Cluster</a></li>
-<li><a href="./cluster-overview#cluster-gossip">Cluster Gossip</a></li>
-<li><a href="./cluster-overview#nodes">Nodes</a></li>
-<li><a href="./cluster-overview#how-a-cluster-forms">How a Cluster Forms</a></li>
-</ul>
-</li>
-<li><a href="./cluster-routing">Cluster Routing</a><ul>
-<li><a href="./cluster-routing#how-routers-use-cluster-gossip">How Routers Use Cluster Gossip</a></li>
-<li><a href="./cluster-routing#cluster-routing-strategies">Cluster Routing Strategies</a></li>
-<li><a href="./cluster-routing#types-of-clustered-routers">Types of Clustered Routers</a></li>
-<li><a href="./cluster-routing#cluster-router-config">Clustered Router Configuration</a></li>
-</ul>
-</li>
-<li><a href="./cluster-extension">Accessing the Cluster <code>ActorSystem</code> Extension</a><ul>
-<li><a href="./cluster-extension#getting-a-reference-to-the-cluster-">Getting a Reference to the <code>Cluster</code></a></li>
-<li><a href="./cluster-extension#working-with-cluster-gossip">Working With Cluster Gossip</a></li>
-<li><a href="./cluster-extension#cluster-gossip-event-types">Cluster Gossip Event Types</a></li>
-<li><a href="./cluster-extension#getting-cluster-state">Getting Cluster State</a></li>
-</ul>
-</li>
-</ul>
+<p><code>Restart</code> works in a similar way as <code>Resume</code> with the addition that accumulated state,
+if any, of the failing processing stage will be reset.</p>
+<pre><code class="hljs lang-csharp">Decider decider = cause =&gt; cause <span class="hljs-keyword">is</span> ArgumentException
+    ? Directive.Restart
+    : Directive.Stop;
+
+<span class="hljs-keyword">var</span> flow = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;()
+    .Scan(<span class="hljs-number">0</span>, (acc, x) =&gt;
+    {
+      <span class="hljs-keyword">if</span>(x &lt; <span class="hljs-number">0</span>)
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> ArgumentException(<span class="hljs-string">"negative not allowed"</span>);
+        <span class="hljs-keyword">return</span> acc + x;
+    })
+    .WithAttributes(ActorAttributes.CreateSupervisionStrategy(decider));
+<span class="hljs-keyword">var</span> source = Source.From(<span class="hljs-keyword">new</span> [] {<span class="hljs-number">1</span>,<span class="hljs-number">3</span>,-<span class="hljs-number">1</span>,<span class="hljs-number">5</span>,<span class="hljs-number">7</span>}).Via(flow);
+<span class="hljs-keyword">var</span> result = source.Limit(<span class="hljs-number">1000</span>).RunWith(Sink.Seq&lt;<span class="hljs-keyword">int</span>&gt;(), materializer);
+<span class="hljs-comment">// the negative element cause the scan stage to be restarted,</span>
+<span class="hljs-comment">// i.e. start from 0 again</span>
+<span class="hljs-comment">// result here will be a Task completed with Success(List(0, 1, 4, 0, 5, 12))</span>
+</code></pre>
+<h1 id="errors-from-selectasync">Errors from SelectAsync</h1>
+<p>Stream supervision can also be applied to the tasks of <code>SelectAsync</code>.</p>
+<p>Let&#39;s say that we use an external service to lookup email addresses and we would like to
+discard those that cannot be found.</p>
+<p>We start with the tweet stream of authors:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> authors = tweets
+    .Where(t =&gt; t.HashTags.Contains(<span class="hljs-string">"Akka.Net"</span>))
+    .Select(t =&gt; t.Author);
+</code></pre>
+<p>Assume that we can lookup their email address using:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function">Task&lt;<span class="hljs-keyword">string</span>&gt; <span class="hljs-title">LookupEmail</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> handle</span>)</span>
+</code></pre>
+<p>The <code>Task</code> is completed with <code>Failure</code> if the email is not found.</p>
+<p>Transforming the stream of authors to a stream of email addresses by using the <code>LookupEmail</code>
+service can be done with <code>SelectAsync</code> and we use <code>Deciders.ResumingDecider</code> to drop
+unknown email addresses:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> emailAddresses = authors.Via(
+    Flow.Create&lt;Author&gt;()
+        .SelectAsync(<span class="hljs-number">4</span>, author =&gt; AddressSystem.LookupEmail(author.Handle))
+        .WithAttributes(ActorAttributes.CreateSupervisionStrategy(Deciders.ResumingDecider)));
+</code></pre>
+<p>If we would not use <code>Resume</code> the default stopping strategy would complete the stream
+with failure on the first <code>Task</code> that was completed with <code>Failure</code>.</p>
 </div>
 
 								
