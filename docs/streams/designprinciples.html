@@ -204,10 +204,10 @@
 <li>libraries shall provide their users with reusable pieces, i.e expose factories that return graphs, allowing full compositionality</li>
 <li>libraries may optionally and additionally provide facilities that consume and materialize graphs</li>
 </ul>
-<p>The reasoning behind the first rule is that compositionality would be destroyed if different libraries only accepted graphs and expected to materialize them: using two of these together would be impossible because materialization can only happen once. As a consequence, the functionality of a library must be expressed such that materialization can be done by the user, outside of the library�s control.
+<p>The reasoning behind the first rule is that compositionality would be destroyed if different libraries only accepted graphs and expected to materialize them: using two of these together would be impossible because materialization can only happen once. As a consequence, the functionality of a library must be expressed such that materialization can be done by the user, outside of the library&#39;s control.
 The second rule allows a library to additionally provide nice sugar for the common case.</p>
 <div class="alert alert-default">
-<p><strong>Note</strong> <br>One important consequence of this is that a reusable flow description cannot be bound to �live� resources, any connection to or allocation of such resources must be deferred until materialization time. Examples of &quot;live&quot; resources are already existing TCP connections, a multicast Publisher, etc.; a TickSource does not fall into this category if its timer is created only upon materialization (as is the case for our implementation). <br>Exceptions from this need to be well-justified and carefully documented.</p>
+<p><strong>Note</strong> <br>One important consequence of this is that a reusable flow description cannot be bound to &quot;live&quot; resources, any connection to or allocation of such resources must be deferred until materialization time. Examples of &quot;live&quot; resources are already existing TCP connections, a multicast Publisher, etc.; a TickSource does not fall into this category if its timer is created only upon materialization (as is the case for our implementation). <br>Exceptions from this need to be well-justified and carefully documented.</p>
 </div>
 <h3 id="resulting-implementation-constraints">Resulting Implementation Constraints</h3>
 <p>Akka Streams must enable a library to express any stream processing utility in terms of immutable blueprints. The most common building blocks are</p>
@@ -230,7 +230,7 @@ The second rule allows a library to additionally provide nice sugar for the comm
 <p>The ability for failures to propagate faster than data elements is essential for tearing down streams that are back-pressured --especially since back-pressure can be the failure mode (e.g. by tripping upstream buffers which then abort because they cannot do anything else; or if a dead-lock occurred).</p>
 <h2 id="the-semantics-of-stream-recovery">The semantics of stream recovery</h2>
 <p>A recovery element (i.e. any transformation that absorbs an <code>onError</code> signal and turns that into possibly more data elements followed normal stream completion) acts as a bulkhead that confines a stream collapse to a given region of the stream topology. Within the collapsed region buffered elements may be lost, but the outside is not affected by the failure.</p>
-<p>This works in the same fashion as a <code>try�catch</code> expression: it marks a region in which exceptions are caught, but the exact amount of code that was skipped within this region in case of a failure might not be known precisely�the placement of statements matters.</p>
+<p>This works in the same fashion as a <code>try-catch</code> expression: it marks a region in which exceptions are caught, but the exact amount of code that was skipped within this region in case of a failure might not be known precisely-the placement of statements matters.</p>
 </div>
 
 								

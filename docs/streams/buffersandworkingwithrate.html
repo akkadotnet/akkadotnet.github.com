@@ -200,7 +200,8 @@ To run a stage asynchronously it has to be marked explicitly as such using the .
 <pre><code class="hljs lang-hocon">akka<span class="hljs-class">.stream</span><span class="hljs-class">.materializer</span><span class="hljs-class">.max-input-buffer-size</span> = <span class="hljs-number">16</span>
 </code></pre>
 <p>Alternatively they can be set by passing a <code>ActorMaterializerSettings</code> to the materializer:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> materializer = ActorMaterializer.Create(system, ActorMaterializerSettings.Create(system).WithInputBuffer(<span class="hljs-number">64</span>, <span class="hljs-number">64</span>));
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> materializer = ActorMaterializer.Create(system, 
+ActorMaterializerSettings.Create(system).WithInputBuffer(<span class="hljs-number">64</span>, <span class="hljs-number">64</span>));
 </code></pre>
 <p>If the buffer size needs to be set for segments of a Flow only, it is possible by defining a separate Flow with these attributes:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> section = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;()
@@ -214,20 +215,21 @@ To run a stage asynchronously it has to be marked explicitly as such using the .
 </code></pre>
 <p>Here is an example of a code that demonstrate some of the issues caused by internal buffers:</p>
 <pre><code class="hljs lang-csharp">RunnableGraph.FromGraph(GraphDsl.Create(b =&gt; {
-                    <span class="hljs-comment">// this is the asynchronous stage in this graph</span>
-                    <span class="hljs-keyword">var</span> zipper = b.Add(ZipWith.Apply&lt;Tick,<span class="hljs-keyword">int</span>,<span class="hljs-keyword">int</span>&gt;((tick, count) =&gt; count).Async());
+    <span class="hljs-comment">// this is the asynchronous stage in this graph</span>
+    <span class="hljs-keyword">var</span> zipper = b.Add(ZipWith.Apply&lt;Tick,<span class="hljs-keyword">int</span>,<span class="hljs-keyword">int</span>&gt;((tick, count) =&gt; count).Async());
 
-                    <span class="hljs-keyword">var</span> s = b.Add(Source.Tick(TimeSpan.FromSeconds(<span class="hljs-number">3</span>), TimeSpan.FromSeconds(<span class="hljs-number">3</span>), <span class="hljs-keyword">new</span> Tick()));
-                    b.From(s).To(zipper.In0);
+    <span class="hljs-keyword">var</span> s = b.Add(Source.Tick(TimeSpan.FromSeconds(<span class="hljs-number">3</span>), TimeSpan.FromSeconds(<span class="hljs-number">3</span>), <span class="hljs-keyword">new</span> Tick()));
+    b.From(s).To(zipper.In0);
 
-                    <span class="hljs-keyword">var</span> s2 = b.Add(Source.Tick(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), TimeSpan.FromSeconds(<span class="hljs-number">1</span>), <span class="hljs-string">"message!"</span>)
-                        .ConflateWithSeed(seed =&gt; <span class="hljs-number">1</span>, (count, _) =&gt; count + <span class="hljs-number">1</span>));
+    <span class="hljs-keyword">var</span> s2 = b.Add(Source.Tick(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), TimeSpan.FromSeconds(<span class="hljs-number">1</span>), <span class="hljs-string">"message!"</span>)
+        .ConflateWithSeed(seed =&gt; <span class="hljs-number">1</span>, (count, _) =&gt; count + <span class="hljs-number">1</span>));
 
-                    b.From(s2).To(zipper.In1);
+    b.From(s2).To(zipper.In1);
 
-                    b.From(zipper.Out).To(Sink.ForEach&lt;<span class="hljs-keyword">int</span>&gt;(i =&gt; Console.WriteLine($<span class="hljs-string">"test: {i}"</span>)).MapMaterializedValue(_ =&gt; NotUsed.Instance));
+    b.From(zipper.Out).To(Sink.ForEach&lt;<span class="hljs-keyword">int</span>&gt;(i =&gt; Console.WriteLine($<span class="hljs-string">"test: {i}"</span>))
+        .MapMaterializedValue(_ =&gt; NotUsed.Instance));
 
-                    <span class="hljs-keyword">return</span> ClosedShape.Instance;
+    <span class="hljs-keyword">return</span> ClosedShape.Instance;
                 }));
 </code></pre>
 <p>Running the above example one would expect the number 3 to be printed in every 3 seconds (the <code>conflateWithSeed</code> step here is configured so that it counts the number of elements received before the downstream <code>ZipWith</code> consumes them). What is being printed is different though, we will see the number 1. The reason for this is the internal buffer which is by default 16 elements large, and prefetches elements before the <code>ZipWith</code> starts consuming them. It is possible to fix this issue by changing the buffer size of <code>ZipWith</code> (or the whole graph) to 1. We will still see a leading 1 though which is caused by an initial prefetch of the <code>ZipWith</code> element.</p>
@@ -263,11 +265,11 @@ jobs.buffer(<span class="hljs-number">1000</span>, OverflowStrategy.backpressure
 <pre><code class="hljs lang-csharp">  <span class="hljs-keyword">var</span> statsFlow = Flow.Create&lt;<span class="hljs-keyword">double</span>&gt;()
                     .ConflateWithSeed(_ =&gt; ImmutableList.Create(_), (agg, acc) =&gt; agg.Add(acc))
                     .Select(s =&gt; {
-                        <span class="hljs-keyword">var</span> � = s.Sum()/s.Count();
+                        <span class="hljs-keyword">var</span> u = s.Sum()/s.Count();
 
-                        <span class="hljs-keyword">var</span> se = s.Select(x =&gt; Math.Pow(x - �, <span class="hljs-number">2</span>));
+                        <span class="hljs-keyword">var</span> se = s.Select(x =&gt; Math.Pow(x - u, <span class="hljs-number">2</span>));
                         <span class="hljs-keyword">var</span> s = Math.Sqrt(se.Sum()/ se.Count());
-                        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> { s , � , size=s.Count()};
+                        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> { s , u , size=s.Count()};
                     });
 </code></pre>
 <p>This example demonstrates that such flow&#39;s rate is decoupled. The element rate at the start of the flow can be much higher that the element rate at the end of the flow.</p>
