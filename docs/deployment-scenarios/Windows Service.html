@@ -215,10 +215,10 @@ Application. Which would look like this:</p>
         mySystem = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
     }
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span>(<span class="hljs-params"></span>)
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Stop</span>(<span class="hljs-params"></span>)
     </span>{
         <span class="hljs-comment">//this is where you stop your actor system</span>
-        mySystem.Shutdown();
+        <span class="hljs-keyword">await</span> mySystem.Terminate();
     }
 }
 </code></pre>
