@@ -399,7 +399,7 @@ belongs to) and feed it into GroupBy, using the topic as the group key.</li>
 <p><strong>Situation:</strong> Given a stream of elements we want to control the emission of those elements according to a trigger signal.
 In other words, even if the stream would be able to flow (not being backpressured) we want to hold back elements until a
 trigger signal arrives.</p>
-<p>This recipe solves the problem by simply zipping the stream of <code>Message</code> elments with the stream of <code>Trigger</code>
+<p>This recipe solves the problem by simply zipping the stream of <code>Message</code> elements with the stream of <code>Trigger</code>
 signals. Since <code>Zip</code> produces pairs, we simply map the output stream selecting the first element of the pair.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> elements = Source.Empty&lt;Message&gt;();
 <span class="hljs-keyword">var</span> triggerSource = Source.Empty&lt;Trigger&gt;();
@@ -754,7 +754,7 @@ chunks if they exceed a size threshold.</p>
 <ul>
 <li>if the buffer is empty, and upstream is not closed we pull for more bytes, if it is closed we complete</li>
 <li>if the buffer is nonEmpty, we split it according to the <code>chunkSize</code>. This will give a next chunk that we will emit,
-and an empty or nonempty remaining buffer.</li>
+and an empty or non-empty remaining buffer.</li>
 </ul>
 <p>Both <code>onPush()</code> and <code>onPull()</code> calls <code>emitChunk()</code> the only difference is that the push handler also stores
 the incoming chunk by appending to the end of the buffer.</p>

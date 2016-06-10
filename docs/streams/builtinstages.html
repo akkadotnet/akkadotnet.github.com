@@ -499,7 +499,7 @@ operation at the same time (usually handling the completion of a Task).</p>
 <h4 id="selectasync">SelectAsync</h4>
 <p>Pass incoming elements to a function that return a <code>Task</code> result. When the task arrives the result is passed
 downstream. Up to <code>n</code> elements can be processed concurrently, but regardless of their completion time the incoming
-order will be kept when results complete. For use cases where order does not mather <code>SelectAsyncUnordered</code> can be used.</p>
+order will be kept when results complete. For use cases where order does not matter <code>SelectAsyncUnordered</code> can be used.</p>
 <p>If a Task fails, the stream also fails (unless a different supervision strategy is applied)</p>
 <p><strong>emits</strong> when the Task returned by the provided function finishes for the next element in sequence</p>
 <p><strong>backpressures</strong> when the number of tasks reaches the configured parallelism and the downstream backpressures</p>
@@ -687,7 +687,7 @@ source completes the rest of the other stream will be emitted.</p>
 <p>These have one input and multiple outputs. They might route the elements between different outputs, or emit elements on
 multiple outputs at the same time.</p>
 <h4 id="unzip">Unzip</h4>
-<p>Takes a stream of two element tuples and unzips the two elements ino two different downstreams.</p>
+<p>Takes a stream of two element tuples and unzips the two elements into two different downstreams.</p>
 <p><strong>emits</strong> when all of the outputs stops backpressuring and there is an input element available</p>
 <p><strong>backpressures</strong> when any of the outputs backpressures</p>
 <p><strong>completes</strong> when upstream completes</p>

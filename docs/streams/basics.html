@@ -249,7 +249,7 @@ zeroes.RunWith(Sink.Aggregate&lt;<span class="hljs-keyword">int</span>,<span cla
 <div class="alert alert-default">
 <p><strong>Note</strong><br/>
 By default Akka Streams elements support <strong>exactly one</strong> downstream processing stage.
-Making fan-out (supporting multiple downstream processing stages) an explicit opt-in feature allows default stream elementsto be less complex and more efficient.
+Making fan-out (supporting multiple downstream processing stages) an explicit opt-in feature allows default stream elements to be less complex and more efficient.
 Also it allows for greater flexibility on <em>how exactly</em> to handle the multicast scenarios, 
 by providing named fan-out elements such as broadcast (signals all down-stream elements) or balance (signals one of available down-stream elements).  </p>
 </div>

@@ -286,7 +286,7 @@ Cluster.Unsubscribe(Self, <span class="hljs-keyword">typeof</span>(IMemberEvent)
 }
 </code></pre>
 <p>Inside the <code>SimpleClusterListener</code> we subscribe to messages of type of <code>ClusterEvent.IMemberEvent</code> and <code>ClusterEvent.UnreachableMember</code>, a class that implements <code>ClusterEvent.IReachabilityEvent</code>.</p>
-<p>The <code>Cluster</code> will periodically broadcast these messages as a result in changes in the membership of the cluister and their reachability, and they&#39;ll be delivered to the <code>SimpleClusterListener</code> as messages that can be handled inside the <code>OnReceive</code> method.</p>
+<p>The <code>Cluster</code> will periodically broadcast these messages as a result in changes in the membership of the cluster and their reachability, and they&#39;ll be delivered to the <code>SimpleClusterListener</code> as messages that can be handled inside the <code>OnReceive</code> method.</p>
 <h3 id="when-to-work-with-gossip-directly">When to Work with Gossip Directly</h3>
 <p>So when would you need to work with cluster gossip messages directly rather than use a clustered router?</p>
 <p><img class="img-responsive" src="images/when-to-use-gossip.png" alt="When to use Akka.Cluster gossip"></p>

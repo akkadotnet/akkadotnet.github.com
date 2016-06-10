@@ -788,7 +788,7 @@ The following example demonstrates a case where the materialized <code>Task</cod
         <span class="hljs-comment">// - Aggregate cannot complete until its upstream SelectAsync completes</span>
         <span class="hljs-comment">// - SelectAsync cannot complete until the materialized Task produced by</span>
         <span class="hljs-comment">//   Aggregate completes</span>
-        <span class="hljs-comment">// As a result this Source will never emit anything, and its materialited</span>
+        <span class="hljs-comment">// As a result this Source will never emit anything, and its materialized</span>
         <span class="hljs-comment">// Task will never complete</span>
         <span class="hljs-keyword">var</span> flow = Flow.Create&lt;Task&lt;<span class="hljs-keyword">int</span>&gt;&gt;().SelectAsync(<span class="hljs-number">4</span>, x =&gt; x);
         b.From(b.MaterializedValue).Via(flow).To(aggregate);
