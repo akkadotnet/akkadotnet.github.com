@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Reactive Tweets | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" ">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Reactive Tweets<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/reactivetweets.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><p>A typical use case for stream processing is consuming a live stream of data that we want to extract or aggregate some
+other data from. In this example we&#39;ll consider consuming a stream of tweets and extracting information from them.</p>
+<p>We will also consider the problem inherent to all non-blocking streaming
+solutions: <em>&quot;What if the subscriber is too slow to consume the live stream of
+data?&quot;</em>. Traditionally the solution is often to buffer the elements, but this
+can—and usually will—cause eventual buffer overflows and instability of such
+systems. Instead Akka Streams depend on internal backpressure signals that
+allow to control what should happen in such scenarios.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+  You can find a example implementation <a href="https://github.com/Silv3rcircl3/Akka.Net-Streams-reactive-tweets">here</a>, it&#39;s using 
+  <a href="https://github.com/linvi/tweetinvi">Tweetinvi</a> to call the Twitter STREAM API.
+  Due to the fact that Tweetinvi doesn&#39;t implement the Reactive Streams specifications, we push the tweets into the stream
+  via the <code>IActorRef</code> that is materialized from the following Source <code>Source.ActorRef&lt;ITweet&gt;(100, OverflowStrategy.DropHead);</code>.</p>
+</div>
+<h1 id="transforming-and-consuming-simple-streams">Transforming and consuming simple streams</h1>
+<p>The example application we will be looking at is a simple Twitter feed stream from which we&#39;ll want to extract certain information,
+like for example the number of tweets a user has posted.</p>
+<p>In order to prepare our environment by creating an <code>ActorSystem</code> and <code>ActorMaterializer</code>,
+which will be responsible for materializing and running the streams we are about to create:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> sys = ActorSystem.Create(<span class="hljs-string">"Reactive-Tweets"</span>))
+{
+    <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> mat = sys.Materializer())
+    {
+    }
+}
+</code></pre>
+<p>The <code>ActorMaterializer</code> can optionally take <code>ActorMaterializerSettings</code> which can be used to define
+materialization properties, such as default buffer sizes (see also <a href="buffersandworkingwithrate#buffers-for-asynchronous-stages">Buffers for asynchronous stages</a>), the dispatcher to
+be used by the pipeline etc. These can be overridden with <code>WithAttributes</code> on <code>Flow</code>, <code>Source</code>, <code>Sink</code> and <code>IGraph</code>.</p>
+<p>Let&#39;s assume we have a stream of tweets readily available. In Akka this is expressed as a <code>Source[Out, M]</code>:</p>
+<pre><code class="hljs lang-csharp">Source&lt;ITweet, NotUsed&gt; tweetSource;
+</code></pre>
+<p>Streams always start flowing from a <code>Source[Out,M1]</code> then can continue through <code>Flow[In,Out,M2]</code> elements or
+more advanced graph elements to finally be consumed by a <code>Sink[In,M3]</code> (ignore the type parameters <code>M1</code>, <code>M2</code>
+and <code>M3</code> for now, they are not relevant to the types of the elements produced/consumed by these classes – they are
+&quot;materialized types&quot;, which we&#39;ll talk about <a href="materialized-values">below</a>).</p>
+<p>The operations should look familiar to anyone who has used the .Net Collections library,
+however they operate on streams and not collections of data (which is a very important distinction, as some operations
+only make sense in streaming and vice versa):</p>
+<pre><code class="hljs lang-csharp">Source&lt;<span class="hljs-keyword">string</span>, NotUsed&gt; formattedRetweets = tweetSource
+  .Where(tweet =&gt; tweet.IsRetweet)
+  .Select(FormatTweet);
+</code></pre>
+<p>Finally in order to <a href="basics#stream-materialization">materialize</a> and run the stream computation we need to attach
+the Flow to a <code>Sink</code> that will get the Flow running. The simplest way to do this is to call
+<code>RunWith(sink, mat)</code> on a <code>Source</code>. For convenience a number of common Sinks are predefined and collected as methods on
+the <code>Sink</code> <a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Streams/Dsl/Sink.cs">companion class</a>.
+For now let&#39;s simply print the formatted retweets:</p>
+<pre><code class="hljs lang-csharp">formattedRetweets.RunWith(Sink.ForEach&lt;<span class="hljs-keyword">string</span>&gt;(Console.WriteLine), mat);
+</code></pre>
+<p>or by using the shorthand version (which are defined only for the most popular Sinks such as <code>Sink.Aggregate</code> and <code>Sink.Foreach</code>):</p>
+<pre><code class="hljs lang-csharp">formattedRetweets.RunForeach(Console.WriteLine, mat);
+</code></pre>
+<p>Materializing and running a stream always requires a <code>Materializer</code> to be passed in like this: <code>.Run(materializer)</code></p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> sys = ActorSystem.Create(<span class="hljs-string">"Reactive-Tweets"</span>))
+{
+    <span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> mat = sys.Materializer())
+    {
+        Source&lt;<span class="hljs-keyword">string</span>, NotUsed&gt; formattedRetweets = tweetSource
+          .Where(tweet =&gt; tweet.IsRetweet)
+          .Select(FormatTweet);
+
+        formattedRetweets.RunForeach(Console.WriteLine, mat);
+    }
+}
+</code></pre>
+<h1 id="flattening-sequences-in-streams">Flattening sequences in streams</h1>
+<p>In the previous section we were working on 1:1 relationships of elements which is the most common case, but sometimes
+we might want to map from one element to a number of elements and receive a &quot;flattened&quot; stream, similarly like <code>SelectMany</code>
+works on .Net Collections. In order to get a flattened stream of hashtags from our stream of tweets we can use the <code>SelectMany</code>
+combinator:</p>
+<pre><code class="hljs lang-csharp">Source&lt;IHashtagEntity, NotUsed&gt; hashTags = tweetSource.SelectMany(tweet =&gt; tweet.Hashtags);
+</code></pre>
+<h1 id="broadcasting-a-stream">Broadcasting a stream</h1>
+<p>Now let&#39;s say we want to persist all hashtags, as well as all author names from this one live stream.
+For example we&#39;d like to write all author handles into one file, and all hashtags into another file on disk.
+This means we have to split the source stream into two streams which will handle the writing to these different files.</p>
+<p>Elements that can be used to form such &quot;fan-out&quot; (or &quot;fan-in&quot;) structures are referred to as &quot;junctions&quot; in Akka Streams.
+One of these that we&#39;ll be using in this example is called <code>Broadcast</code>, and it simply emits elements from its
+input port to all of its output ports.</p>
+<p>Akka Streams intentionally separate the linear stream structures (Flows) from the non-linear, branching ones (Graphs)
+in order to offer the most convenient API for both of these cases. Graphs can express arbitrarily complex stream setups
+at the expense of not reading as familiarly as collection transformations.</p>
+<p>Graphs are constructed using <code>GraphDSL</code> like this:</p>
+<pre><code class="hljs lang-csharp">Sink&lt;IUser, NotUsed&gt; writeAuthors = <span class="hljs-keyword">null</span>;
+Sink&lt;IHashtagEntity, NotUsed&gt; writeHashtags = <span class="hljs-keyword">null</span>;
+
+<span class="hljs-keyword">var</span> g = RunnableGraph.FromGraph(GraphDsl.Create(b =&gt;
+{
+    <span class="hljs-keyword">var</span> broadcast = b.Add(<span class="hljs-keyword">new</span> Broadcast&lt;ITweet&gt;(<span class="hljs-number">2</span>));
+    b.From(tweetSource).To(broadcast.In);
+    b.From(broadcast.Out(<span class="hljs-number">0</span>))
+        .Via(Flow.Create&lt;ITweet&gt;().Select(tweet =&gt; tweet.CreatedBy))
+        .To(writeAuthors);
+    b.From(broadcast.Out(<span class="hljs-number">1</span>))
+        .Via(Flow.Create&lt;ITweet&gt;().SelectMany(tweet =&gt; tweet.Hashtags))
+        .To(writeHashtags);
+
+    <span class="hljs-keyword">return</span> ClosedShape.Instance;
+}));
+
+g.Run(mat);
+</code></pre>
+<p>As you can see, inside the <code>GraphDSL</code> we use an implicit graph builder <code>b</code> to mutably construct the graph
+using the <code>from</code>, <code>via</code> or <code>to</code> &quot;edge operator&quot;.</p>
+<p><code>GraphDSL.Create</code> returns a <code>IGraph</code>, in this example a <code>IGraph&lt;ClosedShape, NotUsed&gt;</code> where
+<code>ClosedShape</code> means that it is <em>a fully connected graph</em> or &quot;closed&quot; - there are no unconnected inputs or outputs.
+Since it is closed it is possible to transform the graph into a <code>IRunnableGraph</code> using <code>RunnableGraph.FromGraph</code>.
+The runnable graph can then be <code>Run()</code> to materialize a stream out of it.</p>
+<p>Both <code>IGraph</code> and <code>IRunnableGraph</code> are <em>immutable, thread-safe, and freely shareable</em>.</p>
+<p>A graph can also have one of several other shapes, with one or more unconnected ports. Having unconnected ports
+expresses a graph that is a <em>partial graph</em>. Concepts around composing and nesting graphs in large structures are
+explained in detail in <a href="modularitycomposition#basics-of-composition-and-modularity">Modularity, Composition and Hierarchy</a>. It is also possible to wrap complex computation graphs as Flows, Sinks or Sources, which will be explained in detail in
+<a href="workingwithgraphs#constructing-sources-sinks-and-flows-from-partial-graphs">Constructing Sources, Sinks and Flows from Partial Graphs</a>.</p>
+<h1 id="back-pressure-in-action">Back-pressure in action</h1>
+<p>One of the main advantages of Akka Streams is that they <em>always</em> propagate back-pressure information from stream Sinks
+(Subscribers) to their Sources (Publishers). It is not an optional feature, and is enabled at all times. To learn more
+about the back-pressure protocol used by Akka Streams and all other Reactive Streams compatible implementations read
+<a href="basics#back-pressure-explained">Back-pressure explained</a>.</p>
+<p>A typical problem applications (not using Akka Streams) like this often face is that they are unable to process the incoming data fast enough,
+either temporarily or by design, and will start buffering incoming data until there&#39;s no more space to buffer, resulting
+in either <code>OutOfMemoryError</code> s or other severe degradations of service responsiveness. With Akka Streams buffering can
+and must be handled explicitly. For example, if we are only interested in the &quot;<em>most recent tweets, with a buffer of 10
+elements</em>&quot; this can be expressed using the <code>Buffer</code> element:</p>
+<pre><code class="hljs lang-csharp">tweetSource
+    .Buffer(<span class="hljs-number">10</span>, OverflowStrategy.DropHead)
+    .Selet(SlowComputation)
+    .RunWith(Sink.Ignore&lt;ComputationResult&gt;(), mat);
+</code></pre>
+<p>The <code>Buffer</code> element takes an explicit and required <code>OverflowStrategy</code>, which defines how the buffer should react
+when it receives another element while it is full. Strategies provided include dropping the oldest element (<code>DropHead</code>),
+dropping the entire buffer, signalling errors etc. Be sure to pick and choose the strategy that fits your use case best.</p>
+<h1 id="materialized-value">Materialized value</h1>
+<p>So far we&#39;ve been only processing data using Flows and consuming it into some kind of external Sink - be it by printing
+values or storing them in some external system. However sometimes we may be interested in some value that can be
+obtained from the materialized processing pipeline. For example, we want to know how many tweets we have processed.
+While this question is not as obvious to give an answer to in case of an infinite stream of tweets (one way to answer
+this question in a streaming setting would be to create a stream of counts described as &quot;<em>up until now</em>, we&#39;ve processed N tweets&quot;),
+but in general it is possible to deal with finite streams and come up with a nice result such as a total count of elements.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> count = Flow.Create&lt;ITweet&gt;().Select(_ =&gt; <span class="hljs-number">1</span>);
+
+<span class="hljs-keyword">var</span> sumSink = Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (agg, i) =&gt; agg + i);
+
+<span class="hljs-keyword">var</span> counterGraph = tweetSource.Via(count).ToMaterialized(sumSink, Keep.Right);
+
+<span class="hljs-keyword">var</span> sum = counterGraph.Run(mat).Result;
+</code></pre>
+<p>First we prepare a reusable <code>Flow</code> that will change each incoming tweet into an integer of value <code>1</code>. We&#39;ll use this in
+order to combine those with a <code>Sink.Aggregate</code> that will sum all <code>Int</code> elements of the stream and make its result available as
+a <code>Task&lt;Int&gt;</code>. Next we connect the <code>tweets</code> stream to <code>count</code> with <code>via</code>. Finally we connect the Flow to the previously
+prepared Sink using <code>ToMaterialized</code>.</p>
+<p>Remember those mysterious <code>Mat</code> type parameters on <code>Source&lt;Out, Mat&gt;</code>, <code>Flow&lt;In, Out, Mat&gt;</code> and <code>Sink&lt;In, Mat&gt;</code>?
+They represent the type of values these processing parts return when materialized. When you chain these together,
+you can explicitly combine their materialized values. In our example we used the <code>Keep.Right</code> predefined function,
+which tells the implementation to only care about the materialized type of the stage currently appended to the right.
+The materialized type of <code>sumSink</code> is <code>Task&lt;Int&gt;</code> and because of using <code>Keep.Right</code>, the resulting <code>IRunnableGraph</code>
+has also a type parameter of <code>Task&lt;Int&gt;</code>.</p>
+<p>This step does <em>not</em> yet materialize the
+processing pipeline, it merely prepares the description of the Flow, which is now connected to a Sink, and therefore can
+be <code>Run()</code>, as indicated by its type: <code>IRunnableGraph&lt;Task&lt;Int&gt;&gt;</code>. Next we call <code>Run(mat)</code>
+to materialize and run the Flow. The value returned by calling <code>Run()</code> on a <code>IRunnableGraph&lt;T&gt;</code> is of type <code>T</code>.
+In our case this type is <code>Task&lt;Int&gt;</code> which, when completed, will contain the total length of our <code>tweets</code> stream.
+In case of the stream failing, this future would complete with a Failure.</p>
+<p>A <code>IRunnableGraph</code> may be reused
+and materialized multiple times, because it is just the &quot;blueprint&quot; of the stream. This means that if we materialize a stream,
+for example one that consumes a live stream of tweets within a minute, the materialized values for those two materializations
+will be different, as illustrated by this example:</p>
+<p>First, let&#39;s write such an element counter using <code>Sink.Aggregate</code> and see how the types look like:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> sumSink = Sink.Aggregate&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">0</span>, (agg, i) =&gt; agg + i);
+
+<span class="hljs-keyword">var</span> counterRunnableGraph = tweetsInMinuteFromNow
+    .Where(tweet =&gt; tweet.IsRetweet)
+    .Select(_ =&gt; <span class="hljs-number">1</span>)
+    .ToMaterialized(sumSink, Keep.Right);
+
+<span class="hljs-comment">// materialize the stream once in the morning</span>
+<span class="hljs-keyword">var</span> morningTweetsCount = counterGraph.Run(mat);
+<span class="hljs-comment">// and once in the evening, reusing the flow</span>
+<span class="hljs-keyword">var</span> eveningTweetsCount = counterGraph.Run(mat);
+</code></pre>
+<p>Many elements in Akka Streams provide materialized values which can be used for obtaining either results of computation or
+steering these elements which will be discussed in detail in <a href="basics#stream-materialization">Stream Materialization</a>. Summing up this section, now we know
+what happens behind the scenes when we run this one-liner, which is equivalent to the multi line version above:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> sum = tweetSource.Select(_ =&gt; <span class="hljs-number">1</span>).RunWith(sumSink, mat);
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+  <code>RunWith()</code> is a convenience method that automatically ignores the materialized value of any other stages except
+  those appended by the <code>RunWith()</code> itself. In the above example it translates to using <code>Keep.Right</code> as the combiner
+  for materialized values.</p>
+</div>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
