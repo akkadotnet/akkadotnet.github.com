@@ -178,146 +178,450 @@
 <p><strong>Note</strong> <br>A custom graph stage should not be the first tool you reach for, defining graphs using flows and the graph DSL is in general easier and does to a larger extent protect you from mistakes that might be easy to make with a custom <code>GraphStage</code></p>
 </div>
 <h2 id="custom-processing-with-graphstage">Custom processing with GraphStage</h2>
-<p>The <code>GraphStage</code> abstraction can be used to create arbitrary graph processing stages with any number of input or output ports. It is a counterpart of the <code>GraphDSL.create()</code> method which creates new stream processing stages by composing others. Where <code>GraphStage</code> differs is that it creates a stage that is itself not divisible into smaller ones, and allows state to be maintained inside it in a safe way.</p>
-<p>As a first motivating example, we will build a new <code>Source</code> that will simply emit numbers from 1 until it is cancelled. To start, we need to define the &quot;interface&quot; of our stage, which is called shape in Akka Streams terminology (this is explained in more detail in the section Modularity, Composition and Hierarchy). This is how this looks like:</p>
+<p>The <code>GraphStage</code> abstraction can be used to create arbitrary graph processing stages with any number of input or output ports. It is a counterpart of the <code>GraphDSL.Create()</code> method which creates new stream processing stages by composing others. Where <code>GraphStage</code> differs is that it creates a stage that is itself not divisible into smaller ones, and allows state to be maintained inside it in a safe way.</p>
+<p>As a first motivating example, we will build a new <code>Source</code> that will simply emit numbers from 1 until it is cancelled. To start, we need to define the &quot;interface&quot; of our stage, which is called shape in Akka Streams terminology (this is explained in more detail in the section <a href="modularitycomposition">Modularity, Composition and Hierarchy</a>). This is how this looks like:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Streams.Stage;
 
-<span class="hljs-keyword">class</span> <span class="hljs-title">NumbersSource</span> : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">SourceShape</span>&lt;<span class="hljs-title">int</span>&gt;&gt; {
-        <span class="hljs-comment">// Define the (sole) output port of this stage</span>
-        <span class="hljs-keyword">private</span> Outlet&lt;<span class="hljs-keyword">int</span>&gt; @Out = <span class="hljs-keyword">new</span> Outlet&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-string">"NumbersSource"</span>);
-        <span class="hljs-comment">// Define the shape of this tage, which is SourceShape with the port we defined above</span>
-        <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> SourceShape&lt;<span class="hljs-keyword">int</span>&gt; Shape =&gt; <span class="hljs-keyword">new</span> SourceShape&lt;<span class="hljs-keyword">int</span>&gt;(Out);
-
-        <span class="hljs-comment">//this is where the actual (possibly statefull) logic will live</span>
-        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>{
-
+<span class="hljs-keyword">class</span> <span class="hljs-title">NumbersSource</span> : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">SourceShape</span>&lt;<span class="hljs-title">int</span>&gt;&gt;
+{
+    <span class="hljs-comment">//this is where the actual (possibly statefull) logic will live</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">NumbersSource source</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">source.Shape</span>)
+        </span>{
         }
     }
+
+    <span class="hljs-comment">// Define the (sole) output port of this stage </span>
+    <span class="hljs-keyword">public</span> Outlet&lt;<span class="hljs-keyword">int</span>&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-string">"NumbersSource"</span>);
+
+    <span class="hljs-comment">// Define the shape of this tage, which is SourceShape with the port we defined above</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> SourceShape&lt;<span class="hljs-keyword">int</span>&gt; Shape =&gt; <span class="hljs-keyword">new</span> SourceShape&lt;<span class="hljs-keyword">int</span>&gt;(Out);
+
+    <span class="hljs-comment">//this is where the actual logic will be created</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <p>As you see, in itself the <code>GraphStage</code> only defines the ports of this stage and a shape that contains the ports. It also has, a currently unimplemented method called <code>CreateLogic</code>. If you recall, stages are reusable in multiple materializations, each resulting in a different executing entity. In the case of <code>GraphStage</code> the actual running logic is modelled as an instance of a <code>GraphStageLogic</code> which will be created by the materializer by calling the <code>CreateLogic</code> method. In other words, all we need to do is to create a suitable logic that will emit the numbers we want.</p>
 <div class="alert alert-default">
 <p><strong>Note</strong> <br>It is very important to keep the <code>GraphStage</code> object itself immutable and reusable. All mutable state needs to be confined to the <code>GraphStageLogic</code> that is created for every materialization.</p>
 </div>
-<p>In order to emit from a <code>Source</code> in a backpressured stream one needs first to have demand from downstream. To receive the necessary events one needs to register a subclass of <code>OutHandler</code> with the output port (<code>Outlet</code>). This handler will receive events related to the lifecycle of the port. In our case we need to override <code>onPull()</code> which indicates that we are free to emit a single element. There is another callback, <code>onDownstreamFinish()</code> which is called if the downstream cancelled. Since the default behavior of that callback is to stop the stage, we don&#39;t need to override it. In the <code>onPull</code> callback we will simply emit the next number. This is how it looks like in the end:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>In order to emit from a <code>Source</code> in a backpressured stream one needs first to have demand from downstream. To receive the necessary events one needs to register a callback with the output port (<code>Outlet</code>). This callback will receive events related to the lifecycle of the port. In our case we need to override <code>onPull</code> which indicates that we are free to emit a single element. There is another callback, <code>onDownstreamFinish</code> which is called if the downstream cancelled. Since the default behavior of that callback is to stop the stage, we don&#39;t need to override it. In the <code>onPull</code> callback we will simply emit the next number. This is how it looks like in the end:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.Streams.Stage;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">NumbersSource</span> : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">SourceShape</span>&lt;<span class="hljs-title">int</span>&gt;&gt;
+{
+    <span class="hljs-comment">//this is where the actual (possibly statefull) logic will live</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-comment">// All state MUST be inside the GraphStageLogic,</span>
+        <span class="hljs-comment">// never inside the enclosing GraphStage.</span>
+        <span class="hljs-comment">// This state is safe to access and modify from all the</span>
+        <span class="hljs-comment">// callbacks that are provided by GraphStageLogic and the</span>
+        <span class="hljs-comment">// registered handlers.</span>
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">int</span> _counter = <span class="hljs-number">1</span>;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">NumbersSource source</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">source.Shape</span>)
+        </span>{
+            SetHandler(source.Out, onPull: () =&gt; Push(source.Out, _counter++));
+        }
+    }
+
+    <span class="hljs-comment">// Define the (sole) output port of this stage </span>
+    <span class="hljs-keyword">public</span> Outlet&lt;<span class="hljs-keyword">int</span>&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-string">"NumbersSource"</span>);
+
+    <span class="hljs-comment">// Define the shape of this tage, which is SourceShape with the port we defined above</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> SourceShape&lt;<span class="hljs-keyword">int</span>&gt; Shape =&gt; <span class="hljs-keyword">new</span> SourceShape&lt;<span class="hljs-keyword">int</span>&gt;(Out);
+
+    <span class="hljs-comment">//this is where the actual logic will be created</span>
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
-<p>Instances of the above <code>GraphStage</code> are subclasses of <code>Graph&lt;SourceShape&lt;int&gt;, Unit&gt;</code> which means that they are already usable in many situations, but do not provide the DSL methods we usually have for other <code>Source</code>s. In order to convert this <code>Graph</code>to a proper <code>Source</code> we need to wrap it using <code>Source.FromGraph</code> (see <a href="modularitycomposition">Modularity, Composition and Hierarchy</a> for more details about graphs and DSLs). Now we can use the source as any other built-in one:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>Instances of the above <code>GraphStage</code> are subclasses of <code>Graph&lt;SourceShape&lt;int&gt;, NotUsed&gt;</code> which means that they are already usable in many situations, but do not provide the DSL methods we usually have for other <code>Source</code>s. In order to convert this <code>Graph</code>to a proper <code>Source</code> we need to wrap it using <code>Source.FromGraph</code> (see <a href="modularitycomposition">Modularity, Composition and Hierarchy</a> for more details about graphs and DSLs). Now we can use the source as any other built-in one:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// A GraphStage is a proper Graph, just like what GraphDSL.Create would return</span>
+<span class="hljs-keyword">var</span> sourceGraph = <span class="hljs-keyword">new</span> NumbersSource();
+
+<span class="hljs-comment">// Create a Source from the Graph to access the DSL</span>
+<span class="hljs-keyword">var</span> mySource = Source.FromGraph(sourceGraph);
+
+<span class="hljs-comment">// Returns 55</span>
+<span class="hljs-keyword">var</span> result1Task = mySource.Take(<span class="hljs-number">10</span>).RunAggregate(<span class="hljs-number">0</span>, (sum, next) =&gt; sum + next, materializer);
+
+<span class="hljs-comment">// Returns 5050</span>
+<span class="hljs-keyword">var</span> result2Task = mySource.Take(<span class="hljs-number">100</span>).RunAggregate(<span class="hljs-number">0</span>, (sum, next) =&gt; sum + next, materializer);
 </code></pre>
 <h3 id="port-states-inhandler-and-outhandler">Port states, InHandler and OutHandler</h3>
 <p>In order to interact with a port (<code>Inlet</code> or <code>Outlet</code>) of the stage we need to be able to receive events and generate new events belonging to the port. From the <code>GraphStageLogic</code> the following operations are available on an output port:</p>
 <ul>
-<li><code>push(out,elem)</code> pushes an element to the output port. Only possible after the port has been pulled by downstream.</li>
-<li><code>complete(out)</code> closes the output port normally.</li>
-<li><code>fail(out,exception)</code> closes the port with a failure signal.</li>
+<li><code>Push(out,elem)</code> pushes an element to the output port. Only possible after the port has been pulled by downstream.</li>
+<li><code>Complete(out)</code> closes the output port normally.</li>
+<li><code>Fail(out,exception)</code> closes the port with a failure signal.</li>
 </ul>
-<p>The events corresponding to an <em>output</em> port can be received in an <code>OutHandler</code> instance registered to the output port using <code>setHandler(out,handler)</code>. This handler has two callbacks:</p>
+<p>The events corresponding to an <em>output</em> port can be received in an <code>Action</code> registered to the output port using <code>SetHandler(out, action)</code>. This handler has two callbacks:</p>
 <ul>
-<li><code>onPull()</code> is called when the output port is ready to emit the next element, <code>push(out, elem)</code> is now allowed to be called on this port.</li>
-<li><code>onDownstreamFinish()</code> is called once the downstream has cancelled and no longer allows messages to be pushed to it. No more <code>onPull()</code> will arrive after this event. If not overridden this will default to stopping the stage.</li>
+<li><code>onPull</code> is called when the output port is ready to emit the next element, <code>Push(out, elem)</code> is now allowed to be called on this port.</li>
+<li><code>onDownstreamFinish</code> is called once the downstream has cancelled and no longer allows messages to be pushed to it. No more <code>onPull</code> will arrive after this event. If not overridden this will default to stopping the stage.</li>
 </ul>
 <p>Also, there are two query methods available for output ports:</p>
 <ul>
-<li><code>isAvailable(out)</code> returns true if the port can be pushed</li>
-<li><code>isClosed(out)</code> returns true if the port is closed. At this point the port can not be pushed and will not be pulled anymore.</li>
+<li><code>IsAvailable(out)</code> returns true if the port can be pushed</li>
+<li><code>IsClosed(out)</code> returns true if the port is closed. At this point the port can not be pushed and will not be pulled anymore.</li>
 </ul>
 <p>The relationship of the above operations, events and queries are summarized in the state machine below. Green shows the initial state while orange indicates the end state. If an operation is not listed for a state, then it is invalid to call it while the port is in that state. If an event is not listed for a state, then that event cannot happen in that state.</p>
 <p><img class="img-responsive" src="../images/outport_transitions1.png" alt="outport transitions1"></p>
 <p>The following operations are available for <em>input</em> ports:</p>
 <ul>
-<li><code>pull(in)</code> requests a new element from an input port. This is only possible after the port has been pushed by upstream.</li>
-<li><code>grab(in)</code> acquires the element that has been received during an <code>onPush()</code> It cannot be called again until the port is pushed again by the upstream.</li>
-<li><code>cancel(in)</code> closes the input port.</li>
+<li><code>Pull(in)</code> requests a new element from an input port. This is only possible after the port has been pushed by upstream.</li>
+<li><code>Grab(in)</code> acquires the element that has been received during an <code>onPush</code> It cannot be called again until the port is pushed again by the upstream.</li>
+<li><code>Cancel(in)</code> closes the input port.</li>
 </ul>
-<p>The events corresponding to an <em>input</em> port can be received in an <code>InHandler</code> instance registrered to the input port using <code>setHandler(in, handler)</code>. This handler has three callbacks:</p>
+<p>The events corresponding to an <em>input</em> port can be received in an <code>Action</code> registrered to the input port using <code>setHandler(in, action)</code>. This handler has three callbacks:</p>
 <ul>
-<li><code>onPush()</code> is called when the output port has now a new element. Now it is possible to acquire this element using <code>grab(in)</code> and/or call <code>pull(in)</code> on the port to request the next element. It is not mandatory to grab the element, but if it is pulled while the element has not been grabbed it will drop the buffered element.</li>
-<li><code>onUpstreamFinish()</code> is called once the upstream has completed and no longer can be pulled for new elements. No more <code>onPush()</code> will arrive after this event. If not overridden this will default to stopping the stage.</li>
-<li><code>onUpstreamFailure()</code> is called if the upstream failed with an exception and no longer can be pulled for new elements. No more <code>onPush()</code> will arrive after this event. If not overridden this will default to failing the stage.</li>
+<li><code>onPush</code> is called when the output port has now a new element. Now it is possible to acquire this element using <code>Grab(in)</code> and/or call <code>Pull(in)</code> on the port to request the next element. It is not mandatory to grab the element, but if it is pulled while the element has not been grabbed it will drop the buffered element.</li>
+<li><code>onUpstreamFinish</code> is called once the upstream has completed and no longer can be pulled for new elements. No more <code>onPush</code> will arrive after this event. If not overridden this will default to stopping the stage.</li>
+<li><code>onUpstreamFailure</code> is called if the upstream failed with an exception and no longer can be pulled for new elements. No more <code>onPush</code> will arrive after this event. If not overridden this will default to failing the stage.</li>
 </ul>
 <p>Also, there are three query methods available for input ports:</p>
 <ul>
-<li><code>isAvailable(in)</code> returns true if the port can be grabbed.</li>
-<li><code>hasBeenPulled(in)</code> returns true if the port has been already pulled. Calling <code>pull(in)</code> in this state is illegal.</li>
-<li><code>isClosed(in)</code> returns true if the port is closed. At this point the port can not be pulled and will not be pushed anymore.</li>
+<li><code>IsAvailable(in)</code> returns true if the port can be grabbed.</li>
+<li><code>HasBeenPulled(in)</code> returns true if the port has been already pulled. Calling <code>Pull(in)</code> in this state is illegal.</li>
+<li><code>IsClosed(in)</code> returns true if the port is closed. At this point the port can not be pulled and will not be pushed anymore.</li>
 </ul>
 <p>The relationship of the above operations, events and queries are summarized in the state machine below. Green shows the initial state while orange indicates the end state. If an operation is not listed for a state, then it is invalid to call it while the port is in that state. If an event is not listed for a state, then that event cannot happen in that state.</p>
 <p><img class="img-responsive" src="../images/inport_transitions1.png" alt="Inport transitions"></p>
 <p>Finally, there are two methods available for convenience to complete the stage and all of its ports:</p>
 <ul>
-<li><code>completeStage()</code> is equivalent to closing all output ports and cancelling all input ports.</li>
-<li><code>failStage(exception)</code> is equivalent to failing all output ports and cancelling all input ports.</li>
+<li><code>CompleteStage()</code> is equivalent to closing all output ports and cancelling all input ports.</li>
+<li><code>FailStage(exception)</code> is equivalent to failing all output ports and cancelling all input ports.</li>
 </ul>
 <p>In some cases it is inconvenient and error prone to react on the regular state machine events with the signal based API described above. For those cases there is a API which allows for a more declarative sequencing of actions which will greatly simplify some use cases at the cost of some extra allocations. The difference between the two APIs could be described as that the first one is signal driven from the outside, while this API is more active and drives its surroundings.</p>
 <p>The operations of this part of the :class:<code>GraphStage</code> API are:</p>
 <ul>
-<li><code>emit(out, elem)</code> and <code>emitMultiple(out, Iterable(elem1, elem2))</code> replaces the <code>OutHandler</code> with a handler that emits one or more elements when there is demand, and then reinstalls the current handlers</li>
-<li><code>read(in)(andThen)</code> and <code>readN(in, n)(andThen)</code> replaces the <code>InHandler</code> with a handler that reads one or more elements as they are pushed and allows the handler to react once the requested number of elements has been read.</li>
-<li><code>abortEmitting()</code> and <code>abortReading()</code> which will cancel an ongoing emit or read</li>
+<li><code>Emit(out, elem)</code> and <code>EmitMultiple(out, Enumerable(elem1, elem2))</code> replaces the <code>OutHandler</code> with a handler that emits one or more elements when there is demand, and then reinstalls the current handlers</li>
+<li><code>Read(in, andThen, onClose)</code> and <code>ReadMany(in, n, andThen, onClose)</code> replaces the <code>InHandler</code> with a handler that reads one or more elements as they are pushed and allows the handler to react once the requested number of elements has been read.</li>
+<li><code>AbortEmitting(out)</code> and <code>AbortReading(in)</code> which will cancel an ongoing emit or read</li>
 </ul>
-<p>Note that since the above methods are implemented by temporarily replacing the handlers of the stage you should never call <code>setHandler</code> while they are running <code>emit</code> or <code>read</code> as that interferes with how they are implemented. The following methods are safe to call after invoking <code>emit</code> and <code>read</code> (and will lead to actually running the operation when those are done): <code>complete(out)</code>, <code>completeStage()</code>, <code>emit</code>, <code>emitMultiple</code>, <code>abortEmitting()</code> and <code>abortReading()</code></p>
-<p>An example of how this API simplifies a stage can be found below in the second version of the :class:Duplicator.</p>
+<p>Note that since the above methods are implemented by temporarily replacing the handlers of the stage you should never call <code>SetHandler</code> while they are running <code>Emit</code> or <code>Read</code> as that interferes with how they are implemented. The following methods are safe to call after invoking <code>Emit</code> and <code>Read</code> (and will lead to actually running the operation when those are done): <code>Complete(out)</code>, <code>CompleteStage()</code>, <code>Emit</code>, <code>EmitMultiple</code>, <code>AbortEmitting()</code> and <code>AbortReading()</code></p>
+<p>An example of how this API simplifies a stage can be found below in the second version of the Duplicator.</p>
 <h3 id="custom-linear-processing-stages-using-graphstage">Custom linear processing stages using GraphStage</h3>
 <p>Graph stages allows for custom linear processing stages through letting them have one input and one output and using <code>FlowShape</code> as their shape.</p>
 <p>Such a stage can be illustrated as a box with two flows as it is seen in the illustration below. Demand flowing upstream leading to elements flowing downstream.</p>
 <p><img class="img-responsive" src="../images/graph_stage_conceptual1.png" alt="graph stage conceptual"></p>
-<p>To illustrate these concepts we create a small <code>GraphStage</code> that implements the <code>map</code> transformation.</p>
+<p>To illustrate these concepts we create a small <code>GraphStage</code> that implements the <code>Map</code> transformation.</p>
 <p><img class="img-responsive" src="../images/graph_stage_map1.png" alt="graph stage map"></p>
-<p>Map calls <code>push(out)</code> from the <code>onPush()</code> handler and it also calls <code>pull()</code> from the <code>onPull</code> handler resulting in the conceptual wiring above, and fully expressed in code below:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>Map calls <code>Push(out)</code> from the <code>onPush</code> handler and it also calls <code>Pull()</code> from the <code>onPull</code> handler resulting in the conceptual wiring above, and fully expressed in code below:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Map</span>&lt;<span class="hljs-title">TIn</span>, <span class="hljs-title">TOut</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">TIn</span>, <span class="hljs-title">TOut</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">Map&lt;TIn, TOut&gt; map</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">map.Shape</span>)
+        </span>{
+            SetHandler(map.In, onPush: () =&gt; Push(map.Out, map._func(Grab(map.In))));
+            SetHandler(map.Out, onPull: ()=&gt; Pull(map.In));
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Func&lt;TIn, TOut&gt; _func;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Map</span>(<span class="hljs-params">Func&lt;TIn, TOut&gt; func</span>)
+    </span>{
+        _func = func;
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;TIn, TOut&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;TIn&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;TIn&gt;(<span class="hljs-string">"Map.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;TOut&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;TOut&gt;(<span class="hljs-string">"Map.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;TIn, TOut&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <p>Map is a typical example of a one-to-one transformation of a stream where demand is passed along upstream elements passed on downstream.</p>
 <p>To demonstrate a many-to-one stage we will implement filter. The conceptual wiring of <code>Filter</code> looks like this:</p>
 <p><img class="img-responsive" src="../images/graph_stage_filter1.png" alt="Graph stage filter"></p>
-<p>As we see above, if the given predicate matches the current element we are propagating it downwards, otherwise we return the &quot;ball&quot; to our upstream so that we get the new element. This is achieved by modifying the map example by adding a conditional in the <code>onPush</code> handler and decide between a <code>pull(in)</code> or <code>push(out)</code> call (and of course not having a mapping f function).</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>As we see above, if the given predicate matches the current element we are propagating it downwards, otherwise we return the &quot;ball&quot; to our upstream so that we get the new element. This is achieved by modifying the map example by adding a conditional in the <code>onPush</code> handler and decide between a <code>Pull(in)</code> or <code>Push(out)</code> call (and of course not having a mapping f function).</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Filter</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">Filter&lt;T&gt; filter</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">filter.Shape</span>)
+        </span>{
+            SetHandler(filter.In, onPush: () =&gt;
+            {
+                <span class="hljs-keyword">var</span> element = Grab(filter.In);
+                <span class="hljs-keyword">if</span>(filter._predicate(element))
+                    Push(filter.Out, element);
+                <span class="hljs-function"><span class="hljs-keyword">else</span>
+                    <span class="hljs-title">Pull</span>(<span class="hljs-params">filter.In</span>)</span>;
+            });
+
+            SetHandler(filter.Out, onPull: ()=&gt; Pull(filter.In));
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Predicate&lt;T&gt; _predicate;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Filter</span>(<span class="hljs-params">Predicate&lt;T&gt; predicate</span>)
+    </span>{
+        _predicate = predicate;
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"Filter.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"Filter.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <p>To complete the picture we define a one-to-many transformation as the next step. We chose a straightforward example stage that emits every upstream element twice downstream. The conceptual wiring of this stage looks like this:</p>
 <p><img class="img-responsive" src="../images/graph_stage_duplicate1.png" alt="Graph stage duplicate"></p>
 <p>This is a stage that has state: an option with the last element it has seen indicating if it has duplicated this last element already or not. We must also make sure to emit the extra element if the upstream completes.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Duplicator</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        Option&lt;T&gt; _lastElement = Option&lt;T&gt;.None;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">Duplicator&lt;T&gt; duplicator</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">duplicator.Shape</span>)
+        </span>{
+            SetHandler(duplicator.In,
+                onPush: () =&gt;
+                {
+                    <span class="hljs-keyword">var</span> element = Grab(duplicator.In);
+                    _lastElement = element;
+                    Push(duplicator.Out, element);
+                },
+                onUpstreamFinish: () =&gt;
+                {
+                    <span class="hljs-keyword">if</span>(_lastElement.HasValue)
+                        Emit(duplicator.Out, _lastElement.Value);
+
+                    Complete(duplicator.Out);
+                });
+
+            SetHandler(duplicator.Out, onPull: () =&gt;
+            {
+                <span class="hljs-keyword">if</span> (_lastElement.HasValue)
+                {
+                    Push(duplicator.Out, _lastElement.Value);
+                    _lastElement = Option&lt;T&gt;.None;
+                }
+                <span class="hljs-function"><span class="hljs-keyword">else</span>
+                    <span class="hljs-title">Pull</span>(<span class="hljs-params">duplicator.In</span>)</span>;
+            });
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Duplicator</span>(<span class="hljs-params">Predicate&lt;T&gt; predicate</span>)
+    </span>{
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"Duplicator.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"Duplicator.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <p>In this case a pull from downstream might be consumed by the stage itself rather than passed along upstream as the stage might contain an element it wants to push. Note that we also need to handle the case where the upstream closes while the stage still has elements it wants to push downstream. This is done by overriding onUpstreamFinish in the InHandler and provide custom logic that should happen when the upstream has been finished.</p>
-<p>This example can be simplified by replacing the usage of a mutable state with calls to <code>emitMultiple</code> which will replace the handlers, emit each of multiple elements and then reinstate the original handlers:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>This example can be simplified by replacing the usage of a mutable state with calls to <code>EmitMultiple</code> which will replace the handlers, emit each of multiple elements and then reinstate the original handlers:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">Duplicator</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">Duplicator&lt;T&gt; duplicator</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">duplicator.Shape</span>)
+        </span>{
+
+            SetHandler(duplicator.In, onPush: () =&gt;
+            {
+                <span class="hljs-keyword">var</span> element = Grab(duplicator.In);
+                <span class="hljs-comment">// this will temporarily suspend this handler until the two elems</span>
+                <span class="hljs-comment">// are emitted and then reinstates it</span>
+                EmitMultiple(duplicator.Out, <span class="hljs-keyword">new</span>[] {element, element});
+            });
+
+            SetHandler(duplicator.Out, onPull: () =&gt; Pull(duplicator.In));
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Duplicator</span>(<span class="hljs-params">Predicate&lt;T&gt; predicate</span>)
+    </span>{
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"Duplicator.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"Duplicator.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <p>Finally, to demonstrate all of the stages above, we put them together into a processing chain, which conceptually would correspond to the following structure:</p>
 <p><img class="img-responsive" src="../images/graph_stage_chain1.png" alt="Graph stage chain"></p>
-<p>In code this is only a few lines, using the <code>via</code> use our custom stages in a stream:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>In code this is only a few lines, using the <code>Via</code> use our custom stages in a stream:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> resultTask = Source.From(<span class="hljs-keyword">new</span> [] {<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>})
+        .Via(<span class="hljs-keyword">new</span> Filter&lt;<span class="hljs-keyword">int</span>&gt;(n =&gt; n%<span class="hljs-number">2</span> ==<span class="hljs-number">0</span>))
+        .Via(<span class="hljs-keyword">new</span> Duplicator&lt;<span class="hljs-keyword">int</span>&gt;())
+        .Via(<span class="hljs-keyword">new</span> Map&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(n=&gt;n/<span class="hljs-number">2</span>))
+        .RunAggregate(<span class="hljs-number">0</span>, (sum, next) =&gt; sum + next, materializer);
 </code></pre>
 <p>If we attempt to draw the sequence of events, it shows that there is one &quot;event token&quot; in circulation in a potential chain of stages, just like our conceptual &quot;railroad tracks&quot; representation predicts.</p>
 <p><img class="img-responsive" src="../images/graph_stage_tracks_11.png" alt="Graph stage tracks"></p>
 <h3 id="completion">Completion</h3>
-<p>Completion handling usually (but not exclusively) comes into the picture when processing stages need to emit a few more elements after their upstream source has been completed. We have seen an example of this in our first <code>Duplicator</code> implementation where the last element needs to be doubled even after the upstream neighbour stage has been completed. This can be done by overriding the <code>onUpstreamFinish</code> method in <code>InHandler</code>.</p>
-<p>Stages by default automatically stop once all of their ports (input and output) have been closed externally or internally. It is possible to opt out from this behavior by invoking <code>setKeepGoing(true)</code> (which is not supported from the stage�s constructor and usually done in <code>preStart</code>). In this case the stage <strong>must</strong> be explicitly closed by calling <code>completeStage()</code> or <code>failStage(exception)</code>. This feature carries the risk of leaking streams and actors, therefore it should be used with care.</p>
+<p>Completion handling usually (but not exclusively) comes into the picture when processing stages need to emit a few more elements after their upstream source has been completed. We have seen an example of this in our first <code>Duplicator</code> implementation where the last element needs to be doubled even after the upstream neighbour stage has been completed. This can be done by overriding the <code>onUpstreamFinish</code> callback in <code>SetHandler(in, action)</code>.</p>
+<p>Stages by default automatically stop once all of their ports (input and output) have been closed externally or internally. It is possible to opt out from this behavior by invoking <code>SetKeepGoing(true)</code> (which is not supported from the stages constructor and usually done in <code>PreStart</code>). In this case the stage <strong>must</strong> be explicitly closed by calling <code>CompleteStage()</code> or <code>FailStage(exception)</code>. This feature carries the risk of leaking streams and actors, therefore it should be used with care.</p>
 <h3 id="using-timers">Using timers</h3>
-<p>It is possible to use timers in <code>GraphStages</code> by using <code>TimerGraphStageLogic</code> as the base class for the returned logic. Timers can be scheduled by calling one of <code>scheduleOnce(key,delay)</code>, <code>schedulePeriodically(key,period)</code> or <code>schedulePeriodicallyWithInitialDelay(key,delay,period)</code> and passing an object as a key for that timer (can be any object, for example a String). The <code>onTimer(key)</code> method needs to be overridden and it will be called once the timer of key fires. It is possible to cancel a timer using <code>cancelTimer(key)</code> and check the status of a timer with <code>isTimerActive(key)</code>. Timers will be automatically cleaned up when the stage completes.</p>
-<p>Timers can not be scheduled from the constructor of the logic, but it is possible to schedule them from the <code>preStart()</code> lifecycle hook.</p>
+<p>It is possible to use timers in <code>GraphStages</code> by using <code>TimerGraphStageLogic</code> as the base class for the returned logic. Timers can be scheduled by calling one of <code>ScheduleOnce(key,delay)</code>, <code>SchedulePeriodically(key,period)</code> or <code>SchedulePeriodicallyWithInitialDelay(key,delay,period)</code> and passing an object as a key for that timer (can be any object, for example a String). The <code>OnTimer(key)</code> method needs to be overridden and it will be called once the timer of key fires. It is possible to cancel a timer using <code>CancelTimer(key)</code> and check the status of a timer with <code>IsTimerActive(key)</code>. Timers will be automatically cleaned up when the stage completes.</p>
+<p>Timers can not be scheduled from the constructor of the logic, but it is possible to schedule them from the <code>PreStart()</code> lifecycle hook.</p>
 <p>In this sample the stage toggles between open and closed, where open means no elements are passed through. The stage starts out as closed but as soon as an element is pushed downstream the gate becomes open for a duration of time during which it will consume and drop upstream messages:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">TimedGate</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> TimeSpan _silencePeriod;
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">TimerGraphStageLogic</span>
+    {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> _open;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">TimedGate&lt;T&gt; gate</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">gate.Shape</span>)
+        </span>{
+            SetHandler(gate.In, onPush: () =&gt;
+            {
+                <span class="hljs-keyword">var</span> element = Grab(gate.In);
+                <span class="hljs-keyword">if</span> (_open)
+                    Pull(gate.In);
+                <span class="hljs-keyword">else</span>
+                {
+                    Push(gate.Out, element);
+                    _open = <span class="hljs-keyword">true</span>;
+                    ScheduleOnce(<span class="hljs-string">"Close"</span>, gate._silencePeriod);
+                }
+            });
+
+            SetHandler(gate.Out, onPull: () =&gt; Pull(gate.In));
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">internal</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnTimer</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> timerKey</span>) </span>=&gt; _open = <span class="hljs-keyword">false</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TimedGate</span>(<span class="hljs-params">TimeSpan silencePeriod</span>)
+    </span>{
+        _silencePeriod = silencePeriod;
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"TimedGate.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"TimedGate.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <h3 id="using-asynchronous-side-channels">Using asynchronous side-channels</h3>
-<p>In order to receive asynchronous events that are not arriving as stream elements (for example a completion of a future or a callback from a 3rd party API) one must acquire a <code>AsyncCallback</code> by calling <code>getAsyncCallback()</code> from the stage logic. The method <code>getAsyncCallback</code> takes as a parameter a callback that will be called once the asynchronous event fires. It is important to <strong>not call the callback directly</strong>, instead, the external API must call the <code>invoke(event)</code> method on the returned <code>AsyncCallback</code>. The execution engine will take care of calling the provided callback in a thread-safe way. The callback can safely access the state of the <code>GraphStageLogic</code> implementation.</p>
-<p>Sharing the <code>AsyncCallback</code> from the constructor risks race conditions, therefore it is recommended to use the <code>preStart()</code> lifecycle hook instead.</p>
+<p>In order to receive asynchronous events that are not arriving as stream elements (for example a completion of a task or a callback from a 3rd party API) one must acquire a <code>AsyncCallback</code> by calling <code>GetAsyncCallback()</code> from the stage logic. The method <code>GetAsyncCallback</code> takes as a parameter a callback that will be called once the asynchronous event fires. It is important to <strong>not call the callback directly</strong>, instead, the external API must <code>invoke</code> the returned <code>Action</code>. The execution engine will take care of calling the provided callback in a thread-safe way. The callback can safely access the state of the <code>GraphStageLogic</code> implementation.</p>
+<p>Sharing the <code>AsyncCallback</code> from the constructor risks race conditions, therefore it is recommended to use the <code>PreStart()</code> lifecycle hook instead.</p>
 <p>This example shows an asynchronous side channel graph stage that starts dropping elements when a future completes:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">KillSwitch</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> KillSwitch&lt;T&gt; _killSwitch;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">KillSwitch&lt;T&gt; killSwitch</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">killSwitch.Shape</span>)
+        </span>{
+            _killSwitch = killSwitch;
+
+            SetHandler(killSwitch.In, onPush: () =&gt; Push(killSwitch.Out, Grab(killSwitch.In)));
+            SetHandler(killSwitch.Out, onPull: () =&gt; Pull(killSwitch.In));
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
+        </span>{
+            <span class="hljs-keyword">var</span> callback = GetAsyncCallback(CompleteStage);
+            _killSwitch._killSwitch.ContinueWith(_ =&gt; callback());
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Task _killSwitch;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">KillSwitch</span>(<span class="hljs-params">Task killSwitch</span>)
+    </span>{
+        _killSwitch = killSwitch;
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"KillSwitch.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"KillSwitch.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <h3 id="integration-with-actors">Integration with actors</h3>
 <p><strong>This section is a stub and will be extended in the next release This is an experimental feature*</strong></p>
-<p>It is possible to acquire an ActorRef that can be addressed from the outside of the stage, similarly how <code>AsyncCallback</code> allows injecting asynchronous events into a stage logic. This reference can be obtained by calling <code>getStageActorRef(receive)</code> passing in a function that takes a <code>Pair</code> of the sender <code>ActorRef</code> and the received message. This reference can be used to watch other actors by calling its <code>watch(ref)</code> or <code>unwatch(ref)</code> methods. The reference can be also watched by external actors. The current limitations of this <code>ActorRef</code> are:</p>
+<p>It is possible to acquire an ActorRef that can be addressed from the outside of the stage, similarly how <code>AsyncCallback</code> allows injecting asynchronous events into a stage logic. This reference can be obtained by calling <code>GetStageActorRef(receive)</code> passing in a function that takes a <code>Tuple</code> of the sender <code>IActorRef</code> and the received message. This reference can be used to watch other actors by calling its <code>Watch(ref)</code> or <code>Unwatch(ref)</code> methods. The reference can be also watched by external actors. The current limitations of this <code>IActorRef</code> are:</p>
 <ul>
 <li>they are not location transparent, they cannot be accessed via remoting.</li>
 <li>they cannot be returned as materialized values.</li>
-<li>they cannot be accessed from the constructor of the <code>GraphStageLogic</code>, but they can be accessed from the <code>preStart()</code> method.</li>
+<li>they cannot be accessed from the constructor of the <code>GraphStageLogic</code>, but they can be accessed from the <code>PreStart()</code> method.</li>
 </ul>
 <h3 id="custom-materialized-values">Custom materialized values</h3>
-<p>Custom stages can return materialized values instead of <code>Unit</code> by inheriting from <code>GraphStageWithMaterializedValue</code> instead of the simpler <code>GraphStage</code>. The difference is that in this case the method <code>createLogicAndMaterializedValue(inheritedAttributes)</code> needs to be overridden, and in addition to the stage logic the materialized value must be provided</p>
+<p>Custom stages can return materialized values instead of <code>NotUsed</code> by inheriting from <code>GraphStageWithMaterializedValue</code> instead of the simpler <code>GraphStage</code>. The difference is that in this case the method <code>CreateLogicAndMaterializedValue(inheritedAttributes)</code> needs to be overridden, and in addition to the stage logic the materialized value must be provided</p>
 <div class="alert alert-warning">
 <p><strong>Warning</strong> <br>There is no built-in synchronization of accessing this value from both of the thread where the logic runs and the thread that got hold of the materialized value. It is the responsibility of the programmer to add the necessary (non-blocking) synchronization and visibility guarantees to this shared object.</p>
 </div>
-<p>In this sample the materialized value is a future containing the first element to go through the stream:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>In this sample the materialized value is a task containing the first element to go through the stream:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">FirstValue</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStageWithMaterializedValue</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;, <span class="hljs-title">Task</span>&lt;<span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">FirstValue&lt;T&gt; first, TaskCompletionSource&lt;T&gt; completion</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">first.Shape</span>)
+        </span>{
+            SetHandler(first.In, onPush: () =&gt;
+            {
+                <span class="hljs-keyword">var</span> element = Grab(first.In);
+                completion.SetResult(element);
+                Push(first.Out, element);
+
+                <span class="hljs-comment">// replace handler with one just forwarding</span>
+                SetHandler(first.In, onPush: () =&gt; Push(first.Out, Grab(first.In)));
+            });
+
+            SetHandler(first.Out, onPull: () =&gt; Pull(first.In));
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">FirstValue</span>(<span class="hljs-params"> </span>)
+    </span>{
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"FirstValue.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"FirstValue.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> ILogicAndMaterializedValue&lt;Task&lt;T&gt;&gt; CreateLogicAndMaterializedValue(Attributes inheritedAttributes)
+    {
+        <span class="hljs-keyword">var</span> completion = <span class="hljs-keyword">new</span> TaskCompletionSource&lt;T&gt;();
+        <span class="hljs-keyword">var</span> logic = <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>, completion);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> LogicAndMaterializedValue&lt;Task&lt;T&gt;&gt;(logic, completion.Task);
+    }
+}
 </code></pre>
 <h2 id="using-attributes-to-affect-the-behavior-of-a-stage">Using attributes to affect the behavior of a stage</h2>
 <p><strong>This section is a stub and will be extended in the next release</strong></p>
@@ -325,7 +629,7 @@
 <p>See <a href="modularitycomposition">Modularity, Composition and Hierarchy</a> for an explanation on how attributes work.</p>
 <h3 id="rate-decoupled-graph-stages">Rate decoupled graph stages</h3>
 <p>Sometimes it is desirable to decouple the rate of the upstream and downstream of a stage, synchronizing only when needed.</p>
-<p>This is achieved in the model by representing a <code>GraphStage</code> as a <em>boundary</em> between two regions where the demand sent upstream is decoupled from the demand that arrives from downstream. One immediate consequence of this difference is that an <code>onPush</code> call does not always lead to calling <code>push</code> and an <code>onPull</code> call does not always lead to calling <code>pull</code>.</p>
+<p>This is achieved in the model by representing a <code>GraphStage</code> as a <em>boundary</em> between two regions where the demand sent upstream is decoupled from the demand that arrives from downstream. One immediate consequence of this difference is that an <code>onPush</code> call does not always lead to calling <code>Push</code> and an <code>onPull</code> call does not always lead to calling <code>Pull</code>.</p>
 <p>One of the important use-case for this is to build buffer-like entities, that allow independent progress of upstream and downstream stages when the buffer is not full or empty, and slowing down the appropriate side if the buffer becomes empty or full.</p>
 <p>The next diagram illustrates the event sequence for a buffer with capacity of two elements in a setting where the downstream demand is slow to start and the buffer will fill up with upstream elements before any demand is seen from downstream.</p>
 <p><img class="img-responsive" src="../images/graph_stage_detached_tracks_11.png" alt="Graph stage detached"></p>
@@ -333,7 +637,78 @@
 <p><img class="img-responsive" src="../images/graph_stage_detached_tracks_21.png" alt="graph stage detached"></p>
 <p>The first difference we can notice is that our <code>Buffer</code> stage is automatically pulling its upstream on initialization. The buffer has demand for up to two elements without any downstream demand.</p>
 <p>The following code example demonstrates a buffer class corresponding to the message sequence chart above.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">TwoBuffer</span>&lt;<span class="hljs-title">T</span>&gt; : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">FlowShape</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">T</span>&gt;&gt;
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> TwoBuffer&lt;T&gt; _buffer;
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> Queue&lt;T&gt; _queue;
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> _downstreamWaiting = <span class="hljs-keyword">false</span>;
+
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">TwoBuffer&lt;T&gt; buffer</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">buffer.Shape</span>)
+        </span>{
+            _buffer = buffer;
+            _queue = <span class="hljs-keyword">new</span> Queue&lt;T&gt;();
+
+            SetHandler(buffer.In, OnPush, OnUpstreamFinish);
+            SetHandler(buffer.Out, OnPull);
+        }
+
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">bool</span> BufferFull =&gt; _queue.Count == <span class="hljs-number">2</span>;
+
+        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnPush</span>(<span class="hljs-params"></span>)
+        </span>{
+            <span class="hljs-keyword">var</span> element = Grab(_buffer.In);
+            _queue.Enqueue(element);
+            <span class="hljs-keyword">if</span> (_downstreamWaiting)
+            {
+                _downstreamWaiting = <span class="hljs-keyword">false</span>;
+                <span class="hljs-keyword">var</span> bufferedElement = _queue.Dequeue();
+                Push(_buffer.Out, bufferedElement);
+            }
+            <span class="hljs-keyword">if</span>(!BufferFull)
+                Pull(_buffer.In);
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnUpstreamFinish</span>(<span class="hljs-params"></span>)
+        </span>{
+            <span class="hljs-keyword">if</span> (_queue.Count != <span class="hljs-number">0</span>)
+            {
+                <span class="hljs-comment">// emit the rest if possible</span>
+                EmitMultiple(_buffer.Out, _queue);
+            }
+
+            CompleteStage();
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnPull</span>(<span class="hljs-params"></span>)
+        </span>{
+            <span class="hljs-keyword">if</span> (_queue.Count == <span class="hljs-number">0</span>)
+                _downstreamWaiting = <span class="hljs-keyword">true</span>;
+            <span class="hljs-keyword">else</span>
+            {
+                <span class="hljs-keyword">var</span> element = _queue.Dequeue();
+                Push(_buffer.Out, element);
+            }
+
+            <span class="hljs-keyword">if</span>(!BufferFull &amp;&amp; !HasBeenPulled(_buffer.In))
+                Pull(_buffer.In);
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TwoBuffer</span>(<span class="hljs-params"></span>)
+    </span>{
+        Shape = <span class="hljs-keyword">new</span> FlowShape&lt;T, T&gt;(In, Out);
+    }
+
+    <span class="hljs-keyword">public</span> Inlet&lt;T&gt; In { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Inlet&lt;T&gt;(<span class="hljs-string">"TwoBuffer.in"</span>);
+
+    <span class="hljs-keyword">public</span> Outlet&lt;T&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;T&gt;(<span class="hljs-string">"TwoBuffer.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> FlowShape&lt;T, T&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
 </code></pre>
 <h2 id="thread-safety-of-custom-processing-stages">Thread safety of custom processing stages</h2>
 <p><strong>All of the above custom stages (linear or graph) provide a few simple guarantees that implementors can rely on.</strong></p>
@@ -341,21 +716,31 @@
 <li>The callbacks exposed by all of these classes are never called concurrently.</li>
 <li>The state encapsulated by these classes can be safely modified from the provided callbacks, without any further synchronization.</li>
 </ul>
-<p>In essence, the above guarantees are similar to what <code>Actor</code> s provide, if one thinks of the state of a custom stage as state of an actor, and the callbacks as the <code>receive</code> block of the actor.</p>
+<p>In essence, the above guarantees are similar to what <code>Actor</code>&#39;s provide, if one thinks of the state of a custom stage as state of an actor, and the callbacks as the <code>receive</code> block of the actor.</p>
 <div class="alert alert-warning">
 <p><strong>Warning</strong> <br>It is <strong>not</strong> safe to access the state of any custom stage outside of the callbacks that it provides, just like it is unsafe to access the state of an actor from the outside. This means that Future callbacks should not close over internal state of custom stages because such access can be concurrent with the provided callbacks, leading to undefined behavior.</p>
 </div>
 <h2 id="extending-flow-combinators-with-custom-operators">Extending Flow Combinators with Custom Operators</h2>
-<p>The most general way of extending any <code>Source</code>, <code>Flow</code> or <code>SubFlow</code> (e.g. from <code>groupBy</code>) is demonstrated above: create a graph of flow-shape like the <code>Duplicator</code> example given above and use the <code>.via(...)</code> combinator to integrate it into your stream topology. This works with all <code>FlowOps</code> sub-types, including the ports that you connect with the graph DSL.</p>
-<p>Advanced Scala users may wonder whether it is possible to write extension methods that enrich FlowOps to allow nicer syntax. The short answer is that Scala 2 does not support this in a fully generic fashion, the problem is that it is impossible to abstract over the kind of stream that is being extended because Source, Flow and SubFlow differ in the number and kind of their type parameters. While it would be possible to write an implicit class that enriches them generically, this class would require explicit instantiation with all type parameters due to SI-2712. For a partial workaround that unifies extensions to Source and Flow see this sketch by R. Kuhn.</p>
-<p>A lot simpler is the task of just adding an extension method to Source as shown below:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>The most general way of extending any <code>Source</code>, <code>Flow</code> or <code>SubFlow</code> (e.g. from <code>GroupBy</code>) is demonstrated above: create a graph of flow-shape like the <code>Filter</code> example given above and use the <code>.Via(...)</code> combinator to integrate it into your stream topology. This works with all <code>IFlow</code> sub-types, including the ports that you connect with the graph DSL.</p>
+<p>Advanced .Net users may wonder whether it is possible to write extension methods that enrich <code>IFlow</code> to allow nicer syntax. The short answer is that .Net does not support this in a fully generic fashion, the problem is that it is impossible to abstract over the kind of stream that is being extended because Source, Flow and SubFlow differ in the number and kind of their type parameters.</p>
+<p>A lot simpler is the task of just adding an extension method to <code>Source</code> and <code>Flow</code> as shown below:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Extensions</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Flow&lt;TIn, TOut, TMat&gt; Filter&lt;TIn, TOut, TMat&gt;(<span class="hljs-keyword">this</span> Flow&lt;TIn, TOut, TMat&gt; flow,
+        Predicate&lt;TOut&gt; predicate) =&gt; flow.Via(<span class="hljs-keyword">new</span> Filter&lt;TOut&gt;(predicate));
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Source&lt;TOut, TMat&gt; Filter&lt;TOut, TMat&gt;(<span class="hljs-keyword">this</span> Source&lt;TOut, TMat&gt; source,
+        Predicate&lt;TOut&gt; predicate) =&gt; source.Via(<span class="hljs-keyword">new</span> Filter&lt;TOut&gt;(predicate));
+}
 </code></pre>
-<p>The analog works for <code>Flow</code> as well:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">//todo</span>
+<p>you can then replace the <code>.Via</code> call from above with the extension method:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> resultTask = Source.From(<span class="hljs-keyword">new</span> [] {<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>})
+    .Filter(n =&gt; n % <span class="hljs-number">2</span> == <span class="hljs-number">0</span>)
+    .Via(<span class="hljs-keyword">new</span> Duplicator&lt;<span class="hljs-keyword">int</span>&gt;())
+    .Via(<span class="hljs-keyword">new</span> Map&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(n=&gt;n/<span class="hljs-number">2</span>))
+    .RunAggregate(<span class="hljs-number">0</span>, (sum, next) =&gt; sum + next, materializer);
 </code></pre>
-<p>If you try to write this for <code>SubFlow</code>, though, you will run into the same issue as when trying to unify the two solutions above, only on a higher level (the type constructors needed for that unification would have rank two, meaning that some of their type arguments are type constructors themselves�when trying to extend the solution shown in the linked sketch the author encountered such a density of compiler StackOverflowErrors and IDE failures that he gave up).</p>
-<p>It is interesting to note that a simplified form of this problem has found its way into the dotty test suite. Dotty is the development version of Scala on its way to Scala 3.</p>
+<p>If you try to write this for <code>SubFlow</code>, though, you will run into the same issue as when trying to unify the two solutions above, only on a higher level (the type constructors needed for that unification would have rank two, meaning that some of their type arguments are type constructors themselves when trying to extend the solution shown in the linked sketch the author encountered such a density of compiler StackOverflowErrors and IDE failures that he gave up).</p>
 </div>
 
 								
