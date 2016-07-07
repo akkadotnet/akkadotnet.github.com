@@ -921,12 +921,16 @@ realize that:</p>
 <p>These two conditions are a typical &quot;chicken-and-egg&quot; problem. The solution is to inject an initial
 element into the cycle that is independent from <code>source</code>. We do this by using a <code>Concat</code> junction on the backwards
 arc that injects a single element using <code>Source.Single</code>.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong><br/>
+This approach isn&#39;t working in the current beta, the graph is still not printing any elements.</p>
+</div>
 <pre><code class="hljs lang-csharp">RunnableGraph.FromGraph(GraphDsl.Create(b =&gt;
 {
     <span class="hljs-keyword">var</span> zip = b.Add(ZipWith.Apply&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;(Keep.Right));
     <span class="hljs-keyword">var</span> broadcast = b.Add(<span class="hljs-keyword">new</span> Broadcast&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">2</span>));
     <span class="hljs-keyword">var</span> concat = b.Add(<span class="hljs-keyword">new</span> Concat&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>&gt;());
-    <span class="hljs-keyword">var</span> start = Source.Single(<span class="hljs-number">0</span>);;
+    <span class="hljs-keyword">var</span> start = Source.Single(<span class="hljs-number">0</span>);
     <span class="hljs-keyword">var</span> print = Flow.Create&lt;<span class="hljs-keyword">int</span>&gt;().Select(s =&gt;
     {
         Console.WriteLine(s);
