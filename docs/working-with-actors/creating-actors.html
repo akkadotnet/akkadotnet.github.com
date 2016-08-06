@@ -172,21 +172,17 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h1 id="creating-your-first-actor">Creating your first Actor</h1>
+								<div><h1 id="creating-actors">Creating Actors</h1>
 <div class="alert alert-default">
-<p><strong>Note</strong><br/>
+<p><strong>Note</strong><br>
 Since Akka.NET enforces parental supervision every actor is supervised and (potentially) the supervisor of its children, it is advisable that you familiarize yourself with <a href="Actor Systems">Actor Systems</a> and <a href="Supervision">Supervision and Monitoring</a> and it may also help to read <a href="Addressing">Actor References, Paths and Addresses</a>.</p>
 </div>
 <h2 id="defining-an-actor-class">Defining an Actor class</h2>
 <p>Actors in C# are implemented by extending the <code>ReceiveActor</code> class and configuring what messages to receive using the <code>Receive&lt;TMessage&gt;</code> method.</p>
 <p>Here is an example:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka;
-<span class="hljs-keyword">using</span> Akka.Actor;
-<span class="hljs-keyword">using</span> Akka.Event;
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span>: <span class="hljs-title">ReceiveActor</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyActor</span>: <span class="hljs-title">ReceiveActor</span>
 {
-  LoggingAdapter log = Logging.GetLogger(Context);
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> ILoggingAdapter log = Context.GetLogger();
 
   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyActor</span>(<span class="hljs-params"></span>)
   </span>{
@@ -194,12 +190,81 @@ Since Akka.NET enforces parental supervision every actor is supervised and (pote
       log.Info(<span class="hljs-string">"Received String message: {0}"</span>, message);
       Sender.Tell(message);
     });
-    Receive&lt;SomeMessage(message =&gt; {...});
+    Receive&lt;SomeMessage&gt;(message =&gt; {...});
   }
 }
 </code></pre>
+<h2 id="props">Props</h2>
+<p><code>Props</code> is a configuration class to specify options for the creation of actors, think of it as an immutable and thus freely shareable recipe for creating an actor including associated deployment information (e.g. which dispatcher to use, see more below). Here are some examples of how to create a <code>Props</code> instance</p>
+<pre><code class="hljs lang-csharp">Props props1 = Props.Create(<span class="hljs-keyword">typeof</span>(MyActor));
+Props props2 = Props.Create(() =&gt; <span class="hljs-keyword">new</span> MyActor(..), <span class="hljs-string">"..."</span>);
+Props props3 = Props.Create&lt;MyActor&gt;();
+</code></pre>
+<p>The second variant shows how to pass constructor arguments to the <code>Actor</code> being created, but it should only be used outside of actors as explained below.</p>
+<h3 id="recommended-practices">Recommended Practices</h3>
+<p>It is a good idea to provide static factory methods on the <code>ReceiveActor</code> which help keeping the creation of suitable <code>Props</code> as close to the actor definition as possible.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DemoActor</span> : <span class="hljs-title">ReceiveActor</span>
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">readonly</span> <span class="hljs-keyword">int</span> _magicNumber;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DemoActor</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> magicNumber</span>)
+    </span>{
+        _magicNumber = magicNumber;
+        Receive&lt;<span class="hljs-keyword">int</span>&gt;(x =&gt;
+        {
+            Sender.Tell(x + _magicNumber);
+        });
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Props <span class="hljs-title">Props</span>(<span class="hljs-params"><span class="hljs-keyword">int</span> magicNumber</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> Akka.Actor.Props.Create(() =&gt; <span class="hljs-keyword">new</span> DemoActor(magicNumber));
+    }
+}
+
+system.ActorOf(DemoActor.Props(<span class="hljs-number">42</span>), <span class="hljs-string">"demo"</span>);
+</code></pre>
+<p>Another good practice is to declare what messages an <code>Actor</code> can receive in the companion object of the <code>Actor</code>, which makes easier to know what it can receive:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DemoMessagesActor</span> : <span class="hljs-title">ReceiveActor</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Greeting</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Greeting</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> <span class="hljs-keyword">from</span></span>)
+        </span>{
+            Greeter = <span class="hljs-keyword">from</span>;
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> Greeter { <span class="hljs-keyword">get</span>; }
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DemoMessagesActor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Receive&lt;Greeting&gt;(greeting =&gt;
+        {
+            Sender.Tell(<span class="hljs-string">"Hello "</span> + greeting.Greeter, Self);
+        });
+    }
+}
+</code></pre>
+<h2 id="creating-actors-with-props">Creating Actors with Props</h2>
+<p>Actors are created by passing a <code>Props</code> instance into the <code>ActorOf</code> factory method which is available on <code>ActorSystem</code> and <code>ActorContext</code>.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// ActorSystem is a heavy object: create only one per application</span>
+ActorSystem system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+IActorRef myActor = system.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myactor"</span>);
+</code></pre>
+<p>Using the <code>ActorSystem</code> will create top-level actors, supervised by the actor system’s provided guardian actor, while using an actor’s context will create a child actor.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">FirstActor</span> : <span class="hljs-title">ReceiveActor</span>
+{
+    IActorRef child = Context.ActorOf(Props.Create(<span class="hljs-keyword">typeof</span>(MyActor)), <span class="hljs-string">"myChild"</span>);
+    <span class="hljs-comment">// plus some behavior ...</span>
+}
+</code></pre>
+<p>It is recommended to create a hierarchy of children, grand-children and so on such that it fits the logical failure-handling structure of the application, see <a href="ActorSystem">Actor Systems</a>.</p>
+<p>The call to <code>ActorOf</code> returns an instance of <code>IActorRef</code>. This is a handle to the actor instance and the only way to interact with it. The <code>IActorRef</code> is immutable and has a one to one relationship with the <code>Actor</code> it represents. The <code>IActorRef</code> is also serializable and network-aware. This means that you can serialize it, send it over the wire and use it on a remote host and it will still be representing the same <code>Actor</code> on the original node, across the network.</p>
+<p>The name parameter is optional, but you should preferably name your actors, since that is used in log messages and for identifying actors. The name must not be empty or start with &quot;$&quot;, but it may contain URL encoded characters (eg. <code>%20</code> for a blank space). If the given name is already in use by another child to the same parent an <code>InvalidActorNameException</code> is thrown.</p>
+<p>Actors are automatically started asynchronously when created.</p>
 <h2 id="the-inbox">The Inbox</h2>
-<p>When writing code outside of actors which shall communicate with actors, the ask pattern can be a solution (see below), but there are two things it cannot do: receiving multiple replies (e.g. by subscribing an <code>ActorRef</code> to a notification service) and watching other actors’ lifecycle. For these purposes there is the Inbox class:</p>
+<p>When writing code outside of actors which shall communicate with actors, the ask pattern can be a solution (see below), but there are two things it cannot do: receiving multiple replies (e.g. by subscribing an <code>IActorRef</code> to a notification service) and watching other actors’ lifecycle. For these purposes there is the <code>Inbox</code> class:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> target = system.ActorOf(Props.Empty);
 <span class="hljs-keyword">var</span> inbox = Inbox.Create(system);
 
@@ -214,7 +279,7 @@ inbox.Send(target, <span class="hljs-string">"hello"</span>);
     <span class="hljs-comment">// timeout</span>
 }
 </code></pre>
-<p>The send method wraps a normal tell and supplies the internal actor’s reference as the sender. This allows the reply to be received on the last line. Watching an actor is quite simple as well:</p>
+<p>The send method wraps a normal <code>Tell</code> and supplies the internal actor’s reference as the sender. This allows the reply to be received on the last line. Watching an actor is quite simple as well</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System.Diagnostics;
 ...
 <span class="hljs-keyword">var</span> inbox = Inbox.Create(system);
@@ -230,8 +295,6 @@ target.Tell(PoisonPill.Instance, ActorRefs.NoSender);
     <span class="hljs-comment">// timeout</span>
 }
 </code></pre>
-<h2 id="f">F</h2>
-<p>TODO</p>
 </div>
 
 								

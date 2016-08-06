@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Persistence Query | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" ">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Persistence Query<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/persistence-query.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="persistence-query">Persistence Query</h1>
+<p>Akka persistence query complements Persistence by providing a universal asynchronous stream based query interface that various journal plugins can implement in order to expose their query capabilities.</p>
+<p>The most typical use case of persistence query is implementing the so-called query side (also known as &quot;read side&quot;) in the popular CQRS architecture pattern - in which the writing side of the application (e.g. implemented using akka persistence) is completely separated from the &quot;query side&quot;. Akka Persistence Query itself is not directly the query side of an application, however it can help to migrate data from the write side to the query side database. In very simple scenarios Persistence Query may be powerful enough to fulfill the query needs of your app, however we highly recommend (in the spirit of CQRS) of splitting up the write/read sides into separate datastores as the need arises.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong> <br>
+This module is marked as “experimental” as of its introduction in Akka.Net 1.1.0. We will continue to improve this API based on our users’ feedback, which implies that while we try to keep incompatible changes to a minimum the binary compatibility guarantee for maintenance releases does not apply to the contents of the Akka.Persistence.Query package.</p>
+</div>
+<h2 id="design-overview">Design overview</h2>
+<p>Akka Persistence Query is purposely designed to be a very loosely specified API. This is in order to keep the provided APIs general enough for each journal implementation to be able to expose its best features, e.g. a SQL journal can use complex SQL queries or if a journal is able to subscribe to a live event stream this should also be possible to expose the same API - a typed stream of events.</p>
+<p>Each read journal must explicitly document which types of queries it supports. Refer to your journal&#39;s plugins documentation for details on which queries and semantics it supports.</p>
+<p>While Akka Persistence Query does not provide actual implementations of ReadJournals, it defines a number of pre-defined query types for the most common query scenarios, that most journals are likely to implement (however they are not required to).</p>
+<h2 id="read-journals">Read Journals</h2>
+<p>In order to issue queries one has to first obtain an instance of a ReadJournal. Read journals are implemented as Community plugins, each targeting a specific datastore (for example Cassandra or ADO.NET databases). For example, given a library that provides a akka.persistence.query.my-read-journal obtaining the related journal is as simple as:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> actorSystem = ActorSystem.Create(<span class="hljs-string">"query"</span>);
+
+<span class="hljs-comment">// obtain read journal by plugin id</span>
+<span class="hljs-keyword">var</span> readJournal = PersistenceQuery.Get(actorSystem)
+    .ReadJournalFor&lt;SqlReadJournal&gt;(<span class="hljs-string">"akka.persistence.query.my-read-journal"</span>);
+
+<span class="hljs-comment">// issue query to journal</span>
+Source&lt;EventEnvelope, NotUsed&gt; source = readJournal
+    .EventsByPersistenceId(<span class="hljs-string">"user-1337"</span>, <span class="hljs-number">0</span>, <span class="hljs-keyword">long</span>.MaxValue);
+
+<span class="hljs-comment">// materialize stream, consuming events</span>
+<span class="hljs-keyword">var</span> mat = ActorMaterializer.Create(actorSystem);
+source.RunForeach(envelope =&gt;
+{
+    Console.WriteLine($<span class="hljs-string">"event {envelope}"</span>);
+}, mat);
+</code></pre>
+<p>Journal implementers are encouraged to put this identifier in a variable known to the user, such that one can access it via <code>ReadJournalFor&lt;SqlReadJournal&gt;(SqlReadJournal.Identifier)</code>, however this is not enforced.</p>
+<p>Read journal implementations are available as Community plugins.</p>
+<h3 id="predefined-queries">Predefined queries</h3>
+<p>Akka persistence query comes with a number of query interfaces built in and suggests Journal implementors to implement them according to the semantics described below. It is important to notice that while these query types are very common a journal is not required to implement all of them - for example because in a given journal such query would be significantly inefficient.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong><br>
+Refer to the documentation of the ReadJournal plugin you are using for a specific list of supported query types. For example, Journal plugins should document their stream completion strategies.</p>
+</div>
+<p>The predefined queries are:</p>
+<p><strong>AllPersistenceIdsQuery and CurrentPersistenceIdsQuery</strong></p>
+<p><code>AllPersistenceIds</code> is used for retrieving all persistenceIds of all persistent actors.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> queries = PersistenceQuery.Get(actorSystem)
+    .ReadJournalFor&lt;SqlReadJournal&gt;(<span class="hljs-string">"akka.persistence.query.my-read-journal"</span>);
+
+<span class="hljs-keyword">var</span> mat = ActorMaterializer.Create(actorSystem);
+Source&lt;<span class="hljs-keyword">string</span>, NotUsed&gt; src = queries.AllPersistenceIds();
+</code></pre>
+<p>The returned event stream is unordered and you can expect different order for multiple executions of the query.</p>
+<p>The stream is not completed when it reaches the end of the currently used <code>PersistenceIds</code>, but it continues to push new <code>PersistenceIds</code> when new persistent actors are created. Corresponding query that is completed when it reaches the end of the currently used <code>PersistenceIds</code> is provided by <code>CurrentPersistenceIds</code>.</p>
+<p>The write journal is notifying the query side as soon as new <code>PersistenceIds</code> are created and there is no periodic polling or batching involved in this query.</p>
+<p>The stream is completed with failure if there is a failure in executing the query in the backend journal.</p>
+<p><strong>EventsByPersistenceIdQuery and CurrentEventsByPersistenceIdQuery</strong></p>
+<p><code>EventsByPersistenceId</code> is used for retrieving events for a specific <code>PersistentActor</code> identified by <code>PersistenceId</code>.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> queries = PersistenceQuery.Get(actorSystem)
+    .ReadJournalFor&lt;SqlReadJournal&gt;(<span class="hljs-string">"akka.persistence.query.my-read-journal"</span>);
+
+<span class="hljs-keyword">var</span> mat = ActorMaterializer.Create(actorSystem);
+<span class="hljs-keyword">var</span> src = queries.EventsByPersistenceId(<span class="hljs-string">"some-persistence-id"</span>, <span class="hljs-number">0</span>L, <span class="hljs-keyword">long</span>.MaxValue);
+Source&lt;<span class="hljs-keyword">object</span>, NotUsed&gt; events = src.Select(c =&gt; c.Event);
+</code></pre>
+<p>You can retrieve a subset of all events by specifying <code>FromSequenceNr</code> and <code>ToSequenceNr</code> or use <code>0L</code> and <code>long.MaxValue</code> respectively to retrieve all events. Note that the corresponding sequence number of each event is provided in the <code>EventEnvelope</code>, which makes it possible to resume the stream at a later point from a given sequence number.</p>
+<p>The returned event stream is ordered by sequence number, i.e. the same order as the <code>PersistentActor</code> persisted the events. The same prefix of stream elements (in same order) are returned for multiple executions of the query, except for when events have been deleted.</p>
+<p>The stream is not completed when it reaches the end of the currently stored events, but it continues to push new events when new events are persisted. Corresponding query that is completed when it reaches the end of the currently stored events is provided by <code>CurrentEventsByPersistenceId</code>.</p>
+<p>The write journal is notifying the query side as soon as events are persisted, but for efficiency reasons the query side retrieves the events in batches that sometimes can be delayed up to the configured <code>refresh-interval</code> or given <code>RefreshInterval</code> hint.</p>
+<p>The stream is completed with failure if there is a failure in executing the query in the backend journal.</p>
+<p><strong>EventsByTag and CurrentEventsByTag</strong></p>
+<p><code>EventsByTag</code> allows querying events regardless of which <code>PersistenceId</code> they are associated with. This query is hard to implement in some journals or may need some additional preparation of the used data store to be executed efficiently. The goal of this query is to allow querying for all events which are &quot;tagged&quot; with a specific tag. That includes the use case to query all domain events of an Aggregate Root type. Please refer to your read journal plugin&#39;s documentation to find out if and how it is supported.</p>
+<p>Some journals may support tagging of events via an Event Adapters that wraps the events in a <code>Akka.Persistence.Journal.Tagged</code> with the given tags. The journal may support other ways of doing tagging - again, how exactly this is implemented depends on the used journal. Here is an example of such a tagging event adapter:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyTaggingEventAdapter</span> : <span class="hljs-title">IWriteEventAdapter</span>
+{
+    <span class="hljs-keyword">private</span> ImmutableHashSet&lt;<span class="hljs-keyword">string</span>&gt; colors = ImmutableHashSet.Create(<span class="hljs-string">"green"</span>, <span class="hljs-string">"black"</span>, <span class="hljs-string">"blue"</span>);
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">string</span> <span class="hljs-title">Manifest</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> evt</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">string</span>.Empty;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">object</span> <span class="hljs-title">ToJournal</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> evt</span>)
+    </span>{
+        <span class="hljs-keyword">var</span> str = evt <span class="hljs-keyword">as</span> <span class="hljs-keyword">string</span>;
+        <span class="hljs-keyword">if</span> (str != <span class="hljs-keyword">null</span>)
+        {
+            <span class="hljs-keyword">var</span> tags = colors.Aggregate(
+                ImmutableHashSet&lt;<span class="hljs-keyword">string</span>&gt;.Empty,
+                (acc, c) =&gt; str.Equals(c) ? acc.Add(c): acc);
+            <span class="hljs-keyword">if</span> (tags.IsEmpty)
+                <span class="hljs-keyword">return</span> evt;
+            <span class="hljs-function"><span class="hljs-keyword">else</span>
+                return new <span class="hljs-title">Tagged</span>(<span class="hljs-params">evt, tags</span>)</span>;
+        }
+        <span class="hljs-keyword">else</span>
+        {
+            <span class="hljs-keyword">return</span> evt;
+        }
+    }
+}
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Note</strong><br>
+A very important thing to keep in mind when using queries spanning multiple <code>PersistenceIds</code>, such as <code>EventsByTag</code> is that the order of events at which the events appear in the stream rarely is guaranteed (or stable between materializations).</p>
+</div>
+<p>Journals may choose to opt for strict ordering of the events, and should then document explicitly what kind of ordering guarantee they provide - for example &quot;ordered by timestamp ascending, independently of <code>PersistenceId</code>&quot; is easy to achieve on relational databases, yet may be hard to implement efficiently on plain key-value datastores.</p>
+<p>In the example below we query all events which have been tagged (we assume this was performed by the write-side using an EventAdapter, or that the journal is smart enough that it can figure out what we mean by this tag - for example if the journal stored the events as json it may try to find those with the field tag set to this value etc.).</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// assuming journal is able to work with numeric offsets we can:</span>
+Source&lt;EventEnvelope, NotUsed&gt; blueThings = readJournal.EventsByTag(<span class="hljs-string">"blue"</span>, <span class="hljs-number">0</span>L);
+
+<span class="hljs-comment">// find top 10 blue things:</span>
+Task&lt;ImmutableHashSet&lt;<span class="hljs-keyword">object</span>&gt;&gt; top10BlueThings = blueThings
+    .Select(c =&gt; c.Event)
+    .Take(<span class="hljs-number">10</span>) <span class="hljs-comment">// cancels the query stream after pulling 10 elements</span>
+    .RunAggregate(
+        ImmutableHashSet&lt;<span class="hljs-keyword">object</span>&gt;.Empty,
+        (acc, c) =&gt; acc.Add(c),
+        mat);
+
+<span class="hljs-comment">// start another query, from the known offset</span>
+<span class="hljs-keyword">var</span> furtherBlueThings = readJournal.EventsByTag(<span class="hljs-string">"blue"</span>, offset: <span class="hljs-number">10</span>);
+</code></pre>
+<p>As you can see, we can use all the usual stream combinators available from Akka Streams on the resulting query stream, including for example taking the first 10 and cancelling the stream. It is worth pointing out that the built-in <code>EventsByTag</code> query has an optionally supported offset parameter (of type Long) which the journals can use to implement resumable-streams. For example a journal may be able to use a WHERE clause to begin the read starting from a specific row, or in a datastore that is able to order events by insertion time it could treat the Long as a timestamp and select only older events.</p>
+<p>If your usage does not require a live stream, you can use the <code>CurrentEventsByTag</code> query.</p>
+<h3 id="materialized-values-of-queries">Materialized values of queries</h3>
+<p>Journals are able to provide additional information related to a query by exposing materialized values, which are a feature of Akka Streams that allows to expose additional values at stream materialization time.</p>
+<p>More advanced query journals may use this technique to expose information about the character of the materialized stream, for example if it&#39;s finite or infinite, strictly ordered or not ordered at all. The materialized value type is defined as the second type parameter of the returned <code>Source</code>, which allows journals to provide users with their specialised query object, as demonstrated in the sample below:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">RichEvent</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">RichEvent</span>(<span class="hljs-params">ISet&lt;<span class="hljs-keyword">string</span>&gt; tags, <span class="hljs-keyword">object</span> payload</span>)
+    </span>{
+        Tags = tags;
+        Payload = payload;
+    }
+
+    <span class="hljs-keyword">public</span> ISet&lt;<span class="hljs-keyword">string</span>&gt; Tags { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">object</span> Payload { <span class="hljs-keyword">get</span>; }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">QueryMetadata</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">QueryMetadata</span>(<span class="hljs-params"><span class="hljs-keyword">bool</span> deterministicOrder, <span class="hljs-keyword">bool</span> infinite</span>)
+    </span>{
+        DeterministicOrder = deterministicOrder;
+        Infinite = infinite;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> DeterministicOrder { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">bool</span> Infinite { <span class="hljs-keyword">get</span>; }
+}
+</code></pre>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> Source&lt;RichEvent, QueryMetadata&gt; ByTagsWithMeta(ISet&lt;<span class="hljs-keyword">string</span>&gt; tags) { }
+</code></pre>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> query = readJournal.ByTagsWithMeta(ImmutableHashSet.Create(<span class="hljs-string">"red"</span>, <span class="hljs-string">"blue"</span>));
+query
+    .MapMaterializedValue(meta =&gt;
+    {
+        Console.WriteLine(
+            $<span class="hljs-string">"The query is: ordered deterministically: {meta.DeterministicOrder}, infinite: {meta.Infinite}"</span>);
+        <span class="hljs-keyword">return</span> meta;
+    })
+    .Select(evt =&gt;
+    {
+        Console.WriteLine($<span class="hljs-string">"Event payload: {evt.Payload}"</span>);
+        <span class="hljs-keyword">return</span> evt;
+    })
+    .RunWith(Sink.Ignore&lt;RichEvent&gt;(), mat);
+</code></pre>
+<h2 id="performance-and-denormalization">Performance and denormalization</h2>
+<p>When building systems using Event sourcing and CQRS (Command &amp; Query Responsibility Segregation) techniques it is tremendously important to realise that the write-side has completely different needs from the read-side, and separating those concerns into datastores that are optimised for either side makes it possible to offer the best experience for the write and read sides independently.</p>
+<p>For example, in a bidding system it is important to &quot;take the write&quot; and respond to the bidder that we have accepted the bid as soon as possible, which means that write-throughput is of highest importance for the write-side – often this means that data stores which are able to scale to accommodate these requirements have a less expressive query side.</p>
+<p>On the other hand the same application may have some complex statistics view or we may have analysts working with the data to figure out best bidding strategies and trends – this often requires some kind of expressive query capabilities like for example SQL or writing Spark jobs to analyse the data. Therefore the data stored in the write-side needs to be projected into the other read-optimised datastore.</p>
+<div class="alert alert-default">
+<p><strong>Note</strong><br>
+When referring to Materialized Views in Akka Persistence think of it as &quot;some persistent storage of the result of a Query&quot;. In other words, it means that the view is created once, in order to be afterwards queried multiple times, as in this format it may be more efficient or interesting to query it (instead of the source events directly).</p>
+</div>
+<h3 id="materialize-view-to-reactive-streams-compatible-datastore">Materialize view to Reactive Streams compatible datastore</h3>
+<p>If the read datastore exposes a Reactive Streams interface then implementing a simple projection is as simple as, using the read-journal and feeding it into the databases driver interface, for example like so:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+<span class="hljs-keyword">var</span> mat = ActorMaterializer.Create(system);
+
+<span class="hljs-keyword">var</span> readJournal =
+  PersistenceQuery.Get(system).ReadJournalFor&lt;MyReadJournal&gt;(JournalId)
+ISubscriber&lt;IImmutableList&lt;<span class="hljs-keyword">object</span>&gt;&gt; dbBatchWriter =
+  <span class="hljs-keyword">new</span> ReactiveStreamsCompatibleDBDriver.BatchWriter();
+
+<span class="hljs-comment">// Using an example (Reactive Streams) Database driver</span>
+readJournal
+  .EventsByPersistenceId(<span class="hljs-string">"user-1337"</span>)
+  .Select(envelope =&gt; envelope.<span class="hljs-keyword">event</span>)
+  .Select(ConvertToReadSideTypes) <span class="hljs-comment">// convert to datatype</span>
+  .Grouped(<span class="hljs-number">20</span>) <span class="hljs-comment">// batch inserts into groups of 20</span>
+  .RunWith(Sink.FromSubscriber(dbBatchWriter), mat); <span class="hljs-comment">// write batches to read-side database</span>
+</code></pre>
+<h3 id="materialize-view-using-selectasync">Materialize view using SelectAsync</h3>
+<p>If the target database does not provide a reactive streams Subscriber that can perform writes, you may have to implement the write logic using plain functions or Actors instead.</p>
+<p>In case your write logic is state-less and you just need to convert the events from one data type to another before writing into the alternative datastore, then the projection is as simple as:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ExampleStore</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> Task&lt;<span class="hljs-keyword">object</span>&gt; <span class="hljs-title">Save</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> evt</span>)
+    </span>{
+        <span class="hljs-keyword">return</span> Task.FromResult(<span class="hljs-keyword">default</span>(<span class="hljs-keyword">object</span>));
+    }
+}
+</code></pre>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> store = <span class="hljs-keyword">new</span> ExampleStore();
+
+readJournal
+    .EventsByTag(<span class="hljs-string">"bid"</span>, <span class="hljs-number">0</span>L)
+    .SelectAsync(<span class="hljs-number">1</span>, e =&gt; store.Save(e))
+    .RunWith(Sink.Ignore&lt;<span class="hljs-keyword">object</span>&gt;(), mat);
+</code></pre>
+<h3 id="resumable-projections">Resumable projections</h3>
+<p>Sometimes you may need to implement &quot;resumable&quot; projections, that will not start from the beginning of time each time when run. In this case you will need to store the sequence number (or offset) of the processed event and use it the next time this projection is started. This pattern is not built-in, however is rather simple to implement yourself.</p>
+<p>The example below additionally highlights how you would use Actors to implement the write side, in case you need to do some complex logic that would be best handled inside an Actor before persisting the event into the other datastore:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> timeout = Timeout(<span class="hljs-number">3.</span>seconds);
+
+<span class="hljs-keyword">var</span> bidProjection = <span class="hljs-keyword">new</span> MyResumableProjection(<span class="hljs-string">"bid"</span>);
+
+<span class="hljs-keyword">var</span> writerProps = Props.Create(<span class="hljs-keyword">typeof</span>(TheOneWhoWritesToQueryJournal), <span class="hljs-string">"bid"</span>);
+<span class="hljs-keyword">var</span> writer = system.ActorOf(writerProps, <span class="hljs-string">"bid-projection-writer"</span>);
+
+readJournal
+  .EventsByTag(<span class="hljs-string">"bid"</span>, bidProjection.LatestOffset ?? <span class="hljs-number">0</span>L)
+  .SelectAsync(<span class="hljs-number">8</span>, envelope =&gt; writer.Ask(envelope.<span class="hljs-keyword">event</span>, timeout).ContinueWith(t =&gt; envelope.offset, TaskContinuationOptions.OnlyOnRanToCompletion))
+  .SelectAsync(<span class="hljs-number">1</span>, offset =&gt; bidProjection.saveProgress(offset))
+  .RunWith(Sink.Ignore&lt;<span class="hljs-keyword">object</span>&gt;(), mat);
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> class <span class="hljs-title">TheOneWhoWritesToQueryJournal</span>(<span class="hljs-params">id: String</span>) : ActorBase
+</span>{
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">TheOneWhoWritesToQueryJournal</span>(<span class="hljs-params"><span class="hljs-keyword">string</span> id</span>) </span>{}
+
+  <span class="hljs-keyword">private</span> DummyStore _store = <span class="hljs-keyword">new</span> DummyStore();
+
+  <span class="hljs-keyword">private</span> ComplexState _state = ComplexState();
+
+  <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">bool</span> <span class="hljs-title">Receive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>) </span>{
+    _state = UpdateState(_state, message);
+    <span class="hljs-keyword">if</span> (_state.IsReadyToSave())
+      _store.Save(<span class="hljs-keyword">new</span> Record(_state));
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">private</span> ComplexState <span class="hljs-title">UpdateState</span>(<span class="hljs-params">ComplexState state, <span class="hljs-keyword">object</span> msg</span>)
+  </span>{
+    <span class="hljs-comment">// some complicated aggregation logic here ...</span>
+    <span class="hljs-keyword">return</span> state;
+  }
+}
+</code></pre>
+<h2 id="configuration">Configuration</h2>
+<p>Configuration settings can be defined in the configuration section with the absolute path corresponding to the identifier, which is <code>Akka.Persistence.Query.Journal.Sqlite</code> for the default <code>SqlReadJournal.Identifier</code>.</p>
+<p>It can be configured with the following properties:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-comment"># Configuration for the SqlReadJournal</span>
+akka.persistence.query.journal.sqlite  {
+  <span class="hljs-comment"># Implementation class of the Sqlite SqlReadJournalProvider</span>
+  <span class="hljs-type">class</span> = <span class="hljs-string">"Akka.Persistence.Query.Sql.SqlReadJournalProvider"</span>
+
+  <span class="hljs-comment"># Absolute path to the write journal plugin configuration entry that this </span>
+  <span class="hljs-comment"># query journal will connect to. That must be a SqliteJournal.</span>
+  <span class="hljs-comment"># If undefined (or "") it will connect to the default journal as specified by the</span>
+  <span class="hljs-comment"># akka.persistence.journal.plugin property.</span>
+  <span class="hljs-command">write</span>-plugin = <span class="hljs-string">""</span>
+
+  <span class="hljs-comment"># The Sqlite write journal is notifying the query side as soon as things</span>
+  <span class="hljs-comment"># are persisted, but for efficiency reasons the query side retrieves the events </span>
+  <span class="hljs-comment"># in batches that sometimes can be delayed up to the configured `refresh-interval`.</span>
+  refresh-interval = <span class="hljs-number">3</span>s
+
+  <span class="hljs-comment"># How many events to fetch in one query (replay) and keep buffered until they</span>
+  <span class="hljs-comment"># are delivered downstreams.</span>
+  max-buffer-size = <span class="hljs-number">100</span>
+}
+</code></pre>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>

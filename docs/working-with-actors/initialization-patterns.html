@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>What&#x27;s in an Actor | Akka.NET</title>
+<title>Initialization patterns | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">What&#x27;s in an Actor<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/whats-in-an-actor.md" > (Edit on Github)</a></li>
+							<li class="active">Initialization patterns<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/initialization-patterns.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,8 +172,62 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h1 id="what-s-in-an-actor">What&#39;s in an Actor</h1>
-<p><code>What&#39;s in an Actor</code> documentation moved here: <a href="http://getakka.net/docs/concepts/actors">http://getakka.net/docs/concepts/actors</a></p>
+								<div><h1 id="initialization-patterns">Initialization patterns</h1>
+<p>The rich lifecycle hooks of <code>Actors</code> provide a useful toolkit to implement various initialization patterns. During the lifetime of an <code>IActorRef</code>, an actor can potentially go through several restarts, where the old instance is replaced by a fresh one, invisibly to the outside observer who only sees the <code>IActorRef</code>.</p>
+<p>One may think about the new instances as &quot;incarnations&quot;. Initialization might be necessary for every incarnation of an actor, but sometimes one needs initialization to happen only at the birth of the first instance when the <code>IActorRef</code> is created. The following sections provide patterns for different initialization needs.</p>
+<h2 id="initialization-via-constructor">Initialization via constructor</h2>
+<p>Using the constructor for initialization has various benefits. First of all, it makes it possible to use readonly fields to store any state that does not change during the life of the actor instance, making the implementation of the actor more robust. The constructor is invoked for every incarnation of the actor, therefore the internals of the actor can always assume that proper initialization happened. This is also the drawback of this approach, as there are cases when one would like to avoid reinitializing internals on restart. For example, it is often useful to preserve child actors across restarts. The following section provides a pattern for this case.</p>
+<h2 id="initialization-via-prestart">Initialization via PreStart</h2>
+<p>The method <code>PreStart()</code> of an actor is only called once directly during the initialization of the first instance, that is, at creation of its ActorRef. In the case of restarts, <code>PreStart()</code> is called from <code>PostRestart()</code>, therefore if not overridden, <code>PreStart()</code> is called on every incarnation. However, overriding <code>PostRestart()</code> one can disable this behavior, and ensure that there is only one call to <code>PreStart()</code>.</p>
+<p>One useful usage of this pattern is to disable creation of new <code>ActorRefs</code> for children during restarts. This can be achieved by overriding <code>PreRestart()</code>:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
+</span>{
+    <span class="hljs-comment">// Initialize children here</span>
+}
+
+<span class="hljs-comment">// Overriding postRestart to disable the call to preStart() after restarts</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostRestart</span>(<span class="hljs-params">Exception reason</span>)
+</span>{ 
+}
+
+<span class="hljs-comment">// The default implementation of PreRestart() stops all the children</span>
+<span class="hljs-comment">// of the actor. To opt-out from stopping the children, we</span>
+<span class="hljs-comment">// have to override PreRestart()</span>
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span>(<span class="hljs-params">Exception reason, <span class="hljs-keyword">object</span> message</span>)
+</span>{
+    <span class="hljs-comment">// Keep the call to PostStop(), but no stopping of children</span>
+    PostStop();
+}
+</code></pre>
+<p>Please note, that the child actors are <em>still restarted</em>, but no new <code>IActorRef</code> is created. One can recursively apply the same principles for the children, ensuring that their <code>PreStart()</code> method is called only at the creation of their refs.</p>
+<p>For more information see <a href="Supervision#what-restarting-means">What Restarting Means</a>.</p>
+<h3 id="initialization-via-message-passing">Initialization via message passing</h3>
+<p>There are cases when it is impossible to pass all the information needed for actor initialization in the constructor, for example in the presence of circular dependencies. In this case the actor should listen for an initialization message, and use <code>Become()</code> or a finite state-machine state transition to encode the initialized and uninitialized states of the actor.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Service</span> : <span class="hljs-title">UntypedActor</span>
+{
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">string</span> _initializeMe;
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
+    </span>{
+        <span class="hljs-keyword">if</span> (message.Equals(<span class="hljs-string">"init"</span>))
+        {
+            _initializeMe = <span class="hljs-string">"Up and running"</span>;
+
+            Become(m =&gt;
+            {
+                <span class="hljs-keyword">if</span> (m.Equals(<span class="hljs-string">"U OK?"</span>))
+                {
+                    Sender.Tell(_initializeMe, Self);
+                }
+            });
+        }
+    }
+}
+</code></pre>
+<p>If the actor may receive messages before it has been initialized, a useful tool can be the <code>Stash</code> to save messages until the initialization finishes, and replaying them after the actor became initialized.</p>
+<div class="alert alert-warning">
+<p><strong>Warning</strong> This pattern should be used with care, and applied only when none of the patterns above are applicable. One of the potential issues is that messages might be lost when sent to remote actors. Also, publishing an <code>IActorRef</code> in an uninitialized state might lead to the condition that it receives a user message before the initialization has been done.</p>
+</div>
 </div>
 
 								

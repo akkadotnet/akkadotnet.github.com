@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Actor lifecycle | Akka.NET</title>
+<title>Actor API | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Actor lifecycle<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Actor lifecycle.md" > (Edit on Github)</a></li>
+							<li class="active">Actor API<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Actor lifecycle.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,72 +172,116 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h2 id="actor-lifecycle">Actor Lifecycle</h2>
+								<div><h1 id="untypedactor-api">UntypedActor API</h1>
+<p>The <code>UntypedActor</code> class defines only one abstract method, the above mentioned <code>OnReceive(object message)</code>, which implements the behavior of the actor.</p>
+<p>If the current actor behavior does not match a received message, it&#39;s recommended that you call the unhandled method, which by default publishes a new <code>Akka.Actor.UnhandledMessage(message, sender, recipient)</code> on the actor system’s event stream (set configuration item <code>Unhandled</code> to on to have them converted into actual <code>Debug</code> messages).</p>
+<p>In addition, it offers:</p>
+<ul>
+<li><p><code>Self</code> reference to the <code>IActorRef</code> of the actor</p>
+</li>
+<li><p><code>Sender</code> reference sender Actor of the last received message, typically used as described in <a href="reply-to-messages">Reply to messages</a>.</p>
+</li>
+<li><p><code>SupervisorStrategy</code> user overridable definition the strategy to use for supervising child actors</p>
+</li>
+</ul>
+<p>This strategy is typically declared inside the actor in order to have access to the actor’s internal state within the decider function: since failure is communicated as a message sent to the supervisor and processed like other messages (albeit outside of the normal behavior), all values and variables within the actor are available, as is the <code>Sender</code> reference (which will be the immediate child reporting the failure; if the original failure occurred within a distant descendant it is still reported one level up at a time).</p>
+<ul>
+<li><p><code>Context</code> exposes contextual information for the actor and the current message, such as:</p>
+<ul>
+<li>factory methods to create child actors (<code>ActorOf</code>)</li>
+<li>system that the actor belongs to</li>
+<li>parent supervisor</li>
+<li>supervised children</li>
+<li>lifecycle monitoring</li>
+<li>hotswap behavior stack as described in <a href="become/unbecome">HotSwap</a></li>
+</ul>
+</li>
+</ul>
+<p>The remaining visible methods are user-overridable life-cycle hooks which are described in the following:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
+</span>{
+}
+
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreRestart</span>(<span class="hljs-params">Exception reason, <span class="hljs-keyword">object</span> message</span>)
+</span>{
+    <span class="hljs-keyword">foreach</span> (IActorRef each <span class="hljs-keyword">in</span> Context.GetChildren())
+    {
+      Context.Unwatch(each);
+      Context.Stop(each);
+    }
+    PostStop();
+}
+
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostRestart</span>(<span class="hljs-params">Exception reason</span>)
+</span>{
+    PreStart();
+}
+
+<span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PostStop</span>(<span class="hljs-params"></span>)
+</span>{
+}
+</code></pre>
+<p>The implementations shown above are the defaults provided by the <code>UntypedActor</code> class.</p>
+<h2 id="actor-lifecycle">Actor Lifecycle</h2>
 <p><img class="img-responsive" src="../images/actor_lifecycle.png" alt="Actor lifecycle"></p>
-<p>A path in an actor system represents a &quot;place&quot; which might be occupied by a living actor. Initially (apart from system initialized actors) a path is empty. When <code>ActorOf()</code> is called it assigns an incarnation of the actor described by the passed <code>Props</code> to the given path. An actor incarnation is identified by the path and a UID. A restart only swaps the Actor instance defined by the Props but the incarnation and hence the UID remains the same.</p>
+<p>A path in an actor system represents a &quot;place&quot; which might be occupied by a living actor. Initially (apart from system initialized actors) a path is empty. When <code>ActorOf()</code> is called it assigns an incarnation of the actor described by the passed <code>Props</code> to the given path. An actor incarnation is identified by the path and a UID. A restart only swaps the Actor instance defined by the <code>Props</code> but the incarnation and hence the UID remains the same.</p>
 <p>The lifecycle of an incarnation ends when the actor is stopped. At that point the appropriate lifecycle events are called and watching actors are notified of the termination. After the incarnation is stopped, the path can be reused again by creating an actor with <code>ActorOf()</code>. In this case the name of the new incarnation will be the same as the previous one but the UIDs will differ.</p>
-<p>An <code>ActorRef</code> always represents an incarnation (path and UID) not just a given path. Therefore if an actor is stopped and a new one with the same name is created an ActorRef of the old incarnation will not point to the new one.</p>
-<p><code>ActorSelection</code> on the other hand points to the path (or multiple paths if wildcards are used) and is completely oblivious to which incarnation is currently occupying it. <code>ActorSelection</code> cannot be watched for this reason. It is possible to resolve the current incarnation&#39;s ActorRef living under the path by sending an <code>Identify</code> message to the <code>ActorSelection</code> which will be replied to with an <code>ActorIdentity</code> containing the correct reference (see Identifying Actors via Actor Selection). This can also be done with the resolveOne method of the <code>ActorSelection</code>, which returns a <code>Task</code> of the matching <code>ActorRef</code>.</p>
-<h3 id="lifecycle-monitoring-aka-deathwatch">Lifecycle Monitoring aka DeathWatch</h3>
-<p>In order to be notified when another actor terminates (i.e. stops permanently, not temporary failure and restart), an actor may register itself for reception of the Terminated message dispatched by the other actor upon termination (see Stopping Actors). This service is provided by the DeathWatch component of the actor system.</p>
+<p>An <code>IActorRef</code> always represents an incarnation (path and UID) not just a given path. Therefore if an actor is stopped and a new one with the same name is created an <code>IActorRef</code> of the old incarnation will not point to the new one.</p>
+<p><code>ActorSelection</code> on the other hand points to the path (or multiple paths if wildcards are used) and is completely oblivious to which incarnation is currently occupying it. <code>ActorSelection</code> cannot be watched for this reason. It is possible to resolve the current incarnation&#39;s ActorRef living under the path by sending an <code>Identify</code> message to the <code>ActorSelection</code> which will be replied to with an <code>ActorIdentity</code> containing the correct reference (see <a href="identifying-actors-via-actor-selection">Identifying Actors via Actor Selection</a>). This can also be done with the resolveOne method of the <code>ActorSelection</code>, which returns a <code>Task</code> of the matching <code>IActorRef</code>.</p>
+<h2 id="lifecycle-monitoring-aka-deathwatch">Lifecycle Monitoring aka DeathWatch</h2>
+<p>In order to be notified when another actor terminates (i.e. stops permanently, not temporary failure and restart), an actor may register itself for reception of the <code>Terminated</code> message dispatched by the other actor upon termination (see <a href="stopping-actors">Stopping Actors</a>). This service is provided by the DeathWatch component of the actor system.</p>
 <p>Registering a monitor is easy (see fourth line, the rest is for demonstrating the whole functionality):</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WatchActor</span> : <span class="hljs-title">UntypedActor</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">WatchActor</span> : <span class="hljs-title">ReceiveActor</span>
 {
+    <span class="hljs-keyword">private</span> IActorRef child = Context.ActorOf(Props.Empty, <span class="hljs-string">"child"</span>);
+    <span class="hljs-keyword">private</span> IActorRef lastSender = Context.System.DeadLetters;
+
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">WatchActor</span>(<span class="hljs-params"></span>)
     </span>{
         Context.Watch(child);
-    }
 
-    ActorRef child = Context.ActorOf(Props.Empty, <span class="hljs-string">"child"</span>);
-    ActorRef lastSender = Context.System.DeadLetters;
-
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">OnReceive</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
-    </span>{
-        <span class="hljs-keyword">if</span> (message.Equals(<span class="hljs-string">"kill"</span>))
+        Receive&lt;<span class="hljs-keyword">string</span>&gt;(str =&gt; str.Equals(<span class="hljs-string">"kill"</span>), msg =&gt;
         {
             Context.Stop(child);
             lastSender = Sender;
-        }
-        <span class="hljs-function"><span class="hljs-keyword">else</span> <span class="hljs-title">if</span> (<span class="hljs-params">message <span class="hljs-keyword">is</span> Terminated</span>)
-        </span>{
-            <span class="hljs-keyword">var</span> t = (Terminated)message;
+        });
 
-            <span class="hljs-keyword">if</span> (t.ActorRef == child)
+        Receive&lt;Terminated&gt;(t =&gt;
+        {
+            <span class="hljs-keyword">if</span> (t.ActorRef.Equals(child))
             {
                 lastSender.Tell(<span class="hljs-string">"finished"</span>);
             }
-        }
-        <span class="hljs-keyword">else</span>
-        {
-            Unhandled(message);
-        }
+        });
     }
 }
 </code></pre>
-<p>It should be noted that the Terminated message is generated independent of the order in which registration and termination occur. In particular, the watching actor will receive a Terminated message even if the watched actor has already been terminated at the time of registration.</p>
-<p>Registering multiple times does not necessarily lead to multiple messages being generated, but there is no guarantee that only exactly one such message is received: if termination of the watched actor has generated and queued the message, and another registration is done before this message has been processed, then a second message will be queued, because registering for monitoring of an already terminated actor leads to the immediate generation of the Terminated message.</p>
-<p>It is also possible to deregister from watching another actor’s liveliness using Context.Unwatch(target). This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no Terminated message for that actor will be processed anymore.</p>
-<h3 id="start-hook">Start Hook</h3>
-<p>Right after starting the actor, its PreStart method is invoked.</p>
+<p>It should be noted that the <code>Terminated</code> message is generated independent of the order in which registration and termination occur. In particular, the watching actor will receive a <code>Terminated</code> message even if the watched actor has already been terminated at the time of registration.</p>
+<p>Registering multiple times does not necessarily lead to multiple messages being generated, but there is no guarantee that only exactly one such message is received: if termination of the watched actor has generated and queued the message, and another registration is done before this message has been processed, then a second message will be queued, because registering for monitoring of an already terminated actor leads to the immediate generation of the <code>Terminated</code> message.</p>
+<p>It is also possible to deregister from watching another actor’s liveliness using <code>Context.Unwatch(target)</code>. This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no <code>Terminated</code> message for that actor will be processed anymore.</p>
+<h2 id="start-hook">Start Hook</h2>
+<p>Right after starting the actor, its <code>PreStart</code> method is invoked.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
 </span>{
     child = Context.ActorOf(Props.Empty);
 }
 </code></pre>
-<p>This method is called when the actor is first created. During restarts it is called by the default implementation of postRestart, which means that by overriding that method you can choose whether the initialization code in this method is called only exactly once for this actor or for every restart. Initialization code which is part of the actor’s constructor will always be called when an instance of the actor class is created, which happens at every restart.</p>
-<h3 id="restart-hooks">Restart Hooks</h3>
-<p>All actors are supervised, i.e. linked to another actor with a fault handling strategy. Actors may be restarted in case an exception is thrown while processing a message (see Supervision and Monitoring). This restart involves the hooks mentioned above:</p>
-<p>The old actor is informed by calling preRestart with the exception which caused the restart and the message which triggered that exception; the latter may be None if the restart was not caused by processing a message, e.g. when a supervisor does not trap the exception and is restarted in turn by its supervisor, or if an actor is restarted due to a sibling’s failure. If the message is available, then that message’s sender is also accessible in the usual way (i.e. by calling the Sender property).</p>
-<p>This method is the best place for cleaning up, preparing hand-over to the fresh actor instance, etc. By default it stops all children and calls postStop.</p>
-<p>The initial factory from the actorOf call is used to produce the fresh instance.</p>
-<p>The new actor’s postRestart method is invoked with the exception which caused the restart. By default the preStart is called, just as in the normal start-up case.</p>
-<p>An actor restart replaces only the actual actor object; the contents of the mailbox is unaffected by the restart, so processing of messages will resume after the postRestart hook returns. The message that triggered the exception will not be received again. Any message sent to an actor while it is being restarted will be queued to its mailbox as usual.</p>
+<p>This method is called when the actor is first created. During restarts it is called by the default implementation of <code>PostRestart</code>, which means that by overriding that method you can choose whether the initialization code in this method is called only exactly once for this actor or for every restart. Initialization code which is part of the actor’s constructor will always be called when an instance of the actor class is created, which happens at every restart.</p>
+<h2 id="restart-hooks">Restart Hooks</h2>
+<p>All actors are supervised, i.e. linked to another actor with a fault handling strategy. Actors may be restarted in case an exception is thrown while processing a message (see <a href="supervision-and-monitoring">Supervision and Monitoring</a>. This restart involves the hooks mentioned above:</p>
+<ul>
+<li>The old actor is informed by calling <code>PreRestart</code> with the exception which caused the restart and the message which triggered that exception; the latter may be None if the restart was not caused by processing a message, e.g. when a supervisor does not trap the exception and is restarted in turn by its supervisor, or if an actor is restarted due to a sibling’s failure. If the message is available, then that message’s sender is also accessible in the usual way (i.e. by calling the <code>Sender</code> property).
+This method is the best place for cleaning up, preparing hand-over to the fresh actor instance, etc. By default it stops all children and calls <code>PostStop</code>.</li>
+<li>The initial factory from the <code>ActorOf</code> call is used to produce the fresh instance.</li>
+<li>The new actor’s <code>PostRestart</code> method is invoked with the exception which caused the restart. By default the <code>PreStart</code> is called, just as in the normal start-up case.</li>
+</ul>
+<p>An actor restart replaces only the actual actor object; the contents of the mailbox is unaffected by the restart, so processing of messages will resume after the <code>PostRestart</code> hook returns. The message that triggered the exception will not be received again. Any message sent to an actor while it is being restarted will be queued to its mailbox as usual.</p>
 <div class="alert alert-warning">
 <p><strong>Warning</strong><br/>
-Be aware that the ordering of failure notifications relative to user messages is not deterministic. In particular, a parent might restart its child before it has processed the last messages sent by the child before the failure. See Discussion: Message Ordering for details.</p>
+Be aware that the ordering of failure notifications relative to user messages is not deterministic. In particular, a parent might restart its child before it has processed the last messages sent by the child before the failure. See Discussion: <a href="message-delivery-reliability#discussion-message-ordering">Message Ordering for details</a>.</p>
 </div>
-<h3 id="stop-hook">Stop Hook</h3>
-<p>After stopping an actor, its postStop hook is called, which may be used e.g. for deregistering this actor from other services. This hook is guaranteed to run after message queuing has been disabled for this actor, i.e. messages sent to a stopped actor will be redirected to the deadLetters of the ActorSystem.</p>
+<h2 id="stop-hook">Stop Hook</h2>
+<p>After stopping an actor, its <code>PostStop</code> hook is called, which may be used e.g. for deregistering this actor from other services. This hook is guaranteed to run after message queuing has been disabled for this actor, i.e. messages sent to a stopped actor will be redirected to the <code>DeadLetters</code> of the <code>ActorSystem</code>.</p>
 </div>
 
 								
