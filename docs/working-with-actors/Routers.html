@@ -179,7 +179,7 @@
 <div class="alert alert-default">
 <p><strong>Note:</strong><br/>
 In general, any message sent to a router will be forwarded to one of its routees, but there is one exception.
-The special <a href="#Broadcast Messages">Broadcast Message</a> will be sent to all routees.</p>
+The special <a href="#broadcast-messages">Broadcast Message</a> will be sent to all routees. See <a href="#specially-handled-messages">Specially Handled Messages</a> section for details.</p>
 </div>
 <h2 id="deployment">Deployment</h2>
 <p>Routers can be deployed in multiple ways, using code or configuration.</p>
@@ -417,9 +417,9 @@ Most routing strategies listed below are available in both types. Some of them m
 <pre><code class="hljs lang-hocon">akka.actor.deployment {
   /some-pool {
     router = tail-chopping-pool
-    nr-<span class="hljs-operator">of</span>-instances = <span class="hljs-number">5</span>
-    <span class="hljs-operator">within</span> = <span class="hljs-number">10</span> <span class="hljs-built_in">seconds</span>
-    tail-chopping-router.interval = <span class="hljs-number">20</span> <span class="hljs-built_in">milliseconds</span>
+    nr-of-instances = <span class="hljs-number">5</span>
+    within = <span class="hljs-number">10</span>s
+    tail-chopping-router.interval = <span class="hljs-number">20</span>ms
   }
 }
 </code></pre>
@@ -435,8 +435,8 @@ Most routing strategies listed below are available in both types. Some of them m
   /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
     router</span> = tail-chopping-<span class="hljs-keyword">group</span>
     <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
-    within = <span class="hljs-number">10</span> seconds
-    tail-chopping-router.interval = <span class="hljs-number">20</span> milliseconds
+    within = <span class="hljs-number">10s</span>
+    tail-chopping-router.interval = <span class="hljs-number">20ms</span>
   }
 }
 </code></pre>
@@ -462,10 +462,10 @@ Most routing strategies listed below are available in both types. Some of them m
 <h4 id="usage-">Usage:</h4>
 <p>ScatterGatherFirstCompletedPool defined in configuration:</p>
 <pre><code class="hljs lang-hocon">akka.actor.deployment {
-  /some-pool {
+  /<span class="hljs-keyword">some</span>-pool {
     router = scatter-gather-pool
-    nr-<span class="hljs-operator">of</span>-instances = <span class="hljs-number">5</span>
-    <span class="hljs-operator">within</span> = <span class="hljs-number">10</span> <span class="hljs-built_in">seconds</span>
+    nr-<span class="hljs-keyword">of</span>-instances = <span class="hljs-number">5</span>
+    within = <span class="hljs-number">10</span>s
   }
 }
 </code></pre>
@@ -480,7 +480,7 @@ Most routing strategies listed below are available in both types. Some of them m
   /some-<span class="hljs-keyword">group</span> <span class="hljs-title">{
     router</span> = scatter-gather-<span class="hljs-keyword">group</span>
     <span class="hljs-title">routees</span>.paths = [<span class="hljs-string">"/user/workers/w1"</span>, <span class="hljs-string">"/user/workers/w2"</span>, <span class="hljs-string">"/user/workers/w3"</span>]
-    within = <span class="hljs-number">10</span> seconds
+    within = <span class="hljs-number">10s</span>
   }
 }
 </code></pre>
@@ -556,6 +556,54 @@ Most routing strategies listed below are available in both types. Some of them m
 </li>
 <li><code>backoff-threshold</code> - A threshold used to decide if the pool should be decreased. The default is <code>0.3</code>, meaning it will decide to decrease the pool if less than 30% of the routers are busy.</li>
 </ul>
+<h2 id="specially-handled-messages">Specially Handled Messages</h2>
+<p>Most messages sent to router will be forwarded according to router&#39;s routing logic. However there are a few types of messages that have special behaviour.</p>
+<h3 id="broadcast-messages">Broadcast Messages</h3>
+<p>A <code>Broadcast</code> message can be used to send message to <strong>all</strong> routees of a router. When a router receives <code>Broadcast</code> message, it will broadcast that message&#39;s <strong>payload</strong> to all routees, no matter how that router normally handles its messages.</p>
+<p>Here is an example of how to send a message to every routee of a router.</p>
+<pre><code class="hljs lang-cs">actorSystem.ActorOf(Props.Create&lt;Worker&gt;(), <span class="hljs-string">"worker1"</span>);
+actorSystem.ActorOf(Props.Create&lt;Worker&gt;(), <span class="hljs-string">"worker2"</span>);
+actorSystem.ActorOf(Props.Create&lt;Worker&gt;(), <span class="hljs-string">"worker3"</span>);
+
+<span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span>[] { <span class="hljs-string">"/user/worker1"</span>, <span class="hljs-string">"/user/worker2"</span>, <span class="hljs-string">"/user/worker3"</span> };
+<span class="hljs-keyword">var</span> router = actorSystem.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(workers)), <span class="hljs-string">"workers"</span>);
+
+<span class="hljs-comment">// this sends to individual worker</span>
+router.Tell(<span class="hljs-string">"Hello, worker1"</span>);
+router.Tell(<span class="hljs-string">"Hello, worker2"</span>);
+router.Tell(<span class="hljs-string">"Hello, worker3"</span>);
+
+<span class="hljs-comment">// this sends to all workers</span>
+router.Tell(<span class="hljs-keyword">new</span> Broadcast(<span class="hljs-string">"Hello, workers"</span>));
+</code></pre>
+<p>In this example, the router received the <code>Broadcast</code> message, extracted its payload (<code>Hello, workers</code>), and then dispatched it to all its routees. It is up to each routee actor to handle the payload.</p>
+<h3 id="poisonpill-messages">PoisonPill Messages</h3>
+<p>When an actor received <code>PoisonPill</code> message, that actor will be stopped. (see <a href="stopping-actors#graceful-shutdown-sending-an-actor-a-poisonpill">PoisonPill</a> for details).</p>
+<p>For a router, which normally passes on messages to routees, the <code>PoisonPill</code> messages are processed <strong>by the router only</strong>. <code>PoisonPill</code> messages sent to a router will <strong>not</strong> be sent on to its routees.</p>
+<p>However, a <code>PisonPill</code> message sent to a router may still affect its routees, as it will stop the router whhich in turns stop children the router has created. Each child will process its current message and then stop. This could lead to some messages being unprocessed.</p>
+<p>If you wish to stop a router and its routees, but you would like the routees to first process all the messages in their mailbxes, then you should send a <code>PoisonPill</code> message wrapped inside a <code>Broadcast</code> message so that each routee will receive the <code>PoisonPill</code> message. </p>
+<div class="alert alert-default">
+<p><strong>Note:</strong><br/>
+The above method will stop all routees, even if they are not created by the router. E.g. routees programatically provided to the router.</p>
+</div>
+<pre><code class="hljs lang-cs">actorSystem.ActorOf(Props.Create&lt;Worker&gt;(), <span class="hljs-string">"worker1"</span>);
+actorSystem.ActorOf(Props.Create&lt;Worker&gt;(), <span class="hljs-string">"worker2"</span>);
+actorSystem.ActorOf(Props.Create&lt;Worker&gt;(), <span class="hljs-string">"worker3"</span>);
+
+<span class="hljs-keyword">var</span> workers = <span class="hljs-keyword">new</span>[] { <span class="hljs-string">"/user/worker1"</span>, <span class="hljs-string">"/user/worker2"</span>, <span class="hljs-string">"/user/worker3"</span> };
+<span class="hljs-keyword">var</span> router = actorSystem.ActorOf(Props.Empty.WithRouter(<span class="hljs-keyword">new</span> RoundRobinGroup(workers)), <span class="hljs-string">"workers"</span>);
+
+router.Tell(<span class="hljs-string">"Hello, worker1"</span>);
+router.Tell(<span class="hljs-string">"Hello, worker2"</span>);
+router.Tell(<span class="hljs-string">"Hello, worker3"</span>);
+
+<span class="hljs-comment">// this sends PoisonPill message to all routees</span>
+router.Tell(<span class="hljs-keyword">new</span> Broadcast(PoisonPill.Instance));
+</code></pre>
+<p>With the code shown above, each routee will receive a <code>PoisonPill</code> message. Each routee will continue to process its messages as normal, eventually processing the <code>PoisonPill</code>. This will cause the routee to stop. After all routees have stopped the router will itself be stopped automatically unless it is a dynamic router, e.g. using a resizer.</p>
+<h3 id="kill-message">Kill Message</h3>
+<p>As with the <code>PoisonPill</code> messasge, there is a distinction between killing a router, which indirectly kills its children (who happen to be routees), and killing routees directly (some of whom may not be children.) To kill routees directly the router should be sent a Kill message wrapped in a <code>Broadcast</code> message.</p>
+<p>See <a href="stopping-actors#noisy-on-purpose-kill-the-actor">Noisy on Purpose: Kill the Actor</a> for more details on how <code>Kill</code> message works.</p>
 <h2 id="advanced">Advanced</h2>
 <h3 id="how-routing-is-designed-within-akka-net">How Routing is Designed within Akka.NET</h3>
 <p>On the surface routers look like normal actors, but they are actually implemented differently. Routers are designed to be extremely efficient at receiving messages and passing them quickly on to routees.</p>

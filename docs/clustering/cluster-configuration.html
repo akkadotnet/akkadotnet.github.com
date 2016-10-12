@@ -196,7 +196,7 @@
     cluster {
        seed-nodes = [&quot;akka.tcp://ClusterSystem@127.0.0.1:8081&quot;] # address of seed node
        roles = [&quot;crawler&quot;, &quot;logger&quot;] # roles this member is in
-       crawler.min-nr-of-members = 3 # crawler role minimum node count
+       role.[&quot;crawler&quot;].min-nr-of-members = 3 # crawler role minimum node count
     }
 }
 </code></pre>
@@ -233,7 +233,7 @@
     cluster {
        seed-nodes = [&quot;akka.tcp://ClusterSystem@127.0.0.1:8081&quot;]
        roles = [&quot;crawlerV1&quot;, &quot;crawlerV2&quot;]
-       crawlerV1.min-nr-of-members = 3
+       role.[&quot;crawlerV1&quot;].min-nr-of-members = 3
     }
 }
 </code></pre>

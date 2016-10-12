@@ -6,7 +6,7 @@
 		
 
 <meta charset="utf-8" />
-<title>Mailboxes | Akka.NET</title>
+<title>Dynamic stream handling | Akka.NET</title>
 
 <meta name="keywords" content="Actor,Finite state machine, concurrency" />
 <meta name="description" content="" />
@@ -144,7 +144,7 @@
 						<ul class="breadcrumb"><!-- breadcrumb -->
 							<li><a href="/">Home</a></li>
 							<li><a href="/docs/">Docs</a></li>
-							<li class="active">Mailboxes<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/Mailbox.md" > (Edit on Github)</a></li>
+							<li class="active">Dynamic stream handling<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/stream-dynamic.md" > (Edit on Github)</a></li>
 						</ul><!-- /breadcrumb -->
 
 						<h2><!-- Page Title -->
@@ -172,66 +172,125 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><h1 id="mailboxes">Mailboxes</h1>
-<h2 id="what-mailboxes-do-">What Mailboxes Do?</h2>
-<p>In Akka.NET, Mailboxes hold messages that are destined for an actor. When you send a message to an actor, the message doesn&#39;t go directly to the actor, but goes to the actor&#39;s mailbox until the actor has time to process it.</p>
-<p>A mailbox can be described as a queue of messages. Messages are usually then delivered from the mailbox to the actor one at a time in the order they were received, but there are implementations like the <a href="#unboundedprioritymailbox">Priority Mailbox</a> that can change the order of delivery.</p>
-<p>Normally every actor has its own mailbox, but this is not a requirement. There are implementations of <a href="Routers">routers</a> where all routees share a single mailbox.</p>
-<h3 id="using-a-mailbox">Using a Mailbox</h3>
-<p>To make an actor use a specific mailbox, you can set it up one of the following locations:</p>
-<ol>
-<li><p>In the actor&#39;s props</p>
-<pre><code class="hljs lang-cs">Props.Create&lt;ActorType&gt;().WithMailbox(<span class="hljs-string">"my-custom-mailbox"</span>);
-</code></pre>
-</li>
-<li><p>In the actor&#39;s deployment configuration</p>
-<pre><code class="hljs lang-hocon">akka.actor.deployment {
-   /<span class="hljs-keyword">my</span>-actor-path {
-       mailbox = <span class="hljs-keyword">my</span>-custom-mailbox
-   }
-}
-</code></pre>
-</li>
-</ol>
-<p>The <code>my-custom-mailbox</code> is a key that was setup using the <a href="#configuring-custom-mailboxes">mailbox configuration</a>.</p>
-<h3 id="configuring-custom-mailboxes">Configuring Custom Mailboxes</h3>
-<p>In order to use a custom mailbox, it must be first configured with a key that the actor system can lookup. You can do this using a custom HOCON setting.</p>
-<p>The example below will setup a mailbox key called <code>my-custom-mailbox</code> pointing to a custom mailbox implementation. Note that the configuration of the mailbox is outside the akka section.</p>
-<pre><code class="hljs lang-hocon"><span class="hljs-tag">akka</span> { ... }
-<span class="hljs-tag">my-custom-mailbox</span> {
-    <span class="hljs-attribute">mailbox-type </span>: <span class="hljs-string">"MyProject.CustomMailbox, MyProjectAssembly"</span>
-}
-</code></pre>
-<h3 id="built-in-mailboxes">Built-in Mailboxes</h3>
-<ul>
-<li><h4 id="unboundedmailbox">UnboundedMailbox</h4>
-<p><strong>This is the default mailbox</strong> used by Akka.NET. It&#39;s a non-blocking unbounded mailbox, and should be good enough for most cases.</p>
-</li>
-<li><h4 id="unboundedprioritymailbox">UnboundedPriorityMailbox</h4>
-<p>The unbounded mailbox priority mailbox is blocking mailbox that allows message prioritization, so that you can choose the order the actor should process messages that are already in the mailbox.</p>
-<p>In order to use this mailbox, you need to extend the <code>UnboundedPriorityMailbox</code> class and provide an ordering logic. The value returned by the <code>PriorityGenerator</code> method will be used to order the message in the mailbox. Lower values will be delivered first. Messages ordered by the same number will remain in delivery order.</p>
-<pre><code class="hljs lang-cs"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">IssueTrackerMailbox</span> : <span class="hljs-title">UnboundedPriorityMailbox</span>
+								<div><h1 id="controlling-graph-completion-with-killswitch">Controlling graph completion with KillSwitch</h1>
+<p>A <code>KillSwitch</code> allows the completion of graphs of <code>FlowShape</code> from the outside. It consists of a flow element that
+can be linked to a graph of <code>FlowShape</code> needing completion control.
+The <code>IKillSwitch</code> interface allows to complete or fail the graph(s).</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IKillSwitch</span>
 {
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">int</span> <span class="hljs-title">PriorityGenerator</span>(<span class="hljs-params"><span class="hljs-keyword">object</span> message</span>)
-    </span>{
-        <span class="hljs-keyword">var</span> issue = message <span class="hljs-keyword">as</span> Issue;
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> After calling <span class="hljs-xmlDocTag">&lt;see cref="Shutdown"/&gt;</span> the linked <span class="hljs-xmlDocTag">&lt;see cref="IGraph{TShape}"/&gt;</span>s of <span class="hljs-xmlDocTag">&lt;see cref="FlowShape{TIn,TOut}"/&gt;</span> are completed normally.</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Shutdown</span>(<span class="hljs-params"></span>)</span>;
 
-        <span class="hljs-keyword">if</span> (issue != <span class="hljs-keyword">null</span>)
-        {
-            <span class="hljs-keyword">if</span> (issue.IsSecurityFlaw)
-                <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-
-            <span class="hljs-keyword">if</span> (issue.IsBug)
-                <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-        }
-
-        <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;
-    }
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;summary&gt;</span></span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> After calling <span class="hljs-xmlDocTag">&lt;see cref="Abort"/&gt;</span> the linked <span class="hljs-xmlDocTag">&lt;see cref="IGraph{TShape}"/&gt;</span>s of <span class="hljs-xmlDocTag">&lt;see cref="FlowShape{TIn,TOut}"/&gt;</span> are failed.</span>
+    <span class="hljs-comment"><span class="hljs-xmlDocTag">///</span> <span class="hljs-xmlDocTag">&lt;/summary&gt;</span></span>
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Abort</span>(<span class="hljs-params">Exception cause</span>)</span>;
 }
 </code></pre>
-<p>Once the class is implemented, you should set it up using the <a href="#using-a-mailbox">instructions above</a>.</p>
-</li>
+<p>After the first call to either <code>Shutdown</code> and <code>Abort</code>, all subsequent calls to any of these methods will be ignored.
+Graph completion is performed by both</p>
+<ul>
+<li>completing its downstream</li>
+<li>cancelling (in case of <code>Shutdown</code>) or failing (in case of <code>Abort</code>) its upstream.</li>
 </ul>
+<p>A <code>KillSwitch</code> can control the completion of one or multiple streams, and therefore comes in two different flavours.</p>
+<h4 id="uniquekillswitch">UniqueKillSwitch</h4>
+<p><code>UniqueKillSwitch</code> allows to control the completion of <strong>one</strong> materialized <code>Graph</code> of <code>FlowShape</code>. Refer to the
+below for usage examples.</p>
+<ul>
+<li><strong>Shutdown</strong></li>
+</ul>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> countingSource = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-keyword">int</span>.MaxValue))
+    .Delay(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), DelayOverflowStrategy.Backpressure);
+<span class="hljs-keyword">var</span> lastSink = Sink.Last&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-keyword">var</span> t =
+    countingSource.ViaMaterialized(KillSwitches.Single&lt;<span class="hljs-keyword">int</span>&gt;(), Keep.Right)
+        .ToMaterialized(lastSink, Keep.Both)
+        .Run(materializer);
+
+<span class="hljs-keyword">var</span> killSwitch = t.Item1;
+<span class="hljs-keyword">var</span> last = t.Item2;
+
+DoSomethingElse();
+
+killSwitch.Shutdown();
+
+last.Result.Should().Be(<span class="hljs-number">2</span>);
+</code></pre>
+<ul>
+<li><strong>Abort</strong></li>
+</ul>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> countingSource = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-keyword">int</span>.MaxValue))
+    .Delay(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), DelayOverflowStrategy.Backpressure);
+<span class="hljs-keyword">var</span> lastSink = Sink.Last&lt;<span class="hljs-keyword">int</span>&gt;();
+
+<span class="hljs-keyword">var</span> t =
+    countingSource.ViaMaterialized(KillSwitches.Single&lt;<span class="hljs-keyword">int</span>&gt;(), Keep.Right)
+        .ToMaterialized(lastSink, Keep.Both)
+        .Run(materializer);
+
+<span class="hljs-keyword">var</span> killSwitch = t.Item1;
+<span class="hljs-keyword">var</span> last = t.Item2;
+
+<span class="hljs-keyword">var</span> error = <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">"boom!"</span>);
+killSwitch.Abort(error);
+
+last.Wait();
+last.Exception.Should().Be(error);
+</code></pre>
+<h4 id="sharedkillswitch">SharedKillSwitch</h4>
+<p>A <code>SharedKillSwitch</code> allows to control the completion of an arbitrary number graphs of <code>FlowShape</code>. It can be
+materialized multiple times via its <code>Flow</code> method, and all materialized graphs linked to it are controlled by the switch.
+Refer to the below for usage examples.</p>
+<ul>
+<li><strong>Shutdown</strong></li>
+</ul>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> countingSource = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-keyword">int</span>.MaxValue))
+    .Delay(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), DelayOverflowStrategy.Backpressure);
+<span class="hljs-keyword">var</span> lastSink = Sink.Last&lt;<span class="hljs-keyword">int</span>&gt;();
+<span class="hljs-keyword">var</span> sharedKillSwitch = KillSwitches.Shared(<span class="hljs-string">"my-kill-switch"</span>);
+
+<span class="hljs-keyword">var</span> last = countingSource.Via(sharedKillSwitch.Flow&lt;<span class="hljs-keyword">int</span>&gt;()).RunWith(lastSink, materializer);
+
+<span class="hljs-keyword">var</span> delayedLast =
+    countingSource.Delay(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), DelayOverflowStrategy.Backpressure)
+        .Via(sharedKillSwitch.Flow&lt;<span class="hljs-keyword">int</span>&gt;())
+        .RunWith(lastSink, materializer);
+
+DoSomethingElse();
+
+sharedKillSwitch.Shutdown();
+
+last.Result.Should().Be(<span class="hljs-number">2</span>);
+delayedLast.Result.Should().Be(<span class="hljs-number">1</span>);
+</code></pre>
+<ul>
+<li><strong>Abort</strong></li>
+</ul>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> countingSource = Source.From(Enumerable.Range(<span class="hljs-number">1</span>, <span class="hljs-keyword">int</span>.MaxValue))
+    .Delay(TimeSpan.FromSeconds(<span class="hljs-number">1</span>), DelayOverflowStrategy.Backpressure);
+<span class="hljs-keyword">var</span> lastSink = Sink.Last&lt;<span class="hljs-keyword">int</span>&gt;();
+<span class="hljs-keyword">var</span> sharedKillSwitch = KillSwitches.Shared(<span class="hljs-string">"my-kill-switch"</span>);
+
+<span class="hljs-keyword">var</span> last1 = countingSource.Via(sharedKillSwitch.Flow&lt;<span class="hljs-keyword">int</span>&gt;()).RunWith(lastSink, materializer);
+<span class="hljs-keyword">var</span> last2 = countingSource.Via(sharedKillSwitch.Flow&lt;<span class="hljs-keyword">int</span>&gt;()).RunWith(lastSink, materializer);
+
+
+<span class="hljs-keyword">var</span> error = <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">"boom!"</span>);
+sharedKillSwitch.Abort(error);
+
+last1.Wait();
+last2.Wait();
+last1.Exception.Should().Be(error);
+last2.Exception.Should().Be(error);
+</code></pre>
+<div class="alert alert-default">
+<p><strong>Note</strong><br/>
+A <code>UniqueKillSwitch</code> is always a result of a materialization, whilst <code>SharedKillSwitch</code> needs to be constructed before any materialization takes place.</p>
+</div>
 </div>
 
 								

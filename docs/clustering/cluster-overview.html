@@ -232,11 +232,8 @@
 <p>Now that we&#39;ve gone over some of the concepts and distributed programming concerns behind Akka.Cluster&#39;s design, let&#39;s focus on how to actually use it inside our own Akka.NET applications.</p>
 <p><img class="img-responsive" src="images/how-to-enable-akka-cluster.png" alt="Steps to enable Akka.Cluster"></p>
 <p>The first step towards using Akka.Cluster is to install the <a href="http://www.nuget.org/packages/Akka.Cluster/" title="Akka.Cluster NuGet Package">Akka.Cluster NuGet package</a>, which you can do inside the Package Manager Console in Visual Studio:</p>
-<pre><code>PM&gt; Install-Package Akka<span class="hljs-class">.Cluster</span> -pre
-</code></pre><div class="alert alert-default">
-<p><strong>NOTE:</strong> Akka.Cluster is currently a pre-release nuget package, so you&#39;ll need to set the <code>pre</code> flag when you install it into your applications. Akka.Cluster will be considered &quot;fully released&quot; <a href="https://waffle.io/akkadotnet/akka.net?milestone=Akka.NET%20v1.1">once Akka.NET v1.1 ships</a>.</p>
-</div>
-<p>Once you&#39;ve installed Akka.Cluster, we need to update our HOCON configuration to turn on the <a href="http://api.getakka.net/docs/stable/html/CC0676F0.htm" title="Akka.NET API Docs - ClusterActorRefProvider class"><code>ClusterActorRefProvider</code></a>, configure an Akka.Remote transport, and enable at least 1 seed node.</p>
+<pre><code>PM&gt; <span class="hljs-keyword">Install</span>-Package Akka.Cluster
+</code></pre><p>Once you&#39;ve installed Akka.Cluster, we need to update our HOCON configuration to turn on the <a href="http://api.getakka.net/docs/stable/html/CC0676F0.htm" title="Akka.NET API Docs - ClusterActorRefProvider class"><code>ClusterActorRefProvider</code></a>, configure an Akka.Remote transport, and enable at least 1 seed node.</p>
 <div class="alert alert-default">
 <p><strong>NOTE:</strong> Akka.Cluster depends on Akka.Remote.</p>
 </div>
