@@ -745,6 +745,17 @@ returned value downstream.</p>
 <p><strong>emits</strong> when the given stream has an element available; if the given input completes, it tries the current one</p>
 <p><strong>backpressures</strong> when downstream backpressures</p>
 <p><strong>completes</strong> when all upstreams complete</p>
+<h4 id="orelse">OrElse</h4>
+<p>If the primary source completes without emitting any elements, the elements from the secondary source
+are emitted. If the primary source emits any elements the secondary source is cancelled.</p>
+<p>Note that both sources are materialized directly and the secondary source is backpressured until it becomes
+the source of elements or is cancelled.</p>
+<p>Signal errors downstream, regardless which of the two sources emitted the error.</p>
+<p><strong>emits</strong> when an element is available from first stream or first stream closed without emitting any elements and an element
+is available from the second stream</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> the primary stream completes after emitting at least one element, when the primary stream completes
+without emitting and the secondary stream already has completed or when the secondary stream completes</p>
 <h4 id="interleave">Interleave</h4>
 <p>Emits a specifiable number of elements from the original source, then from the provided source and repeats. If one
 source completes the rest of the other stream will be emitted.</p>
