@@ -178,7 +178,7 @@
 <p>Remember that Cluster client relies on Akka.Remote and Distributed Publish/Subscribe and all of their limitations also applies here. Also don&#39;t use cluster client to communicate between actors inside the same cluster, as it&#39;s not a suitable tool for this job, see. <a href="clustering/distributed-publish-subscribe">Distributed Publish/Subscribe</a>.</p>
 </blockquote>
 <p>Receptionist is supposed to be started on all cluster nodes (or those with specific role) using <code>ClusterClientReceptionist</code> before cluster client connection attempt. In order to make an actor visible outside the cluster it should be registered inside receptionist first. From the client perspective it can be accessed using <code>ClusterClient.Send</code>, <code>ClusterClient.SendToAll</code> and <code>ClusterClient.Publish</code> messages, which work accordingly to their Distributed Publish/Subscribe counterparts.</p>
-<p>Example:</p>
+<p>Example (you will need install <code>Akka.Cluster.Tools</code>):</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// inside the Cluster</span>
 <span class="hljs-keyword">var</span> receptionist = ClusterClientReceptionist.Get(system);
 receptionist.RegisterService(actorRef);
