@@ -174,7 +174,7 @@
 
 								<div><h1 id="sending-messages">Sending messages</h1>
 <h2 id="messages-and-immutability">Messages and immutability</h2>
-<p><strong>IMPORTANT:</strong> Messages can be any kind of object but have to be immutable. Akka can’t enforce immutability (yet) so this has to be by convention.</p>
+<p><strong>IMPORTANT:</strong> Messages can be any kind of object but have to be immutable. Akka can&#39;t enforce immutability (yet) so this has to be by convention.</p>
 <p>Here is an example of an immutable message:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ImmutableMessage</span>
 {
@@ -200,7 +200,7 @@ There are performance implications of using ask since something needs to keep tr
 <p>In all these methods you have the option of passing along your own ActorRef. Make it a practice of doing so because it will allow the receiver actors to be able to respond to your message, since the sender reference is sent along with the message.</p>
 <h3 id="tell-fire-forget">Tell: Fire-forget</h3>
 <p>This is the preferred way of sending messages. No blocking waiting for a message. This gives the best concurrency and scalability characteristics.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-comment">// don’t forget to think about who is the sender (2nd argument)</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-comment">// don't forget to think about who is the sender (2nd argument)</span>
 target.Tell(message, Self);
 </code></pre>
 <p>The sender reference is passed along with the message and available within the receiving actor via its Sender property while processing this message. Inside of an actor it is usually Self who shall be the sender, but there can be cases where replies shall be routed to some other actor—e.g. the parent—in which the second argument to tell would be a different one. Outside of an actor and if no reply is needed the second argument can be null; if a reply is needed outside of an actor you can use the ask-pattern described next.</p>
@@ -239,7 +239,7 @@ exception while processing a message.</p>
 <p>For more information on Tasks, check out the <a href="https://msdn.microsoft.com/en-us/library/dd537609(v=vs.110">MSDN documentation</a>.aspx).</p>
 <div class="alert alert-warning">
 <p><strong>Warning</strong><br/>
-When using task callbacks inside actors, you need to carefully avoid closing over the containing actor’s reference, i.e. do not call methods or access mutable state on the enclosing actor from within the callback. This would break the actor encapsulation and may introduce synchronization bugs and race conditions because the callback will be scheduled concurrently to the enclosing actor. Unfortunately there is not yet a way to detect these illegal accesses at compile time. See also: [[Actors and shared mutable state]]</p>
+When using task callbacks inside actors, you need to carefully avoid closing over the containing actor&#39;s reference, i.e. do not call methods or access mutable state on the enclosing actor from within the callback. This would break the actor encapsulation and may introduce synchronization bugs and race conditions because the callback will be scheduled concurrently to the enclosing actor. Unfortunately there is not yet a way to detect these illegal accesses at compile time. See also: [[Actors and shared mutable state]]</p>
 </div>
 <h3 id="forward-message">Forward message</h3>
 <p>You can forward a message from one actor to another. This means that the original sender address/reference is maintained even though the message is going through a &#39;mediator&#39;. This can be useful when writing actors that work as routers, load-balancers, replicators etc. You need to pass along your context variable as well.</p>

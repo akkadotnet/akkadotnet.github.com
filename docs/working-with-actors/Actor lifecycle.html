@@ -174,7 +174,7 @@
 
 								<div><h1 id="untypedactor-api">UntypedActor API</h1>
 <p>The <code>UntypedActor</code> class defines only one abstract method, the above mentioned <code>OnReceive(object message)</code>, which implements the behavior of the actor.</p>
-<p>If the current actor behavior does not match a received message, it&#39;s recommended that you call the unhandled method, which by default publishes a new <code>Akka.Actor.UnhandledMessage(message, sender, recipient)</code> on the actor system’s event stream (set configuration item <code>Unhandled</code> to on to have them converted into actual <code>Debug</code> messages).</p>
+<p>If the current actor behavior does not match a received message, it&#39;s recommended that you call the unhandled method, which by default publishes a new <code>Akka.Actor.UnhandledMessage(message, sender, recipient)</code> on the actor system&#39;s event stream (set configuration item <code>Unhandled</code> to on to have them converted into actual <code>Debug</code> messages).</p>
 <p>In addition, it offers:</p>
 <ul>
 <li><p><code>Self</code> reference to the <code>IActorRef</code> of the actor</p>
@@ -184,7 +184,7 @@
 <li><p><code>SupervisorStrategy</code> user overridable definition the strategy to use for supervising child actors</p>
 </li>
 </ul>
-<p>This strategy is typically declared inside the actor in order to have access to the actor’s internal state within the decider function: since failure is communicated as a message sent to the supervisor and processed like other messages (albeit outside of the normal behavior), all values and variables within the actor are available, as is the <code>Sender</code> reference (which will be the immediate child reporting the failure; if the original failure occurred within a distant descendant it is still reported one level up at a time).</p>
+<p>This strategy is typically declared inside the actor in order to have access to the actor&#39;s internal state within the decider function: since failure is communicated as a message sent to the supervisor and processed like other messages (albeit outside of the normal behavior), all values and variables within the actor are available, as is the <code>Sender</code> reference (which will be the immediate child reporting the failure; if the original failure occurred within a distant descendant it is still reported one level up at a time).</p>
 <ul>
 <li><p><code>Context</code> exposes contextual information for the actor and the current message, such as:</p>
 <ul>
@@ -258,7 +258,7 @@
 </code></pre>
 <p>It should be noted that the <code>Terminated</code> message is generated independent of the order in which registration and termination occur. In particular, the watching actor will receive a <code>Terminated</code> message even if the watched actor has already been terminated at the time of registration.</p>
 <p>Registering multiple times does not necessarily lead to multiple messages being generated, but there is no guarantee that only exactly one such message is received: if termination of the watched actor has generated and queued the message, and another registration is done before this message has been processed, then a second message will be queued, because registering for monitoring of an already terminated actor leads to the immediate generation of the <code>Terminated</code> message.</p>
-<p>It is also possible to deregister from watching another actor’s liveliness using <code>Context.Unwatch(target)</code>. This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no <code>Terminated</code> message for that actor will be processed anymore.</p>
+<p>It is also possible to deregister from watching another actor&#39;s liveliness using <code>Context.Unwatch(target)</code>. This works even if the Terminated message has already been enqueued in the mailbox; after calling unwatch no <code>Terminated</code> message for that actor will be processed anymore.</p>
 <h2 id="start-hook">Start Hook</h2>
 <p>Right after starting the actor, its <code>PreStart</code> method is invoked.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PreStart</span>(<span class="hljs-params"></span>)
@@ -266,14 +266,14 @@
     child = Context.ActorOf(Props.Empty);
 }
 </code></pre>
-<p>This method is called when the actor is first created. During restarts it is called by the default implementation of <code>PostRestart</code>, which means that by overriding that method you can choose whether the initialization code in this method is called only exactly once for this actor or for every restart. Initialization code which is part of the actor’s constructor will always be called when an instance of the actor class is created, which happens at every restart.</p>
+<p>This method is called when the actor is first created. During restarts it is called by the default implementation of <code>PostRestart</code>, which means that by overriding that method you can choose whether the initialization code in this method is called only exactly once for this actor or for every restart. Initialization code which is part of the actor&#39;s constructor will always be called when an instance of the actor class is created, which happens at every restart.</p>
 <h2 id="restart-hooks">Restart Hooks</h2>
 <p>All actors are supervised, i.e. linked to another actor with a fault handling strategy. Actors may be restarted in case an exception is thrown while processing a message (see <a href="supervision-and-monitoring">Supervision and Monitoring</a>. This restart involves the hooks mentioned above:</p>
 <ul>
-<li>The old actor is informed by calling <code>PreRestart</code> with the exception which caused the restart and the message which triggered that exception; the latter may be None if the restart was not caused by processing a message, e.g. when a supervisor does not trap the exception and is restarted in turn by its supervisor, or if an actor is restarted due to a sibling’s failure. If the message is available, then that message’s sender is also accessible in the usual way (i.e. by calling the <code>Sender</code> property).
+<li>The old actor is informed by calling <code>PreRestart</code> with the exception which caused the restart and the message which triggered that exception; the latter may be None if the restart was not caused by processing a message, e.g. when a supervisor does not trap the exception and is restarted in turn by its supervisor, or if an actor is restarted due to a sibling&#39;s failure. If the message is available, then that message&#39;s sender is also accessible in the usual way (i.e. by calling the <code>Sender</code> property).
 This method is the best place for cleaning up, preparing hand-over to the fresh actor instance, etc. By default it stops all children and calls <code>PostStop</code>.</li>
 <li>The initial factory from the <code>ActorOf</code> call is used to produce the fresh instance.</li>
-<li>The new actor’s <code>PostRestart</code> method is invoked with the exception which caused the restart. By default the <code>PreStart</code> is called, just as in the normal start-up case.</li>
+<li>The new actor&#39;s <code>PostRestart</code> method is invoked with the exception which caused the restart. By default the <code>PreStart</code> is called, just as in the normal start-up case.</li>
 </ul>
 <p>An actor restart replaces only the actual actor object; the contents of the mailbox is unaffected by the restart, so processing of messages will resume after the <code>PostRestart</code> hook returns. The message that triggered the exception will not be received again. Any message sent to an actor while it is being restarted will be queued to its mailbox as usual.</p>
 <div class="alert alert-warning">

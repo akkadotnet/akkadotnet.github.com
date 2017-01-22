@@ -221,7 +221,7 @@ targetActorRef.Tell(PoisonPill.Instance);
 <p><code>Kill</code> will cause an actor to be <code>Stop</code>ped by its supervisor. In the process, the supervisor will log the <code>ActorKilledException</code>.</p>
 <h4 id="what-happens-when-i-kill-an-actor-">What Happens When I <code>Kill</code> an Actor?</h4>
 <ol>
-<li><a href="(https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka/Actor/ActorCell.DefaultMessages.cs#L376">The actor throws</a>) an <a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka/Actor/Exceptions.cs#L134"><code>ActorKilledException</code></a>. The actor&#39;s supervisor logs this message.<ul>
+<li><a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka/Actor/ActorCell.DefaultMessages.cs#L376">The actor throws</a> an <a href="https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka/Actor/Exceptions.cs#L134"><code>ActorKilledException</code></a>. The actor&#39;s supervisor logs this message.<ul>
 <li>Note: This suspends the actor mailbox from processing further user messages.</li>
 </ul>
 </li>

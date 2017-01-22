@@ -368,10 +368,10 @@ IActorRef deserializedActorRef = extendedSystem.Provider.ResolveActorRef(id);
 through the remote transport. There are other uses of serialization, though,
 e.g. storing actor references outside of an actor application (database, etc.).
 In this case, it is important to keep in mind that the address part of an
-actor’s path determines how that actor is communicated with. Storing a local
+actor&#39;s path determines how that actor is communicated with. Storing a local
 actor path might be the right choice if the retrieval happens in the same
 logical context, but it is not enough when deserializing it on a different
-network host: for that it would need to include the system’s remote transport
+network host: for that it would need to include the system&#39;s remote transport
 address. An actor system is not limited to having just one remote transport
 per se, which makes this question a bit more interesting. To find out the
 appropriate address to use when sending to remoteAddr you can use<br><code>IActorRefProvider.GetExternalAddressFor(remoteAddr)</code> like this:</p>
@@ -434,7 +434,7 @@ include the unique id.</p>
 the system which will deserialize the resulting actor reference; if you have no
 concrete address handy you can create a dummy one for the right protocol using
 new Address(protocol, &quot;&quot;, &quot;&quot;, 0) (assuming that the actual transport used is as
-lenient as Akka’s RemoteActorRefProvider).</p>
+lenient as Akka&#39;s RemoteActorRefProvider).</p>
 <p>There is also a default remote address which is the one used by cluster support
 (and typical systems have just this one); you can get it like this:</p>
 <p>.. includecode:: code/docs/serialization/DefaultAddress.cs</p>
@@ -480,7 +480,11 @@ public class DefaultAddress extends
     }
   }
 }
-</code></pre><h3 id="deep-serialization-of-actors">Deep serialization of Actors</h3>
+</code></pre><div class="alert alert-default">
+<p><strong>Note</strong><br/>
+The license of Wire has changed to GNU v3. Because of this the Akka.NET team has created a fork of Wire, under the name <a href="https://github.com/akkadotnet/Hyperion">Hyperion</a>. An Akka.Serialization.Hyperion package will be released as part of the 1.1.3 release.</p>
+</div>
+<h3 id="deep-serialization-of-actors">Deep serialization of Actors</h3>
 <p>The recommended approach to do deep serialization of internal actor state is
 to use <a href="Persistence">Akka Persistence</a>.</p>
 </div>

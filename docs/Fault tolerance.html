@@ -176,7 +176,7 @@
 <p>As explained in <a href="ActorSystem">Actor Systems</a> each actor is the supervisor of its
 children, and as such each actor defines fault handling supervisor strategy.
 This strategy cannot be changed afterwards as it is an integral part of the
-actor system’s structure.</p>
+actor system&#39;s structure.</p>
 <h2 id="fault-handling-in-practice">Fault Handling in Practice</h2>
 <p>First, let us look at a sample that illustrates one way to handle data store errors,
 which is a typical source of failure in real world applications. Of course it depends
@@ -266,7 +266,7 @@ longer be the case:</p>
 <p>And finally in case of the fatal <code>IllegalArgumentException</code> the child will be
 terminated by the supervisor:</p>
 <p>!!!TODO: Port sample code</p>
-<p>Up to now the supervisor was completely unaffected by the child’s failure,
+<p>Up to now the supervisor was completely unaffected by the child&#39;s failure,
 because the directives set did handle it. In case of an <code>Exception</code>, this is not
 true anymore and the supervisor escalates the failure.</p>
 <p>!!!TODO: Port sample code</p>
