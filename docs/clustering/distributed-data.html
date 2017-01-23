@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->	<html> <!--<![endif]-->
+	<head>
+		
+
+<meta charset="utf-8" />
+<title>Akka distributed data | Akka.NET</title>
+
+<meta name="keywords" content="Actor,Finite state machine, concurrency" />
+<meta name="description" content="" />
+<meta name="Author" content="Dorin Grigoras [www.stepofweb.com]" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- mobile settings -->
+<meta name="viewport" contenht="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/theme_assets/images/demo/favicon.ico" />
+
+<!-- WEB FONTS -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,800&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" />
+
+<!-- CORE CSS -->
+<link href="/theme_assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/sky-forms.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/weather-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/line-icons.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/owl-carousel/owl.pack.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/plugins/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/animate.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/flexslider.css" rel="stylesheet" type="text/css" />
+
+<!-- FAV ICON -->
+<link rel="shortcut icon" href="http://akkadotnet.github.io/favicon.ico?v=2" />
+
+<!-- REVOLUTION SLIDER -->
+<link href="/theme_assets/css/revolution-slider.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layerslider.css" rel="stylesheet" type="text/css" />
+
+<!-- BLOG -->
+<link href="/theme_assets/css/layout-blog.css" rel="stylesheet" type="text/css" />
+
+<!-- THEME CSS -->
+<link href="/theme_assets/css/essentials.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/layout.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/header-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/footer-default.css" rel="stylesheet" type="text/css" />
+<link href="/theme_assets/css/color_scheme/red.css" rel="stylesheet" type="text/css" id="color_scheme" />
+
+<!-- Highlighting -->
+<link href="https://highlightjs.org/static/demo/styles/github.css" rel="stylesheet" type="text/css" />
+<link href="/css/screen.css" rel="stylesheet" type="text/css" />
+
+<!-- Modernizr -->
+<script type="text/javascript" src="/theme_assets/plugins/modernizr.min.js"></script>
+
+<!--[if lte IE 8]>
+  <script src="/theme_assets/plugins/respond.js"></script>
+<![endif]-->
+
+	</head>
+
+	<!--
+		Available body classes:
+			smoothscroll			= enable chrome browser smooth scroll
+			grey 					= grey content background
+			boxed 					= boxed style
+			pattern1 ... pattern10 	= background pattern
+
+		Background Image - add to body:
+			data-background="/theme_assets/images/boxed_background/1.jpg"
+	-->
+	<body class=" ">
+
+		<div id="wrapper">
+			<div id="header">
+  <header id="topBar">
+    <div class="container">
+
+      
+
+      <!-- Logo -->
+      <a class="logo" href="/">
+        <img src="/images/akkalogo.png"  alt="" style="padding-top:0px;padding-left: 5px;" />
+      </a>
+
+    </div><!-- /.container -->
+  </header>
+  <div id="topNav">
+  <div class="container">
+    <!-- Mobile Menu Button -->
+    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Search -->
+    <form class="search" method="get" action="/search">
+      <input type="text" class="form-control" name="q" value="" placeholder="Search">
+      <button class="fa fa-search"></button>
+    </form>
+    <!-- /Search -->
+
+    <!-- Top Nav -->
+    <div class="navbar-collapse nav-main-collapse collapse inline-block">
+      <nav class="nav-main">
+
+      
+
+        <!-- pageurl  -->
+        <ul id="topMain" class="nav nav-pills nav-main">
+          <li class="mega-menu  active">
+            <a href="/docs/">DOCUMENTATION<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://github.com/akkadotnet/akka.net/">CODE<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://gitter.im/akkadotnet/akka.net">PROJECT CHAT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu">
+            <a href="https://groups.google.com/forum/#!forum/akkadotnet-user-list">MAILING LIST<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/pages/support">COMMERCIAL SUPPORT<span>&nbsp;</span></a>
+          </li>
+          <li class="mega-menu ">
+            <a href="/docs/Resources">RESOURCES<span>&nbsp;</span></a>
+          </li>
+        </ul>
+
+      </nav>
+    </div>
+</div>
+</div>
+			
+
+			<!-- PAGE TOP -->
+			<section class="page-title">
+				<div class="container">
+					<header>
+						<ul class="breadcrumb"><!-- breadcrumb -->
+							<li><a href="/">Home</a></li>
+							<li><a href="/docs/">Docs</a></li>
+							<li class="active">Akka distributed data<a href="https://github.com/akkadotnet/getakka.net/edit/master/src/docs/distributed-data.md" > (Edit on Github)</a></li>
+						</ul><!-- /breadcrumb -->
+
+						<h2><!-- Page Title -->
+							<strong>Akka.NET</strong> Docs
+						</h2><!-- /Page Title -->
+
+					</header>
+
+				</div>
+			</section>
+			<!-- /PAGE TOP -->
+
+			<!-- CONTENT -->
+			<section>
+				<div class="container">
+
+					<div class="row">
+
+						<!-- RIGHT COLUMNS -->
+						<div class="col-md-3" id="toc">
+						</div>
+						<!-- /RIGHT COLUMNS -->
+
+						<!-- LEFT COLUMNS -->
+						<div class="col-md-8 docs-content">
+							<div id="main_content">
+
+								<div><h1 id="distributed-data">Distributed data</h1>
+<p>Akka.DistributedData plugin can be used as in-memory, highly-available, distributed key-value store, where values conform to so called <a href="http://hal.upmc.fr/inria-00555588/document">Conflict-Free Replicated Data Types</a> (CRDT). Those data types can have replicas across multiple nodes in the cluster, where DistributedData plugin has been initialized. We are free to perform concurrent updates on replicas with the same corresponding key without need of coordination (distributed locks or transactions) - all state changes will eventually converge with conflicts being automatically resolved, thanks to the nature of CRDTs. To use distributed data plugin, simply install it via NuGet:</p>
+<pre><code><span class="hljs-operator"><span class="hljs-keyword">install</span>-<span class="hljs-keyword">package</span> Akka.DistributedData -pre</span>
+</code></pre><p>Keep in mind, that CRDTs are indended for high-availability, non-blocking read/write scenarios. However they are not a good fit, when you need strong consistency or are operating on big data. If you want to have millions of data entries, this is NOT a way to go. Keep in mind, that all data is kept in memory and, as state-based CRDTs, whole object state is replicated remotelly across the nodes, when an update happens. A more efficient implementations (delta-based CRDTs) are considered for the future implementations.</p>
+<div class="alert alert-warning">
+<p><strong>WARNING</strong>: At the present moment, Akka.DistributedData plugin is in state of flux. This means, that its API is unstable and the performance is yet to improve.</p>
+</div>
+<h2 id="basic-operations">Basic operations</h2>
+<p>Each CRDT defines few core operations, which are: reads, upserts and deletes. There&#39;s no explicit distinction between inserting a value and updating it.</p>
+<h3 id="reads">Reads</h3>
+<p>To retrieve current data value stored under expected key, you need to send a <code>Replicator.Get</code> request directly to a replicator actor reference. You can use <code>Dsl.Get</code> helper too:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.DistributedData;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">static</span> Akka.DistributedData.Dsl;
+
+<span class="hljs-keyword">var</span> replicator = DistributedData.Get(system).Replicator;
+<span class="hljs-keyword">var</span> key = <span class="hljs-keyword">new</span> ORSetKey&lt;<span class="hljs-keyword">string</span>&gt;(<span class="hljs-string">"keyA"</span>);
+<span class="hljs-keyword">var</span> readConsistency = ReadLocal.Instance;
+
+<span class="hljs-keyword">var</span> response = <span class="hljs-keyword">await</span> replicator.Ask&lt;Replicator.IGetResponse&gt;(Get(key, readConsistency));
+<span class="hljs-keyword">if</span> (response.IsSuccessful) 
+{
+    <span class="hljs-keyword">var</span> data = response.Get(key);    
+}
+</code></pre>
+<p>In response, you should receive <code>Replicator.IGetResponse</code> message. There are several types of possible responses:</p>
+<ul>
+<li><code>GetSuccess</code> when a value for provided key has been received successfully. To get the value, you need to call <code>response.Get(key)</code> with the key, you&#39;ve sent with the request.</li>
+<li><code>NotFound</code> when no value was found under provided key.</li>
+<li><code>GetFailure</code> when a replicator failed to retrieve value withing specified consistency and timeout constraints.</li>
+<li><code>DataDeleted</code> when a value for the provided key has been deleted.</li>
+</ul>
+<p>All <code>Get</code> requests follows the read-your-own-write rule - if you updated the data, and want to read the state under the same key immediatelly after, you&#39;ll always retrieve modified value, even if the <code>IGetResponse</code> message will arrive before <code>IUpdateResponse</code>.</p>
+<h4 id="read-consistency">Read consistency</h4>
+<p>What is a mentioned read consistency? As we said at the beginning, all updates perfomed within distributed data module will eventually converge. This means, we&#39;re not speaking about immediate consistency of a given value across all nodes. Therefore we can precise, what degree of consistency are we expecting:</p>
+<ul>
+<li><code>ReadLocal</code> - we take value based on replica living on a current node.</li>
+<li><code>ReadFrom</code> - value will be merged from states retrieved from some number of nodes, including local one.</li>
+<li><code>ReadMajority</code> - value will be merged from more than a half of cluster nodes replicas (or nodes given a configured role).</li>
+<li><code>ReadAll</code> - before returning, value will be read and merged from all cluster nodes (or the ones with configured role).</li>
+</ul>
+<h3 id="upserts">Upserts</h3>
+<p>To update and replicate the data, you need to send <code>Replicator.Update</code> request directly to a replicator actor reference. You can use <code>Dsl.Update</code> helper too:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
+<span class="hljs-keyword">using</span> Akka.Cluster;
+<span class="hljs-keyword">using</span> Akka.DistributedData;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">static</span> Akka.DistributedData.Dsl;
+
+<span class="hljs-keyword">var</span> cluster = Cluster.Get(system);
+<span class="hljs-keyword">var</span> replicator = DistributedData.Get(system).Replicator;
+<span class="hljs-keyword">var</span> key = <span class="hljs-keyword">new</span> ORSetKey&lt;<span class="hljs-keyword">string</span>&gt;(<span class="hljs-string">"keyA"</span>);
+<span class="hljs-keyword">var</span> <span class="hljs-keyword">set</span> = ORSet.Create(cluster, <span class="hljs-string">"value"</span>);
+<span class="hljs-keyword">var</span> writeConsistency = <span class="hljs-keyword">new</span> WriteTo(<span class="hljs-number">3</span>, TimeSpan.FromSeconds(<span class="hljs-number">1</span>));
+
+<span class="hljs-keyword">var</span> response = <span class="hljs-keyword">await</span> replicator.Ask&lt;Replicator.IUpdateResponse&gt;(Update(key, <span class="hljs-keyword">set</span>, writeConsistency, old =&gt; old.Merge(<span class="hljs-keyword">set</span>)));
+</code></pre>
+<p>Just like in case of reads, there are several possible responses:</p>
+<ul>
+<li><code>UpdateSuccess</code> when a value for provided key has been replicated successfully within provided write consistency constraints.</li>
+<li><code>ModifyFailure</code> when update failed because of an exception within modify function used inside <code>Update</code> command.</li>
+<li><code>UpdateTimeout</code> when a write consistency constraints has not been fulfilled on time. <strong>Warning</strong>: this doesn&#39;t mean, that update has been rolled back! Provided value will eventually propage its replicas across nodes using gossip protocol, causing the altered state to eventually converge across all of them.</li>
+<li><code>DataDeleted</code> when a value under provided key has been deleted.</li>
+</ul>
+<p>You&#39;ll always see updates done on local node. When you perform two updates on the same key, second modify function will always see changes done by the first one.</p>
+<h4 id="write-consistency">Write consistency</h4>
+<p>Just like in case of reads, write consistency allows us to specify level of certainity of our updates before proceeding:</p>
+<ul>
+<li><code>WriteLocal</code> - while value will be disseminated later using gossip, the response will return immediatelly after local replica update has been acknowledged.</li>
+<li><code>WriteTo</code> - update will immediatelly be propagated to a given number of replicas, including local one.</li>
+<li><code>WriteMajority</code> - update will propagate to more than a half nodes in a cluster (or nodes given a configured role) before response will be emitted.</li>
+<li><code>WriteAll</code> - update will propagate to all nodes in a cluster (or nodes given a configured role) before response will be emitted.</li>
+</ul>
+<h3 id="deletes">Deletes</h3>
+<p>Any data can be deleted by sending a <code>Replicator.Delete</code> request to a local replicator actor reference. You can use <code>Dsl.Delete</code> helper too:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> Akka.DistributedData;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">static</span> Akka.DistributedData.Dsl;
+
+<span class="hljs-keyword">var</span> replicator = DistributedData.Get(system).Replicator;
+<span class="hljs-keyword">var</span> key = <span class="hljs-keyword">new</span> ORSetKey&lt;<span class="hljs-keyword">string</span>&gt;(<span class="hljs-string">"keyA"</span>);
+<span class="hljs-keyword">var</span> writeConsistency = WriteLocal.Instance;
+
+<span class="hljs-keyword">var</span> response = <span class="hljs-keyword">await</span> replicator.Ask&lt;Replicator.IDeleteResponse&gt;(Delete(key, writeConsistency))
+</code></pre>
+<p>Delete may return one of the 3 responses:</p>
+<ul>
+<li><code>DeleteSuccess</code> when key deletion succeeded within provided consistency constraints.</li>
+<li><code>DataDeleted</code> when data has been deleted already. Once deleted, key can no longer be reused and <code>DataDeleted</code> response will be send to all subsequent requests (either reads, updates or deletes). This message will also be used as notification for subscribers.</li>
+<li><code>ReplicationDeleteFailure</code> when operation failed to satisfy specified consistency constraints. <strong>Warning</strong>: this doesn&#39;t mean, that delete has been rolled back! Provided operation will eventually propage its replicas across nodes using gossip protocol, causing the altered state to eventually converge across all of them.</li>
+</ul>
+<p>Deletes doesn&#39;t specify it&#39;s own consistency - it uses the same <code>IWriteConsistency</code> interface as updates.</p>
+<p>Delete operation doesn&#39;t mean, that the entry for specified key has been completely removed. It will still occupy portion of a memory. In case of frequent updates and removals consider to use remove-aware data types such as <code>ORSet</code> or <code>ORDictionary</code>.</p>
+<h2 id="subscriptions">Subscriptions</h2>
+<p>You may decide to subscribe to eventual notifications about possible updates by sending <code>Replicator.Subscribe</code> message to a local replicator actor reference. All subscribers will be notified periodically (accordingly to <code>akka.cluster.distributed-data.notify-subscribers-interval</code> setting, which is 0.5 sec by default). You can also provoke immediate notification of all subscribers by sending <code>Replicator.FlushChanges</code> request to the replicator. Example of actor subscription:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">using</span> System;
+<span class="hljs-keyword">using</span> Akka.DistributedData;
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">static</span> Akka.DistributedData.Dsl;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">Subscriber</span> : <span class="hljs-title">ReceiveActor</span> 
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Subscriber</span>(<span class="hljs-params"></span>) 
+    </span>{
+        <span class="hljs-keyword">var</span> replicator = DistributedData.Get(Context.System).Replicator;
+        <span class="hljs-keyword">var</span> key = <span class="hljs-keyword">new</span> ORSetKey&lt;<span class="hljs-keyword">string</span>&gt;(<span class="hljs-string">"keyA"</span>);
+        replicator.Tell(Subscribe(key, Self));
+
+        Receive&lt;Replicator.Changed&gt;(changed =&gt; 
+        {
+            <span class="hljs-keyword">var</span> newValue = changed.Get(key);
+            Console.WriteLine($<span class="hljs-string">"Received updated value for key '{key}': {newValue}"</span>);
+        });
+    }    
+}
+</code></pre>
+<p>All subscribers are removed automatically when terminated. This can be also done explicitly by sending <code>Replicator.Unsubscribe</code> message.</p>
+<h2 id="available-replicated-data-types">Available replicated data types</h2>
+<p>Akka.DistributedData specifies several data types, sharing the same <code>IReplicatedData</code> interface. All of them share some common members, such as (default) empty value or <code>Merge</code> method used to merge two replicas of the same data with automatic conflic resolution. All of those values are also immutable - this means, that any operations, which are supposed to change their state, produce new instance in result:</p>
+<ul>
+<li><code>Flag</code> is a boolean CRDT flag, which default value is always <code>false</code>. When a merging replicas have conflicting state, <code>true</code> will always win over <code>false</code>.</li>
+<li><code>GCounter</code> (also known as growing-only counter) allows only for addition/increment of its state. Trying to add a negative value is forbidden here. Total value of the counter is a sum of values across all of the replicas. In case of conflicts during merge operation, a copy of replica with greater value will always win.</li>
+<li><code>PNCounter</code> allows for both increments and decrements. A total value of the counter is a sum of increments across all replcias decreased by the sum of all decrements.</li>
+<li><code>GSet</code> is an add-only set, which disallows to remove elements once added to it. Merges of GSets are simple unions of their elements. This data type doesn&#39;t produce any garbadge.</li>
+<li><code>ORSet</code> is implementation of an observed remove add-wins set. It allows to both add and remove its elements any number of times. In case of conflicts when merging replicas, added elements always wins over removed ones.</li>
+<li><code>ORDictionary</code> (also knowns as OR-Map or Observed Remove Map) has similar semantics to OR-Set, however it allows to merge values (which must be CRDTs themselves) in case of concurrent updates.</li>
+<li><code>ORMultiDictionary</code> is a multi-map implementation based on <code>ORDictionary</code>, where values are represented as OR-Sets. Use <code>AddItem</code> or <code>RemoveItem</code> to add or remove elements to the bucket under specified keys.</li>
+<li><code>PNCounterDictionary</code> is a dictionary implementation based on <code>ORDictionary</code>, where values are represented as PN-Counters.</li>
+<li><code>LWWRegister</code> (Last Write Wins Register) is a cell for any data type, that implements CRDT semantics. Each modification updates register&#39;s timestamp (timestamp generation can be customized, by default it&#39;s using UTC date time ticks). In case of merge conflicts, the value with highest update timestamp always wins.</li>
+<li><code>LWWDictionary</code> is a dictionary implementation, which internally uses LLW-Registers to allow to store data of any type to be stored in it. Dictionary entry additions/removals are solved with add-wins semantics, while in-place entry value updates are resolved using last write wins semantics.</li>
+</ul>
+<p>Keep in mind, that most of the replicated collections add/remove methods require to provide local instance of the cluster in order to correctly track, to which replica update is originally assigned to.</p>
+<h2 id="tombstones">Tombstones</h2>
+<p>One of the issue of CRDTs, is that they accumulate history of changes (including removed elements), producing a garbadge, that effectivelly pile up in memory. While this is still a problem, it can be limited by replicator, which is able to remove data associated with nodes, that no longer exist in the cluster. This process is known as a pruning.</p>
+<h2 id="settings">Settings</h2>
+<p>There are several different HOCON settings, that can be used to configure distributed data plugin. By default, they all live under <code>akka.cluster.distributed-data</code> node:</p>
+<ul>
+<li><code>name</code> of replicator actor. Default: <em>ddataReplicator</em>.</li>
+<li><code>role</code> used to limit expected DistributedData capability to nodes having that role. None by default.</li>
+<li><code>gossip-interval</code> tells replicator, how often replicas should be gossiped over the cluster. Default: <em>2 seconds</em></li>
+<li><code>notify-subscribers-interval</code> tells, how often replicator subscribers should be notified with replica state changes. Default: <em>0.5 second</em></li>
+<li><code>max-delta-elements</code> limits a maximum number of entries (key-value pairs) to be send in a single gossip information. If there are more modified entries waiting to be gossiped, they will be send in the next round. Default: <em>1000</em></li>
+<li><code>use-dispatcher</code> can be used to specify custom replicator actor message dispatcher. By default it uses an actor system default dispatcher.</li>
+<li><code>pruning-interval</code> tells, how often replicator will check if pruning should be performed. Default: <em>30 seconds</em></li>
+<li><code>max-pruning-dissemination</code> informs, what is the worst expected time for the pruning process to inform whole cluster about pruned node data. Default: <em>60 seconds</em></li>
+<li><code>serializer-cache-time-to-live</code> is used by custom distributed data serializer to determine, for how long serialized replicas should be cached. When sending replica over multiple nodes, it will reuse data already serialized, if it was found in a cache. Default: <em>10 seconds</em>.</li>
+</ul>
+</div>
+
+								
+
+						</div>
+						<div class="col-md-1">&nbsp;</div>
+						<!-- /LEFT COLUMNS -->
+
+
+
+					</div>
+
+				</div>
+			</section>
+			<!-- /CONTENT -->
+
+			<footer id="footer">
+  <div class="container">
+    <div class="row">
+        <!-- col #1 -->
+        <div class="spaced dark col-md-3">
+            <h4>About <strong>Akka.NET</strong></h4>
+            <p class="block">
+                Akka.NET is a port of the popular
+                <br/> Java/Scala framework <a href="http://akka.io">Akka</a> to .NET.
+                <br/>
+                <br/> This is a community driven port and
+                <br/> is not affiliated with <a href="http://typesafe.com">Typesafe</a> who
+                <br/> makes the original Java/Scala version.
+                <br/>
+            </p>
+            <!-- social -->
+            <p class="block">
+                <a href="mailto:hi@getakka.net">hi@getakka.net</a><br>
+                <a href="https://www.facebook.com/akkadotnet" class="social fa fa-facebook"></a>
+                <a href="http://stackoverflow.com/questions/tagged/akka.net" class="social fa fa-stack-overflow"></a>
+                <a href="https://twitter.com/AkkaDotNET" class="social fa fa-twitter"></a>
+            </p><!-- /social -->
+        </div>
+        <!-- /col #1 -->
+        <!-- col #3 -->
+        <div class="spaced col-md-6 col-sm-4">
+            <h4>Recent <strong>Tweets</strong></h4>
+            <ul class="list-unstyled fsize13" id="recent_tweets">
+            </ul>
+        </div>
+        <!-- /col #3 -->
+        <div class="spaced col-md-3 col-sm-4">
+            <h4>Keep <strong>Updated</strong></h4>
+            <h4><small><strong>Subscribe to our Newsletter</strong></small></h4>
+            <!-- Begin MailChimp Signup Form -->
+<div id="mc_embed_signup">
+    <form class="input-group" action="//github.us8.list-manage.com/subscribe/post?u=945d2a2edaa89aaabd396bc45&amp;id=5f9a7a993d" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <input type="email" value="" name="EMAIL" class="form-control placeholder required email" id="mce-EMAIL" placeholder="E-mail Address">
+        <span class="input-group-btn">
+  <button class="btn btn-primary" type="submit" name="subscribe" id="mc-embedded-subscribe">SUBMIT</button>
+</span>
+        <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+        </div>
+        <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" name="b_945d2a2edaa89aaabd396bc45_5f9a7a993d" tabindex="-1" value="">
+        </div>
+        <div class="clear"></div>
+    </form>
+</div>
+<!--End mc_embed_signup-->
+
+        </div>
+    </div>
+  </div>
+  <hr />
+  <!-- <div class="copyright">
+    <div class="container text-center fsize12"></div>
+  </div> -->
+</footer>
+
+
+			<a href="#" id="toTop"></a>
+
+		</div><!-- /#wrapper -->
+
+		<script type="text/javascript" src="/theme_assets/plugins/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/jquery.isotope.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/masonry.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/owl-carousel/owl.carousel.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/knob/js/jquery.knob.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/flexslider/jquery.flexslider-min.js"></script>
+
+<!-- REVOLUTION SLIDER -->
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.plugins.min.js"></script>
+<script type="text/javascript" src="/theme_assets/plugins/revolution-slider/js/jquery.themepunch.revolution.min.js"></script>
+<script type="text/javascript" src="/theme_assets/js/revolution_slider.js"></script>
+<script type="text/javascript" src="/js/jquery-toc.js"></script>
+<script type="text/javascript" src="/theme_assets/js/scripts.js"></script>
+<script type="text/javascript" src="/js/scripts.js"></script>
+		<!-- REACTIVE MANIFESTO BANNER -->
+<a href="http://www.reactivemanifesto.org/"> <img style="border: 0; position: fixed; right: 0; top:0; z-index: 9000; max-width: 125px;" src="//d379ifj7s9wntv.cloudfront.net/reactivemanifesto/images/ribbons/we-are-reactive-red-right.png"> </a>
+
+	</body>
+</html>
