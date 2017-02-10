@@ -231,7 +231,7 @@ frameworks are described in more depth in the
 guideline.</p>
 <hr>
 <p>Currently the following Akka.NET Dependency Injection plugins are available:</p>
-<h2 id="autofac">AutoFac</h2>
+<h2 id="autofac">Autofac</h2>
 <p>In order to use this plugin, install the Nuget package with
 <code>Install-Package Akka.DI.AutoFac</code>, then follow the instructions:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
@@ -244,7 +244,7 @@ builder.RegisterType&lt;TypedWorker&gt;();
 <span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
 <span class="hljs-keyword">var</span> propsResolver = <span class="hljs-keyword">new</span> AutoFacDependencyResolver(container, system);
 </code></pre>
-<h2 id="castlewindsor">CastleWindsor</h2>
+<h2 id="castle-windsor">Castle Windsor</h2>
 <p>In order to use this plugin, install the Nuget package with
 <code>Install-Package Akka.DI.CastleWindsor</code>, then follow the instructions:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// Create and build your container</span>
