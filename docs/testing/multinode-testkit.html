@@ -185,15 +185,13 @@
 <p>Here&#39;s an example of a multi node spec from the Akka.Cluster.Tests project:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressMultiNodeConfig</span> : <span class="hljs-title">MultiNodeConfig</span>
 {
-    <span class="hljs-keyword">readonly</span> RoleName _first;
-    <span class="hljs-keyword">public</span> RoleName First { <span class="hljs-keyword">get</span> {<span class="hljs-keyword">return</span> _first;} }
-    <span class="hljs-keyword">readonly</span> RoleName _second;
-    <span class="hljs-keyword">public</span> RoleName Second { <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> _second; } }
+    <span class="hljs-keyword">public</span> RoleName First { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> RoleName Second { <span class="hljs-keyword">get</span>; }
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JoinInProgressMultiNodeConfig</span>(<span class="hljs-params"></span>)
     </span>{
-        _first = Role(<span class="hljs-string">"first"</span>);
-        _second = Role(<span class="hljs-string">"second"</span>);
+        First = Role(<span class="hljs-string">"first"</span>);
+        Second = Role(<span class="hljs-string">"second"</span>);
 
         CommonConfig = MultiNodeLoggingConfig.LoggingConfig.WithFallback(DebugConfig(<span class="hljs-keyword">true</span>))
             .WithFallback(ConfigurationFactory.ParseString(<span class="hljs-string">@"
@@ -206,22 +204,23 @@
                         acceptable-heartbeat-pause = 1 second
                     }
                 }"</span>).WithFallback(MultiNodeClusterSpec.ClusterConfig()));
+
+        NodeConfig(<span class="hljs-keyword">new</span> List&lt;RoleName&gt; { First }, <span class="hljs-keyword">new</span> List&lt;Config&gt;
+        {
+            ConfigurationFactory.ParseString(<span class="hljs-string">"akka.cluster.roles =[frontend]"</span>)
+        });
+        NodeConfig(<span class="hljs-keyword">new</span> List&lt;RoleName&gt; { Second }, <span class="hljs-keyword">new</span> List&lt;Config&gt;
+        {
+            ConfigurationFactory.ParseString(<span class="hljs-string">"akka.cluster.roles =[backend]"</span>)
+        });
     }
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressMultiNode1</span> : <span class="hljs-title">JoinInProgressSpec</span>
-{
-}
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressMultiNode2</span> : <span class="hljs-title">JoinInProgressSpec</span>
-{
-}
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressSpec</span> : <span class="hljs-title">MultiNodeClusterSpec</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressSpec</span> : <span class="hljs-title">MultiNodeClusterSpec</span>
 {
     <span class="hljs-keyword">readonly</span> JoinInProgressMultiNodeConfig _config;
 
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-title">JoinInProgressSpec</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new JoinInProgressMultiNodeConfig(</span>))
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JoinInProgressSpec</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new JoinInProgressMultiNodeConfig(</span>))
     </span>{
     }
 
@@ -270,15 +269,13 @@
 <p>The first thing to do is define a configuration for each node you want to include in the test, so in order to do that we have to create a test-specific implementation of <code>MultiNodeConfig</code>.</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressMultiNodeConfig</span> : <span class="hljs-title">MultiNodeConfig</span>
 {
-    <span class="hljs-keyword">readonly</span> RoleName _first;
-    <span class="hljs-keyword">public</span> RoleName First { <span class="hljs-keyword">get</span> {<span class="hljs-keyword">return</span> _first;} }
-    <span class="hljs-keyword">readonly</span> RoleName _second;
-    <span class="hljs-keyword">public</span> RoleName Second { <span class="hljs-keyword">get</span> { <span class="hljs-keyword">return</span> _second; } }
+    <span class="hljs-keyword">public</span> RoleName First { <span class="hljs-keyword">get</span>; }
+    <span class="hljs-keyword">public</span> RoleName Second { <span class="hljs-keyword">get</span>; }
 
     <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JoinInProgressMultiNodeConfig</span>(<span class="hljs-params"></span>)
     </span>{
-        _first = Role(<span class="hljs-string">"first"</span>);
-        _second = Role(<span class="hljs-string">"second"</span>);
+        First = Role(<span class="hljs-string">"first"</span>);
+        Second = Role(<span class="hljs-string">"second"</span>);
 
         CommonConfig = MultiNodeLoggingConfig.LoggingConfig.WithFallback(DebugConfig(<span class="hljs-keyword">true</span>))
             .WithFallback(ConfigurationFactory.ParseString(<span class="hljs-string">@"
@@ -291,18 +288,28 @@
                         acceptable-heartbeat-pause = 1 second
                     }
                 }"</span>).WithFallback(MultiNodeClusterSpec.ClusterConfig()));
+
+
+        NodeConfig(<span class="hljs-keyword">new</span> List&lt;RoleName&gt; { First }, <span class="hljs-keyword">new</span> List&lt;Config&gt;
+        {
+            ConfigurationFactory.ParseString(<span class="hljs-string">"akka.cluster.roles =[frontend]"</span>)
+        });
+        NodeConfig(<span class="hljs-keyword">new</span> List&lt;RoleName&gt; { Second }, <span class="hljs-keyword">new</span> List&lt;Config&gt;
+        {
+            ConfigurationFactory.ParseString(<span class="hljs-string">"akka.cluster.roles =[backend]"</span>)
+        });
     }
 }
 </code></pre>
 <p>In the <code>JoinInProgressMultiNodeConfig</code>, we define two <code>RoleName</code>s for the two nodes who will be participating in this multi node spec, and then we define a <code>Config</code> object and have it set to the <code>CommonConfig</code> property, which is shared across all nodes.</p>
-<p>We&#39;ll show you how to configure individual nodes in a second.</p>
-<h4 id="step-2-define-an-abstract-base-class-for-your-spec-inherit-from-multinodespec-">Step 2 - Define an Abstract Base Class for Your Spec, Inherit from <code>MultiNodeSpec</code></h4>
-<p>The next step is to subclass <code>MultiNodeSpec</code> and create an <code>abstract</code> base class that each of your individual nodes will run.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressSpec</span> : <span class="hljs-title">MultiNodeClusterSpec</span>
+<p>Also we configured each node to represent specific role <code>[frontend,backend]</code> in the cluster. You can attach arbitrary config instance(s) to individual node or group of nodes by calling <code>NodeConfig(IEnumerable&lt;RoleName&gt; roles, IEnumerable&lt;Config&gt; configs)</code>.</p>
+<h4 id="step-2-define-a-class-for-your-spec-inherit-from-multinodespec-">Step 2 - Define a Class for Your Spec, Inherit from <code>MultiNodeSpec</code></h4>
+<p>The next step is to subclass <code>MultiNodeSpec</code> and create a class that each of your individual nodes will run.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressSpec</span> : <span class="hljs-title">MultiNodeClusterSpec</span>
 {
     <span class="hljs-keyword">readonly</span> JoinInProgressMultiNodeConfig _config;
 
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-title">JoinInProgressSpec</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new JoinInProgressMultiNodeConfig(</span>))
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JoinInProgressSpec</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new JoinInProgressMultiNodeConfig(</span>))
     </span>{
     }
 
@@ -326,11 +333,11 @@
 <p>The second constructor overload can be used for allowing individual nodes to run with non-shared configurations.</p>
 <h4 id="step-3-write-the-actual-test-methods">Step 3 - Write the Actual Test Methods</h4>
 <p>Decorate each of the independent tests with the <code>MultiNodeFact</code> attribute - the <code>MultiNodeTestRunner</code> will pick these up once it runs.</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressSpec</span> : <span class="hljs-title">MultiNodeClusterSpec</span>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressSpec</span> : <span class="hljs-title">MultiNodeClusterSpec</span>
 {
     <span class="hljs-keyword">readonly</span> JoinInProgressMultiNodeConfig _config;
 
-    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-title">JoinInProgressSpec</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new JoinInProgressMultiNodeConfig(</span>))
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">JoinInProgressSpec</span>(<span class="hljs-params"></span>) : <span class="hljs-title">this</span>(<span class="hljs-params">new JoinInProgressMultiNodeConfig(</span>))
     </span>{
     }
 
@@ -404,21 +411,11 @@
 }
 </code></pre>
 <p>This unfortunate design is a byproduct of Xunit and how it recreates the entire test class on each method.</p>
-<h4 id="step-4-implement-your-multinodespec-subclass-for-each-node">Step 4 - Implement Your <code>MultiNodeSpec</code> Subclass for Each Node</h4>
-<p>All that&#39;s left is to do this for each node participating in the spec:</p>
-<pre><code class="hljs lang-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressMultiNode1</span> : <span class="hljs-title">JoinInProgressSpec</span>
-{
-}
-
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">JoinInProgressMultiNode2</span> : <span class="hljs-title">JoinInProgressSpec</span>
-{
-}
-</code></pre>
 <h3 id="running-multinode-specs">Running MultiNode Specs</h3>
 <p>To actually run this specification, we have to execute the <code>Akka.MultiNodeTestRunner.exe</code> against the .DLL that contains our specs.</p>
 <p>Here&#39;s the set of arguments that the MultiNodeTestRunner takes:</p>
 <pre><code>Akka.MultiNodeTestRunner.<span class="hljs-keyword">exe</span> path-<span class="hljs-keyword">to</span>-dll # path <span class="hljs-keyword">to</span> DLL containing tests
-[-Dmultinode.enable-filesink=(<span class="hljs-keyword">on</span>|off)] # writes test output <span class="hljs-keyword">to</span> disk 
+[-Dmultinode.enable-filesink=(<span class="hljs-keyword">on</span>|off)] # writes test output <span class="hljs-keyword">to</span> disk
 [-Dmultinode.spec=(<span class="hljs-string">"fully qualified spec method name)] # execute a specific test method
 </span>                                                            # instead of <span class="hljs-keyword">all</span> of them
 </code></pre><p>Here&#39;s an example of what invoking the test runner might look like if all of our multinodetests were packaged into Akka.MultiNodeTests.dll.</p>
