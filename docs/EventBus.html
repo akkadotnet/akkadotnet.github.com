@@ -172,9 +172,55 @@
 						<div class="col-md-8 docs-content">
 							<div id="main_content">
 
-								<div><ul>
-<li>Read more on <a href="http://doc.akka.io/docs/akka/snapshot/java/event-bus.html">http://doc.akka.io/docs/akka/snapshot/java/event-bus.html</a></li>
-</ul>
+								<div><h1 id="eventbus">EventBus</h1>
+<h2 id="subscribing-to-dead-letter-messages">Subscribing to Dead letter messages</h2>
+<p>The following example demonstrates the capturing of dead letter messages generated from a stopped actor.  The dedicated actor will output the message, sender and recipient of the captured dead letter to the console.</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Main</span>(<span class="hljs-params"></span>)
+</span>{
+    <span class="hljs-comment">// Setup the actor system</span>
+    ActorSystem system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
+
+    <span class="hljs-comment">// Setup an actor that will handle deadletter type messages</span>
+    <span class="hljs-keyword">var</span> deadletterWatchMonitorProps = Props.Create(() =&gt; <span class="hljs-keyword">new</span> DeadletterMonitor());
+    <span class="hljs-keyword">var</span> deadletterWatchActorRef = system.ActorOf(deadletterWatchMonitorProps, <span class="hljs-string">"DeadLetterMonitoringActor"</span>);
+
+    <span class="hljs-comment">// subscribe to the event stream for messages of type "DeadLetter"</span>
+    system.EventStream.Subscribe(deadletterWatchActorRef, <span class="hljs-keyword">typeof</span>(DeadLetter));    
+
+    <span class="hljs-comment">// Setup an actor which will simulate a failure/shutdown</span>
+    <span class="hljs-keyword">var</span> expendableActorProps = Props.Create(() =&gt; <span class="hljs-keyword">new</span> ExpendableActor());
+    <span class="hljs-keyword">var</span> expendableActorRef = system.ActorOf(expendableActorProps, <span class="hljs-string">"ExpendableActor"</span>);
+
+    <span class="hljs-comment">// simulate the expendable actor failing/stopping</span>
+    expendableActorRef.Tell(Akka.Actor.PoisonPill.Instance);
+
+    <span class="hljs-comment">// try sending a message to the stopped actor</span>
+    expendableActorRef.Tell(<span class="hljs-string">"another message"</span>);
+
+}
+
+<span class="hljs-comment">// A dead letter handling actor specifically for messages of type "DeadLetter"</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">DeadletterMonitor</span> : <span class="hljs-title">ReceiveActor</span>
+{
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">DeadletterMonitor</span>(<span class="hljs-params"></span>)
+    </span>{
+        Receive&lt;DeadLetter&gt;(dl =&gt; HandleDeadletter(dl));
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">HandleDeadletter</span>(<span class="hljs-params">DeadLetter dl</span>)
+    </span>{
+        Console.WriteLine($<span class="hljs-string">"DeadLetter captured: {dl.Message}, sender: {dl.Sender}, recipient: {dl.Recipient}"</span>);
+    }
+}
+
+<span class="hljs-comment">// An expendable actor which will simulate a failure</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">ExpendableActor</span> : <span class="hljs-title">ReceiveActor</span> {  }
+</code></pre>
+<p>sample capture</p>
+<pre><code class="hljs lang-string">DeadLetter <span class="hljs-string">captured:</span> another message, <span class="hljs-string">sender:</span> [<span class="hljs-string">akka:</span><span class="hljs-comment">//MySystem/deadLetters], recipient: [akka://MySystem/user/ExpendableActor#1469246785]</span>
+</code></pre>
+<h2 id="subscribing-to-messages-of-type-string-">Subscribing to messages of type &quot;string&quot;</h2>
 <pre><code class="hljs lang-csharp"><span class="hljs-keyword">var</span> system = ActorSystem.Create(<span class="hljs-string">"MySystem"</span>);
 <span class="hljs-keyword">var</span> subscriber = system.ActorOf&lt;SomeActor&gt;();
 <span class="hljs-comment">//Subscribe to messages of type string</span>
@@ -182,6 +228,10 @@ system.EventStream.Subscribe(subscriber,<span class="hljs-keyword">typeof</span>
 <span class="hljs-comment">//send a message</span>
 system.EventStream.Publish(<span class="hljs-string">"hello"</span>); <span class="hljs-comment">//this will be forwarded to subscriber</span>
 </code></pre>
+<h3 id="further-reading">Further reading</h3>
+<ul>
+<li>Read more on <a href="http://doc.akka.io/docs/akka/snapshot/java/event-bus.html">http://doc.akka.io/docs/akka/snapshot/java/event-bus.html</a></li>
+</ul>
 </div>
 
 								
