@@ -290,7 +290,7 @@ Context.ActorSelection(<span class="hljs-string">"/user/serviceA/actor"</span>);
 <span class="hljs-comment">// will look up sibling beneath same supervisor</span>
 Context.ActorSelection(<span class="hljs-string">"../joe"</span>);
 </code></pre>
-<p>The supplied path is parsed as a <code>System.URI</code>, which basically means that it is split on / into path elements. If the path starts with /, it is absolute and the look-up starts at the root guardian (which is the parent of &quot;/user&quot;); otherwise it starts at the current actor. If a path element equals .., the look-up will take a step “up” towards the supervisor of the currently traversed actor, otherwise it will step “down” to the named child. It should be noted that the .. in actor paths here always means the logical structure, i.e. the supervisor.</p>
+<p>The supplied path is parsed as a <code>System.URI</code>, which basically means that it is split on / into path elements. If the path starts with /, it is absolute and the look-up starts at the root guardian (which is the parent of &quot;/user&quot;); otherwise it starts at the current actor. If a path element equals .., the look-up will take a step &quot;up&quot; towards the supervisor of the currently traversed actor, otherwise it will step &quot;down&quot; to the named child. It should be noted that the .. in actor paths here always means the logical structure, i.e. the supervisor.</p>
 <p>The path elements of an actor selection may contain wildcard patterns allowing for broadcasting of messages to that section:</p>
 <pre><code class="hljs lang-csharp"><span class="hljs-comment">// will look all children to serviceB with names starting with worker</span>
 Context.ActorSelection(<span class="hljs-string">"/user/serviceB/worker*"</span>);
@@ -374,7 +374,7 @@ actorFor is deprecated in favor of actorSelection because actor references acqui
 </code></pre>
 <h2 id="send-messages">Send messages</h2>
 <p>Messages are sent to an Actor through one of the following methods.</p>
-<p>tell means “fire-and-forget”, e.g. send a message asynchronously and return immediately.
+<p>tell means &quot;fire-and-forget&quot;, e.g. send a message asynchronously and return immediately.
 ask sends a message asynchronously and returns a Future representing a possible reply.
 Message ordering is guaranteed on a per-sender basis.</p>
 <div class="alert alert-default">
@@ -569,7 +569,7 @@ Please note that the actor will revert to its original behavior when restarted b
 }
 </code></pre>
 <p>This variant of the Become method is useful for many different things, such as to implement a Finite State Machine (FSM). It will replace the current behavior (i.e. the top of the behavior stack), which means that you do not use Unbecome, instead always the next behavior is explicitly installed.</p>
-<p>The other way of using Become does not replace but add to the top of the behavior stack. In this case care must be taken to ensure that the number of “pop” operations (i.e. Unbecome) matches the number of “push” ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).</p>
+<p>The other way of using Become does not replace but add to the top of the behavior stack. In this case care must be taken to ensure that the number of &quot;pop&quot; operations (i.e. Unbecome) matches the number of &quot;push&quot; ones in the long run, otherwise this amounts to a memory leak (which is why this behavior is not the default).</p>
 <pre><code class="hljs lang-csharp">
 <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Swapper</span> : <span class="hljs-title">UntypedActor</span>
 {

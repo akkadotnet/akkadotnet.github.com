@@ -174,8 +174,8 @@
 
 								<div><h1 id="message-delivery-reliability">Message Delivery Reliability</h1>
 <p>Akka.NET helps you build reliable applications which make use of multiple processor
-cores in one machine (“scaling up”) or distributed across a computer network
-(“scaling out”). The key abstraction to make this work is that all interactions
+cores in one machine (&quot;scaling up&quot;) or distributed across a computer network
+(&quot;scaling out&quot;). The key abstraction to make this work is that all interactions
 between your code units—actors—happen via message passing, which is why the
 precise semantics of how messages are passed between actors deserve their own
 chapter.</p>
@@ -198,7 +198,7 @@ actors—you can place them always on the same local application and enjoy stric
 on message delivery. The details of this trade-off are discussed further below.</p>
 <p>As a supplementary part we give a few pointers at how to build stronger
 reliability on top of the built-in ones. The chapter closes by discussing the
-role of the “Dead Letter Office”.</p>
+role of the &quot;Dead Letter Office&quot;.</p>
 <h2 id="the-general-rules">The General Rules</h2>
 <p>These are the rules for message sends (i.e. the <code>tell</code> or <code>!</code> method, which
 also underlies the <code>ask</code> pattern):</p>
@@ -208,7 +208,7 @@ also underlies the <code>ask</code> pattern):</p>
 </ul>
 <p>The first rule is typically found also in other actor implementations while the
 second is specific to Akka.</p>
-<h2 id="discussion-what-does-at-most-once-mean-">Discussion: What does “at-most-once” mean?</h2>
+<h2 id="discussion-what-does-at-most-once-mean-">Discussion: What does &quot;at-most-once&quot; mean?</h2>
 <p>When it comes to describing the semantics of a delivery mechanism, there are
 three basic categories:</p>
 <ul>
@@ -248,12 +248,12 @@ mean:</p>
 there are conditions under which any message passing library would be unable to
 comply; think for example about configurable mailbox types and how a bounded
 mailbox would interact with the third point, or even what it would mean to
-decide upon the “successfully” part of point five.</p>
+decide upon the &quot;successfully&quot; part of point five.</p>
 <p>Along those same lines goes the reasoning in <code>Nobody Needs Reliable
 Messaging</code>_. The only meaningful way for a sender to know whether an
 interaction was successful is by receiving a business-level acknowledgement
 message, which is not something Akka.NET could make up on its own (neither are we
-writing a “do what I mean” framework nor would you want us to).</p>
+writing a &quot;do what I mean&quot; framework nor would you want us to).</p>
 <p>Akka.NET embraces distributed computing and makes the fallibility of communication
 explicit through message passing, therefore it does not try to lie and emulate
 a leaky abstraction. This is a model that has been used with great success in
@@ -321,7 +321,7 @@ a user and system message cannot guarantee the ordering of their dequeue times.<
 will bind your application to local-only deployment: an application may have to
 be designed differently (as opposed to just employing some message exchange
 patterns local to some actors) in order to be fit for running on a cluster of
-machines. Our credo is “design once, deploy any way you wish”, and to achieve
+machines. Our credo is &quot;design once, deploy any way you wish&quot;, and to achieve
 this you should only rely on The <a href="">General Rules</a>.</p>
 <h3 id="reliability-of-local-message-sends">Reliability of Local Message Sends</h3>
 <p>The Akka.NET test suite relies on not losing messages in the local context (and for
