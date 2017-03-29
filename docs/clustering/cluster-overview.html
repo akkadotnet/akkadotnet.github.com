@@ -305,6 +305,9 @@
 <p><img class="img-responsive" src="diagrams/akka-cluster-concept.png" alt="Initial state of a 5-node Akka.NET cluster"></p>
 <p><strong>A</strong> and <strong>B</strong> are both seed nodes, and listen on IP address / port combinations that are baked into the configurations of <strong>C, D,</strong> and <strong>E</strong>.</p>
 <p><strong>A</strong> and <strong>B</strong> also know <em>each other&#39;s locations</em>, so they can communicate with each other initially also.</p>
+<blockquote>
+<p>NOTE: A special rule applies the first time a cluster forms: the first seed node declared in a <code>akka.cluster.seed-nodes</code> list <em>must be up</em>. Otherwise the cluster will not form. This is designed to prevent a split brain from forming the first time a cluster launches. And in general, as a best practice: <strong>always use an identical seed node list on every node, including the seed nodes</strong>. This will give you the most consistent behavior and results.</p>
+</blockquote>
 <p><img class="img-responsive" src="diagrams/akka-cluster-joining.png" alt="Akka.Cluster nodes begin attempting to join each other, beginning with seed nodes"></p>
 <p>All nodes initially attempt to connect to a seed node - in this instance the nodes are configured in the following way:</p>
 <ul>
