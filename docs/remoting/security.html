@@ -173,10 +173,41 @@
 							<div id="main_content">
 
 								<div><h1 id="akka-remote-security">Akka.Remote Security</h1>
-<p>This section is extremely brief - as of today there are no built-in secure transports in Akka.Remote. Security is a &quot;do it yourself&quot; exercise.</p>
-<p>That being said, however, <a href="http://helios-io.github.io/" title="Helios - Reactive socket middleware for .NET">Helios - the socket library that powers all of the transports in Akka.Remote</a>, is working on plans to introduce <a href="http://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a> and <a href="http://en.wikipedia.org/wiki/Datagram_Transport_Layer_Security">DTLS</a> inside Helios 2.0, which will bring asymmetric encryption and secure sockets to Akka.Remote.</p>
-<p>But in the meantime, we have to create our own security options around Akka.Remote.</p>
-<h3 id="secure-the-network-akka-remote-with-virtual-private-networks">Secure the Network: Akka.Remote with Virtual Private Networks</h3>
+<p>There are 2 ways you may like to achieve network security when using Akka.Remote:</p>
+<ul>
+<li>Transport Layer Security (introduced with Akka.Remote Version 1.2)</li>
+<li>Virtual Private Networks</li>
+</ul>
+<h3 id="akka-remote-with-tls-transport-layer-security-">Akka.Remote with TLS (Transport Layer Security)</h3>
+<p>The release of Akka.NET version 1.2.0 introduces the default <a href="https://github.com/Azure/DotNetty">DotNetty</a> transport and the ability to configure <a href="http://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a> security across Akka.Remote Actor Systems.  In order to use TLS, you must first install a valid SSL certificate on all Akka.Remote hosts that you intend to use TLS.</p>
+<p>Once you&#39;ve installed valid SSL certificates, TLS is enabled via your HOCON configuration by setting <code>enable-ssl = true</code> and configuring the <code>ssl</code> HOCON configuration section like below:</p>
+<pre><code><span class="hljs-name">akka</span> {
+  <span class="hljs-literal">loglevel</span> = DEBUG
+  actor {
+    <span class="hljs-literal">provider</span> = Akka.Remote.RemoteActorRefProvider,Akka.Remote
+  }
+  <span class="hljs-name">remote</span> {
+    dot-netty.tcp {
+      port = <span class="hljs-number">0</span>
+      <span class="hljs-built_in">hostname</span> = <span class="hljs-number">127.0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>
+      <span class="hljs-literal">enable</span>-ssl = <span class="hljs-keyword">true</span>
+      log-transport = <span class="hljs-keyword">true</span>
+      ssl {
+        suppress-validation = <span class="hljs-keyword">true</span>
+        certificate {
+          <span class="hljs-comment"># valid ssl certificate must be installed on both hosts</span>
+          <span class="hljs-built_in">path</span> = <span class="hljs-string">"&lt;valid certificate path&gt;"</span> 
+          <span class="hljs-literal">password</span> = <span class="hljs-string">"&lt;certificate password&gt;"</span>
+          <span class="hljs-comment"># flags is optional: defaults to "default-flag-set" key storage flag</span>
+          <span class="hljs-comment"># other available storage flags:</span>
+          <span class="hljs-comment">#   exportable | machine-key-set | persist-key-set | user-key-set | user-protected</span>
+          <span class="hljs-literal">flags</span> = [ <span class="hljs-string">"default-flag-set"</span> ] 
+        }
+      }
+    }
+  }
+}
+</code></pre><h3 id="akka-remote-with-virtual-private-networks">Akka.Remote with Virtual Private Networks</h3>
 <p>The absolute best practice for securing remote Akka.NET applications today is to make the network around the applications secure - don&#39;t use public, open networks! Instead, use a private network to restrict machines that can contact Akka.Remote processes to ones who have your VPN credentials.</p>
 <p>Some options for doing this:</p>
 <ul>
