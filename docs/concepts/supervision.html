@@ -247,8 +247,8 @@ Lifecycle Monitoring in Akka.NET is usually referred to as <code>DeathWatch</cod
     <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> SupervisorStrategy <span class="hljs-title">SupervisorStrategy</span>(<span class="hljs-params"></span>)
     </span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> OneForOneStrategy( <span class="hljs-comment">//or AllForOneStrategy</span>
-            maxNumberOfRetries: <span class="hljs-number">10</span>,
-            duration: TimeSpan.FromSeconds(<span class="hljs-number">30</span>),
+            maxNrOfRetries: <span class="hljs-number">10</span>,
+            withinTimeRange: TimeSpan.FromSeconds(<span class="hljs-number">30</span>),
             decider: Decider.From(x =&gt;
             {
                 <span class="hljs-comment">//Maybe we consider ArithmeticException to not be application critical</span>
