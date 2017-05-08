@@ -480,6 +480,70 @@
 <h3 id="completion">Completion</h3>
 <p>Completion handling usually (but not exclusively) comes into the picture when processing stages need to emit a few more elements after their upstream source has been completed. We have seen an example of this in our first <code>Duplicator</code> implementation where the last element needs to be doubled even after the upstream neighbour stage has been completed. This can be done by overriding the <code>onUpstreamFinish</code> callback in <code>SetHandler(in, action)</code>.</p>
 <p>Stages by default automatically stop once all of their ports (input and output) have been closed externally or internally. It is possible to opt out from this behavior by invoking <code>SetKeepGoing(true)</code> (which is not supported from the stages constructor and usually done in <code>PreStart</code>). In this case the stage <strong>must</strong> be explicitly closed by calling <code>CompleteStage()</code> or <code>FailStage(exception)</code>. This feature carries the risk of leaking streams and actors, therefore it should be used with care.</p>
+<h3 id="logging-inside-graphstages">Logging inside GraphStages</h3>
+<p>Logging debug or other important information in your stages is often a very good idea, especially when developing
+more advances stages which may need to be debugged at some point.</p>
+<p>The <code>Log</code> property is provided to enable you to easily obtain a <code>LoggingAdapter</code>
+inside of a <code>GraphStage</code> as long as the <code>Materializer</code> you&#39;re using is able to provide you with a logger.
+In that sense, it serves a very similar purpose as <code>ActorLogging</code> does for Actors. </p>
+<blockquote>
+<p>Note: <br>Please note that you can always simply use a logging library directly inside a Stage.
+Make sure to use an asynchronous appender however, to not accidentally block the stage when writing to files etc.</p>
+</blockquote>
+<p>The stage gets access to the <code>Log</code> property which it can safely use from any <code>GraphStage</code> callbacks:</p>
+<pre><code class="hljs lang-csharp"><span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">RandomLettersSource</span> : <span class="hljs-title">GraphStage</span>&lt;<span class="hljs-title">SourceShape</span>&lt;<span class="hljs-title">string</span>&gt;&gt;
+{
+    <span class="hljs-preprocessor">#<span class="hljs-keyword">region</span> internal classes</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">sealed</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Logic</span> : <span class="hljs-title">GraphStageLogic</span>
+    {
+        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Logic</span>(<span class="hljs-params">RandomLettersSource stage</span>) : <span class="hljs-title">base</span>(<span class="hljs-params">stage.Shape</span>)
+        </span>{
+            SetHandler(stage.Out, onPull: () =&gt;
+            {
+                <span class="hljs-keyword">var</span> c = NextChar(); <span class="hljs-comment">// ASCII lower case letters</span>
+
+                Log.Debug($<span class="hljs-string">"Randomly generated: {c}"</span>);    
+
+                Push(stage.Out, c.ToString());
+            });
+        }
+
+        <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">char</span> <span class="hljs-title">NextChar</span>(<span class="hljs-params"></span>) </span>=&gt; (<span class="hljs-keyword">char</span>) ThreadLocalRandom.Current.Next(<span class="hljs-string">'a'</span>, <span class="hljs-string">'z'</span><span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-preprocessor">#<span class="hljs-keyword">endregion</span></span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">RandomLettersSource</span>(<span class="hljs-params"></span>)
+    </span>{
+        Shape = <span class="hljs-keyword">new</span> SourceShape&lt;<span class="hljs-keyword">string</span>&gt;(Out);
+    }
+
+    <span class="hljs-keyword">private</span> Outlet&lt;<span class="hljs-keyword">string</span>&gt; Out { <span class="hljs-keyword">get</span>; } = <span class="hljs-keyword">new</span> Outlet&lt;<span class="hljs-keyword">string</span>&gt;(<span class="hljs-string">"RandomLettersSource.out"</span>);
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> SourceShape&lt;<span class="hljs-keyword">string</span>&gt; Shape { <span class="hljs-keyword">get</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">override</span> GraphStageLogic <span class="hljs-title">CreateLogic</span>(<span class="hljs-params">Attributes inheritedAttributes</span>) </span>=&gt; <span class="hljs-keyword">new</span> Logic(<span class="hljs-keyword">this</span>);
+}
+
+
+[Fact]
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">A_GraphStageLogic_must_support_logging_in_custom_graphstage</span>(<span class="hljs-params"></span>)
+</span>{
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> n = <span class="hljs-number">10</span>;
+    EventFilter.Debug(start: <span class="hljs-string">"Randomly generated"</span>).Expect(n, () =&gt;
+    {
+        Source.FromGraph(<span class="hljs-keyword">new</span> RandomLettersSource())
+            .Take(n)
+            .RunWith(Sink.Ignore&lt;<span class="hljs-keyword">string</span>&gt;(), Materializer)
+            .Wait(TimeSpan.FromSeconds(<span class="hljs-number">3</span>));
+    });
+}
+</code></pre>
+<blockquote>
+<p>Note: <br><strong>SPI Note:</strong> If you&#39;re implementing a Materializer, you can add this ability to your materializer by implementing 
+<code>IMaterializerLoggingProvider</code> in your <code>Materializer</code>.</p>
+</blockquote>
 <h3 id="using-timers">Using timers</h3>
 <p>It is possible to use timers in <code>GraphStages</code> by using <code>TimerGraphStageLogic</code> as the base class for the returned logic. Timers can be scheduled by calling one of <code>ScheduleOnce(key,delay)</code>, <code>SchedulePeriodically(key,period)</code> or <code>SchedulePeriodicallyWithInitialDelay(key,delay,period)</code> and passing an object as a key for that timer (can be any object, for example a String). The <code>OnTimer(key)</code> method needs to be overridden and it will be called once the timer of key fires. It is possible to cancel a timer using <code>CancelTimer(key)</code> and check the status of a timer with <code>IsTimerActive(key)</code>. Timers will be automatically cleaned up when the stage completes.</p>
 <p>Timers can not be scheduled from the constructor of the logic, but it is possible to schedule them from the <code>PreStart()</code> lifecycle hook.</p>
