@@ -733,6 +733,11 @@ smallest element.</p>
 returned value downstream.</p>
 <p><strong>emits</strong> when all of the inputs have an element available</p>
 <p><strong>backpressures</strong> when downstream backpressures</p>
+<p><strong>completes</strong> when any upstream completes  </p>
+<h4 id="zipwithindex">ZipWithIndex</h4>
+<p>Zips elements of current flow with its indices.</p>
+<p><strong>emits</strong> when upstream emits an element and is paired with their index</p>
+<p><strong>backpressures</strong> when downstream backpressures</p>
 <p><strong>completes</strong> when any upstream completes</p>
 <h4 id="concat">Concat</h4>
 <p>After completion of the original upstream the elements of the given source will be emitted.</p>
