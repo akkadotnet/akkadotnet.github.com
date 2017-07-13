@@ -182,7 +182,7 @@ Akka Stream processing entities have bounded &quot;mailboxes&quot; that do not d
 <p>Before we move on, let&#39;s define some basic terminology which will be used throughout the entire documentation:   </p>
 <p><strong>Stream</strong><br>An active process that involves moving and transforming data.</p>
 <p><strong>Element</strong><br>An element is the processing unit of streams. All operations transform and transfer elements from upstream to downstream. 
-Buffer sizes are always expressed as number of elements independently form the actual size of the elements.</p>
+Buffer sizes are always expressed as number of elements independently from the actual size of the elements.</p>
 <p><strong>Back-pressure</strong><br>A means of flow-control, a way for consumers of data to notify a producer about their current availability, effectively slowing down the upstream producer to match their consumption speeds. 
 In the context of Akka Streams back-pressure is always understood as <em>non-blocking</em> and <em>asynchronous</em>.</p>
 <p><strong>Non-Blocking</strong><br>Means that a certain operation does not hinder the progress of the calling thread, 
