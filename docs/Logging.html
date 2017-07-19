@@ -181,11 +181,17 @@
 <pre><code class="hljs lang-csharp">_log.Debug(<span class="hljs-string">"Some message"</span>);
 </code></pre>
 <h2 id="standard-loggers">Standard Loggers</h2>
-<p>Akka.NET comes with two built in loggers.</p>
+<p>Akka.NET comes with three built in loggers.</p>
 <ul>
 <li><strong>StandardOutLogger</strong></li>
 <li><strong>BusLogging</strong></li>
+<li><strong>TraceLogger</strong></li>
 </ul>
+<p>Example configuration inside your app.config or web.config to use the <code>TraceLogger</code>:</p>
+<pre><code class="hljs lang-hocon"><span class="hljs-title">akka</span> {
+    <span class="hljs-title">loggers</span> = [<span class="hljs-string">"Akka.Event.TraceLogger, Akka"</span>]
+}
+</code></pre>
 <h2 id="contrib-loggers">Contrib Loggers</h2>
 <p>These loggers are also available as separate nuget packages</p>
 <ul>
